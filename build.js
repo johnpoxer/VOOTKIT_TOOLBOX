@@ -12,6 +12,7 @@ const fs = require("fs");
 const path = require("path");
 const ROOT = __dirname;
 const VK = require("./data/catalog.js");
+const MONEY = require("./assets/js/tools-money.js");
 const SITE = "https://vootkit.com";
 const PUB = "ca-pub-5906583727409402";
 
@@ -86,7 +87,7 @@ ${o.ads ? `<script async src="https://pagead2.googlesyndication.com/pagead/js/ad
 <main id="main" tabindex="-1">`;
 }
 
-function foot(depth) {
+function foot(depth, extraScripts) {
   const up = "../".repeat(depth) || "./";
   const cats = VK.CATEGORIES.slice(0, 8)
     .map((c) => `<a href="${up}tools/${c.slug}/">${esc(c.name)}</a>`).join("");
@@ -111,6 +112,7 @@ if(s)document.documentElement.setAttribute('data-theme',s);
 t.addEventListener('click',function(){var c=document.documentElement.getAttribute('data-theme'),x=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',x);try{localStorage.setItem('vk-theme',x);}catch(e){}});})();
 </script>
 <script src="${up}assets/js/recent.js" defer></script>
+${(extraScripts||[]).map(function(x){return '<script src="'+up+x+'" defer></script>';}).join("\n")}
 </body>
 </html>
 `;
@@ -259,11 +261,10 @@ function toolPage(t) {
       mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) }
   ];
 
+  const hasCalc = !!MONEY[t.id];
   const workspace = live
     ? `<div class="ws" id="workspace" data-tool="${t.id}">
-         <div class="ws-empty">
-           <p class="note">Interactive workspace loads here.</p>
-         </div>
+         <noscript><p class="note">This tool needs JavaScript — it runs the calculation in your browser rather than on a server.</p></noscript>
        </div>`
     : `<div class="ws ws-soon">
          <strong>Not built yet</strong>
@@ -335,7 +336,7 @@ function toolPage(t) {
       ? "This tool processes everything locally in your browser. You can disconnect from the internet after the page loads and it will still work."
       : "This tool calls an external service to fetch live data. It does not require an account and does not track you."}</p>
   </section>
-</div>` + foot(3);
+</div>` + foot(3, hasCalc ? ['assets/js/calc.js','assets/js/tools-money.js'] : []);
 }
 
 function exampleFor(t, c) {

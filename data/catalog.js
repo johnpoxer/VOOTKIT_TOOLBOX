@@ -48,11 +48,11 @@
 
   var TOOLS = [
     /* ---------- MONEY: finance (CPC $22.10) ---------- */
-    t("mortgage-calculator","finance","Mortgage Calculator","Monthly payment, total interest and full amortisation schedule.",{tier:"money",kw:"home loan repayment amortization"}),
-    t("loan-calculator","finance","Loan Calculator","Payment, interest and payoff for any personal or business loan.",{tier:"money",kw:"personal loan repayment"}),
-    t("auto-loan-calculator","finance","Auto Loan Calculator","Car payment, total cost and interest by term and rate.",{tier:"money",kw:"car finance payment vehicle"}),
-    t("refinance-calculator","finance","Refinance Break-Even","See how many months until refinancing pays for itself.",{tier:"money",kw:"remortgage break even"}),
-    t("credit-card-payoff","finance","Credit Card Payoff","How long to clear a balance, and what extra payments save.",{tier:"money",kw:"debt snowball avalanche interest"}),
+    t("mortgage-calculator","finance","Mortgage Calculator","Monthly payment, total interest and full amortisation schedule.",{tier:"money",status:"live",kw:"home loan repayment amortization"}),
+    t("loan-calculator","finance","Loan Calculator","Payment, interest and payoff for any personal or business loan.",{tier:"money",status:"live",kw:"personal loan repayment"}),
+    t("auto-loan-calculator","finance","Auto Loan Calculator","Car payment, total cost and interest by term and rate.",{tier:"money",status:"live",kw:"car finance payment vehicle"}),
+    t("refinance-calculator","finance","Refinance Break-Even","See how many months until refinancing pays for itself.",{tier:"money",status:"live",kw:"remortgage break even"}),
+    t("credit-card-payoff","finance","Credit Card Payoff","How long to clear a balance, and what extra payments save.",{tier:"money",status:"live",kw:"debt snowball avalanche interest"}),
     t("compound-interest","finance","Compound Interest","Grow savings with regular contributions over time.",{tier:"money",kw:"savings growth investment"}),
     t("savings-goal","finance","Savings Goal Planner","How much to set aside each month to hit a target.",{tier:"money",kw:"save monthly target"}),
     t("retirement-calculator","finance","Retirement Projection","Project a pension or 401k pot at your chosen retirement age.",{tier:"money",kw:"401k pension nest egg"}),
@@ -68,11 +68,11 @@
     t("income-protection","insurance","Income Protection Estimator","How much monthly benefit would cover your commitments.",{tier:"money",kw:"disability cover"}),
 
     /* ---------- MONEY: real estate (CPC $14.20, pure arithmetic) ---------- */
-    t("rent-vs-buy","realestate","Rent vs Buy","Compare renting against buying over your real time horizon.",{tier:"money",kw:"should i buy a house"}),
-    t("cap-rate","realestate","Cap Rate Calculator","Capitalisation rate from income and property value.",{tier:"money",kw:"rental yield investment property"}),
+    t("rent-vs-buy","realestate","Rent vs Buy","Compare renting against buying over your real time horizon.",{tier:"money",status:"live",kw:"should i buy a house"}),
+    t("cap-rate","realestate","Cap Rate Calculator","Capitalisation rate from income and property value.",{tier:"money",status:"live",kw:"rental yield investment property"}),
     t("cash-on-cash","realestate","Cash-on-Cash Return","Annual return on the actual cash you put in.",{tier:"money",kw:"coc property return"}),
     t("closing-costs","realestate","Closing Costs Estimator","Estimate the fees on top of the purchase price.",{tier:"money",kw:"stamp duty fees completion"}),
-    t("home-affordability","realestate","Home Affordability","What price you can support on your income and deposit.",{tier:"money",kw:"how much house can i afford"}),
+    t("home-affordability","realestate","Home Affordability","What price you can support on your income and deposit.",{tier:"money",status:"live",kw:"how much house can i afford"}),
     t("rental-yield","realestate","Rental Yield","Gross and net yield on a rental property.",{tier:"money",kw:"buy to let return"}),
     t("mortgage-payoff","realestate","Mortgage Payoff","How much time and interest extra payments save.",{tier:"money",kw:"overpayment early repayment"}),
 

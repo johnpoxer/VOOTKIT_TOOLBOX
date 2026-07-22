@@ -62,7 +62,34 @@
 .trust-note { margin-top: var(--s-6); padding: var(--s-4); border-left: 3px solid var(--accent); background: var(--accent-weak); border-radius: 0; }
 .trust-note .note { color: var(--ink-soft); margin: 0; }
 
+/* ---------- calculator ---------- */
+.ws:has(.calc), .calc { display: block; }
+.calc { width: 100%; }
+.calc-form { display: grid; gap: var(--s-4); grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: var(--s-5); }
+.calc-field.is-wide { grid-column: 1 / -1; }
+.calc-hint { display: block; margin-top: var(--s-1); font-size: var(--t-xs); color: var(--ink-mute); }
+
+.calc-out { border-top: 1px solid var(--line); padding-top: var(--s-5); }
+.calc-headline { display: flex; flex-direction: column; gap: 2px; margin-bottom: var(--s-4); }
+.calc-label { font-size: var(--t-sm); font-weight: 600; color: var(--ink-mute); text-transform: uppercase; letter-spacing: .06em; }
+.calc-value { font-family: var(--font-display); font-size: clamp(2rem, 1.4rem + 2.6vw, 3rem); line-height: 1.05; letter-spacing: -.03em; color: var(--accent); }
+.calc-sub { font-size: var(--t-base); color: var(--ink-soft); }
+
+.calc-stats { display: grid; gap: var(--s-3); grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+.calc-stat { background: var(--surface-sunk); border-radius: var(--r-md); padding: var(--s-3) var(--s-4); }
+.calc-stat span { display: block; font-size: var(--t-xs); color: var(--ink-mute); margin-bottom: 2px; }
+.calc-stat b { font-family: var(--font-display); font-size: var(--t-lg); color: var(--ink); }
+
+.calc-extra { margin-top: var(--s-4); }
+.calc-table { margin-top: var(--s-4); border: 1px solid var(--line); border-radius: var(--r-md); }
+.calc-table summary { cursor: pointer; padding: var(--s-3) var(--s-4); font-weight: 600; font-size: var(--t-base); min-height: var(--tap); display: flex; align-items: center; }
+.calc-scroll { max-height: 340px; overflow: auto; border-top: 1px solid var(--line); }
+.calc-table table { width: 100%; border-collapse: collapse; font-size: var(--t-sm); }
+.calc-table th { position: sticky; top: 0; background: var(--surface-sunk); text-align: left; padding: var(--s-2) var(--s-4); font-weight: 600; color: var(--ink-soft); }
+.calc-table td { padding: var(--s-2) var(--s-4); border-top: 1px solid var(--line); white-space: nowrap; }
+
 @media (max-width: 640px) {
   .cat-head { flex-direction: column; align-items: flex-start; gap: var(--s-1); }
   .ws { padding: var(--s-4); }
+  .calc-form { grid-template-columns: 1fr; gap: var(--s-3); }
 }
