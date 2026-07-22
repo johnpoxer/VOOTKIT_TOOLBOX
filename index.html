@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="google-adsense-account" content="ca-pub-5906583727409402">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#fbfcfe" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)">
+<title>Vootkit — free tools that run in your browser</title>
+<meta name="description" content="Free online tools for PDF, images, video, finance and more. Most run entirely in your browser, so your files never leave your device. No sign-up, no watermark, no daily limit.">
+<link rel="canonical" href="https://vootkit.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Vootkit">
+<meta property="og:title" content="Vootkit — free tools that run in your browser">
+<meta property="og:description" content="Your files never leave your device. No sign-up, no watermark, no daily limit.">
+<meta property="og:url" content="https://vootkit.com/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Vootkit — free tools that run in your browser">
+<meta name="twitter:description" content="Your files never leave your device. No sign-up, no watermark, no daily limit.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@700;800&display=swap">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/base.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","name":"Vootkit","url":"https://vootkit.com/",
+"description":"Free online tools that run in your browser.",
+"potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://vootkit.com/tools/?q={search_term_string}"},"query-input":"required name=search_term_string"}}
+</script>
+<style>
+/* hero + home-only components */
+.hero { padding-block: clamp(var(--s-7), 7vw, var(--s-9)) var(--s-6); text-align: center; }
+.hero h1 { font-size: var(--t-4xl); margin-bottom: var(--s-4); }
+.hero .lede { font-size: var(--t-lg); color: var(--ink-soft); max-width: 46ch; margin: 0 auto var(--s-6); }
+.searchbox { position: relative; max-width: 720px; margin: 0 auto; }
+.searchbox svg { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; color: var(--ink-mute); pointer-events: none; }
+#q { width: 100%; min-height: 62px; padding: var(--s-4) var(--s-6) var(--s-4) 52px; font-size: var(--t-lg);
+     border: 1px solid var(--line-strong); border-radius: var(--r-xl); background: var(--surface); color: var(--ink);
+     box-shadow: var(--shadow-md); outline: 0; transition: border-color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease); }
+#q:focus { border-color: var(--accent); box-shadow: var(--ring), var(--shadow-lg); }
+#q::-webkit-search-cancel-button { display: none; }
+.kbd { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); border: 1px solid var(--line); background: var(--surface-sunk); color: var(--ink-mute); border-radius: 6px; padding: 3px 8px; font-size: var(--t-xs); font-weight: 600; }
+@media (max-width: 640px) { .kbd { display: none; } #q { padding-right: var(--s-4); } }
+.qcount { font-size: var(--t-sm); color: var(--ink-mute); margin-top: var(--s-2); min-height: 20px; }
+.tries { display: flex; flex-wrap: wrap; gap: var(--s-2); justify-content: center; margin-top: var(--s-4); }
+.try { border: 1px solid var(--line); background: var(--surface); border-radius: var(--r-pill); padding: var(--s-2) var(--s-4); font-size: var(--t-sm); color: var(--ink-soft); cursor: pointer; min-height: 38px; }
+.try:hover { border-color: var(--accent-border); color: var(--accent); }
+.results { max-width: 720px; margin: var(--s-4) auto 0; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--shadow-lg); overflow: hidden; }
+.res { display: flex; align-items: center; gap: var(--s-4); padding: var(--s-3) var(--s-4); border-bottom: 1px solid var(--line); min-height: 64px; }
+.res:last-child { border-bottom: 0; }
+.res:hover, .res.is-active { background: var(--accent-weak); }
+.res-main { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.res-main strong { font-size: var(--t-md); font-weight: 600; }
+.res-desc { font-size: var(--t-sm); color: var(--ink-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.res-meta { display: flex; align-items: center; gap: var(--s-2); flex: none; }
+.res-cat { font-size: var(--t-xs); color: var(--ink-mute); font-weight: 600; }
+.soon { font-style: normal; font-size: var(--t-xs); color: var(--ink-mute); font-weight: 500; }
+@media (max-width: 640px) { .res-meta .res-cat { display: none; } .res-desc { white-space: normal; } }
+.proof { display: grid; gap: var(--s-3); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.proof .card { display: flex; flex-direction: column; gap: var(--s-2); }
+.proof strong { font-family: var(--font-display); font-size: var(--t-xl); }
+.proof p { font-size: var(--t-sm); color: var(--ink-soft); }
+.vs { width: 100%; border-collapse: collapse; font-size: var(--t-base); }
+.vs th, .vs td { text-align: left; padding: var(--s-3) var(--s-4); border-bottom: 1px solid var(--line); }
+.vs thead th { font-size: var(--t-sm); color: var(--ink-mute); font-weight: 600; }
+.vs td:first-child { color: var(--ink-soft); }
+.vs .yes { color: var(--ok); font-weight: 600; }
+.vs .no { color: var(--ink-mute); }
+.sec-head { text-align: center; margin-bottom: var(--s-6); }
+.sec-head h2 { font-size: var(--t-2xl); margin: var(--s-2) 0 var(--s-2); }
+.sec-head p { color: var(--ink-soft); max-width: 52ch; margin-inline: auto; }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="hdr">
+  <div class="wrap hdr-in">
+    <a class="brand" href="./" aria-label="Vootkit home">
+      <svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="17.5" fill="none" stroke="var(--accent)" stroke-opacity=".45" stroke-width="1.3" stroke-dasharray="17 7"/><path d="M12.5 14.5 21.5 30 31.5 13.5" fill="none" stroke="var(--accent)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="33.5" cy="10.5" r="2.7" fill="#06b6d4"/></svg>
+      vootkit
+    </a>
+    <nav class="nav" id="nav" aria-label="Main">
+      <a href="tools/">All tools</a>
+      <a href="tools/pdf/">PDF</a>
+      <a href="tools/images/">Images</a>
+      <a href="tools/video/">Video</a>
+      <a href="tools/finance/">Finance</a>
+    </nav>
+    <div class="hdr-act">
+      <button class="icon-btn" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav">
+        <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <button class="icon-btn" id="theme" type="button" aria-label="Switch theme">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.5M12 19v2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M2.5 12H5M19 12h2.5M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+
+  <section class="hero wrap">
+    <span class="eyebrow">One platform. Infinite possibilities.</span>
+    <h1>Every digital task, <span class="grad-text">done in your browser.</span></h1>
+    <p class="lede">Most Vootkit tools process your files on your own device — so nothing is uploaded, there's no queue, and there's no daily limit.</p>
+
+    <div class="searchbox">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+      <input id="q" type="search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="results" aria-autocomplete="list"
+             placeholder="What do you need to do?" aria-label="Search tools">
+      <kbd class="kbd">/</kbd>
+    </div>
+    <p class="qcount" id="qcount" role="status" aria-live="polite"></p>
+    <div class="results" id="results" role="listbox" aria-label="Search results" hidden></div>
+
+    <div class="tries" id="browse">
+      <button class="try" type="button" data-try="compress pdf">compress a PDF</button>
+      <button class="try" type="button" data-try="discord">shrink a clip for Discord</button>
+      <button class="try" type="button" data-try="remove background">remove a background</button>
+      <button class="try" type="button" data-try="mortgage">work out a mortgage</button>
+      <button class="try" type="button" data-try="heic">convert HEIC photos</button>
+    </div>
+  </section>
+
+  <section class="section wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Why it's different</span>
+      <h2>The others upload your files. We don't.</h2>
+      <p>Every competitor sends your document to their server — that's why they need daily limits, queues and CAPTCHAs. Ours runs on your machine, so none of that is necessary.</p>
+    </div>
+    <div class="proof">
+      <div class="card"><strong>No upload</strong><p>Most tools never send your file anywhere. Nothing to leak, nothing to delete.</p></div>
+      <div class="card"><strong>No daily limit</strong><p>Your device does the work, so there's no per-task cost to ration.</p></div>
+      <div class="card"><strong>No sign-up</strong><p>Open a tab, do the thing, leave. No account, no watermark.</p></div>
+      <div class="card"><strong>Faster on big files</strong><p>Skip the upload, the queue and the download. Local wins on large video.</p></div>
+    </div>
+  </section>
+
+  <section class="section wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Categories</span>
+      <h2><span data-count="live">50</span> tools live across <span data-count="cats">17</span> categories</h2>
+      <p>Built to scale to hundreds without becoming a maze.</p>
+    </div>
+    <div class="grid" id="cats"></div>
+  </section>
+
+  <section class="section wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Honest comparison</span>
+      <h2>What you actually get</h2>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table class="vs">
+        <thead><tr><th scope="col">&nbsp;</th><th scope="col">Typical online tool</th><th scope="col">Vootkit</th></tr></thead>
+        <tbody>
+          <tr><td>Free tasks per day</td><td class="no">Often 2</td><td class="yes">Unlimited</td></tr>
+          <tr><td>Your file is uploaded</td><td class="no">Yes</td><td class="yes">No, for most tools</td></tr>
+          <tr><td>Account required</td><td class="no">Often</td><td class="yes">Never</td></tr>
+          <tr><td>Watermarks</td><td class="no">Sometimes</td><td class="yes">None</td></tr>
+          <tr><td>Ads inside the tool</td><td class="no">Common</td><td class="yes">Never in the workspace</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note" style="margin-top:var(--s-3);text-align:center">
+      A few tools genuinely need the internet — live currency rates, weather, downloading a URL. Those are labelled <span class="badge badge-net">uses an API</span> so you always know.
+    </p>
+  </section>
+
+  <section class="section wrap" style="text-align:center">
+    <h2 style="font-size:var(--t-2xl);margin-bottom:var(--s-3)">Start with the thing you came for.</h2>
+    <p style="color:var(--ink-soft);margin-bottom:var(--s-5)">No sign-up. No limit. Nothing uploaded.</p>
+    <a class="btn btn-primary" href="tools/">Browse all tools</a>
+  </section>
+
+</main>
+
+<footer class="ftr">
+  <div class="wrap">
+    <div class="ftr-grid">
+      <div>
+        <h4>Popular</h4>
+        <a href="tools/pdf/">PDF tools</a><a href="tools/images/">Image tools</a><a href="tools/video/">Video &amp; streaming</a><a href="tools/finance/">Finance</a>
+      </div>
+      <div>
+        <h4>More</h4>
+        <a href="tools/seo/">SEO</a><a href="tools/accessibility/">Accessibility</a><a href="tools/privacy/">Privacy</a><a href="tools/developer/">Developer</a>
+      </div>
+      <div>
+        <h4>Vootkit</h4>
+        <a href="tools/">All tools</a><a href="privacy.html">Privacy policy</a><a href="terms.html">Terms</a>
+      </div>
+    </div>
+    <p style="margin-top:var(--s-6);font-size:var(--t-sm)">&copy; <span id="yr"></span> Vootkit — every digital task, done in your browser.</p>
+  </div>
+</footer>
+
+<script src="data/catalog.js"></script>
+<script src="assets/js/home.js" defer></script>
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+(function () {
+  var b = document.getElementById('burger'), nav = document.getElementById('nav');
+  b.addEventListener('click', function () {
+    var open = nav.classList.toggle('open');
+    b.setAttribute('aria-expanded', open ? 'true' : 'false');
+    b.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  });
+  var t = document.getElementById('theme');
+  var saved = null; try { saved = localStorage.getItem('vk-theme'); } catch (e) {}
+  if (saved) document.documentElement.setAttribute('data-theme', saved);
+  t.addEventListener('click', function () {
+    var cur = document.documentElement.getAttribute('data-theme');
+    var next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('vk-theme', next); } catch (e) {}
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "name": "vootkit",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "node build.js",
+    "check": "node --check build.js && node --check data/catalog.js && node --check assets/js/home.js && node --check assets/js/recent.js && node build.js"
+  }
+}

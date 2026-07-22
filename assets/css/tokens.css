@@ -1,0 +1,143 @@
+/* Vootkit design tokens — the single source of truth.
+ * Direction locked in docs/DESIGN_RESEARCH.md:
+ * light default + first-class dark, ONE accent, 8px rhythm, variable fonts. */
+
+:root {
+  color-scheme: light;
+
+  /* ---- neutrals (do ~95% of the work) ---- */
+  --n-0:  #ffffff;
+  --n-25: #fbfcfe;   /* soft canvas — calm, not clinical pure white */
+  --n-50: #f5f7fa;
+  --n-100:#eef1f6;
+  --n-200:#e2e7ef;
+  --n-300:#cbd3df;
+  --n-400:#9aa5b5;
+  --n-500:#6b7688;
+  --n-600:#4d5768;
+  --n-700:#354052;
+  --n-800:#1f2937;
+  --n-900:#0d1420;
+
+  /* ---- ONE accent. Discipline is the design. ---- */
+  --accent:        #2563eb;
+  --accent-hover:  #1d4ed8;
+  --accent-active: #1a43bf;
+  --accent-weak:   #eaf0ff;   /* tinted surface */
+  --accent-border: #b9cdfb;
+  --accent-on:     #ffffff;   /* text on accent */
+
+  /* ---- semantic only. never decorative. ---- */
+  --ok:#0f7a4a;  --ok-weak:#e7f6ee;  --ok-border:#a9dcc2;
+  --warn:#a45c06; --warn-weak:#fdf3e3; --warn-border:#f0cf95;
+  --err:#b4232a;  --err-weak:#fdeceb;  --err-border:#f2b8b5;
+
+  /* ---- surfaces & text ---- */
+  --canvas:      var(--n-25);
+  --surface:     var(--n-0);
+  --surface-sunk:var(--n-50);
+  --line:        var(--n-200);
+  --line-strong: var(--n-300);
+  --ink:         var(--n-900);
+  --ink-soft:    var(--n-600);
+  --ink-mute:    var(--n-500);
+
+  /* ---- type: workhorse + speaker, both variable ---- */
+  --font-sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: Manrope, var(--font-sans);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* fluid type scale */
+  --t-xs:   0.75rem;    /* 12 */
+  --t-sm:   0.8125rem;  /* 13 */
+  --t-base: 0.9375rem;  /* 15 */
+  --t-md:   1rem;       /* 16 */
+  --t-lg:   1.125rem;   /* 18 */
+  --t-xl:   clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
+  --t-2xl:  clamp(1.5rem, 1.25rem + 1.1vw, 2rem);
+  --t-3xl:  clamp(1.875rem, 1.4rem + 2vw, 2.75rem);
+  --t-4xl:  clamp(2.25rem, 1.5rem + 3.4vw, 3.75rem);
+  --leading-tight: 1.12;
+  --leading-body: 1.65;
+
+  /* ---- 8px rhythm ---- */
+  --s-1: 4px;   --s-2: 8px;   --s-3: 12px;  --s-4: 16px;
+  --s-5: 24px;  --s-6: 32px;  --s-7: 48px;  --s-8: 64px;  --s-9: 96px;
+
+  /* ---- radii ---- */
+  --r-sm: 8px;  --r-md: 12px;  --r-lg: 16px;  --r-xl: 20px;  --r-pill: 999px;
+
+  /* ---- elevation: subtle, layered ---- */
+  --shadow-sm: 0 1px 2px rgb(13 20 32 / .04), 0 2px 8px rgb(13 20 32 / .04);
+  --shadow-md: 0 2px 6px rgb(13 20 32 / .05), 0 10px 24px rgb(13 20 32 / .07);
+  --shadow-lg: 0 8px 20px rgb(13 20 32 / .07), 0 24px 56px rgb(13 20 32 / .10);
+  --ring: 0 0 0 4px rgb(37 99 235 / .14);   /* micro-glow focus */
+
+  /* ---- motion ---- */
+  --ease: cubic-bezier(.22,.8,.3,1);
+  --dur-fast: .14s;  --dur: .2s;  --dur-slow: .32s;
+
+  /* ---- layout ---- */
+  --page: 1160px;
+  --gutter: clamp(16px, 4vw, 40px);
+  --tap: 44px;   /* minimum touch target */
+}
+
+/* ---------- dark: a designed palette, not an inversion ---------- */
+[data-theme="dark"] {
+  color-scheme: dark;
+  --canvas:      #0b1220;
+  --surface:     #121b2b;
+  --surface-sunk:#0e1727;
+  --line:        #24314a;
+  --line-strong: #33425e;
+  --ink:         #eaf0f9;
+  --ink-soft:    #a9b8cc;
+  --ink-mute:    #8494ab;
+
+  --accent:        #5b8bf7;
+  --accent-hover:  #7ba3f9;
+  --accent-active: #96b6fb;
+  --accent-weak:   #16223a;
+  --accent-border: #2f4c86;
+  --accent-on:     #08111f;
+
+  --ok:#5ed49b;  --ok-weak:#0f2b1f;  --ok-border:#1f5c40;
+  --warn:#f0b352; --warn-weak:#2c2010; --warn-border:#6b4d17;
+  --err:#ff8b90;  --err-weak:#2e1517;  --err-border:#6d2a2d;
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / .3);
+  --shadow-md: 0 2px 6px rgb(0 0 0 / .34), 0 10px 24px rgb(0 0 0 / .3);
+  --shadow-lg: 0 8px 20px rgb(0 0 0 / .4), 0 24px 56px rgb(0 0 0 / .36);
+  --ring: 0 0 0 4px rgb(91 139 247 / .22);
+}
+
+/* respect OS preference when the user hasn't chosen */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --canvas:#0b1220; --surface:#121b2b; --surface-sunk:#0e1727;
+    --line:#24314a; --line-strong:#33425e;
+    --ink:#eaf0f9; --ink-soft:#a9b8cc; --ink-mute:#8494ab;
+    --accent:#5b8bf7; --accent-hover:#7ba3f9; --accent-active:#96b6fb;
+    --accent-weak:#16223a; --accent-border:#2f4c86; --accent-on:#08111f;
+    --ok:#5ed49b; --ok-weak:#0f2b1f; --ok-border:#1f5c40;
+    --warn:#f0b352; --warn-weak:#2c2010; --warn-border:#6b4d17;
+    --err:#ff8b90; --err-weak:#2e1517; --err-border:#6d2a2d;
+    --shadow-sm:0 1px 2px rgb(0 0 0 / .3);
+    --shadow-md:0 2px 6px rgb(0 0 0 / .34), 0 10px 24px rgb(0 0 0 / .3);
+    --shadow-lg:0 8px 20px rgb(0 0 0 / .4), 0 24px 56px rgb(0 0 0 / .36);
+    --ring:0 0 0 4px rgb(91 139 247 / .22);
+  }
+}
+
+/* the single sanctioned gradient — max ONE element per page */
+.grad-text {
+  background: linear-gradient(100deg, var(--accent), #6d5dfc 60%, #06b6d4);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur-fast: 0s; --dur: 0s; --dur-slow: 0s; }
+}

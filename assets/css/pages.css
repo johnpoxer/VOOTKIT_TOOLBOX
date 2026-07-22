@@ -1,0 +1,68 @@
+/* pages.css — generated page layouts (tools index, category, tool). */
+
+.crumb { font-size: var(--t-sm); color: var(--ink-mute); margin-bottom: var(--s-4); }
+.crumb a { color: var(--accent); font-weight: 500; }
+.crumb span[aria-current] { color: var(--ink-soft); }
+
+.page-h1 { font-size: var(--t-3xl); margin-bottom: var(--s-3); }
+.page-lede { font-size: var(--t-lg); color: var(--ink-soft); max-width: 62ch; margin-bottom: var(--s-4); }
+.h-sm { font-size: var(--t-xl); margin-bottom: var(--s-4); }
+
+/* tool card additions */
+.tool-card .card-foot { margin-top: auto; padding-top: var(--s-2); }
+.tool-card.is-soon { opacity: .72; }
+.tool-card .soon { font-size: var(--t-xs); font-weight: 600; color: var(--ink-mute); background: var(--surface-sunk); border-radius: var(--r-pill); padding: 2px 8px; vertical-align: middle; }
+
+/* chips */
+.chips { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+.chip { display: inline-flex; align-items: center; min-height: 38px; padding: var(--s-2) var(--s-4); border: 1px solid var(--line); border-radius: var(--r-pill); background: var(--surface); font-size: var(--t-sm); font-weight: 500; color: var(--ink-soft); transition: border-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease); }
+.chip:hover { border-color: var(--accent-border); color: var(--accent); }
+
+/* all-tools grouping */
+.cat-block { margin-top: var(--s-7); }
+.cat-block:first-child { margin-top: var(--s-5); }
+.cat-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s-3); margin-bottom: var(--s-4); }
+.cat-head h2 { font-size: var(--t-xl); }
+.cat-head a { color: inherit; }
+.cat-head a:hover { color: var(--accent); }
+
+.local-search { position: relative; max-width: 480px; margin-bottom: var(--s-2); }
+.local-search svg { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); width: 19px; height: 19px; color: var(--ink-mute); pointer-events: none; }
+.local-search .field { padding-left: 44px; }
+
+/* ---------- tool page ---------- */
+.tool-page { max-width: 860px; }
+.tool-head { margin-bottom: var(--s-5); }
+.trust { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-4); }
+.trust .badge { background: var(--surface-sunk); color: var(--ink-soft); border: 1px solid var(--line); }
+.trust .badge-local { background: var(--ok-weak); color: var(--ok); border-color: var(--ok-border); }
+.trust .badge-net { background: var(--warn-weak); color: var(--warn); border-color: var(--warn-border); }
+
+.ws { border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); box-shadow: var(--shadow-sm); padding: var(--s-6); min-height: 220px; display: grid; place-items: center; }
+.ws-soon { text-align: center; gap: var(--s-3); }
+.ws-soon strong { font-family: var(--font-display); font-size: var(--t-xl); display: block; margin-bottom: var(--s-2); }
+.ws-soon .note { max-width: 46ch; margin-inline: auto; margin-bottom: var(--s-4); }
+
+/* prose blocks */
+.prose { margin-top: var(--s-7); max-width: 68ch; }
+.prose h2 { font-size: var(--t-xl); margin: var(--s-6) 0 var(--s-3); }
+.prose h2:first-child { margin-top: 0; }
+.prose p { margin-bottom: var(--s-3); color: var(--ink-soft); }
+.prose ul, .prose ol { margin: 0 0 var(--s-4) var(--s-5); color: var(--ink-soft); }
+.prose li { margin-bottom: var(--s-2); }
+.prose li strong { color: var(--ink); }
+
+.faq details { border-bottom: 1px solid var(--line); }
+.faq summary { cursor: pointer; list-style: none; padding: var(--s-4) 0; font-weight: 600; color: var(--ink); display: flex; justify-content: space-between; align-items: center; gap: var(--s-4); min-height: var(--tap); }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; color: var(--accent); font-size: 20px; font-weight: 400; }
+.faq details[open] summary::after { content: "–"; }
+.faq p { padding-bottom: var(--s-4); margin: 0; }
+
+.trust-note { margin-top: var(--s-6); padding: var(--s-4); border-left: 3px solid var(--accent); background: var(--accent-weak); border-radius: 0; }
+.trust-note .note { color: var(--ink-soft); margin: 0; }
+
+@media (max-width: 640px) {
+  .cat-head { flex-direction: column; align-items: flex-start; gap: var(--s-1); }
+  .ws { padding: var(--s-4); }
+}
