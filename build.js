@@ -12,7 +12,7 @@ const fs = require("fs");
 const path = require("path");
 const ROOT = __dirname;
 const VK = require("./data/catalog.js");
-const MONEY = require("./assets/js/tools-money.js");
+const MONEY = Object.assign({}, require("./assets/js/tools-money.js"), require("./assets/js/tools-money2.js"));
 const SITE = "https://vootkit.com";
 const PUB = "ca-pub-5906583727409402";
 
@@ -336,7 +336,7 @@ function toolPage(t) {
       ? "This tool processes everything locally in your browser. You can disconnect from the internet after the page loads and it will still work."
       : "This tool calls an external service to fetch live data. It does not require an account and does not track you."}</p>
   </section>
-</div>` + foot(3, hasCalc ? ['assets/js/calc.js','assets/js/tools-money.js'] : []);
+</div>` + foot(3, hasCalc ? ['assets/js/calc.js','assets/js/tools-money.js','assets/js/tools-money2.js'] : []);
 }
 
 function exampleFor(t, c) {

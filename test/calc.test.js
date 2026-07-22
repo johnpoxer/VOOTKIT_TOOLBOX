@@ -66,9 +66,9 @@ near(M.futureValue(0, 100, 0.06 / 12, 120), 16387.93, 0.05, "FV annuity");
 near(M.futureValue(500, 50, 0, 12), 500 + 600, 1e-9, "FV zero rate");
 
 /* ---- tool specs sanity ---- */
-const TOOLS = require("../assets/js/tools-money.js");
+const TOOLS = Object.assign({}, require("../assets/js/tools-money.js"), require("../assets/js/tools-money2.js"));
 const ids = Object.keys(TOOLS);
-eq(ids.length, 8, "8 money tools defined");
+eq(ids.length, 33, "33 money tools defined");
 
 const VK = require("../data/catalog.js");
 ids.forEach(id => {
@@ -99,5 +99,68 @@ edge.forEach(([id, v]) => {
   assert.ok(out && out.headline, `${id} survives edge case`); pass++;
   assert.ok(!/NaN/.test(JSON.stringify(out)), `${id} edge case produces no NaN`); pass++;
 });
+
+/* ---- Wave 1b reference values (independently computed) ---- */
+const T2 = require("../assets/js/tools-money2.js");
+
+/* VAT: £100 net at 20% → £120 gross, £20 tax */
+let r = T2["vat-gst"].compute({ amount: 100, rate: 20, mode: "net", cur: "GBP" }, M);
+assert.ok(/120/.test(r.headline.value), "VAT add: 100 +20% = 120, got " + r.headline.value); pass++;
+/* Reverse: £120 gross at 20% → £100 net (the classic mistake is 120*0.8=96) */
+r = T2["vat-gst"].compute({ amount: 120, rate: 20, mode: "gross", cur: "GBP" }, M);
+assert.ok(/100/.test(r.headline.value), "VAT remove: 120 inc 20% = 100 net, got " + r.headline.value); pass++;
+
+/* Margin vs markup: cost 40, price 100 → 60% margin, 150% markup */
+r = T2["profit-margin"].compute({ cost: 40, price: 100, units: 1, cur: "USD" }, M);
+eq(r.headline.value, "60.0%", "margin 40->100 is 60%");
+assert.ok(r.stats[0].value === "150.0%", "markup 40->100 is 150%, got " + r.stats[0].value); pass++;
+
+/* Break-even: 4000 fixed, 49 price, 18 variable → ceil(4000/31)=130 units */
+r = T2["break-even"].compute({ fixed: 4000, price: 49, varCost: 18, cur: "USD" }, M);
+assert.ok(/130/.test(r.headline.value), "break-even 130 units, got " + r.headline.value); pass++;
+
+/* Overtime: 22/hr, 40 normal, 8 OT at 1.5x → 880 + 264 = 1144 */
+r = T2["overtime-calculator"].compute({ rate: 22, normal: 40, otHours: 8, mult: 1.5, weeks: 1, cur: "USD" }, M);
+assert.ok(/1,?144/.test(r.headline.value), "overtime total 1144, got " + r.headline.value); pass++;
+
+/* PTO: 25 days, 6 months worked, 0 taken → 12.5 accrued */
+r = T2["pto-accrual"].compute({ entitlement: 25, worked: 6, taken: 0, carried: 0 }, M);
+assert.ok(/12\.5/.test(r.headline.value), "PTO 12.5 days, got " + r.headline.value); pass++;
+
+/* Percentage: 25% of 200 = 50 */
+r = T2["percentage-calculator"].compute({ a: 25, b: 200, mode: "of" }, M);
+eq(r.headline.value, "50", "25% of 200 = 50");
+/* % change 50 -> 75 is +50% */
+r = T2["percentage-calculator"].compute({ a: 50, b: 75, mode: "change" }, M);
+eq(r.headline.value, "50.00%", "change 50->75 is 50%");
+
+/* Tip: 100 bill, 20% tip, 4 people → 30 each */
+r = T2["tip-split"].compute({ bill: 100, tip: 20, people: 4, round: 0, cur: "USD" }, M);
+assert.ok(/30/.test(r.headline.value), "tip split 30 each, got " + r.headline.value); pass++;
+
+/* Life cover: 50k x 10 + 200k debts + 10k final + 0 edu - 60k assets = 650k */
+r = T2["life-insurance-needs"].compute({ income: 50000, years: 10, debts: 200000, final: 10000, education: 0, savings: 60000, cur: "USD" }, M);
+assert.ok(/650,?000/.test(r.headline.value), "life cover 650k, got " + r.headline.value); pass++;
+
+/* Deductible trade-off: saves 300/yr, risks 750 more → 2.5 years per claim */
+r = T2["deductible-calculator"].compute({ lowExcess: 250, lowPrem: 1500, highExcess: 1000, highPrem: 1200, cur: "USD" }, M);
+assert.ok(/2\.5 years/.test(r.stats[2].value), "break-even 2.5 years/claim, got " + r.stats[2].value); pass++;
+
+/* Cap rate: 300k value, 2000/mo, 0% vacancy, 6000 expenses → NOI 18000 → 6.00% */
+r = TOOLS["cap-rate"].compute({ value: 300000, rent: 2000, vacancy: 0, expenses: 6000, cur: "USD" }, M);
+eq(r.headline.value, "6.00%", "cap rate 6%");
+
+/* Rental yield gross: 300k, 2000/mo → 8.00% gross */
+r = T2["rental-yield"].compute({ price: 300000, rent: 2000, costs: 0, vacancy: 0, cur: "USD" }, M);
+assert.ok(/8\.00%/.test(r.headline.sub), "gross yield 8%, got " + r.headline.sub); pass++;
+
+/* Late fee: 1000 at 10%/yr for 365 days = 100 interest */
+r = T2["late-fee"].compute({ amount: 1000, days: 365, rate: 10, flat: 0, cur: "USD" }, M);
+assert.ok(/1,?100/.test(r.headline.value), "late fee total 1100, got " + r.headline.value); pass++;
+
+/* Employee cost: 100k salary, 10% tax, 0 pension/benefits/equip/overhead = 110k, 1.10x */
+r = T2["employee-cost"].compute({ salary: 100000, employerTax: 10, pension: 0, benefits: 0, equipment: 0, overhead: 0, cur: "USD" }, M);
+assert.ok(/110,?000/.test(r.headline.value), "employee cost 110k, got " + r.headline.value); pass++;
+assert.ok(/1\.10/.test(r.headline.sub), "burden 1.10x, got " + r.headline.sub); pass++;
 
 console.log(`calc: ${pass} assertions passed`);

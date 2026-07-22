@@ -64,10 +64,8 @@
     <p class="page-lede">Work out sensible liability and deductible levels.</p>
     <div class="trust"><span class="badge badge-local">runs on your device</span><span class="badge">no sign-up</span><span class="badge">no watermark</span><span class="badge">no daily limit</span></div>
   </header>
-  <div class="ws ws-soon">
-         <strong>Not built yet</strong>
-         <p class="note">Auto Cover Estimator is on the roadmap. The page below explains what it will do — we publish the tool before we promote it.</p>
-         <a class="btn" href="../">Browse Insurance tools that work today</a>
+  <div class="ws" id="workspace" data-tool="auto-insurance-estimator">
+         <noscript><p class="note">This tool needs JavaScript — it runs the calculation in your browser rather than on a server.</p></noscript>
        </div>
 
   <!-- 2-4. explanation, benefits, how it works -->
@@ -107,16 +105,16 @@
   <!-- 6. related tools — never a dead end -->
   <section class="section">
     <h2 class="h-sm">Next in Insurance</h2>
-    <div class="grid"><a class="card tool-card is-soon" href="../../../tools/insurance/life-insurance-needs/">
-    <h3>Life Cover Estimator <span class="soon">soon</span></h3>
+    <div class="grid"><a class="card tool-card" href="../../../tools/insurance/life-insurance-needs/">
+    <h3>Life Cover Estimator</h3>
     <p>Estimate the life cover a household would actually need.</p>
     <span class="card-foot"><span class="badge badge-local">runs on your device</span></span>
-  </a><a class="card tool-card is-soon" href="../../../tools/insurance/deductible-calculator/">
-    <h3>Deductible Trade-off <span class="soon">soon</span></h3>
+  </a><a class="card tool-card" href="../../../tools/insurance/deductible-calculator/">
+    <h3>Deductible Trade-off</h3>
     <p>Compare premium savings against out-of-pocket risk.</p>
     <span class="card-foot"><span class="badge badge-local">runs on your device</span></span>
-  </a><a class="card tool-card is-soon" href="../../../tools/insurance/income-protection/">
-    <h3>Income Protection Estimator <span class="soon">soon</span></h3>
+  </a><a class="card tool-card" href="../../../tools/insurance/income-protection/">
+    <h3>Income Protection Estimator</h3>
     <p>How much monthly benefit would cover your commitments.</p>
     <span class="card-foot"><span class="badge badge-local">runs on your device</span></span>
   </a></div>
@@ -153,6 +151,8 @@ if(s)document.documentElement.setAttribute('data-theme',s);
 t.addEventListener('click',function(){var c=document.documentElement.getAttribute('data-theme'),x=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',x);try{localStorage.setItem('vk-theme',x);}catch(e){}});})();
 </script>
 <script src="../../../assets/js/recent.js" defer></script>
-
+<script src="../../../assets/js/calc.js" defer></script>
+<script src="../../../assets/js/tools-money.js" defer></script>
+<script src="../../../assets/js/tools-money2.js" defer></script>
 </body>
 </html>
