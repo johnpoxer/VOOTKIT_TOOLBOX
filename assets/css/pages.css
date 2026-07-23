@@ -130,3 +130,17 @@
 .wmd { min-height: 260px; overflow: auto; padding: var(--s-4); border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); }
 .wcheck { display: inline-flex; align-items: center; gap: var(--s-2); font-size: var(--t-sm); color: var(--ink-soft); }
 .calc-stat.wmono b { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: var(--t-xs); word-break: break-all; }
+
+/* ---------- everyday / privacy / design widgets ---------- */
+.wmeter { height: 8px; border-radius: 99px; background: var(--surface-sunk); overflow: hidden; }
+.wmeter i { display: block; height: 100%; width: 0; transition: width var(--dur-fast) var(--ease); background: var(--ink-mute); }
+.meter-weak { background: var(--err) !important; } .meter-ok { background: var(--warn) !important; } .meter-strong { background: var(--ok) !important; }
+.wcolor { width: 48px; height: 40px; padding: 0; border: 1px solid var(--line-strong); border-radius: var(--r-sm); background: none; cursor: pointer; }
+.wswatch { height: 72px; border-radius: var(--r-md); border: 1px solid var(--line); }
+.wcontrast { padding: var(--s-5); border-radius: var(--r-md); border: 1px solid var(--line); font-size: var(--t-lg); }
+.wgradient { height: 120px; border-radius: var(--r-md); border: 1px solid var(--line); }
+.wpalette { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: var(--s-2); }
+.wpal { height: 88px; border: 1px solid var(--line); border-radius: var(--r-md); cursor: pointer; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 6px; }
+.wpal span { background: rgba(255,255,255,.85); color: #111; font-size: var(--t-xs); font-family: ui-monospace, monospace; padding: 2px 6px; border-radius: 4px; }
+.wshadowbox { display: grid; place-items: center; height: 200px; border-radius: var(--r-md); background: var(--surface-sunk); }
+.wshadowtarget { width: 120px; height: 120px; border-radius: var(--r-md); background: var(--surface); }

@@ -119,9 +119,9 @@
     t("bulk-resize","images","Bulk Image Resizer","Resize a batch of images in one pass.",{tier:"traffic",status:"live",kw:"multiple batch"}),
     t("favicon-generator","images","Favicon Generator","Every favicon size and the HTML to go with it.",{tier:"gap",status:"live",kw:"ico site icon"}),
     t("image-watermark","images","Image Watermark","Stamp text across a photo to protect it.",{tier:"traffic",status:"live",kw:"copyright protect"}),
-    t("exif-viewer","images","EXIF Viewer & Stripper","See photo metadata and download a clean copy.",{tier:"edge",status:"live",kw:"metadata location remove"}),
-    t("color-from-image","images","Image Palette Extractor","Pull the dominant colours out of any image.",{tier:"traffic",status:"live",kw:"dominant swatch"}),
-    t("meme-generator","images","Meme Generator","Classic top and bottom captions on any image.",{tier:"retention",status:"live",kw:"caption impact text"}),
+    t("exif-viewer","images","EXIF Viewer & Stripper","See photo metadata and download a clean copy.",{tier:"edge",status:"planned",kw:"metadata location remove"}),
+    t("color-from-image","images","Image Palette Extractor","Pull the dominant colours out of any image.",{tier:"traffic",status:"planned",kw:"dominant swatch"}),
+    t("meme-generator","images","Meme Generator","Classic top and bottom captions on any image.",{tier:"retention",status:"planned",kw:"caption impact text"}),
 
     /* ---------- RETENTION: video & streaming ---------- */
     t("compress-for-discord","video","Compress for Discord","One-click 10 MB, 50 MB and 500 MB presets that actually fit.",{tier:"retention",status:"live",kw:"discord upload limit too big clip"}),
@@ -180,9 +180,9 @@
     t("pomodoro","everyday","Pomodoro & Countdown","A focus timer that chimes when it's done.",{tier:"retention",status:"live",kw:"focus study timer"}),
     t("stopwatch","everyday","Stopwatch","Precise stopwatch with lap times.",{tier:"retention",status:"live",kw:"lap timer"}),
     t("timezone-converter","everyday","Time Zone Converter","Compare a time across cities worldwide.",{tier:"retention",status:"live",kw:"meeting across countries utc"}),
-    t("qr-generator","everyday","QR Code Generator","Turn any link or text into a downloadable QR code.",{tier:"retention",status:"live",kw:"qr link scan"}),
-    t("qr-scanner","everyday","QR Code Scanner","Scan a QR code with your camera or from an image.",{tier:"retention",status:"live",kw:"read decode qr"}),
-    t("barcode-generator","everyday","Barcode Generator","CODE128 and EAN barcodes, ready to download.",{tier:"retention",status:"live",kw:"ean upc code128"}),
+    t("qr-generator","everyday","QR Code Generator","Turn any link or text into a downloadable QR code.",{tier:"retention",status:"planned",kw:"qr link scan"}),
+    t("qr-scanner","everyday","QR Code Scanner","Scan a QR code with your camera or from an image.",{tier:"retention",status:"planned",kw:"read decode qr"}),
+    t("barcode-generator","everyday","Barcode Generator","CODE128 and EAN barcodes, ready to download.",{tier:"retention",status:"planned",kw:"ean upc code128"}),
     t("random-picker","everyday","Random Picker","Pick a winner fairly from a list.",{tier:"retention",status:"live",kw:"raffle giveaway choose"}),
     t("typing-test","everyday","Typing Speed Test","Words per minute and accuracy.",{tier:"retention",kw:"wpm keyboard speed"}),
 
@@ -199,12 +199,12 @@
     t("regex-tester","developer","Regex Tester","Test a pattern against text and count matches.",{tier:"retention",status:"live",kw:"regular expression match"}),
     t("url-encoder","developer","URL Encode / Decode","Percent-encode URLs and query values.",{tier:"retention",status:"live",kw:"escape querystring"}),
     t("timestamp-converter","developer","Timestamp Converter","Unix time to human dates and back.",{tier:"retention",status:"live",kw:"epoch unix date"}),
-    t("csv-viewer","data","CSV Viewer & Sorter","Open a CSV as a sortable, filterable table.",{tier:"traffic",status:"live",kw:"spreadsheet open sort"}),
-    t("csv-to-chart","data","CSV to Chart","Turn two columns into a bar or line chart.",{tier:"traffic",status:"live",kw:"graph visualise plot"}),
-    t("json-csv","data","JSON ↔ CSV","Convert a JSON array to CSV and back.",{tier:"traffic",status:"live",kw:"convert tabular"}),
-    t("remove-background","ai","Background Remover","Cut out a background — private, in-browser AI.",{tier:"traffic",status:"live",kw:"transparent cutout png subject"}),
-    t("image-to-text","ai","Image to Text (OCR)","Extract text from photos, screenshots and scans.",{tier:"traffic",status:"live",kw:"ocr scan read text"}),
-    t("transcribe-audio","ai","Audio to Text","Transcribe speech with on-device Whisper.",{tier:"traffic",status:"live",kw:"transcription subtitles speech"})
+    t("csv-viewer","data","CSV Viewer & Sorter","Open a CSV as a sortable, filterable table.",{tier:"traffic",status:"planned",kw:"spreadsheet open sort"}),
+    t("csv-to-chart","data","CSV to Chart","Turn two columns into a bar or line chart.",{tier:"traffic",status:"planned",kw:"graph visualise plot"}),
+    t("json-csv","data","JSON ↔ CSV","Convert a JSON array to CSV and back.",{tier:"traffic",status:"planned",kw:"convert tabular"}),
+    t("remove-background","ai","Background Remover","Cut out a background — private, in-browser AI.",{tier:"traffic",status:"planned",kw:"transparent cutout png subject"}),
+    t("image-to-text","ai","Image to Text (OCR)","Extract text from photos, screenshots and scans.",{tier:"traffic",status:"planned",kw:"ocr scan read text"}),
+    t("transcribe-audio","ai","Audio to Text","Transcribe speech with on-device Whisper.",{tier:"traffic",status:"planned",kw:"transcription subtitles speech"})
   ];
 
   /* ---------- helpers ---------- */
