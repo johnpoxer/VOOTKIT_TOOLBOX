@@ -42,7 +42,10 @@ function widgetScriptsFor(id) {
   for (const file in WIDGETS) if (WIDGETS[file].indexOf(id) !== -1) return ["assets/js/widget.js", file];
   return null;
 }
-const SITE = "https://vootkit.com";
+const CFG = require("./data/site.config.js");
+const SITE = CFG.origin;
+const SUPPORT = CFG.supportEmail;
+const GA4 = CFG.ga4;
 const PUB = "ca-pub-5906583727409402";
 
 const esc = (v) => String(v == null ? "" : v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -84,6 +87,8 @@ function head(o) {
 <link rel="stylesheet" href="${up}assets/css/base.css">
 <link rel="stylesheet" href="${up}assets/css/pages.css">
 ${o.ads ? `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${PUB}" crossorigin="anonymous"></script>` : "<!-- no ads inside an active tool workspace -->"}
+<script async src="https://www.googletagmanager.com/gtag/js?id=${GA4}"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA4}');</script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -125,12 +130,13 @@ function foot(depth, extraScripts) {
   <div class="wrap">
     <div class="ftr-grid">
       <div><h4>Categories</h4>${cats}</div>
-      <div><h4>Vootkit</h4><a href="${up}tools/">All tools</a><a href="${up}privacy.html">Privacy</a><a href="${up}terms.html">Terms</a></div>
+      <div><h4>Vootkit</h4><a href="${up}tools/">All tools</a><a href="${up}pricing.html">Pricing</a><a href="${up}privacy.html">Privacy</a><a href="${up}terms.html">Terms</a><a href="mailto:${SUPPORT}">Contact</a></div>
       <div><h4>How it works</h4><p style="font-size:var(--t-sm);color:var(--ink-soft)">Most tools run entirely in your browser. Your files aren't uploaded, so there's no queue and no daily limit.</p></div>
     </div>
     <p style="margin-top:var(--s-6);font-size:var(--t-sm)">&copy; <span id="yr"></span> Vootkit — every digital task, done in your browser.</p>
   </div>
 </footer>
+<script src="${up}data/site.config.js"></script>
 <script src="${up}data/catalog.js"></script>
 <script>
 document.getElementById('yr').textContent=new Date().getFullYear();
@@ -489,8 +495,95 @@ function componentsPage() {
   return html;
 }
 
+/* ---------- pricing (static, Stripe-ready) ---------- */
+function pricingPage() {
+  const url = SITE + "/pricing.html";
+  const P = CFG.stripe.plans;
+  const ld = [
+    { "@context": "https://schema.org", "@type": "WebPage", name: "Pricing", url, description: "Vootkit pricing — every tool is free, no login, no limits. Upgrade for no ads, cloud history and premium features." },
+    { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Vootkit", item: SITE + "/" },
+      { "@type": "ListItem", position: 2, name: "Pricing", item: url }
+    ]}
+  ];
+  const feat = (on, txt) => `<li class="${on ? "yes" : "no"}"><svg viewBox="0 0 24 24" aria-hidden="true">${on ? '<path d="M20 6 9 17l-5-5"/>' : '<path d="M6 6l12 12M18 6 6 18"/>'}</svg>${txt}</li>`;
+  return head({ depth: 0, url, ads: true, ld, title: "Pricing — Vootkit", ogTitle: "Vootkit Pricing", desc: "Every Vootkit tool is free, with no login and no limits. Upgrade to Creator Pro or Teams for no ads, cloud history, premium tools and priority support." }) +
+`<div class="wrap section">
+  <header class="sec-head" style="margin-top:var(--s-4)">
+    <span class="eyebrow">Pricing</span>
+    <h1 class="page-h1">The tools are free. Forever.</h1>
+    <p class="page-lede">Every downloader and tool works with no login and no limits. Upgrade only if you want the extras — no ads, cloud history and premium processing.</p>
+  </header>
+
+  <div class="bill-toggle" role="group" aria-label="Billing period">
+    <button class="bt-opt is-on" type="button" data-bill="month" aria-pressed="true">Monthly</button>
+    <button class="bt-opt" type="button" data-bill="year" aria-pressed="false">Annual <span class="bt-save">2 months free</span></button>
+  </div>
+
+  <div class="plans">
+    <div class="plan">
+      <h2>Free</h2>
+      <p class="plan-price"><span class="plan-amt">$0</span><span class="plan-per">forever</span></p>
+      <p class="plan-tag">Everything most people need.</p>
+      <a class="btn btn-block" href="tools/">Start using tools</a>
+      <ul class="plan-feats">
+        ${feat(true, "All " + VK.counts.live + " tools")}
+        ${feat(true, "No login, ever")}
+        ${feat(true, "No daily limits")}
+        ${feat(true, "No watermarks")}
+        ${feat(true, "Runs on your device")}
+        ${feat(false, "Ads on content pages")}
+      </ul>
+    </div>
+
+    <div class="plan plan--featured">
+      <span class="plan-flag">Most popular</span>
+      <h2>Creator Pro</h2>
+      <p class="plan-price"><span class="plan-amt" data-price="pro">$${P.creator_pro_monthly.amount}</span><span class="plan-per" data-per="pro">/month</span></p>
+      <p class="plan-tag">For creators who live in these tools.</p>
+      <button class="btn btn-primary btn-block" type="button" data-plan="creator_pro" data-plan-month="creator_pro_monthly" data-plan-year="creator_pro_annual">Upgrade to Pro</button>
+      <ul class="plan-feats">
+        ${feat(true, "Everything in Free")}
+        ${feat(true, "No ads, anywhere")}
+        ${feat(true, "Faster, higher-res processing")}
+        ${feat(true, "Premium & early-access tools")}
+        ${feat(true, "Cloud history across devices")}
+        ${feat(true, "Priority support")}
+      </ul>
+    </div>
+
+    <div class="plan">
+      <h2>Creator Teams</h2>
+      <p class="plan-price"><span class="plan-amt" data-price="teams">$${P.creator_teams_monthly.amount}</span><span class="plan-per" data-per="teams">/month</span></p>
+      <p class="plan-tag">For studios and teams.</p>
+      <button class="btn btn-block" type="button" data-plan="creator_teams" data-plan-month="creator_teams_monthly" data-plan-year="creator_teams_annual">Start a team</button>
+      <ul class="plan-feats">
+        ${feat(true, "Everything in Pro")}
+        ${feat(true, "Shared team workspace")}
+        ${feat(true, "Higher processing limits")}
+        ${feat(true, "API access (coming)")}
+        ${feat(true, "Centralised billing")}
+        ${feat(true, "Onboarding support")}
+      </ul>
+    </div>
+  </div>
+
+  <p class="note" style="text-align:center;margin-top:var(--s-5)">Prices in USD. Cancel anytime. The core tools never require a subscription.</p>
+
+  <section class="prose faq" style="margin-top:var(--s-8)">
+    <h2>Questions</h2>
+    <details><summary>Are the tools really free?</summary><p>Yes. Every tool and downloader works free, with no account and no daily limit. Most run entirely in your browser, so there's nothing for us to meter. Paid plans only add conveniences like removing ads and syncing history.</p></details>
+    <details><summary>Do I need an account to use Vootkit?</summary><p>No. You can use everything without signing up. An account only exists to sync your history and manage a subscription if you choose to upgrade.</p></details>
+    <details><summary>What do I actually get with Pro?</summary><p>No ads across the whole site, faster and higher-resolution processing, premium and early-access tools, cloud history across your devices, and priority support.</p></details>
+    <details><summary>Can I cancel?</summary><p>Anytime, from your account. You keep Pro until the end of the period you've paid for, then drop back to the (still fully usable) free tier.</p></details>
+    <details><summary>How do you handle payment?</summary><p>Payments are processed by Stripe. We never see or store your card details.</p></details>
+  </section>
+</div>` + foot(0, ["assets/js/pricing.js"]);
+}
+
 const LAST_UPDATED = "22 July 2026";
 
+write("pricing.html", pricingPage());
 write("privacy.html", legalPage({
   file: "privacy.html", title: "Privacy Policy", updated: LAST_UPDATED,
   desc: "How Vootkit handles your data. Most tools process files entirely in your browser and never upload them.",
@@ -625,7 +718,14 @@ console.log(`_redirects: ${lines.filter((l) => l.includes("301")).length} rules`
  * so Google Fonts and the ffmpeg CDN still load. Ad-bearing pages are untouched,
  * so AdSense is unaffected. */
 const fxIds = Object.keys(VIDEOFX);
-const hlines = ["# Cross-origin isolation for in-browser video processing (scoped — no ad pages).", ""];
+const hlines = [
+  "# Global security headers (safe for ads — no COEP here).", "",
+  "/*",
+  "  X-Content-Type-Options: nosniff",
+  "  Referrer-Policy: strict-origin-when-cross-origin",
+  "  X-Frame-Options: SAMEORIGIN",
+  "",
+  "# Cross-origin isolation for in-browser video processing (scoped — no ad pages).", ""];
 fxIds.forEach((id) => {
   const t = VK.find(id);
   if (!t) return;

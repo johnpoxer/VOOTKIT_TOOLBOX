@@ -1,0 +1,19 @@
+# Netlify configuration for Vootkit (site e074cf0a-9974-4e84-ae5a-c8ca57b0a093)
+# The site is a static build produced by `npm run build` (build.js). The
+# generated _headers and _redirects files carry the per-path rules.
+
+[build]
+  publish = "."
+  command = "npm run build"
+  functions = "netlify/functions"
+
+# Canonicalise the apex to www (matches the canonical URLs the build emits).
+[[redirects]]
+  from = "https://vootkit.com/*"
+  to = "https://www.vootkit.com/:splat"
+  status = 301
+  force = true
+
+# Serverless functions (Stripe Checkout) need their deps.
+[functions]
+  node_bundler = "esbuild"
