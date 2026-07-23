@@ -57,7 +57,7 @@
     t("savings-goal","finance","Savings Goal Planner","How much to set aside each month to hit a target.",{tier:"money",status:"live",kw:"save monthly target"}),
     t("retirement-calculator","finance","Retirement Projection","Project a pension or 401k pot at your chosen retirement age.",{tier:"money",status:"live",kw:"401k pension nest egg"}),
     t("crypto-profit","finance","Crypto Profit & DCA","Profit, loss and dollar-cost-average entry across buys.",{tier:"money",status:"live",kw:"bitcoin average cost gain"}),
-    t("currency-converter","finance","Currency Converter","Live exchange rates from European Central Bank data.",{tier:"money",processing:"network",kw:"fx exchange rate"}),
+    t("currency-converter","finance","Currency Converter","Live exchange rates from European Central Bank data.",{tier:"money",status:"live",processing:"network",kw:"fx exchange rate"}),
     t("percentage-calculator","finance","Percentage Calculator","Percent of, is-what-percent, and percentage change.",{tier:"retention",status:"live",kw:"percent increase decrease"}),
     t("tip-split","finance","Tip & Bill Split","Split a bill with tip across any number of people.",{tier:"retention",status:"live",kw:"restaurant gratuity"}),
 
