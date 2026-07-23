@@ -16,6 +16,7 @@ const MONEY = Object.assign({}, require("./assets/js/tools-money.js"), require("
 const IMAGE = require("./assets/js/tools-image.js");
 const PDF = require("./assets/js/tools-pdf.js");
 const VIDEO = require("./assets/js/tools-video.js");
+const VIDEOFX = require("./assets/js/tools-videofx.js");
 const SITE = "https://vootkit.com";
 const PUB = "ca-pub-5906583727409402";
 
@@ -268,6 +269,7 @@ function toolPage(t) {
   const hasFile = !!IMAGE[t.id];
   const hasPdf = !!PDF[t.id];
   const hasVideo = !!VIDEO[t.id];
+  const hasVideoFx = !!VIDEOFX[t.id];
   const workspace = live
     ? `<div class="ws" id="workspace" data-tool="${t.id}">
          <noscript><p class="note">This tool needs JavaScript — it runs the calculation in your browser rather than on a server.</p></noscript>
@@ -338,13 +340,16 @@ function toolPage(t) {
 
   <!-- 8. trust -->
   <section class="trust-note">
-    <p class="note">${local
+    <p class="note">${hasVideoFx
+      ? "Your video is processed entirely in your browser — it's never uploaded. The video engine (ffmpeg) downloads once from a CDN the first time you run a tool, then works from cache. Large files are memory-bound, so keep clips reasonable."
+      : local
       ? "This tool processes everything locally in your browser. You can disconnect from the internet after the page loads and it will still work."
       : "This tool calls an external service to fetch live data. It does not require an account and does not track you."}</p>
   </section>
 </div>` + foot(3, hasCalc ? (VIDEO[t.id] ? ['assets/js/calc.js','assets/js/tools-video.js'] : ['assets/js/calc.js','assets/js/tools-money.js','assets/js/tools-money2.js'])
     : hasFile ? ['assets/js/filetool.js','assets/js/tools-image.js']
-    : hasPdf ? ['assets/js/filetool.js','assets/js/tools-pdf.js'] : []);
+    : hasPdf ? ['assets/js/filetool.js','assets/js/tools-pdf.js']
+    : hasVideoFx ? ['assets/js/filetool.js','assets/js/videoengine.js','assets/js/tools-videofx.js'] : []);
 }
 
 function exampleFor(t, c) {
@@ -511,3 +516,21 @@ lines.push("/t/*   /tools/   301   # any tool page we didn't map individually");
 lines.push("/c/*   /tools/   301");
 fs.writeFileSync(path.join(ROOT, "_redirects"), lines.join("\n") + "\n");
 console.log(`_redirects: ${lines.filter((l) => l.includes("301")).length} rules`);
+
+/* Cross-origin isolation for the video-processing tools ONLY.
+ * ffmpeg.wasm wants SharedArrayBuffer, which needs COOP + COEP. We scope these
+ * headers to just these tool paths (they carry NO ads) and use COEP:credentialless
+ * so Google Fonts and the ffmpeg CDN still load. Ad-bearing pages are untouched,
+ * so AdSense is unaffected. */
+const fxIds = Object.keys(VIDEOFX);
+const hlines = ["# Cross-origin isolation for in-browser video processing (scoped — no ad pages).", ""];
+fxIds.forEach((id) => {
+  const t = VK.find(id);
+  if (!t) return;
+  hlines.push(`/tools/${t.cat}/${id}/*`);
+  hlines.push("  Cross-Origin-Opener-Policy: same-origin");
+  hlines.push("  Cross-Origin-Embedder-Policy: credentialless");
+  hlines.push("");
+});
+fs.writeFileSync(path.join(ROOT, "_headers"), hlines.join("\n") + "\n");
+console.log(`_headers: ${fxIds.length} isolated tool paths`);

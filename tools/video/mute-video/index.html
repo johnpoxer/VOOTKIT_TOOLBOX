@@ -64,10 +64,8 @@
     <p class="page-lede">Remove the audio track to avoid copyright strikes.</p>
     <div class="trust"><span class="badge badge-local">runs on your device</span><span class="badge">no sign-up</span><span class="badge">no watermark</span><span class="badge">no daily limit</span></div>
   </header>
-  <div class="ws ws-soon">
-         <strong>Not built yet</strong>
-         <p class="note">Mute / Strip Audio is on the roadmap. The page below explains what it will do — we publish the tool before we promote it.</p>
-         <a class="btn" href="../">Browse Video &amp; Streaming tools that work today</a>
+  <div class="ws" id="workspace" data-tool="mute-video">
+         <noscript><p class="note">This tool needs JavaScript — it runs the calculation in your browser rather than on a server.</p></noscript>
        </div>
 
   <!-- 2-4. explanation, benefits, how it works -->
@@ -107,28 +105,28 @@
   <!-- 6. related tools — never a dead end -->
   <section class="section">
     <h2 class="h-sm">Next in Video &amp; Streaming</h2>
-    <div class="grid"><a class="card tool-card is-soon" href="../../../tools/video/compress-for-discord/">
-    <h3>Compress for Discord <span class="soon">soon</span></h3>
+    <div class="grid"><a class="card tool-card" href="../../../tools/video/compress-for-discord/">
+    <h3>Compress for Discord</h3>
     <p>One-click 10 MB, 50 MB and 500 MB presets that actually fit.</p>
     <span class="card-foot"><span class="badge badge-local">runs on your device</span></span>
-  </a><a class="card tool-card is-soon" href="../../../tools/video/trim-video/">
-    <h3>Video Trimmer <span class="soon">soon</span></h3>
+  </a><a class="card tool-card" href="../../../tools/video/trim-video/">
+    <h3>Video Trimmer</h3>
     <p>Cut the segment you want and save it.</p>
     <span class="card-foot"><span class="badge badge-local">runs on your device</span></span>
   </a><a class="card tool-card" href="../../../tools/video/bitrate-calculator/">
     <h3>Streaming Bitrate Calculator</h3>
     <p>Best bitrate for your upload speed, resolution and platform.</p>
     <span class="card-foot"><span class="badge badge-local">runs on your device</span></span>
-  </a><a class="card tool-card is-soon" href="../../../tools/video/vertical-reframe/">
-    <h3>Vertical Reframe 9:16 <span class="soon">soon</span></h3>
+  </a><a class="card tool-card" href="../../../tools/video/vertical-reframe/">
+    <h3>Vertical Reframe 9:16</h3>
     <p>Reframe a clip for Shorts, TikTok and Reels.</p>
     <span class="card-foot"><span class="badge badge-local">runs on your device</span></span>
-  </a><a class="card tool-card is-soon" href="../../../tools/video/video-to-gif/">
-    <h3>Video to GIF <span class="soon">soon</span></h3>
+  </a><a class="card tool-card" href="../../../tools/video/video-to-gif/">
+    <h3>Video to GIF</h3>
     <p>Turn a short clip into a shareable GIF.</p>
     <span class="card-foot"><span class="badge badge-local">runs on your device</span></span>
-  </a><a class="card tool-card is-soon" href="../../../tools/video/frame-grabber/">
-    <h3>Frame Grabber <span class="soon">soon</span></h3>
+  </a><a class="card tool-card" href="../../../tools/video/frame-grabber/">
+    <h3>Frame Grabber</h3>
     <p>Pull a still frame out for a thumbnail.</p>
     <span class="card-foot"><span class="badge badge-local">runs on your device</span></span>
   </a></div>
@@ -142,7 +140,7 @@
 
   <!-- 8. trust -->
   <section class="trust-note">
-    <p class="note">This tool processes everything locally in your browser. You can disconnect from the internet after the page loads and it will still work.</p>
+    <p class="note">Your video is processed entirely in your browser — it's never uploaded. The video engine (ffmpeg) downloads once from a CDN the first time you run a tool, then works from cache. Large files are memory-bound, so keep clips reasonable.</p>
   </section>
 </div></main>
 <footer class="ftr">
@@ -165,6 +163,8 @@ if(s)document.documentElement.setAttribute('data-theme',s);
 t.addEventListener('click',function(){var c=document.documentElement.getAttribute('data-theme'),x=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',x);try{localStorage.setItem('vk-theme',x);}catch(e){}});})();
 </script>
 <script src="../../../assets/js/recent.js" defer></script>
-
+<script src="../../../assets/js/filetool.js" defer></script>
+<script src="../../../assets/js/videoengine.js" defer></script>
+<script src="../../../assets/js/tools-videofx.js" defer></script>
 </body>
 </html>
