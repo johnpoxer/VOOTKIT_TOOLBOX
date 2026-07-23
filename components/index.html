@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="google-adsense-account" content="ca-pub-5906583727409402">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#fbfcfe" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)">
+<title>Component Library — Vootkit</title>
+<meta name="description" content="Vootkit design-system components and their states.">
+<link rel="canonical" href="https://vootkit.com/components/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Vootkit">
+<meta property="og:title" content="Component Library — Vootkit">
+<meta property="og:description" content="Vootkit design-system components and their states.">
+<meta property="og:url" content="https://vootkit.com/components/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Component Library — Vootkit">
+<meta name="twitter:description" content="Vootkit design-system components and their states.">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Component library","url":"https://vootkit.com/components/"}</script>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/tokens.css">
+<link rel="stylesheet" href="../assets/css/base.css">
+<link rel="stylesheet" href="../assets/css/pages.css">
+<!-- no ads inside an active tool workspace -->
+<meta name="robots" content="noindex">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="hdr">
+  <div class="wrap hdr-in">
+    <a class="brand" href="../" aria-label="Vootkit home">
+      <svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="17.5" fill="none" stroke="var(--accent)" stroke-opacity=".45" stroke-width="1.3" stroke-dasharray="17 7"/><path d="M12.5 14.5 21.5 30 31.5 13.5" fill="none" stroke="var(--accent)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="33.5" cy="10.5" r="2.7" fill="#06b6d4"/></svg>
+      vootkit
+    </a>
+    <nav class="nav" id="nav" aria-label="Main">
+      <a href="../tools/">All tools</a>
+      <a href="../tools/pdf/">PDF</a>
+      <a href="../tools/images/">Images</a>
+      <a href="../tools/video/">Video</a>
+      <a href="../tools/finance/">Finance</a>
+    </nav>
+    <div class="hdr-act">
+      <a class="icon-btn" href="../tools/" aria-label="Search tools">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+      </a>
+      <button class="icon-btn" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav">
+        <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <button class="icon-btn" id="theme" type="button" aria-label="Switch theme">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.5M12 19v2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M2.5 12H5M19 12h2.5M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1"><div class="wrap section">
+  <nav class="crumb" aria-label="Breadcrumb"><a href="../">Vootkit</a> <span aria-hidden="true">›</span> <span aria-current="page">Components</span></nav>
+  <h1 class="page-h1">Component library</h1>
+  <p class="page-lede">The single design language. Every state, one place. See <code>docs/DESIGN_SYSTEM.md</code>.</p>
+
+  <section class="prose"><h2>Buttons</h2></section>
+  <div class="wbtns" style="margin-bottom:var(--s-6)">
+    <button class="btn btn-primary" type="button">Primary</button>
+    <button class="btn" type="button">Secondary</button>
+    <button class="icon-btn" type="button" aria-label="Icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg></button>
+  </div>
+
+  <section class="prose"><h2>Badges</h2></section>
+  <div class="wbtns" style="margin-bottom:var(--s-6)">
+    <span class="badge badge-local">runs on your device</span>
+    <span class="badge badge-net">uses an API</span>
+    <span class="badge">no sign-up</span>
+  </div>
+
+  <section class="prose"><h2>Fields</h2></section>
+  <div class="wgrid2" style="margin-bottom:var(--s-6)">
+    <label class="wfield"><span class="wlab">Text field</span><input class="field" type="text" placeholder="Type here"></label>
+    <label class="wfield"><span class="wlab">Select</span><select class="field"><option>Option A</option><option>Option B</option></select></label>
+  </div>
+
+  <section class="prose"><h2>Stats</h2></section>
+  <div class="calc-stats" style="margin-bottom:var(--s-6)">
+    <div class="calc-stat"><span>Words</span><b>1,240</b></div>
+    <div class="calc-stat"><span>Reading time</span><b>6 min</b></div>
+    <div class="calc-stat"><span>Saved</span><b>62%</b></div>
+  </div>
+
+  <section class="prose"><h2>Notes</h2></section>
+  <div style="display:grid;gap:var(--s-2);margin-bottom:var(--s-6)">
+    <p class="note">A neutral note — context or guidance.</p>
+    <p class="note err">An error note — something needs fixing.</p>
+  </div>
+
+  <section class="prose"><h2>Skeleton &amp; empty state</h2></section>
+  <div class="wgrid2" style="margin-bottom:var(--s-6)">
+    <div style="display:grid;gap:var(--s-2)"><div class="vk-skeleton" style="height:20px;width:70%"></div><div class="vk-skeleton" style="height:14px"></div><div class="vk-skeleton" style="height:14px;width:85%"></div></div>
+    <div class="vk-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg><h3>Nothing here yet</h3><p class="note">Search above to find a tool.</p></div>
+  </div>
+
+  <section class="prose"><h2>Upload target</h2></section>
+  <div class="vk-upload" style="margin-bottom:var(--s-6)"><strong>Choose a file or drag it here</strong><small class="note">Processed on your device — never uploaded</small></div>
+
+  <section class="prose"><h2>Tabs</h2></section>
+  <div data-tabs style="margin-bottom:var(--s-6)">
+    <div role="tablist" class="wbtns" aria-label="Example tabs">
+      <button class="btn" role="tab" id="t1" aria-controls="p1">Overview</button>
+      <button class="btn" role="tab" id="t2" aria-controls="p2">Details</button>
+    </div>
+    <div role="tabpanel" id="p1" aria-labelledby="t1"><p class="note">Overview panel — arrow keys switch tabs.</p></div>
+    <div role="tabpanel" id="p2" aria-labelledby="t2"><p class="note">Details panel.</p></div>
+  </div>
+
+  <section class="prose"><h2>Toast, modal &amp; command palette</h2></section>
+  <div class="wbtns" style="margin-bottom:var(--s-8)">
+    <button class="btn" type="button" onclick="VKUI.toast('Saved to your device',{type:'ok'})">Show toast</button>
+    <button class="btn" type="button" onclick="VKUI.modal({title:'Example dialog',content:'<p class=note>Focus-trapped, ESC to close, backdrop click to dismiss.</p>'})">Open modal</button>
+    <button class="btn" type="button" onclick="VKUI.openPalette&&VKUI.openPalette()">Open command palette (⌘K)</button>
+  </div>
+</div></main>
+<footer class="ftr">
+  <div class="wrap">
+    <div class="ftr-grid">
+      <div><h4>Categories</h4><a href="../tools/pdf/">PDF</a><a href="../tools/images/">Images</a><a href="../tools/video/">Video &amp; Streaming</a><a href="../tools/finance/">Finance &amp; Loans</a><a href="../tools/insurance/">Insurance</a><a href="../tools/realestate/">Real Estate</a><a href="../tools/tax/">Tax, Payroll &amp; HR</a><a href="../tools/business/">Freelance &amp; Business</a></div>
+      <div><h4>Vootkit</h4><a href="../tools/">All tools</a><a href="../privacy.html">Privacy</a><a href="../terms.html">Terms</a></div>
+      <div><h4>How it works</h4><p style="font-size:var(--t-sm);color:var(--ink-soft)">Most tools run entirely in your browser. Your files aren't uploaded, so there's no queue and no daily limit.</p></div>
+    </div>
+    <p style="margin-top:var(--s-6);font-size:var(--t-sm)">&copy; <span id="yr"></span> Vootkit — every digital task, done in your browser.</p>
+  </div>
+</footer>
+<script src="../data/catalog.js"></script>
+<script>
+document.getElementById('yr').textContent=new Date().getFullYear();
+(function(){var b=document.getElementById('burger'),n=document.getElementById('nav');
+b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');b.setAttribute('aria-label',o?'Close menu':'Open menu');});
+var t=document.getElementById('theme'),s=null;try{s=localStorage.getItem('vk-theme');}catch(e){}
+if(s)document.documentElement.setAttribute('data-theme',s);
+t.addEventListener('click',function(){var c=document.documentElement.getAttribute('data-theme'),x=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',x);try{localStorage.setItem('vk-theme',x);}catch(e){}});})();
+</script>
+<script src="../assets/js/ui.js" defer></script>
+<script src="../assets/js/recent.js" defer></script>
+
+</body>
+</html>

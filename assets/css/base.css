@@ -140,3 +140,51 @@ label { display: block; font-size: var(--t-sm); font-weight: 600; color: var(--i
 .ftr h4 { font-size: var(--t-sm); font-weight: 700; color: var(--ink); margin-bottom: var(--s-2); }
 .ftr a { display: block; padding: 5px 0; color: var(--ink-soft); }
 .ftr a:hover { color: var(--accent); }
+
+/* ============ Component library (ui.js) ============ */
+/* Toasts */
+.vk-toasts { position: fixed; bottom: var(--s-5); right: var(--s-5); z-index: 60; display: flex; flex-direction: column; gap: var(--s-2); max-width: min(92vw, 380px); }
+.vk-toast { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-3) var(--s-4); background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: var(--r-md); box-shadow: var(--shadow-lg); animation: vk-toast-in var(--dur) var(--ease); }
+.vk-toast--ok { border-left-color: var(--ok); } .vk-toast--err { border-left-color: var(--err); } .vk-toast--warn { border-left-color: var(--warn); }
+.vk-toast.is-out { opacity: 0; transform: translateY(6px); transition: opacity .2s, transform .2s; }
+.vk-toast-msg { flex: 1; font-size: var(--t-sm); color: var(--ink); }
+.vk-toast-x { border: 0; background: none; color: var(--ink-mute); cursor: pointer; font-size: 13px; padding: 4px; }
+@keyframes vk-toast-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* Backdrop + modal */
+.vk-backdrop { position: fixed; inset: 0; z-index: 70; display: grid; place-items: center; padding: var(--gutter); background: rgb(13 20 32 / .5); backdrop-filter: blur(2px); animation: vk-fade var(--dur-fast) var(--ease); }
+.vk-backdrop.is-out { opacity: 0; transition: opacity .18s; }
+.vk-modal { width: min(560px, 100%); max-height: 85vh; overflow: auto; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--shadow-lg); animation: vk-pop var(--dur) var(--ease); }
+.vk-modal-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); padding: var(--s-4) var(--s-5); border-bottom: 1px solid var(--line); }
+.vk-modal-title { font-size: var(--t-lg); margin: 0; }
+.vk-modal-body { padding: var(--s-5); }
+@keyframes vk-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes vk-pop { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
+
+/* Command palette */
+.vk-cmd-back { align-items: flex-start; padding-top: min(16vh, 120px); opacity: 0; pointer-events: none; }
+.vk-cmd-back.is-open { opacity: 1; pointer-events: auto; }
+.vk-cmd { width: min(600px, 100%); background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--shadow-lg); overflow: hidden; animation: vk-pop var(--dur) var(--ease); }
+.vk-cmd-top { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-3) var(--s-4); border-bottom: 1px solid var(--line); }
+.vk-cmd-ic { width: 20px; height: 20px; color: var(--ink-mute); flex: none; }
+.vk-cmd-input { flex: 1; border: 0; background: none; font: inherit; font-size: var(--t-lg); color: var(--ink); outline: 0; }
+.vk-cmd-esc { border: 1px solid var(--line); border-radius: 6px; padding: 2px 7px; font-size: var(--t-xs); color: var(--ink-mute); }
+.vk-cmd-list { max-height: 52vh; overflow: auto; padding: var(--s-2); }
+.vk-cmd-item { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); padding: var(--s-3) var(--s-4); border-radius: var(--r-sm); text-decoration: none; }
+.vk-cmd-item:hover, .vk-cmd-item.is-active { background: var(--accent-weak); }
+.vk-cmd-name { font-size: var(--t-md); font-weight: 500; color: var(--ink); }
+.vk-cmd-cat { font-size: var(--t-xs); color: var(--ink-mute); }
+.vk-cmd-hint, .vk-cmd-empty { padding: var(--s-4); font-size: var(--t-sm); color: var(--ink-soft); }
+.vk-cmd-hint a, .vk-cmd-empty a { color: var(--accent); font-weight: 600; }
+
+/* Skeleton, empty state, upload */
+.vk-skeleton { position: relative; overflow: hidden; background: var(--surface-sunk); border-radius: var(--r-sm); min-height: 1em; }
+.vk-skeleton::after { content: ""; position: absolute; inset: 0; transform: translateX(-100%); background: linear-gradient(90deg, transparent, rgb(255 255 255 / .35), transparent); animation: vk-shimmer 1.3s infinite; }
+[data-theme="dark"] .vk-skeleton::after { background: linear-gradient(90deg, transparent, rgb(255 255 255 / .06), transparent); }
+@keyframes vk-shimmer { to { transform: translateX(100%); } }
+.vk-empty { text-align: center; padding: var(--s-8) var(--s-5); color: var(--ink-soft); }
+.vk-empty svg { width: 44px; height: 44px; color: var(--ink-mute); margin-bottom: var(--s-3); }
+.vk-empty h3 { font-size: var(--t-lg); color: var(--ink); margin: 0 0 var(--s-2); }
+.vk-upload { display: grid; place-items: center; gap: var(--s-2); padding: var(--s-7) var(--s-5); border: 1.5px dashed var(--line-strong); border-radius: var(--r-lg); background: var(--surface-sunk); text-align: center; cursor: pointer; transition: border-color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease); }
+.vk-upload:hover, .vk-upload.is-over { border-color: var(--accent); background: var(--accent-weak); }
+@media (prefers-reduced-motion: reduce) { .vk-toast, .vk-modal, .vk-cmd, .vk-skeleton::after { animation: none; } }

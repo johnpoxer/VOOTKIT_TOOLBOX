@@ -162,6 +162,7 @@ var t=document.getElementById('theme'),s=null;try{s=localStorage.getItem('vk-the
 if(s)document.documentElement.setAttribute('data-theme',s);
 t.addEventListener('click',function(){var c=document.documentElement.getAttribute('data-theme'),x=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',x);try{localStorage.setItem('vk-theme',x);}catch(e){}});})();
 </script>
+<script src="../../../assets/js/ui.js" defer></script>
 <script src="../../../assets/js/recent.js" defer></script>
 <script src="../../../assets/js/widget.js" defer></script>
 <script src="../../../assets/js/tools-privacy.js" defer></script>

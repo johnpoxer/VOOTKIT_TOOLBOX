@@ -140,6 +140,7 @@ var t=document.getElementById('theme'),s=null;try{s=localStorage.getItem('vk-the
 if(s)document.documentElement.setAttribute('data-theme',s);
 t.addEventListener('click',function(){var c=document.documentElement.getAttribute('data-theme'),x=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',x);try{localStorage.setItem('vk-theme',x);}catch(e){}});})();
 </script>
+<script src="${up}assets/js/ui.js" defer></script>
 <script src="${up}assets/js/recent.js" defer></script>
 ${(extraScripts||[]).map(function(x){return '<script src="'+up+x+'" defer></script>';}).join("\n")}
 </body>
@@ -415,6 +416,79 @@ function legalPage(o) {
 </div>` + foot(0);
 }
 
+/* ---------- component gallery (internal reference, noindex) ---------- */
+function componentsPage() {
+  const url = SITE + "/components/";
+  const ld = { "@context": "https://schema.org", "@type": "WebPage", name: "Component library", url };
+  let html = head({ depth: 1, url, ads: false, ld, title: "Component Library — Vootkit", desc: "Vootkit design-system components and their states." })
+    .replace("</head>", '<meta name="robots" content="noindex">\n</head>');
+  html += `<div class="wrap section">
+  <nav class="crumb" aria-label="Breadcrumb"><a href="../">Vootkit</a> <span aria-hidden="true">›</span> <span aria-current="page">Components</span></nav>
+  <h1 class="page-h1">Component library</h1>
+  <p class="page-lede">The single design language. Every state, one place. See <code>docs/DESIGN_SYSTEM.md</code>.</p>
+
+  <section class="prose"><h2>Buttons</h2></section>
+  <div class="wbtns" style="margin-bottom:var(--s-6)">
+    <button class="btn btn-primary" type="button">Primary</button>
+    <button class="btn" type="button">Secondary</button>
+    <button class="icon-btn" type="button" aria-label="Icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg></button>
+  </div>
+
+  <section class="prose"><h2>Badges</h2></section>
+  <div class="wbtns" style="margin-bottom:var(--s-6)">
+    <span class="badge badge-local">runs on your device</span>
+    <span class="badge badge-net">uses an API</span>
+    <span class="badge">no sign-up</span>
+  </div>
+
+  <section class="prose"><h2>Fields</h2></section>
+  <div class="wgrid2" style="margin-bottom:var(--s-6)">
+    <label class="wfield"><span class="wlab">Text field</span><input class="field" type="text" placeholder="Type here"></label>
+    <label class="wfield"><span class="wlab">Select</span><select class="field"><option>Option A</option><option>Option B</option></select></label>
+  </div>
+
+  <section class="prose"><h2>Stats</h2></section>
+  <div class="calc-stats" style="margin-bottom:var(--s-6)">
+    <div class="calc-stat"><span>Words</span><b>1,240</b></div>
+    <div class="calc-stat"><span>Reading time</span><b>6 min</b></div>
+    <div class="calc-stat"><span>Saved</span><b>62%</b></div>
+  </div>
+
+  <section class="prose"><h2>Notes</h2></section>
+  <div style="display:grid;gap:var(--s-2);margin-bottom:var(--s-6)">
+    <p class="note">A neutral note — context or guidance.</p>
+    <p class="note err">An error note — something needs fixing.</p>
+  </div>
+
+  <section class="prose"><h2>Skeleton &amp; empty state</h2></section>
+  <div class="wgrid2" style="margin-bottom:var(--s-6)">
+    <div style="display:grid;gap:var(--s-2)"><div class="vk-skeleton" style="height:20px;width:70%"></div><div class="vk-skeleton" style="height:14px"></div><div class="vk-skeleton" style="height:14px;width:85%"></div></div>
+    <div class="vk-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg><h3>Nothing here yet</h3><p class="note">Search above to find a tool.</p></div>
+  </div>
+
+  <section class="prose"><h2>Upload target</h2></section>
+  <div class="vk-upload" style="margin-bottom:var(--s-6)"><strong>Choose a file or drag it here</strong><small class="note">Processed on your device — never uploaded</small></div>
+
+  <section class="prose"><h2>Tabs</h2></section>
+  <div data-tabs style="margin-bottom:var(--s-6)">
+    <div role="tablist" class="wbtns" aria-label="Example tabs">
+      <button class="btn" role="tab" id="t1" aria-controls="p1">Overview</button>
+      <button class="btn" role="tab" id="t2" aria-controls="p2">Details</button>
+    </div>
+    <div role="tabpanel" id="p1" aria-labelledby="t1"><p class="note">Overview panel — arrow keys switch tabs.</p></div>
+    <div role="tabpanel" id="p2" aria-labelledby="t2"><p class="note">Details panel.</p></div>
+  </div>
+
+  <section class="prose"><h2>Toast, modal &amp; command palette</h2></section>
+  <div class="wbtns" style="margin-bottom:var(--s-8)">
+    <button class="btn" type="button" onclick="VKUI.toast('Saved to your device',{type:'ok'})">Show toast</button>
+    <button class="btn" type="button" onclick="VKUI.modal({title:'Example dialog',content:'<p class=note>Focus-trapped, ESC to close, backdrop click to dismiss.</p>'})">Open modal</button>
+    <button class="btn" type="button" onclick="VKUI.openPalette&&VKUI.openPalette()">Open command palette (⌘K)</button>
+  </div>
+</div>` + foot(1);
+  return html;
+}
+
 const LAST_UPDATED = "22 July 2026";
 
 write("privacy.html", legalPage({
@@ -488,6 +562,7 @@ write("terms.html", legalPage({
 
 /* ---------- run ---------- */
 let pages = 2;
+write("components/index.html", componentsPage()); pages++;
 write("tools/index.html", allToolsPage()); pages++;
 VK.CATEGORIES.forEach((c) => { write(`tools/${c.slug}/index.html`, categoryPage(c)); pages++; });
 VK.TOOLS.forEach((t) => { write(`tools/${t.cat}/${t.id}/index.html`, toolPage(t)); pages++; });
