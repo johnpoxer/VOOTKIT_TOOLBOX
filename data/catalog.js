@@ -125,17 +125,17 @@
 
     /* ---------- RETENTION: video & streaming ---------- */
     t("compress-for-discord","video","Compress for Discord","One-click 10 MB, 50 MB and 500 MB presets that actually fit.",{tier:"retention",kw:"discord upload limit too big clip"}),
-    t("trim-video","video","Video Trimmer","Cut the segment you want and save it.",{tier:"retention",status:"live",kw:"clip cut shorten"}),
-    t("bitrate-calculator","video","Streaming Bitrate Calculator","Best bitrate for your upload speed, resolution and platform.",{tier:"retention",kw:"obs twitch youtube kick stream settings"}),
+    t("trim-video","video","Video Trimmer","Cut the segment you want and save it.",{tier:"retention",status:"planned",kw:"clip cut shorten"}),
+    t("bitrate-calculator","video","Streaming Bitrate Calculator","Best bitrate for your upload speed, resolution and platform.",{tier:"retention",status:"live",kw:"obs twitch youtube kick stream settings"}),
     t("vertical-reframe","video","Vertical Reframe 9:16","Reframe a clip for Shorts, TikTok and Reels.",{tier:"retention",kw:"portrait tiktok shorts crop"}),
     t("video-to-gif","video","Video to GIF","Turn a short clip into a shareable GIF.",{tier:"retention",kw:"animated gif convert"}),
     t("frame-grabber","video","Frame Grabber","Pull a still frame out for a thumbnail.",{tier:"retention",kw:"screenshot thumbnail still"}),
     t("mute-video","video","Mute / Strip Audio","Remove the audio track to avoid copyright strikes.",{tier:"retention",kw:"remove sound silent"}),
     t("extract-audio","video","Extract Audio","Save the audio from a video as MP3 or WAV.",{tier:"retention",kw:"rip sound mp3"}),
-    t("stream-asset-sizer","video","Stream Asset Sizer","Correct sizes for Twitch and YouTube banners, avatars and panels.",{tier:"retention",kw:"twitch banner youtube thumbnail dimensions"}),
-    t("emote-resizer","video","Emote & Sticker Resizer","Resize to Discord and Twitch emote limits.",{tier:"retention",kw:"discord 128 twitch emote"}),
+    t("stream-asset-sizer","video","Stream Asset Sizer","Correct sizes for Twitch and YouTube banners, avatars and panels.",{tier:"retention",status:"live",kw:"twitch banner youtube thumbnail dimensions"}),
+    t("emote-resizer","video","Emote & Sticker Resizer","Resize to Discord and Twitch emote limits.",{tier:"retention",status:"live",kw:"discord 128 twitch emote"}),
     t("brb-overlay","video","BRB & Countdown Overlay","A styled page to drop into OBS as a browser source.",{tier:"retention",kw:"obs browser source stream starting soon"}),
-    t("upload-time","video","Upload Time Estimator","How long a file will take on your connection.",{tier:"retention",kw:"how long to upload"}),
+    t("upload-time","video","Upload Time Estimator","How long a file will take on your connection.",{tier:"retention",status:"live",kw:"how long to upload"}),
 
     /* ---------- GAP: SEO & marketing ---------- */
     t("meta-tag-generator","seo","Meta Tag Generator","Title, description and Open Graph tags, ready to paste.",{tier:"gap",kw:"og tags head html"}),

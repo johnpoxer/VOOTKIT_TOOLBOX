@@ -313,6 +313,51 @@
           status: 'Watermarked'
         };
       }
+    },
+
+    'emote-resizer': {
+      accept: 'image/*', action: 'Make emotes',
+      dropLabel: 'Choose an emote image (square works best)',
+      options: [
+        { k: 'pack', label: 'Sizes', type: 'select', def: 'twitch',
+          options: [
+            { v: 'twitch', label: 'Twitch emote (112, 56, 28)' },
+            { v: 'discord', label: 'Discord emoji (128)' },
+            { v: 'both', label: 'Both platforms' }
+          ] }
+      ],
+      process: async function (files, o, api) {
+        var f = files[0];
+        var img = await api.loadImage(f);
+        var sizes = o.pack === 'discord' ? [128] : o.pack === 'both' ? [128, 112, 56, 28] : [112, 56, 28];
+        // centre-crop to a square so nothing is stretched
+        var side = Math.min(img.naturalWidth, img.naturalHeight);
+        var sx = (img.naturalWidth - side) / 2, sy = (img.naturalHeight - side) / 2;
+        var downloads = [];
+        for (var i = 0; i < sizes.length; i++) {
+          var s = sizes[i];
+          var k = canvasFrom(img, s, s);
+          k.ctx.clearRect(0, 0, s, s);
+          k.ctx.drawImage(img, sx, sy, side, side, 0, 0, s, s);
+          var blob = await toBlob(k.c, 'image/png');
+          downloads.push({ label: 'Download ' + s + '×' + s, blob: blob, name: baseName(f.name) + '-' + s + '.png' });
+          api.progress((i + 1) / sizes.length * 0.9);
+        }
+        return {
+          previewUrl: downloads.length ? api.urls.make(downloads[0].blob) : null,
+          previewAlt: 'Largest emote preview',
+          stats: [
+            { label: 'Source', value: img.naturalWidth + '×' + img.naturalHeight },
+            { label: 'Emotes made', value: sizes.length },
+            { label: 'Format', value: 'PNG (transparent)' }
+          ],
+          downloads: downloads,
+          status: 'Made ' + sizes.length + ' emote' + (sizes.length > 1 ? 's' : ''),
+          note: img.naturalWidth !== img.naturalHeight
+            ? 'Your image wasn’t square, so it was centre-cropped. For full control, crop it square first.'
+            : 'PNG keeps transparency — the right choice for emotes.'
+        };
+      }
     }
   };
 
