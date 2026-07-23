@@ -180,9 +180,9 @@
     t("pomodoro","everyday","Pomodoro & Countdown","A focus timer that chimes when it's done.",{tier:"retention",status:"live",kw:"focus study timer"}),
     t("stopwatch","everyday","Stopwatch","Precise stopwatch with lap times.",{tier:"retention",status:"live",kw:"lap timer"}),
     t("timezone-converter","everyday","Time Zone Converter","Compare a time across cities worldwide.",{tier:"retention",status:"live",kw:"meeting across countries utc"}),
-    t("qr-generator","everyday","QR Code Generator","Turn any link or text into a downloadable QR code.",{tier:"retention",status:"planned",kw:"qr link scan"}),
-    t("qr-scanner","everyday","QR Code Scanner","Scan a QR code with your camera or from an image.",{tier:"retention",status:"planned",kw:"read decode qr"}),
-    t("barcode-generator","everyday","Barcode Generator","CODE128 and EAN barcodes, ready to download.",{tier:"retention",status:"planned",kw:"ean upc code128"}),
+    t("qr-generator","everyday","QR Code Generator","Turn any link or text into a downloadable QR code.",{tier:"retention",status:"live",kw:"qr link scan"}),
+    t("qr-scanner","everyday","QR Code Scanner","Scan a QR code with your camera or from an image.",{tier:"retention",status:"live",kw:"read decode qr"}),
+    t("barcode-generator","everyday","Barcode Generator","CODE128 and EAN barcodes, ready to download.",{tier:"retention",status:"live",kw:"ean upc code128"}),
     t("random-picker","everyday","Random Picker","Pick a winner fairly from a list.",{tier:"retention",status:"live",kw:"raffle giveaway choose"}),
     t("typing-test","everyday","Typing Speed Test","Words per minute and accuracy.",{tier:"retention",kw:"wpm keyboard speed"}),
 

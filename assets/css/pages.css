@@ -165,3 +165,8 @@
 .wtable thead th { position: sticky; top: 0; background: var(--surface-sunk); cursor: pointer; user-select: none; font-weight: 600; }
 .wtable tbody tr:hover { background: var(--accent-weak); }
 .wmeme { max-width: 100%; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface-sunk); }
+
+/* ---------- QR / barcode ---------- */
+.wcode { max-width: 100%; display: block; background: #fff; border: 1px solid var(--line); border-radius: var(--r-md); padding: var(--s-3); }
+canvas.wcode, svg.wcode { max-height: 360px; }
+video.wcode { padding: 0; }
