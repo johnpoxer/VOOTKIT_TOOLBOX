@@ -662,7 +662,7 @@ VK.TOOLS.forEach((t) => { write(`tools/${t.cat}/${t.id}/index.html`, toolPage(t)
 console.log(`generated ${pages} pages`);
 
 /* sitemap */
-const urls = ["/", "/tools/", "/privacy.html", "/terms.html"]
+const urls = ["/", "/tools/", "/pricing.html", "/privacy.html", "/terms.html"]
   .concat(VK.CATEGORIES.map((c) => `/tools/${c.slug}/`))
   .concat(VK.TOOLS.map((t) => `/tools/${t.cat}/${t.id}/`));
 fs.writeFileSync(path.join(ROOT, "sitemap.xml"),
