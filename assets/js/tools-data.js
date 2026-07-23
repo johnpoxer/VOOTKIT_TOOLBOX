@@ -54,6 +54,20 @@
     return rows.slice(1).map(function (r) { var o = {}; head.forEach(function (h, i) { o[h] = r[i] == null ? '' : r[i]; }); return o; });
   }
 
+  /* lazy Chart.js loader for csv-to-chart */
+  var CHART_URL = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js';
+  var chartLoaded = false;
+  function loadChart() {
+    if (chartLoaded && root.Chart) return Promise.resolve(root.Chart);
+    if (root.Chart) { chartLoaded = true; return Promise.resolve(root.Chart); }
+    return new Promise(function (res, rej) {
+      var s = document.createElement('script'); s.src = CHART_URL; s.async = true;
+      s.onload = function () { chartLoaded = true; root.Chart ? res(root.Chart) : rej(new Error('Chart library failed to load.')); };
+      s.onerror = function () { rej(new Error('Could not load the chart library from the CDN.')); };
+      document.head.appendChild(s);
+    });
+  }
+
   /* ---------- UI ---------- */
   function area(W, ph, rows) { return W.el('textarea', { class: 'field wtext wmono', rows: String(rows || 8), placeholder: ph || '', spellcheck: 'false' }); }
   function fld(W, label, node) { return W.el('label', { class: 'wfield' }, [W.el('span', { class: 'wlab', text: label }), node]); }
@@ -102,6 +116,48 @@
         W.copyBtn('Copy', function () { return out.value; })
       ]));
       host.appendChild(err); host.appendChild(fld(W, 'Output', out)); toCSV();
+    },
+
+    'csv-to-chart': function (host, W) {
+      var input = W.el('input', { type: 'file', class: 'field', accept: '.csv,text/csv', 'aria-label': 'Choose a CSV file' });
+      var paste = area(W, 'or paste CSV — first row is the header…', 5);
+      paste.value = 'Month,Sales\nJan,120\nFeb,180\nMar,90\nApr,240';
+      var labelCol = W.el('select', { class: 'field', 'aria-label': 'Label column' });
+      var valueCol = W.el('select', { class: 'field', 'aria-label': 'Value column' });
+      var type = W.el('select', { class: 'field' }); [['bar', 'Bar'], ['line', 'Line'], ['pie', 'Pie'], ['doughnut', 'Doughnut']].forEach(function (o) { type.appendChild(W.el('option', { value: o[0], text: o[1] })); });
+      var canvas = W.el('canvas', { class: 'wchart' });
+      var err = W.el('p', { class: 'note err', hidden: 'hidden', role: 'alert' });
+      var rows = [], chart = null;
+      var PALETTE = ['#2563eb', '#06b6d4', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#64748b'];
+      function fillCols() {
+        var head = rows[0] || [];
+        [labelCol, valueCol].forEach(function (s, si) { s.innerHTML = ''; head.forEach(function (h, i) { s.appendChild(W.el('option', { value: String(i), text: h || ('Column ' + (i + 1)) })); }); s.value = String(si === 0 ? 0 : Math.min(1, head.length - 1)); });
+      }
+      function load(text) { rows = parseCsv(text); fillCols(); draw(); }
+      async function draw() {
+        err.hidden = true;
+        if (rows.length < 2) { err.hidden = false; err.textContent = 'Need a header row plus at least one data row.'; return; }
+        var li = +labelCol.value, vi = +valueCol.value;
+        var labels = rows.slice(1).map(function (r) { return r[li]; });
+        var values = rows.slice(1).map(function (r) { return parseFloat(r[vi]); });
+        if (values.some(isNaN)) { err.hidden = false; err.textContent = 'The value column “' + (rows[0][vi] || '') + '” has non-numeric cells.'; return; }
+        try {
+          var Chart = await loadChart();
+          if (chart) chart.destroy();
+          var isPie = type.value === 'pie' || type.value === 'doughnut';
+          chart = new Chart(canvas, { type: type.value,
+            data: { labels: labels, datasets: [{ label: rows[0][vi] || 'Value', data: values, backgroundColor: isPie ? PALETTE : PALETTE[0], borderColor: PALETTE[0], borderWidth: isPie ? 0 : 2, tension: 0.25 }] },
+            options: { responsive: true, plugins: { legend: { display: isPie } } } });
+        } catch (e) { err.hidden = false; err.textContent = e.message; }
+      }
+      input.addEventListener('change', function () { var f = input.files[0]; if (!f) return; var r = new FileReader(); r.onload = function () { paste.value = String(r.result); load(paste.value); }; r.readAsText(f); });
+      paste.addEventListener('input', W.debounce(function () { load(paste.value); }, 200));
+      [labelCol, valueCol, type].forEach(function (x) { x.addEventListener('change', draw); });
+      host.appendChild(fld(W, 'CSV file', input)); host.appendChild(fld(W, 'or paste', paste));
+      host.appendChild(W.el('div', { class: 'wgrid2' }, [fld(W, 'Labels', labelCol), fld(W, 'Values', valueCol), fld(W, 'Chart type', type)]));
+      host.appendChild(err); host.appendChild(canvas);
+      host.appendChild(W.el('div', { class: 'wbtns' }, [W.el('button', { class: 'btn btn-primary', type: 'button', text: 'Download PNG', onClick: function () { canvas.toBlob(function (b) { if (b) W.download(b, 'chart.png'); }, 'image/png'); } })]));
+      load(paste.value);
     }
   };
 

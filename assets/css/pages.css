@@ -170,3 +170,9 @@
 .wcode { max-width: 100%; display: block; background: #fff; border: 1px solid var(--line); border-radius: var(--r-md); padding: var(--s-3); }
 canvas.wcode, svg.wcode { max-height: 360px; }
 video.wcode { padding: 0; }
+
+/* ---------- csv chart + pdf pages ---------- */
+.wchart { max-width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); padding: var(--s-3); }
+.wpages { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: var(--s-3); }
+.wpage { display: flex; flex-direction: column; gap: var(--s-2); }
+.wpage-thumb { width: 100%; height: auto; border: 1px solid var(--line); border-radius: var(--r-sm); background: #fff; }

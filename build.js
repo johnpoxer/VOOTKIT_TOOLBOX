@@ -27,9 +27,10 @@ const WIDGETS = {
   "assets/js/tools-privacy.js": ["password-generator","password-strength","text-encrypt","file-checksum"],
   "assets/js/tools-design.js": ["color-converter","contrast-checker","gradient-generator","palette-generator","shadow-generator"],
   "assets/js/tools-seo.js": ["meta-tag-generator","serp-preview","og-preview","robots-generator","sitemap-generator","schema-generator","keyword-density","slug-generator","utm-builder"],
-  "assets/js/tools-data.js": ["csv-viewer","json-csv"],
+  "assets/js/tools-data.js": ["csv-viewer","json-csv","csv-to-chart"],
   "assets/js/tools-imaging.js": ["exif-viewer","color-from-image","meme-generator"],
-  "assets/js/tools-codes.js": ["qr-generator","qr-scanner","barcode-generator"]
+  "assets/js/tools-codes.js": ["qr-generator","qr-scanner","barcode-generator"],
+  "assets/js/tools-pdfview.js": ["pdf-to-jpg","pdf-to-text"]
 };
 function widgetScriptsFor(id) {
   for (const file in WIDGETS) if (WIDGETS[file].indexOf(id) !== -1) return ["assets/js/widget.js", file];
