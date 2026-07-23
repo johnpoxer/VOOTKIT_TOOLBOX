@@ -64,10 +64,8 @@
     <p class="page-lede">Black out private details before sharing a screenshot.</p>
     <div class="trust"><span class="badge badge-local">runs on your device</span><span class="badge">no sign-up</span><span class="badge">no watermark</span><span class="badge">no daily limit</span></div>
   </header>
-  <div class="ws ws-soon">
-         <strong>Not built yet</strong>
-         <p class="note">Screenshot Redactor is on the roadmap. The page below explains what it will do — we publish the tool before we promote it.</p>
-         <a class="btn" href="../">Browse Privacy tools that work today</a>
+  <div class="ws" id="workspace" data-tool="screenshot-redactor">
+         <noscript><p class="note">This tool needs JavaScript — it runs the calculation in your browser rather than on a server.</p></noscript>
        </div>
 
   <!-- 2-4. explanation, benefits, how it works -->
@@ -107,12 +105,12 @@
   <!-- 6. related tools — never a dead end -->
   <section class="section">
     <h2 class="h-sm">Next in Privacy</h2>
-    <div class="grid"><a class="card tool-card is-soon" href="../../../tools/privacy/metadata-remover/">
-    <h3>Metadata Remover <span class="soon">soon</span></h3>
+    <div class="grid"><a class="card tool-card" href="../../../tools/privacy/metadata-remover/">
+    <h3>Metadata Remover</h3>
     <p>Strip hidden data from images and documents.</p>
     <span class="card-foot"><span class="badge badge-local">runs on your device</span></span>
-  </a><a class="card tool-card is-soon" href="../../../tools/privacy/url-cleaner/">
-    <h3>URL Tracker Cleaner <span class="soon">soon</span></h3>
+  </a><a class="card tool-card" href="../../../tools/privacy/url-cleaner/">
+    <h3>URL Tracker Cleaner</h3>
     <p>Remove utm_, fbclid and other tracking parameters.</p>
     <span class="card-foot"><span class="badge badge-local">runs on your device</span></span>
   </a><a class="card tool-card" href="../../../tools/privacy/password-generator/">
@@ -165,6 +163,7 @@ if(s)document.documentElement.setAttribute('data-theme',s);
 t.addEventListener('click',function(){var c=document.documentElement.getAttribute('data-theme'),x=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',x);try{localStorage.setItem('vk-theme',x);}catch(e){}});})();
 </script>
 <script src="../../../assets/js/recent.js" defer></script>
-
+<script src="../../../assets/js/widget.js" defer></script>
+<script src="../../../assets/js/tools-privacy2.js" defer></script>
 </body>
 </html>

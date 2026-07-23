@@ -176,3 +176,9 @@ video.wcode { padding: 0; }
 .wpages { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: var(--s-3); }
 .wpage { display: flex; flex-direction: column; gap: var(--s-2); }
 .wpage-thumb { width: 100%; height: auto; border: 1px solid var(--line); border-radius: var(--r-sm); background: #fff; }
+
+/* ---------- privacy2 + misc ---------- */
+.wredact { max-width: 100%; border: 1px solid var(--line); border-radius: var(--r-md); cursor: crosshair; touch-action: none; background: var(--surface-sunk); }
+.wtype-target { font-family: ui-monospace, Menlo, Consolas, monospace; line-height: 1.9; padding: var(--s-4); border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface-sunk); font-size: var(--t-md); }
+.wtype-target .ok { color: var(--ok); } .wtype-target .bad { color: #fff; background: var(--err); border-radius: 2px; } .wtype-target .cur { border-bottom: 2px solid var(--accent); }
+.wbrb { width: 100%; aspect-ratio: 16/9; border: 1px solid var(--line); border-radius: var(--r-md); background: #000; }

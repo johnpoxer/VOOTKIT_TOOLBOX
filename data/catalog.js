@@ -83,7 +83,7 @@
     t("overtime-calculator","tax","Overtime Pay","Overtime and premium hours at any multiplier.",{tier:"money",status:"live",kw:"time and a half"}),
     t("pto-accrual","tax","PTO Accrual","Holiday accrued to date from your entitlement.",{tier:"money",status:"live",kw:"annual leave vacation days"}),
     t("employee-cost","tax","True Employee Cost","Salary plus benefits, taxes, equipment and overhead.",{tier:"money",status:"live",kw:"cost of hiring burden rate"}),
-    t("salary-converter","tax","Salary Converter","Hourly, weekly, monthly and annual, both ways.",{tier:"retention",kw:"wage per hour annual"}),
+    t("salary-converter","tax","Salary Converter","Hourly, weekly, monthly and annual, both ways.",{tier:"retention",status:"live",kw:"wage per hour annual"}),
 
     /* ---------- MONEY: freelance & business ---------- */
     t("invoice-generator","business","Invoice Generator","Build a clean invoice with line items and export a PDF.",{tier:"money",kw:"bill client pdf"}),
@@ -134,7 +134,7 @@
     t("extract-audio","video","Extract Audio","Save the audio from a video as MP3 or WAV.",{tier:"retention",status:"live",kw:"rip sound mp3"}),
     t("stream-asset-sizer","video","Stream Asset Sizer","Correct sizes for Twitch and YouTube banners, avatars and panels.",{tier:"retention",status:"live",kw:"twitch banner youtube thumbnail dimensions"}),
     t("emote-resizer","video","Emote & Sticker Resizer","Resize to Discord and Twitch emote limits.",{tier:"retention",status:"live",kw:"discord 128 twitch emote"}),
-    t("brb-overlay","video","BRB & Countdown Overlay","A styled page to drop into OBS as a browser source.",{tier:"retention",kw:"obs browser source stream starting soon"}),
+    t("brb-overlay","video","BRB & Countdown Overlay","A styled page to drop into OBS as a browser source.",{tier:"retention",status:"live",kw:"obs browser source stream starting soon"}),
     t("upload-time","video","Upload Time Estimator","How long a file will take on your connection.",{tier:"retention",status:"live",kw:"how long to upload"}),
 
     /* ---------- GAP: SEO & marketing ---------- */
@@ -158,9 +158,9 @@
     t("caption-validator","accessibility","Caption / SRT Validator","Check subtitle timing and formatting.",{tier:"edge",status:"live",kw:"srt vtt subtitles timing"}),
 
     /* ---------- EDGE: privacy ---------- */
-    t("metadata-remover","privacy","Metadata Remover","Strip hidden data from images and documents.",{tier:"edge",kw:"exif scrub clean anonymise"}),
-    t("url-cleaner","privacy","URL Tracker Cleaner","Remove utm_, fbclid and other tracking parameters.",{tier:"edge",kw:"clean link share utm fbclid"}),
-    t("screenshot-redactor","privacy","Screenshot Redactor","Black out private details before sharing a screenshot.",{tier:"edge",kw:"blur censor hide"}),
+    t("metadata-remover","privacy","Metadata Remover","Strip hidden data from images and documents.",{tier:"edge",status:"live",kw:"exif scrub clean anonymise"}),
+    t("url-cleaner","privacy","URL Tracker Cleaner","Remove utm_, fbclid and other tracking parameters.",{tier:"edge",status:"live",kw:"clean link share utm fbclid"}),
+    t("screenshot-redactor","privacy","Screenshot Redactor","Black out private details before sharing a screenshot.",{tier:"edge",status:"live",kw:"blur censor hide"}),
     t("password-generator","privacy","Password Generator","Strong random passwords, generated on your device.",{tier:"retention",status:"live",kw:"passphrase secure random"}),
     t("password-strength","privacy","Password Strength Checker","How strong a password is — checked locally.",{tier:"retention",status:"live",kw:"secure weak entropy"}),
     t("text-encrypt","privacy","Text Encrypt / Decrypt","AES-encrypt a message with a password.",{tier:"edge",status:"live",kw:"aes cipher secret"}),
@@ -184,7 +184,7 @@
     t("qr-scanner","everyday","QR Code Scanner","Scan a QR code with your camera or from an image.",{tier:"retention",status:"live",kw:"read decode qr"}),
     t("barcode-generator","everyday","Barcode Generator","CODE128 and EAN barcodes, ready to download.",{tier:"retention",status:"live",kw:"ean upc code128"}),
     t("random-picker","everyday","Random Picker","Pick a winner fairly from a list.",{tier:"retention",status:"live",kw:"raffle giveaway choose"}),
-    t("typing-test","everyday","Typing Speed Test","Words per minute and accuracy.",{tier:"retention",kw:"wpm keyboard speed"}),
+    t("typing-test","everyday","Typing Speed Test","Words per minute and accuracy.",{tier:"retention",status:"live",kw:"wpm keyboard speed"}),
 
     /* ---------- design / developer / data / ai (kept, frozen) ---------- */
     t("color-converter","design","Colour Converter","HEX, RGB and HSL with a live swatch.",{tier:"retention",status:"live",kw:"hex rgb hsl"}),
