@@ -157,3 +157,11 @@
 .wog-dom { font-size: var(--t-xs); color: var(--ink-mute); text-transform: uppercase; }
 .wog-title { font-weight: 600; margin: 2px 0; }
 .wog-desc { font-size: var(--t-sm); color: var(--ink-soft); }
+
+/* ---------- data + imaging widgets ---------- */
+.wtablewrap { max-height: 460px; overflow: auto; border: 1px solid var(--line); border-radius: var(--r-md); }
+.wtable { border-collapse: collapse; width: 100%; font-size: var(--t-sm); }
+.wtable th, .wtable td { padding: 6px var(--s-3); border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+.wtable thead th { position: sticky; top: 0; background: var(--surface-sunk); cursor: pointer; user-select: none; font-weight: 600; }
+.wtable tbody tr:hover { background: var(--accent-weak); }
+.wmeme { max-width: 100%; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface-sunk); }

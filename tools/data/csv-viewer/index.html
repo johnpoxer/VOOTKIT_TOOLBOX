@@ -64,10 +64,8 @@
     <p class="page-lede">Open a CSV as a sortable, filterable table.</p>
     <div class="trust"><span class="badge badge-local">runs on your device</span><span class="badge">no sign-up</span><span class="badge">no watermark</span><span class="badge">no daily limit</span></div>
   </header>
-  <div class="ws ws-soon">
-         <strong>Not built yet</strong>
-         <p class="note">CSV Viewer &amp; Sorter is on the roadmap. The page below explains what it will do — we publish the tool before we promote it.</p>
-         <a class="btn" href="../">Browse Data tools that work today</a>
+  <div class="ws" id="workspace" data-tool="csv-viewer">
+         <noscript><p class="note">This tool needs JavaScript — it runs the calculation in your browser rather than on a server.</p></noscript>
        </div>
 
   <!-- 2-4. explanation, benefits, how it works -->
@@ -111,8 +109,8 @@
     <h3>CSV to Chart <span class="soon">soon</span></h3>
     <p>Turn two columns into a bar or line chart.</p>
     <span class="card-foot"><span class="badge badge-local">runs on your device</span></span>
-  </a><a class="card tool-card is-soon" href="../../../tools/data/json-csv/">
-    <h3>JSON ↔ CSV <span class="soon">soon</span></h3>
+  </a><a class="card tool-card" href="../../../tools/data/json-csv/">
+    <h3>JSON ↔ CSV</h3>
     <p>Convert a JSON array to CSV and back.</p>
     <span class="card-foot"><span class="badge badge-local">runs on your device</span></span>
   </a></div>
@@ -149,6 +147,7 @@ if(s)document.documentElement.setAttribute('data-theme',s);
 t.addEventListener('click',function(){var c=document.documentElement.getAttribute('data-theme'),x=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',x);try{localStorage.setItem('vk-theme',x);}catch(e){}});})();
 </script>
 <script src="../../../assets/js/recent.js" defer></script>
-
+<script src="../../../assets/js/widget.js" defer></script>
+<script src="../../../assets/js/tools-data.js" defer></script>
 </body>
 </html>
