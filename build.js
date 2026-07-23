@@ -17,6 +17,17 @@ const IMAGE = require("./assets/js/tools-image.js");
 const PDF = require("./assets/js/tools-pdf.js");
 const VIDEO = require("./assets/js/tools-video.js");
 const VIDEOFX = require("./assets/js/tools-videofx.js");
+/* widget tools: text-in/out interactive tools sharing assets/js/widget.js.
+ * We list ids here (their modules export logic, not id lists) so page
+ * generation knows which module script to load. */
+const WIDGETS = {
+  "assets/js/tools-text.js": ["word-counter","case-converter","text-diff","readability","line-tools","lorem-ipsum","markdown-editor"],
+  "assets/js/tools-dev.js": ["json-formatter","base64","jwt-decoder","uuid-generator","hash-generator","regex-tester","url-encoder","timestamp-converter"]
+};
+function widgetScriptsFor(id) {
+  for (const file in WIDGETS) if (WIDGETS[file].indexOf(id) !== -1) return ["assets/js/widget.js", file];
+  return null;
+}
 const SITE = "https://vootkit.com";
 const PUB = "ca-pub-5906583727409402";
 
@@ -270,6 +281,7 @@ function toolPage(t) {
   const hasPdf = !!PDF[t.id];
   const hasVideo = !!VIDEO[t.id];
   const hasVideoFx = !!VIDEOFX[t.id];
+  const widgetScripts = widgetScriptsFor(t.id);
   const workspace = live
     ? `<div class="ws" id="workspace" data-tool="${t.id}">
          <noscript><p class="note">This tool needs JavaScript — it runs the calculation in your browser rather than on a server.</p></noscript>
@@ -349,7 +361,8 @@ function toolPage(t) {
 </div>` + foot(3, hasCalc ? (VIDEO[t.id] ? ['assets/js/calc.js','assets/js/tools-video.js'] : ['assets/js/calc.js','assets/js/tools-money.js','assets/js/tools-money2.js'])
     : hasFile ? ['assets/js/filetool.js','assets/js/tools-image.js']
     : hasPdf ? ['assets/js/filetool.js','assets/js/tools-pdf.js']
-    : hasVideoFx ? ['assets/js/filetool.js','assets/js/videoengine.js','assets/js/tools-videofx.js'] : []);
+    : hasVideoFx ? ['assets/js/filetool.js','assets/js/videoengine.js','assets/js/tools-videofx.js']
+    : widgetScripts ? widgetScripts : []);
 }
 
 function exampleFor(t, c) {

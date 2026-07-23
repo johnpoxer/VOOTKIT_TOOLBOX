@@ -107,3 +107,26 @@
   background-size: 16px 16px; background-position: 0 0, 0 8px, 8px -8px, -8px 0; }
 .ft-code { background: var(--n-900); color: #cfe4ff; border-radius: var(--r-md); padding: var(--s-3) var(--s-4); font: 12.5px/1.6 var(--font-mono); overflow-x: auto; margin-top: var(--s-2); white-space: pre; }
 [data-theme="dark"] .ft-code { background: #060c16; }
+
+/* ---------- widget tools (text / developer) ---------- */
+.widget { display: flex; flex-direction: column; gap: var(--s-4); }
+.wtext { width: 100%; font: inherit; line-height: 1.5; resize: vertical; padding: var(--s-3) var(--s-4);
+  border: 1px solid var(--line-strong); border-radius: var(--r-md); background: var(--surface); color: var(--ink); }
+.wtext:focus { outline: 0; border-color: var(--accent); box-shadow: var(--ring); }
+.wmono, .wtext.wmono, textarea.wmono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: var(--t-sm); }
+.wbtns { display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: center; }
+.wbtns .field { max-width: 8rem; }
+.btn.is-ok { background: var(--ok); border-color: var(--ok); color: #fff; }
+.wgrid2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-4); }
+@media (max-width: 640px) { .wgrid2 { grid-template-columns: 1fr; } }
+.wfield { display: flex; flex-direction: column; gap: var(--s-2); }
+.wlab { font-size: var(--t-sm); font-weight: 600; color: var(--ink-soft); }
+.wdiff { max-height: 420px; overflow: auto; border: 1px solid var(--line); border-radius: var(--r-md);
+  background: var(--surface-sunk); font-family: ui-monospace, Menlo, Consolas, monospace; font-size: var(--t-sm); }
+.wdl { padding: 2px var(--s-3); white-space: pre-wrap; word-break: break-word; border-left: 3px solid transparent; }
+.wdl-add { background: color-mix(in srgb, var(--ok) 12%, transparent); border-left-color: var(--ok); }
+.wdl-del { background: color-mix(in srgb, var(--err) 12%, transparent); border-left-color: var(--err); }
+.wdl-same { color: var(--ink-soft); }
+.wmd { min-height: 260px; overflow: auto; padding: var(--s-4); border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); }
+.wcheck { display: inline-flex; align-items: center; gap: var(--s-2); font-size: var(--t-sm); color: var(--ink-soft); }
+.calc-stat.wmono b { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: var(--t-xs); word-break: break-all; }
