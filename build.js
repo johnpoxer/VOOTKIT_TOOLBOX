@@ -14,6 +14,7 @@ const ROOT = __dirname;
 const VK = require("./data/catalog.js");
 const MONEY = Object.assign({}, require("./assets/js/tools-money.js"), require("./assets/js/tools-money2.js"));
 const IMAGE = require("./assets/js/tools-image.js");
+const PDF = require("./assets/js/tools-pdf.js");
 const SITE = "https://vootkit.com";
 const PUB = "ca-pub-5906583727409402";
 
@@ -264,6 +265,7 @@ function toolPage(t) {
 
   const hasCalc = !!MONEY[t.id];
   const hasFile = !!IMAGE[t.id];
+  const hasPdf = !!PDF[t.id];
   const workspace = live
     ? `<div class="ws" id="workspace" data-tool="${t.id}">
          <noscript><p class="note">This tool needs JavaScript — it runs the calculation in your browser rather than on a server.</p></noscript>
@@ -339,7 +341,8 @@ function toolPage(t) {
       : "This tool calls an external service to fetch live data. It does not require an account and does not track you."}</p>
   </section>
 </div>` + foot(3, hasCalc ? ['assets/js/calc.js','assets/js/tools-money.js','assets/js/tools-money2.js']
-    : hasFile ? ['assets/js/filetool.js','assets/js/tools-image.js'] : []);
+    : hasFile ? ['assets/js/filetool.js','assets/js/tools-image.js']
+    : hasPdf ? ['assets/js/filetool.js','assets/js/tools-pdf.js'] : []);
 }
 
 function exampleFor(t, c) {

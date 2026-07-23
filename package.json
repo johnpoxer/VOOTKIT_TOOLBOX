@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "node build.js",
-    "test": "node test/calc.test.js && node test/filetool.test.js",
+    "test": "node test/calc.test.js && node test/filetool.test.js && node test/pdf.test.js",
     "check": "node test/calc.test.js && node test/filetool.test.js && node --check build.js && node --check data/catalog.js && node --check assets/js/home.js && node --check assets/js/recent.js && node build.js"
   }
 }

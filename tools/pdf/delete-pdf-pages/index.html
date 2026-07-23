@@ -64,10 +64,8 @@
     <p class="page-lede">Remove pages you don&#39;t need and re-save.</p>
     <div class="trust"><span class="badge badge-local">runs on your device</span><span class="badge">no sign-up</span><span class="badge">no watermark</span><span class="badge">no daily limit</span></div>
   </header>
-  <div class="ws ws-soon">
-         <strong>Not built yet</strong>
-         <p class="note">Delete PDF Pages is on the roadmap. The page below explains what it will do — we publish the tool before we promote it.</p>
-         <a class="btn" href="../">Browse PDF tools that work today</a>
+  <div class="ws" id="workspace" data-tool="delete-pdf-pages">
+         <noscript><p class="note">This tool needs JavaScript — it runs the calculation in your browser rather than on a server.</p></noscript>
        </div>
 
   <!-- 2-4. explanation, benefits, how it works -->
@@ -123,8 +121,8 @@
     <h3>Rotate PDF</h3>
     <p>Rotate every page 90, 180 or 270 degrees.</p>
     <span class="card-foot"><span class="badge badge-local">runs on your device</span></span>
-  </a><a class="card tool-card is-soon" href="../../../tools/pdf/reorder-pdf/">
-    <h3>Organise PDF Pages <span class="soon">soon</span></h3>
+  </a><a class="card tool-card" href="../../../tools/pdf/reorder-pdf/">
+    <h3>Organise PDF Pages</h3>
     <p>Drag pages into a new order.</p>
     <span class="card-foot"><span class="badge badge-local">runs on your device</span></span>
   </a><a class="card tool-card" href="../../../tools/pdf/pdf-to-jpg/">
@@ -165,6 +163,7 @@ if(s)document.documentElement.setAttribute('data-theme',s);
 t.addEventListener('click',function(){var c=document.documentElement.getAttribute('data-theme'),x=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',x);try{localStorage.setItem('vk-theme',x);}catch(e){}});})();
 </script>
 <script src="../../../assets/js/recent.js" defer></script>
-
+<script src="../../../assets/js/filetool.js" defer></script>
+<script src="../../../assets/js/tools-pdf.js" defer></script>
 </body>
 </html>

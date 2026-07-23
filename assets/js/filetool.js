@@ -130,6 +130,9 @@
         c.value = String(o.def);
       } else if (o.type === 'range') {
         c = el('input', { id: id, type: 'range', min: String(o.min), max: String(o.max), step: String(o.step || 1), value: String(o.def), class: 'range' });
+      } else if (o.type === 'text') {
+        c = el('input', { id: id, type: 'text', class: 'field', value: String(o.def), autocomplete: 'off' });
+        if (o.placeholder) c.setAttribute('placeholder', o.placeholder);
       } else {
         c = el('input', { id: id, type: 'number', class: 'field', value: String(o.def), step: String(o.step || 1) });
         if (o.min != null) c.setAttribute('min', String(o.min));
