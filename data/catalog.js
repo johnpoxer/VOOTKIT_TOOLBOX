@@ -86,8 +86,8 @@
     t("salary-converter","tax","Salary Converter","Hourly, weekly, monthly and annual, both ways.",{tier:"retention",status:"live",kw:"wage per hour annual"}),
 
     /* ---------- MONEY: freelance & business ---------- */
-    t("invoice-generator","business","Invoice Generator","Build a clean invoice with line items and export a PDF.",{tier:"money",kw:"bill client pdf"}),
-    t("quote-generator","business","Quote & Estimate","Send a professional estimate before the work starts.",{tier:"money",kw:"proposal estimate client"}),
+    t("invoice-generator","business","Invoice Generator","Build a clean invoice with line items and export a PDF.",{tier:"money",status:"live",kw:"bill client pdf"}),
+    t("quote-generator","business","Quote & Estimate","Send a professional estimate before the work starts.",{tier:"money",status:"live",kw:"proposal estimate client"}),
     t("hourly-rate","business","Hourly Rate Calculator","The rate you must charge to hit your income target.",{tier:"money",status:"live",kw:"freelance day rate pricing"}),
     t("profit-margin","business","Profit Margin","Margin, markup and selling price from cost.",{tier:"money",status:"live",kw:"markup gross margin"}),
     t("break-even","business","Break-Even Point","Units and revenue needed to cover fixed costs.",{tier:"money",status:"live",kw:"fixed variable cost"}),
@@ -97,7 +97,7 @@
     /* ---------- TRAFFIC: PDF ---------- */
     t("merge-pdf","pdf","Merge PDFs","Combine several PDFs into one, in the order you choose.",{tier:"traffic",status:"live",kw:"join combine documents"}),
     t("split-pdf","pdf","Split PDF","Pull a page range out into a new document.",{tier:"traffic",status:"live",kw:"extract pages separate"}),
-    t("compress-pdf","pdf","Compress PDF","Shrink a PDF below an upload or email limit.",{tier:"traffic",kw:"reduce file size smaller"}),
+    t("compress-pdf","pdf","Compress PDF","Shrink a PDF below an upload or email limit.",{tier:"traffic",status:"live",kw:"reduce file size smaller"}),
     t("rotate-pdf","pdf","Rotate PDF","Rotate every page 90, 180 or 270 degrees.",{tier:"traffic",status:"live",kw:"sideways scan orientation"}),
     t("delete-pdf-pages","pdf","Delete PDF Pages","Remove pages you don't need and re-save.",{tier:"traffic",status:"live",kw:"remove page"}),
     t("reorder-pdf","pdf","Organise PDF Pages","Drag pages into a new order.",{tier:"traffic",status:"live",kw:"rearrange sort pages"}),
@@ -107,8 +107,8 @@
     t("pdf-page-numbers","pdf","Add Page Numbers","Stamp page numbers in any corner.",{tier:"traffic",status:"live",kw:"numbering footer"}),
     t("pdf-watermark","pdf","PDF Watermark","Stamp text across pages to mark a draft or copy.",{tier:"traffic",status:"live",kw:"draft confidential stamp"}),
     t("protect-pdf","pdf","Protect PDF","Add a password to a document before sharing it.",{tier:"traffic",status:"live",kw:"encrypt password lock"}),
-    t("pdf-redact","pdf","Redact PDF","Black out sensitive text before you send a file.",{tier:"edge",kw:"black out censor private"}),
-    t("compare-pdf","pdf","Compare PDFs","Spot what changed between two versions.",{tier:"traffic",kw:"diff versions changes"}),
+    t("pdf-redact","pdf","Redact PDF","Black out sensitive text before you send a file.",{tier:"edge",status:"live",kw:"black out censor private"}),
+    t("compare-pdf","pdf","Compare PDFs","Spot what changed between two versions.",{tier:"traffic",status:"live",kw:"diff versions changes"}),
 
     /* ---------- TRAFFIC: images ---------- */
     t("compress-image","images","Image Compressor","Shrink JPG, PNG or WebP with a quality slider.",{tier:"traffic",status:"live",kw:"reduce photo size smaller"}),

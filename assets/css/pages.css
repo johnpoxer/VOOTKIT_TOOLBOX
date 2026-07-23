@@ -182,3 +182,9 @@ video.wcode { padding: 0; }
 .wtype-target { font-family: ui-monospace, Menlo, Consolas, monospace; line-height: 1.9; padding: var(--s-4); border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface-sunk); font-size: var(--t-md); }
 .wtype-target .ok { color: var(--ok); } .wtype-target .bad { color: #fff; background: var(--err); border-radius: 2px; } .wtype-target .cur { border-bottom: 2px solid var(--accent); }
 .wbrb { width: 100%; aspect-ratio: 16/9; border: 1px solid var(--line); border-radius: var(--r-md); background: #000; }
+
+/* ---------- business docs ---------- */
+.witems { display: flex; flex-direction: column; gap: var(--s-2); }
+.witem { display: grid; grid-template-columns: 1fr 80px 100px 40px; gap: var(--s-2); align-items: center; }
+.wdocframe { width: 100%; height: 520px; border: 1px solid var(--line); border-radius: var(--r-md); background: #fff; }
+@media (max-width: 640px) { .witem { grid-template-columns: 1fr 60px 80px 36px; } }

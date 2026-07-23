@@ -33,7 +33,9 @@ const WIDGETS = {
   "assets/js/tools-pdfview.js": ["pdf-to-jpg","pdf-to-text"],
   "assets/js/tools-a11y.js": ["accessible-palette","color-blind-simulator","heading-checker","alt-text-auditor","caption-validator"],
   "assets/js/tools-privacy2.js": ["url-cleaner","metadata-remover","screenshot-redactor"],
-  "assets/js/tools-misc.js": ["salary-converter","typing-test","brb-overlay"]
+  "assets/js/tools-misc.js": ["salary-converter","typing-test","brb-overlay"],
+  "assets/js/tools-business.js": ["invoice-generator","quote-generator"],
+  "assets/js/tools-pdfedit.js": ["compress-pdf","pdf-redact","compare-pdf"]
 };
 function widgetScriptsFor(id) {
   for (const file in WIDGETS) if (WIDGETS[file].indexOf(id) !== -1) return ["assets/js/widget.js", file];
