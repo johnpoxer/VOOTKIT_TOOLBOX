@@ -150,12 +150,12 @@
 
     /* ---------- EDGE: accessibility ---------- */
     t("contrast-checker","accessibility","Contrast Checker","Check text against WCAG AA and AAA.",{tier:"edge",status:"live",kw:"wcag ratio legible"}),
-    t("accessible-palette","accessibility","Accessible Palette","Build a palette that passes contrast at every pairing.",{tier:"edge",kw:"wcag colors combination"}),
-    t("color-blind-simulator","accessibility","Colour-Blindness Simulator","See a design as different types of colour vision do.",{tier:"edge",kw:"deuteranopia protanopia simulate"}),
-    t("heading-checker","accessibility","Heading Structure Checker","Find skipped levels and broken document outlines.",{tier:"edge",kw:"h1 h2 outline semantic"}),
-    t("alt-text-auditor","accessibility","Alt Text Auditor","Find missing or unhelpful image alt text.",{tier:"edge",kw:"image description screen reader"}),
+    t("accessible-palette","accessibility","Accessible Palette","Build a palette that passes contrast at every pairing.",{tier:"edge",status:"live",kw:"wcag colors combination"}),
+    t("color-blind-simulator","accessibility","Colour-Blindness Simulator","See a design as different types of colour vision do.",{tier:"edge",status:"live",kw:"deuteranopia protanopia simulate"}),
+    t("heading-checker","accessibility","Heading Structure Checker","Find skipped levels and broken document outlines.",{tier:"edge",status:"live",kw:"h1 h2 outline semantic"}),
+    t("alt-text-auditor","accessibility","Alt Text Auditor","Find missing or unhelpful image alt text.",{tier:"edge",status:"live",kw:"image description screen reader"}),
     t("tap-target-checker","accessibility","Tap Target Checker","Flag controls smaller than the 44px minimum.",{tier:"edge",kw:"touch size mobile wcag"}),
-    t("caption-validator","accessibility","Caption / SRT Validator","Check subtitle timing and formatting.",{tier:"edge",kw:"srt vtt subtitles timing"}),
+    t("caption-validator","accessibility","Caption / SRT Validator","Check subtitle timing and formatting.",{tier:"edge",status:"live",kw:"srt vtt subtitles timing"}),
 
     /* ---------- EDGE: privacy ---------- */
     t("metadata-remover","privacy","Metadata Remover","Strip hidden data from images and documents.",{tier:"edge",kw:"exif scrub clean anonymise"}),

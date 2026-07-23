@@ -30,7 +30,8 @@ const WIDGETS = {
   "assets/js/tools-data.js": ["csv-viewer","json-csv","csv-to-chart"],
   "assets/js/tools-imaging.js": ["exif-viewer","color-from-image","meme-generator"],
   "assets/js/tools-codes.js": ["qr-generator","qr-scanner","barcode-generator"],
-  "assets/js/tools-pdfview.js": ["pdf-to-jpg","pdf-to-text"]
+  "assets/js/tools-pdfview.js": ["pdf-to-jpg","pdf-to-text"],
+  "assets/js/tools-a11y.js": ["accessible-palette","color-blind-simulator","heading-checker","alt-text-auditor","caption-validator"]
 };
 function widgetScriptsFor(id) {
   for (const file in WIDGETS) if (WIDGETS[file].indexOf(id) !== -1) return ["assets/js/widget.js", file];

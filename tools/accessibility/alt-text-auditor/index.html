@@ -64,10 +64,8 @@
     <p class="page-lede">Find missing or unhelpful image alt text.</p>
     <div class="trust"><span class="badge badge-local">runs on your device</span><span class="badge">no sign-up</span><span class="badge">no watermark</span><span class="badge">no daily limit</span></div>
   </header>
-  <div class="ws ws-soon">
-         <strong>Not built yet</strong>
-         <p class="note">Alt Text Auditor is on the roadmap. The page below explains what it will do — we publish the tool before we promote it.</p>
-         <a class="btn" href="../">Browse Accessibility tools that work today</a>
+  <div class="ws" id="workspace" data-tool="alt-text-auditor">
+         <noscript><p class="note">This tool needs JavaScript — it runs the calculation in your browser rather than on a server.</p></noscript>
        </div>
 
   <!-- 2-4. explanation, benefits, how it works -->
@@ -111,24 +109,24 @@
     <h3>Contrast Checker</h3>
     <p>Check text against WCAG AA and AAA.</p>
     <span class="card-foot"><span class="badge badge-local">runs on your device</span></span>
-  </a><a class="card tool-card is-soon" href="../../../tools/accessibility/accessible-palette/">
-    <h3>Accessible Palette <span class="soon">soon</span></h3>
+  </a><a class="card tool-card" href="../../../tools/accessibility/accessible-palette/">
+    <h3>Accessible Palette</h3>
     <p>Build a palette that passes contrast at every pairing.</p>
     <span class="card-foot"><span class="badge badge-local">runs on your device</span></span>
-  </a><a class="card tool-card is-soon" href="../../../tools/accessibility/color-blind-simulator/">
-    <h3>Colour-Blindness Simulator <span class="soon">soon</span></h3>
+  </a><a class="card tool-card" href="../../../tools/accessibility/color-blind-simulator/">
+    <h3>Colour-Blindness Simulator</h3>
     <p>See a design as different types of colour vision do.</p>
     <span class="card-foot"><span class="badge badge-local">runs on your device</span></span>
-  </a><a class="card tool-card is-soon" href="../../../tools/accessibility/heading-checker/">
-    <h3>Heading Structure Checker <span class="soon">soon</span></h3>
+  </a><a class="card tool-card" href="../../../tools/accessibility/heading-checker/">
+    <h3>Heading Structure Checker</h3>
     <p>Find skipped levels and broken document outlines.</p>
     <span class="card-foot"><span class="badge badge-local">runs on your device</span></span>
   </a><a class="card tool-card is-soon" href="../../../tools/accessibility/tap-target-checker/">
     <h3>Tap Target Checker <span class="soon">soon</span></h3>
     <p>Flag controls smaller than the 44px minimum.</p>
     <span class="card-foot"><span class="badge badge-local">runs on your device</span></span>
-  </a><a class="card tool-card is-soon" href="../../../tools/accessibility/caption-validator/">
-    <h3>Caption / SRT Validator <span class="soon">soon</span></h3>
+  </a><a class="card tool-card" href="../../../tools/accessibility/caption-validator/">
+    <h3>Caption / SRT Validator</h3>
     <p>Check subtitle timing and formatting.</p>
     <span class="card-foot"><span class="badge badge-local">runs on your device</span></span>
   </a></div>
@@ -165,6 +163,7 @@ if(s)document.documentElement.setAttribute('data-theme',s);
 t.addEventListener('click',function(){var c=document.documentElement.getAttribute('data-theme'),x=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',x);try{localStorage.setItem('vk-theme',x);}catch(e){}});})();
 </script>
 <script src="../../../assets/js/recent.js" defer></script>
-
+<script src="../../../assets/js/widget.js" defer></script>
+<script src="../../../assets/js/tools-a11y.js" defer></script>
 </body>
 </html>
