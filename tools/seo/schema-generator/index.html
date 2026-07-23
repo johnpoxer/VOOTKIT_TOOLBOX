@@ -64,10 +64,8 @@
     <p class="page-lede">JSON-LD for FAQ, article, product and breadcrumbs.</p>
     <div class="trust"><span class="badge badge-local">runs on your device</span><span class="badge">no sign-up</span><span class="badge">no watermark</span><span class="badge">no daily limit</span></div>
   </header>
-  <div class="ws ws-soon">
-         <strong>Not built yet</strong>
-         <p class="note">Schema Markup Generator is on the roadmap. The page below explains what it will do — we publish the tool before we promote it.</p>
-         <a class="btn" href="../">Browse SEO &amp; Marketing tools that work today</a>
+  <div class="ws" id="workspace" data-tool="schema-generator">
+         <noscript><p class="note">This tool needs JavaScript — it runs the calculation in your browser rather than on a server.</p></noscript>
        </div>
 
   <!-- 2-4. explanation, benefits, how it works -->
@@ -107,28 +105,28 @@
   <!-- 6. related tools — never a dead end -->
   <section class="section">
     <h2 class="h-sm">Next in SEO &amp; Marketing</h2>
-    <div class="grid"><a class="card tool-card is-soon" href="../../../tools/seo/meta-tag-generator/">
-    <h3>Meta Tag Generator <span class="soon">soon</span></h3>
+    <div class="grid"><a class="card tool-card" href="../../../tools/seo/meta-tag-generator/">
+    <h3>Meta Tag Generator</h3>
     <p>Title, description and Open Graph tags, ready to paste.</p>
     <span class="card-foot"><span class="badge badge-local">runs on your device</span></span>
-  </a><a class="card tool-card is-soon" href="../../../tools/seo/serp-preview/">
-    <h3>SERP Snippet Preview <span class="soon">soon</span></h3>
+  </a><a class="card tool-card" href="../../../tools/seo/serp-preview/">
+    <h3>SERP Snippet Preview</h3>
     <p>See how your page looks in Google before publishing.</p>
     <span class="card-foot"><span class="badge badge-local">runs on your device</span></span>
-  </a><a class="card tool-card is-soon" href="../../../tools/seo/og-preview/">
-    <h3>Social Share Preview <span class="soon">soon</span></h3>
+  </a><a class="card tool-card" href="../../../tools/seo/og-preview/">
+    <h3>Social Share Preview</h3>
     <p>Preview how a link unfurls on social platforms.</p>
     <span class="card-foot"><span class="badge badge-local">runs on your device</span></span>
-  </a><a class="card tool-card is-soon" href="../../../tools/seo/robots-generator/">
-    <h3>robots.txt Generator <span class="soon">soon</span></h3>
+  </a><a class="card tool-card" href="../../../tools/seo/robots-generator/">
+    <h3>robots.txt Generator</h3>
     <p>Build a valid robots.txt with the rules you need.</p>
     <span class="card-foot"><span class="badge badge-local">runs on your device</span></span>
-  </a><a class="card tool-card is-soon" href="../../../tools/seo/sitemap-generator/">
-    <h3>Sitemap Generator <span class="soon">soon</span></h3>
+  </a><a class="card tool-card" href="../../../tools/seo/sitemap-generator/">
+    <h3>Sitemap Generator</h3>
     <p>Turn a URL list into a valid XML sitemap.</p>
     <span class="card-foot"><span class="badge badge-local">runs on your device</span></span>
-  </a><a class="card tool-card is-soon" href="../../../tools/seo/keyword-density/">
-    <h3>Keyword Density <span class="soon">soon</span></h3>
+  </a><a class="card tool-card" href="../../../tools/seo/keyword-density/">
+    <h3>Keyword Density</h3>
     <p>Term frequency and stuffing check for a page.</p>
     <span class="card-foot"><span class="badge badge-local">runs on your device</span></span>
   </a></div>
@@ -165,6 +163,7 @@ if(s)document.documentElement.setAttribute('data-theme',s);
 t.addEventListener('click',function(){var c=document.documentElement.getAttribute('data-theme'),x=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',x);try{localStorage.setItem('vk-theme',x);}catch(e){}});})();
 </script>
 <script src="../../../assets/js/recent.js" defer></script>
-
+<script src="../../../assets/js/widget.js" defer></script>
+<script src="../../../assets/js/tools-seo.js" defer></script>
 </body>
 </html>

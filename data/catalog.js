@@ -138,15 +138,15 @@
     t("upload-time","video","Upload Time Estimator","How long a file will take on your connection.",{tier:"retention",status:"live",kw:"how long to upload"}),
 
     /* ---------- GAP: SEO & marketing ---------- */
-    t("meta-tag-generator","seo","Meta Tag Generator","Title, description and Open Graph tags, ready to paste.",{tier:"gap",kw:"og tags head html"}),
-    t("serp-preview","seo","SERP Snippet Preview","See how your page looks in Google before publishing.",{tier:"gap",kw:"google result title truncate"}),
-    t("og-preview","seo","Social Share Preview","Preview how a link unfurls on social platforms.",{tier:"gap",kw:"open graph twitter card"}),
-    t("robots-generator","seo","robots.txt Generator","Build a valid robots.txt with the rules you need.",{tier:"gap",kw:"crawl disallow"}),
-    t("sitemap-generator","seo","Sitemap Generator","Turn a URL list into a valid XML sitemap.",{tier:"gap",kw:"xml urls index"}),
-    t("schema-generator","seo","Schema Markup Generator","JSON-LD for FAQ, article, product and breadcrumbs.",{tier:"gap",kw:"structured data json-ld rich result"}),
-    t("keyword-density","seo","Keyword Density","Term frequency and stuffing check for a page.",{tier:"gap",kw:"frequency count on page"}),
-    t("slug-generator","seo","URL Slug Generator","Clean, readable slugs from any title.",{tier:"gap",kw:"permalink url safe"}),
-    t("utm-builder","seo","UTM Link Builder","Build tagged campaign URLs consistently.",{tier:"gap",kw:"campaign tracking analytics"}),
+    t("meta-tag-generator","seo","Meta Tag Generator","Title, description and Open Graph tags, ready to paste.",{tier:"gap",status:"live",kw:"og tags head html"}),
+    t("serp-preview","seo","SERP Snippet Preview","See how your page looks in Google before publishing.",{tier:"gap",status:"live",kw:"google result title truncate"}),
+    t("og-preview","seo","Social Share Preview","Preview how a link unfurls on social platforms.",{tier:"gap",status:"live",kw:"open graph twitter card"}),
+    t("robots-generator","seo","robots.txt Generator","Build a valid robots.txt with the rules you need.",{tier:"gap",status:"live",kw:"crawl disallow"}),
+    t("sitemap-generator","seo","Sitemap Generator","Turn a URL list into a valid XML sitemap.",{tier:"gap",status:"live",kw:"xml urls index"}),
+    t("schema-generator","seo","Schema Markup Generator","JSON-LD for FAQ, article, product and breadcrumbs.",{tier:"gap",status:"live",kw:"structured data json-ld rich result"}),
+    t("keyword-density","seo","Keyword Density","Term frequency and stuffing check for a page.",{tier:"gap",status:"live",kw:"frequency count on page"}),
+    t("slug-generator","seo","URL Slug Generator","Clean, readable slugs from any title.",{tier:"gap",status:"live",kw:"permalink url safe"}),
+    t("utm-builder","seo","UTM Link Builder","Build tagged campaign URLs consistently.",{tier:"gap",status:"live",kw:"campaign tracking analytics"}),
 
     /* ---------- EDGE: accessibility ---------- */
     t("contrast-checker","accessibility","Contrast Checker","Check text against WCAG AA and AAA.",{tier:"edge",status:"live",kw:"wcag ratio legible"}),

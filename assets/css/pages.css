@@ -144,3 +144,16 @@
 .wpal span { background: rgba(255,255,255,.85); color: #111; font-size: var(--t-xs); font-family: ui-monospace, monospace; padding: 2px 6px; border-radius: 4px; }
 .wshadowbox { display: grid; place-items: center; height: 200px; border-radius: var(--r-md); background: var(--surface-sunk); }
 .wshadowtarget { width: 120px; height: 120px; border-radius: var(--r-md); background: var(--surface); }
+
+/* ---------- SEO tool previews ---------- */
+.wserp { padding: var(--s-4); border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); max-width: 640px; }
+.wserp-url { font-size: var(--t-sm); color: var(--ink-soft); }
+.wserp-title { color: #1a0dab; font-size: 20px; line-height: 1.3; margin: 2px 0; }
+.wserp-desc { font-size: var(--t-sm); color: var(--ink-soft); line-height: 1.5; }
+[data-theme="dark"] .wserp-title { color: #8ab4f8; }
+.wog { max-width: 500px; border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; }
+.wog-img { aspect-ratio: 1.91/1; background: var(--surface-sunk) center/cover no-repeat; display: grid; place-items: center; color: var(--ink-mute); font-size: var(--t-sm); }
+.wog-body { padding: var(--s-3) var(--s-4); background: var(--surface-sunk); }
+.wog-dom { font-size: var(--t-xs); color: var(--ink-mute); text-transform: uppercase; }
+.wog-title { font-weight: 600; margin: 2px 0; }
+.wog-desc { font-size: var(--t-sm); color: var(--ink-soft); }
