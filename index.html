@@ -70,6 +70,37 @@
 .sec-head { text-align: center; margin-bottom: var(--s-6); }
 .sec-head h2 { font-size: var(--t-2xl); margin: var(--s-2) 0 var(--s-2); }
 .sec-head p { color: var(--ink-soft); max-width: 52ch; margin-inline: auto; }
+
+/* hero trust chips */
+.hero-trust { list-style: none; display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-5); justify-content: center; margin: var(--s-5) 0 0; padding: 0; }
+.hero-trust li { display: inline-flex; align-items: center; gap: 7px; font-size: var(--t-sm); font-weight: 500; color: var(--ink-soft); }
+.hero-trust svg { width: 16px; height: 16px; fill: none; stroke: var(--ok); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+/* search result icons */
+.res-ic { flex: none; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 9px; background: var(--accent-weak); color: var(--accent); }
+.res-ic svg { width: 19px; height: 19px; }
+
+/* popular tools */
+.pop-sec { padding-top: var(--s-6); }
+.popular-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--s-3); }
+.poptool { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-3) var(--s-4); background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); box-shadow: var(--shadow-sm); transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease); min-height: var(--tap); }
+.poptool:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--accent-border); }
+.poptool-ic { flex: none; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 10px; background: var(--accent-weak); color: var(--accent); }
+.poptool-ic svg { width: 22px; height: 22px; }
+.poptool-tx { display: flex; flex-direction: column; min-width: 0; }
+.poptool-tx strong { font-size: var(--t-base); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.poptool-tx span { font-size: var(--t-xs); color: var(--ink-mute); }
+
+/* category cards */
+.catgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--s-4); }
+.catcard { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: var(--s-4); row-gap: var(--s-2); padding: var(--s-5); background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--shadow-sm); transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease); }
+.catcard:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--accent-border); }
+.catcard-ic { grid-row: 1 / 3; width: 48px; height: 48px; display: grid; place-items: center; border-radius: 12px; background: var(--accent-weak); color: var(--accent); }
+.catcard-ic svg { width: 26px; height: 26px; }
+.catcard-body h3 { font-size: var(--t-lg); margin: 0 0 2px; }
+.catcard-body p { font-size: var(--t-sm); color: var(--ink-soft); line-height: 1.5; margin: 0; }
+.catcard-n { grid-column: 2; font-size: var(--t-xs); font-weight: 600; color: var(--accent); }
+@media (max-width: 640px) { .catcard { padding: var(--s-4); } }
 </style>
 </head>
 <body>
@@ -122,6 +153,22 @@
       <button class="try" type="button" data-try="mortgage">work out a mortgage</button>
       <button class="try" type="button" data-try="heic">convert HEIC photos</button>
     </div>
+
+    <ul class="hero-trust" aria-label="What makes Vootkit different">
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Runs on your device</li>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Nothing uploaded</li>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> No sign-up</li>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> No daily limit</li>
+    </ul>
+  </section>
+
+  <section class="section wrap pop-sec">
+    <div class="sec-head">
+      <span class="eyebrow">Most used</span>
+      <h2>Popular tools</h2>
+      <p>The ones people open first — every one runs right here in your browser.</p>
+    </div>
+    <div class="popular-grid" id="popular"></div>
   </section>
 
   <section class="section wrap">
@@ -144,7 +191,7 @@
       <h2><span data-count="live">50</span> tools live across <span data-count="cats">17</span> categories</h2>
       <p>Built to scale to hundreds without becoming a maze.</p>
     </div>
-    <div class="grid" id="cats"></div>
+    <div class="catgrid" id="cats"></div>
   </section>
 
   <section class="section wrap">
