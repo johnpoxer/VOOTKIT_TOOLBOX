@@ -148,6 +148,8 @@ t.addEventListener('click',function(){var c=document.documentElement.getAttribut
 </script>
 <script src="${up}assets/js/ui.js" defer></script>
 <script src="${up}assets/js/recent.js" defer></script>
+<script src="${up}assets/js/supabase-config.js" defer></script>
+<script src="${up}assets/js/auth.js" defer></script>
 ${(extraScripts||[]).map(function(x){return '<script src="'+up+x+'" defer></script>';}).join("\n")}
 </body>
 </html>
@@ -495,6 +497,88 @@ function componentsPage() {
   return html;
 }
 
+/* ---------- auth pages ---------- */
+function authShell(kind, title, desc, inner) {
+  const url = `${SITE}/auth/${kind}/`;
+  const ld = { "@context": "https://schema.org", "@type": "WebPage", name: title, url };
+  return head({ depth: 2, url, ads: false, ld, title: `${title} — Vootkit`, desc })
+    .replace("</head>", '<meta name="robots" content="noindex">\n</head>') +
+`<div class="wrap auth-wrap">
+  <div class="auth-card" data-auth="${kind === "sign-in" ? "signin" : kind === "sign-up" ? "signup" : kind === "reset" ? "reset" : kind === "update-password" ? "update" : "callback"}">
+    <a class="auth-brand" href="../../" aria-label="Vootkit home"><svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="17.5" fill="none" stroke="var(--accent)" stroke-opacity=".45" stroke-width="1.3" stroke-dasharray="17 7"/><path d="M12.5 14.5 21.5 30 31.5 13.5" fill="none" stroke="var(--accent)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg> vootkit</a>
+    ${inner}
+    <p class="auth-msg note" role="status" hidden></p>
+  </div>
+  <p class="auth-foot note">The tools are free and need no account. Sign in only to sync favorites and history. <a href="../../pricing.html">See plans</a></p>
+</div>` + foot(2, ["assets/js/authforms.js"]);
+}
+const OAUTH = `<div class="auth-oauth">
+    <button class="btn btn-block" type="button" data-oauth="google"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#4285F4" d="M22.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h6c-.3 1.4-1 2.6-2.3 3.4v2.8h3.6c2.1-1.9 3.3-4.8 3.3-8z"/><path fill="#34A853" d="M12 23c3 0 5.6-1 7.4-2.8l-3.6-2.8c-1 .7-2.3 1.1-3.8 1.1-2.9 0-5.4-2-6.3-4.6H1.9v2.9C3.7 20.5 7.5 23 12 23z"/><path fill="#FBBC05" d="M5.7 13.9c-.2-.7-.4-1.4-.4-2.1s.1-1.4.4-2.1V6.8H1.9C1.1 8.3.7 10.1.7 11.8s.4 3.5 1.2 5z"/><path fill="#EA4335" d="M12 4.7c1.6 0 3.1.6 4.2 1.7l3.1-3.1C17.6 1.5 15 .5 12 .5 7.5.5 3.7 3 1.9 6.8l3.8 2.9C6.6 6.7 9.1 4.7 12 4.7z"/></svg> Continue with Google</button>
+  </div>
+  <div class="auth-or"><span>or</span></div>`;
+
+function pageSignIn() {
+  return authShell("sign-in", "Sign in", "Sign in to your Vootkit account to sync favorites and history.", `
+    <h1>Welcome back</h1>
+    ${OAUTH}
+    <form novalidate>
+      <label class="wfield"><span class="wlab">Email</span><input class="field" id="email" type="email" autocomplete="email" required></label>
+      <label class="wfield"><span class="wlab">Password</span><input class="field" id="password" type="password" autocomplete="current-password" required></label>
+      <div class="auth-row"><a href="../reset/">Forgot password?</a></div>
+      <button class="btn btn-primary btn-block" type="submit">Sign in</button>
+    </form>
+    <p class="auth-alt">New to Vootkit? <a href="../sign-up/">Create an account</a></p>`);
+}
+function pageSignUp() {
+  return authShell("sign-up", "Create account", "Create a free Vootkit account to sync favorites and history across devices.", `
+    <h1>Create your account</h1>
+    ${OAUTH}
+    <form novalidate>
+      <label class="wfield"><span class="wlab">Name</span><input class="field" id="name" type="text" autocomplete="name"></label>
+      <label class="wfield"><span class="wlab">Email</span><input class="field" id="email" type="email" autocomplete="email" required></label>
+      <label class="wfield"><span class="wlab">Password</span><input class="field" id="password" type="password" autocomplete="new-password" required></label>
+      <button class="btn btn-primary btn-block" type="submit">Create account</button>
+    </form>
+    <p class="auth-alt">Already have an account? <a href="../sign-in/">Sign in</a></p>`);
+}
+function pageReset() {
+  return authShell("reset", "Reset password", "Reset your Vootkit account password.", `
+    <h1>Reset your password</h1>
+    <p class="note">Enter your email and we'll send a reset link.</p>
+    <form novalidate>
+      <label class="wfield"><span class="wlab">Email</span><input class="field" id="email" type="email" autocomplete="email" required></label>
+      <button class="btn btn-primary btn-block" type="submit">Send reset link</button>
+    </form>
+    <p class="auth-alt"><a href="../sign-in/">Back to sign in</a></p>`);
+}
+function pageUpdatePassword() {
+  return authShell("update-password", "Set new password", "Set a new password for your Vootkit account.", `
+    <h1>Set a new password</h1>
+    <form novalidate>
+      <label class="wfield"><span class="wlab">New password</span><input class="field" id="password" type="password" autocomplete="new-password" required></label>
+      <button class="btn btn-primary btn-block" type="submit">Save new password</button>
+    </form>`);
+}
+function pageCallback() {
+  return authShell("callback", "Signing you in", "Completing sign-in.", `
+    <h1>Signing you in…</h1>
+    <p class="note">One moment while we confirm your account.</p>
+    <div class="vk-skeleton" style="height:48px;margin-top:var(--s-4)"></div>`);
+}
+
+/* ---------- account / dashboard ---------- */
+function accountPage() {
+  const url = `${SITE}/account/`;
+  const ld = { "@context": "https://schema.org", "@type": "WebPage", name: "Your account", url };
+  return head({ depth: 1, url, ads: false, ld, title: "Your account — Vootkit", desc: "Your Vootkit account — favorites, history, subscription and settings." })
+    .replace("</head>", '<meta name="robots" content="noindex">\n</head>') +
+`<div class="wrap section">
+  <div id="account" class="acct">
+    <div class="vk-skeleton" style="height:80px;max-width:420px"></div>
+  </div>
+</div>` + foot(1, ["assets/js/account.js"]);
+}
+
 /* ---------- pricing (static, Stripe-ready) ---------- */
 function pricingPage() {
   const url = SITE + "/pricing.html";
@@ -584,6 +668,12 @@ function pricingPage() {
 const LAST_UPDATED = "22 July 2026";
 
 write("pricing.html", pricingPage());
+write("auth/sign-in/index.html", pageSignIn());
+write("auth/sign-up/index.html", pageSignUp());
+write("auth/reset/index.html", pageReset());
+write("auth/update-password/index.html", pageUpdatePassword());
+write("auth/callback/index.html", pageCallback());
+write("account/index.html", accountPage());
 write("privacy.html", legalPage({
   file: "privacy.html", title: "Privacy Policy", updated: LAST_UPDATED,
   desc: "How Vootkit handles your data. Most tools process files entirely in your browser and never upload them.",
