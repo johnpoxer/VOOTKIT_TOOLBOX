@@ -224,6 +224,28 @@ body::before {
 }
 @media (prefers-reduced-motion: no-preference) { .acct-upgrade-cta:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgb(0 0 0 / .18); } }
 
+/* ---------- contact / support form ---------- */
+.contact-layout { display: grid; grid-template-columns: 1.4fr 1fr; gap: var(--s-6); align-items: start; margin-top: var(--s-2); }
+.contact-card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg);
+  padding: var(--s-6); box-shadow: var(--shadow-md);
+}
+.contact-form { display: flex; flex-direction: column; gap: var(--s-4); }
+.cf-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-4); }
+.cf-field { display: flex; flex-direction: column; gap: 6px; }
+.cf-lab { font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .05em; font-size: 10px; font-weight: 600; color: var(--ink-soft); }
+.contact-form textarea.field { min-height: 140px; resize: vertical; line-height: 1.5; }
+.cf-actions { display: flex; align-items: center; gap: var(--s-4); flex-wrap: wrap; }
+.cf-status { font-size: var(--t-sm); font-weight: 500; }
+.cf-status.is-ok { color: var(--ok); }
+.cf-status.is-err { color: var(--err); }
+.contact-aside h2 { font-size: var(--t-lg); margin-bottom: var(--s-2); }
+.contact-email { font-family: var(--font-mono); font-weight: 600; color: var(--accent); font-size: var(--t-md); margin: 2px 0 var(--s-3); word-break: break-all; }
+@media (max-width: 780px) {
+  .contact-layout { grid-template-columns: 1fr; }
+  .cf-row { grid-template-columns: 1fr; }
+}
+
 /* ---------- micro-interactions ---------- */
 .brand svg { transition: transform var(--dur) var(--ease); }
 @media (prefers-reduced-motion: no-preference) { .brand:hover svg { transform: rotate(-6deg) scale(1.06); } }

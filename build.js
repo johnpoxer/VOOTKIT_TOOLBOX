@@ -134,7 +134,7 @@ function foot(depth, extraScripts) {
   <div class="wrap">
     <div class="ftr-grid">
       <div><h4>Categories</h4>${cats}</div>
-      <div><h4>Vootkit</h4><a href="${up}tools/">All tools</a><a href="${up}pricing.html">Pricing</a><a href="${up}privacy.html">Privacy</a><a href="${up}terms.html">Terms</a><a href="mailto:${SUPPORT}">Contact</a></div>
+      <div><h4>Vootkit</h4><a href="${up}tools/">All tools</a><a href="${up}pricing.html">Pricing</a><a href="${up}about.html">About</a><a href="${up}privacy.html">Privacy</a><a href="${up}terms.html">Terms</a><a href="${up}contact.html">Contact &amp; support</a></div>
       <div><h4>How it works</h4><p style="font-size:var(--t-sm);color:var(--ink-soft)">Most tools run entirely in your browser. Your files aren't uploaded, so there's no queue and no daily limit.</p></div>
     </div>
     <p style="margin-top:var(--s-6);font-size:var(--t-sm)">&copy; <span id="yr"></span> Vootkit — every digital task, done in your browser.</p>
@@ -485,7 +485,7 @@ function infoPage(o) {
     ${o.lede ? `<p class="page-lede">${o.lede}</p>` : ""}
   </header>
   ${o.body}
-</div>` + foot(depth);
+</div>` + foot(depth, o.scripts);
 }
 
 /* ---------- component gallery (internal reference, noindex) ---------- */
@@ -864,22 +864,61 @@ write("about.html", infoPage({
 }));
 
 write("contact.html", infoPage({
-  slug: "contact.html", title: "Contact Vootkit", eyebrow: "Contact",
-  h1: "We'd love to hear from you.",
-  desc: "Get in touch with the Vootkit team — support, feedback, tool requests, partnerships and billing questions.",
-  lede: "Questions, feedback, a tool you wish existed, or a billing issue — reach out and we'll help.",
+  slug: "contact.html", title: "Contact Support", eyebrow: "Contact & Support",
+  h1: "Contact support.",
+  desc: "Contact the Vootkit support team directly from this page — send us a message about a tool, a bug, billing, a feature idea or a partnership.",
+  lede: "Send us a message and we'll get back to you by email. No mail app needed — just fill in the box below.",
+  scripts: ["assets/js/contact.js"],
   body: `
-  <div class="plans" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">
-    <div class="plan"><h2>Support &amp; feedback</h2><p class="plan-tag">Help with a tool, a bug, or an idea for something new.</p><a class="btn btn-primary btn-block" href="mailto:${SUPPORT}?subject=Vootkit%20support">Email support</a><p class="note" style="margin-top:var(--s-3)">${SUPPORT}</p></div>
-    <div class="plan"><h2>Billing &amp; Pro</h2><p class="plan-tag">Questions about a Pro or Teams subscription.</p><a class="btn btn-block" href="mailto:${SUPPORT}?subject=Vootkit%20billing">Email billing</a><p class="note" style="margin-top:var(--s-3)">Payments are handled securely by Stripe.</p></div>
-    <div class="plan"><h2>Partnerships</h2><p class="plan-tag">Press, partnerships, or business enquiries.</p><a class="btn btn-block" href="mailto:${SUPPORT}?subject=Vootkit%20partnership">Get in touch</a></div>
-  </div>
-  <section class="prose faq" style="margin-top:var(--s-8)">
-    <h2>Before you write</h2>
-    <details><summary>Do I need an account to use the tools?</summary><p>No. Every tool works without signing up. An account only syncs your history and manages a subscription if you upgrade.</p></details>
-    <details><summary>Is my file uploaded when I use a tool?</summary><p>For most tools, no — they run entirely in your browser. Tools that need the internet are clearly labelled on their page.</p></details>
-    <details><summary>How fast will I hear back?</summary><p>We read every message and aim to reply within a couple of business days.</p></details>
-  </section>`
+  <div class="contact-layout">
+    <div class="contact-card">
+      <form id="contact-form" class="contact-form" name="contact" method="POST" action="/contact-success/" data-netlify="true" netlify-honeypot="bot-field">
+        <input type="hidden" name="form-name" value="contact">
+        <p class="cf-hp" hidden><label>Leave this empty <input name="bot-field"></label></p>
+        <div class="cf-row">
+          <label class="cf-field"><span class="cf-lab">Your name</span><input class="field" type="text" name="name" required autocomplete="name" placeholder="Jane Doe"></label>
+          <label class="cf-field"><span class="cf-lab">Your email</span><input class="field" type="email" name="email" required autocomplete="email" placeholder="you@example.com"></label>
+        </div>
+        <label class="cf-field"><span class="cf-lab">Topic</span>
+          <select class="field" name="topic">
+            <option>Support &amp; feedback</option>
+            <option>A bug or something broken</option>
+            <option>Billing &amp; Pro subscription</option>
+            <option>A tool idea / feature request</option>
+            <option>Press &amp; partnerships</option>
+          </select>
+        </label>
+        <label class="cf-field"><span class="cf-lab">Message</span><textarea class="field" name="message" rows="6" required placeholder="How can we help?"></textarea></label>
+        <div class="cf-actions">
+          <button class="btn btn-primary" type="submit" id="cf-submit">Send message</button>
+          <span class="cf-status" id="cf-status" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+    </div>
+    <aside class="contact-aside">
+      <h2>Other ways to reach us</h2>
+      <p class="note">Prefer your own email app? Write to us at:</p>
+      <p class="contact-email">${SUPPORT}</p>
+      <p class="note">We read every message and aim to reply within a couple of business days.</p>
+      <div class="prose faq" style="margin-top:var(--s-5)">
+        <details><summary>Do I need an account to use the tools?</summary><p>No. Every tool works without signing up. An account only syncs your history and manages a subscription if you upgrade.</p></details>
+        <details><summary>Is my file uploaded when I use a tool?</summary><p>For most tools, no — they run entirely in your browser. Tools that need the internet are clearly labelled on their page.</p></details>
+      </div>
+    </aside>
+  </div>`
+}));
+
+write("contact-success/index.html", infoPage({
+  depth: 1, slug: "contact-success/", title: "Message sent", eyebrow: "Contact & Support",
+  h1: "Thanks — your message is on its way.",
+  desc: "Your message to Vootkit support was sent successfully.",
+  lede: "We've received your message and will reply by email within a couple of business days.",
+  body: `
+  <div class="cta-band" style="margin-top:var(--s-6);padding:var(--s-6);border:1px solid var(--line);border-radius:var(--r-lg);text-align:center">
+    <h2 style="margin:0 0 var(--s-2)">In the meantime…</h2>
+    <p class="page-lede" style="margin:0 auto var(--s-4)">Explore the tools while you wait for our reply.</p>
+    <a class="btn btn-primary" href="../tools/">Browse all tools</a>
+  </div>`
 }));
 
 write("blog/index.html", infoPage({

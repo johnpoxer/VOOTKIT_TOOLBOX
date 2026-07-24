@@ -6,26 +6,26 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#fbfcfe" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)">
-<title>Contact Vootkit — Vootkit</title>
-<meta name="description" content="Get in touch with the Vootkit team — support, feedback, tool requests, partnerships and billing questions.">
+<title>Contact Support — Vootkit</title>
+<meta name="description" content="Contact the Vootkit support team directly from this page — send us a message about a tool, a bug, billing, a feature idea or a partnership.">
 <link rel="canonical" href="https://www.vootkit.com/contact.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Vootkit">
-<meta property="og:title" content="Contact Vootkit">
-<meta property="og:description" content="Get in touch with the Vootkit team — support, feedback, tool requests, partnerships and billing questions.">
+<meta property="og:title" content="Contact Support">
+<meta property="og:description" content="Contact the Vootkit support team directly from this page — send us a message about a tool, a bug, billing, a feature idea or a partnership.">
 <meta property="og:url" content="https://www.vootkit.com/contact.html">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Contact Vootkit">
-<meta name="twitter:description" content="Get in touch with the Vootkit team — support, feedback, tool requests, partnerships and billing questions.">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Contact Vootkit","url":"https://www.vootkit.com/contact.html","description":"Get in touch with the Vootkit team — support, feedback, tool requests, partnerships and billing questions."}</script>
+<meta name="twitter:title" content="Contact Support">
+<meta name="twitter:description" content="Contact the Vootkit support team directly from this page — send us a message about a tool, a bug, billing, a feature idea or a partnership.">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Contact Support","url":"https://www.vootkit.com/contact.html","description":"Contact the Vootkit support team directly from this page — send us a message about a tool, a bug, billing, a feature idea or a partnership."}</script>
 <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@700;800&display=swap">
-<link rel="stylesheet" href="./assets/css/tokens.css?v=1784911869145">
-<link rel="stylesheet" href="./assets/css/base.css?v=1784911869145">
-<link rel="stylesheet" href="./assets/css/pages.css?v=1784911869145">
-<link rel="stylesheet" href="./assets/css/skin.css?v=1784911869145">
+<link rel="stylesheet" href="./assets/css/tokens.css?v=1784912305213">
+<link rel="stylesheet" href="./assets/css/base.css?v=1784912305213">
+<link rel="stylesheet" href="./assets/css/pages.css?v=1784912305213">
+<link rel="stylesheet" href="./assets/css/skin.css?v=1784912305213">
 <!-- no ads inside an active tool workspace -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KLEWTJ8WG2"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-KLEWTJ8WG2');</script>
@@ -62,35 +62,60 @@
 </header>
 <main id="main" tabindex="-1"><div class="wrap section">
   <header class="sec-head" style="margin-top:var(--s-4)">
-    <span class="eyebrow">Contact</span>
-    <h1 class="page-h1">We&#39;d love to hear from you.</h1>
-    <p class="page-lede">Questions, feedback, a tool you wish existed, or a billing issue — reach out and we'll help.</p>
+    <span class="eyebrow">Contact &amp; Support</span>
+    <h1 class="page-h1">Contact support.</h1>
+    <p class="page-lede">Send us a message and we'll get back to you by email. No mail app needed — just fill in the box below.</p>
   </header>
   
-  <div class="plans" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">
-    <div class="plan"><h2>Support &amp; feedback</h2><p class="plan-tag">Help with a tool, a bug, or an idea for something new.</p><a class="btn btn-primary btn-block" href="mailto:vootkit1@gmail.com?subject=Vootkit%20support">Email support</a><p class="note" style="margin-top:var(--s-3)">vootkit1@gmail.com</p></div>
-    <div class="plan"><h2>Billing &amp; Pro</h2><p class="plan-tag">Questions about a Pro or Teams subscription.</p><a class="btn btn-block" href="mailto:vootkit1@gmail.com?subject=Vootkit%20billing">Email billing</a><p class="note" style="margin-top:var(--s-3)">Payments are handled securely by Stripe.</p></div>
-    <div class="plan"><h2>Partnerships</h2><p class="plan-tag">Press, partnerships, or business enquiries.</p><a class="btn btn-block" href="mailto:vootkit1@gmail.com?subject=Vootkit%20partnership">Get in touch</a></div>
+  <div class="contact-layout">
+    <div class="contact-card">
+      <form id="contact-form" class="contact-form" name="contact" method="POST" action="/contact-success/" data-netlify="true" netlify-honeypot="bot-field">
+        <input type="hidden" name="form-name" value="contact">
+        <p class="cf-hp" hidden><label>Leave this empty <input name="bot-field"></label></p>
+        <div class="cf-row">
+          <label class="cf-field"><span class="cf-lab">Your name</span><input class="field" type="text" name="name" required autocomplete="name" placeholder="Jane Doe"></label>
+          <label class="cf-field"><span class="cf-lab">Your email</span><input class="field" type="email" name="email" required autocomplete="email" placeholder="you@example.com"></label>
+        </div>
+        <label class="cf-field"><span class="cf-lab">Topic</span>
+          <select class="field" name="topic">
+            <option>Support &amp; feedback</option>
+            <option>A bug or something broken</option>
+            <option>Billing &amp; Pro subscription</option>
+            <option>A tool idea / feature request</option>
+            <option>Press &amp; partnerships</option>
+          </select>
+        </label>
+        <label class="cf-field"><span class="cf-lab">Message</span><textarea class="field" name="message" rows="6" required placeholder="How can we help?"></textarea></label>
+        <div class="cf-actions">
+          <button class="btn btn-primary" type="submit" id="cf-submit">Send message</button>
+          <span class="cf-status" id="cf-status" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+    </div>
+    <aside class="contact-aside">
+      <h2>Other ways to reach us</h2>
+      <p class="note">Prefer your own email app? Write to us at:</p>
+      <p class="contact-email">vootkit1@gmail.com</p>
+      <p class="note">We read every message and aim to reply within a couple of business days.</p>
+      <div class="prose faq" style="margin-top:var(--s-5)">
+        <details><summary>Do I need an account to use the tools?</summary><p>No. Every tool works without signing up. An account only syncs your history and manages a subscription if you upgrade.</p></details>
+        <details><summary>Is my file uploaded when I use a tool?</summary><p>For most tools, no — they run entirely in your browser. Tools that need the internet are clearly labelled on their page.</p></details>
+      </div>
+    </aside>
   </div>
-  <section class="prose faq" style="margin-top:var(--s-8)">
-    <h2>Before you write</h2>
-    <details><summary>Do I need an account to use the tools?</summary><p>No. Every tool works without signing up. An account only syncs your history and manages a subscription if you upgrade.</p></details>
-    <details><summary>Is my file uploaded when I use a tool?</summary><p>For most tools, no — they run entirely in your browser. Tools that need the internet are clearly labelled on their page.</p></details>
-    <details><summary>How fast will I hear back?</summary><p>We read every message and aim to reply within a couple of business days.</p></details>
-  </section>
 </div></main>
 <footer class="ftr">
   <div class="wrap">
     <div class="ftr-grid">
       <div><h4>Categories</h4><a href="./tools/pdf/">PDF</a><a href="./tools/images/">Images</a><a href="./tools/video/">Video &amp; Streaming</a><a href="./tools/finance/">Finance &amp; Loans</a><a href="./tools/insurance/">Insurance</a><a href="./tools/realestate/">Real Estate</a><a href="./tools/tax/">Tax, Payroll &amp; HR</a><a href="./tools/business/">Freelance &amp; Business</a></div>
-      <div><h4>Vootkit</h4><a href="./tools/">All tools</a><a href="./pricing.html">Pricing</a><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a><a href="mailto:vootkit1@gmail.com">Contact</a></div>
+      <div><h4>Vootkit</h4><a href="./tools/">All tools</a><a href="./pricing.html">Pricing</a><a href="./about.html">About</a><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a><a href="./contact.html">Contact &amp; support</a></div>
       <div><h4>How it works</h4><p style="font-size:var(--t-sm);color:var(--ink-soft)">Most tools run entirely in your browser. Your files aren't uploaded, so there's no queue and no daily limit.</p></div>
     </div>
     <p style="margin-top:var(--s-6);font-size:var(--t-sm)">&copy; <span id="yr"></span> Vootkit — every digital task, done in your browser.</p>
   </div>
 </footer>
-<script src="./data/site.config.js?v=1784911869145"></script>
-<script src="./data/catalog.js?v=1784911869145"></script>
+<script src="./data/site.config.js?v=1784912305213"></script>
+<script src="./data/catalog.js?v=1784912305213"></script>
 <script>
 document.getElementById('yr').textContent=new Date().getFullYear();
 (function(){var b=document.getElementById('burger'),n=document.getElementById('nav');
@@ -99,11 +124,11 @@ var t=document.getElementById('theme'),s=null;try{s=localStorage.getItem('vk-the
 if(s)document.documentElement.setAttribute('data-theme',s);
 t.addEventListener('click',function(){var c=document.documentElement.getAttribute('data-theme'),x=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',x);try{localStorage.setItem('vk-theme',x);}catch(e){}});})();
 </script>
-<script src="./assets/js/ui.js?v=1784911869145" defer></script>
-<script src="./assets/js/recent.js?v=1784911869145" defer></script>
-<script src="./assets/js/supabase-config.js?v=1784911869145" defer></script>
-<script src="./assets/js/auth.js?v=1784911869145" defer></script>
-<script src="./assets/js/usage.js?v=1784911869145" defer></script>
-
+<script src="./assets/js/ui.js?v=1784912305213" defer></script>
+<script src="./assets/js/recent.js?v=1784912305213" defer></script>
+<script src="./assets/js/supabase-config.js?v=1784912305213" defer></script>
+<script src="./assets/js/auth.js?v=1784912305213" defer></script>
+<script src="./assets/js/usage.js?v=1784912305213" defer></script>
+<script src="./assets/js/contact.js?v=1784912305213" defer></script>
 </body>
 </html>
