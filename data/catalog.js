@@ -162,6 +162,7 @@
     t("keyword-density","seo","Keyword Density","Term frequency and stuffing check for a page.",{tier:"gap",status:"live",kw:"frequency count on page"}),
     t("slug-generator","seo","URL Slug Generator","Clean, readable slugs from any title.",{tier:"gap",status:"live",kw:"permalink url safe"}),
     t("utm-builder","seo","UTM Link Builder","Build tagged campaign URLs consistently.",{tier:"gap",status:"live",kw:"campaign tracking analytics"}),
+    t("url-shortener","seo","URL Shortener","Turn a long link into a short, shareable vootkit.com/s/ link — with an optional custom name.",{tier:"traffic",status:"live",processing:"network",kw:"link shortener short url tinyurl bitly custom alias"}),
 
     /* ---------- EDGE: accessibility ---------- */
     t("contrast-checker","accessibility","Contrast Checker","Check text against WCAG AA and AAA.",{tier:"edge",status:"live",kw:"wcag ratio legible"}),

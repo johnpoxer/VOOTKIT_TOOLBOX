@@ -43,6 +43,7 @@ function widgetScriptsFor(id) {
   for (const file in WIDGETS) if (WIDGETS[file].indexOf(id) !== -1) return ["assets/js/widget.js", file];
   return null;
 }
+const LINKTOOLS = ["url-shortener"];   // server-backed tools (Supabase + Netlify functions)
 const CFG = require("./data/site.config.js");
 const SITE = CFG.origin;
 const SUPPORT = CFG.supportEmail;
@@ -350,6 +351,7 @@ function toolPage(t) {
   const hasPdf = !!PDF[t.id];
   const hasVideo = !!VIDEO[t.id];
   const hasVideoFx = !!VIDEOFX[t.id];
+  const hasLink = LINKTOOLS.indexOf(t.id) !== -1;
   const widgetScripts = widgetScriptsFor(t.id);
   const workspace = live
     ? `<div class="ws" id="workspace" data-tool="${t.id}">
@@ -434,6 +436,7 @@ function toolPage(t) {
     : hasFile ? ['assets/js/filetool.js','assets/js/tools-image.js']
     : hasPdf ? ['assets/js/filetool.js','assets/js/tools-pdf.js']
     : hasVideoFx ? ['assets/js/filetool.js','assets/js/videoengine.js','assets/js/tools-videofx.js']
+    : hasLink ? ['assets/js/tools-linktools.js']
     : widgetScripts ? widgetScripts : []);
 }
 

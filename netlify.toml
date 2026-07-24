@@ -14,6 +14,13 @@
   status = 301
   force = true
 
+# Short links: /s/<code> is served by the redirect function, which looks the
+# code up in Supabase and 302s to the real destination.
+[[redirects]]
+  from = "/s/:code"
+  to = "/.netlify/functions/redirect?code=:code"
+  status = 200
+
 # Serverless functions (Stripe Checkout) need their deps.
 [functions]
   node_bundler = "esbuild"

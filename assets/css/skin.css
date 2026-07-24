@@ -261,6 +261,16 @@ body::before {
 .blog-body h2 { margin-top: var(--s-6); }
 .blog-body img { max-width: 100%; height: auto; border-radius: var(--r-md); }
 
+/* ---------- link tools (URL shortener) ---------- */
+.lk-form { display: flex; flex-direction: column; gap: var(--s-4); max-width: 560px; }
+.lk-alias { display: flex; align-items: stretch; border: 1px solid var(--line-strong); border-radius: var(--r-md); overflow: hidden; }
+.lk-alias .lk-prefix { display: flex; align-items: center; padding: 0 10px; background: var(--surface-sunk); color: var(--ink-mute); font-family: var(--font-mono); font-size: var(--t-sm); white-space: nowrap; border-right: 1px solid var(--line); }
+.lk-alias .field { border: 0; border-radius: 0; }
+.lk-out { margin-top: var(--s-5); background: var(--accent-weak); border: 1px solid var(--accent-border); border-radius: var(--r-md); padding: var(--s-4); }
+.lk-row { display: flex; align-items: center; gap: var(--s-3); margin-top: 6px; flex-wrap: wrap; }
+.lk-short { font-family: var(--font-mono); font-weight: 600; font-size: var(--t-md); color: var(--accent); word-break: break-all; text-decoration: none; }
+.btn-sm { padding: 6px 14px; font-size: var(--t-sm); }
+
 /* ---------- micro-interactions ---------- */
 .brand svg { transition: transform var(--dur) var(--ease); }
 @media (prefers-reduced-motion: no-preference) { .brand:hover svg { transform: rotate(-6deg) scale(1.06); } }
