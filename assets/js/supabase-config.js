@@ -12,6 +12,8 @@
     url: 'https://qfqdmzwmjxdiqzeybaoo.supabase.co',
     ref: 'qfqdmzwmjxdiqzeybaoo',
     region: 'eu-west-1',
-    anonKey: root.__VK_SUPABASE_ANON__ || '' // set by deploy/env; empty = auth disabled
+    // Public anon key — safe in the browser; Row-Level Security protects the data.
+    // (An env override is still honoured so the key can be rotated without a rebuild.)
+    anonKey: root.__VK_SUPABASE_ANON__ || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFmcWRtendtanhkaXF6ZXliYW9vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0NjY1MDgsImV4cCI6MjA5NzA0MjUwOH0.AtbTdxEhW7EcxcF2aQ0-ODeAhUfEiA5LWk7MNQoYNqg'
   };
 })(typeof window !== 'undefined' ? window : globalThis);
