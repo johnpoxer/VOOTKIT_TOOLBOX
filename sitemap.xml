@@ -38,6 +38,7 @@
   <url><loc>https://www.vootkit.com/tools/finance/currency-converter/</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://www.vootkit.com/tools/finance/percentage-calculator/</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://www.vootkit.com/tools/finance/tip-split/</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://www.vootkit.com/tools/finance/discount-calculator/</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://www.vootkit.com/tools/insurance/life-insurance-needs/</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://www.vootkit.com/tools/insurance/auto-insurance-estimator/</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://www.vootkit.com/tools/insurance/deductible-calculator/</loc><changefreq>monthly</changefreq></url>
@@ -59,6 +60,12 @@
   <url><loc>https://www.vootkit.com/tools/business/invoice-generator/</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://www.vootkit.com/tools/business/quote-generator/</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://www.vootkit.com/tools/business/hourly-rate/</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://www.vootkit.com/tools/business/amazon-fba-calculator/</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://www.vootkit.com/tools/business/etsy-fee-calculator/</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://www.vootkit.com/tools/business/stripe-fee-calculator/</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://www.vootkit.com/tools/business/paypal-fee-calculator/</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://www.vootkit.com/tools/business/roas-calculator/</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://www.vootkit.com/tools/business/cac-ltv-calculator/</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://www.vootkit.com/tools/business/profit-margin/</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://www.vootkit.com/tools/business/break-even/</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://www.vootkit.com/tools/business/late-fee/</loc><changefreq>monthly</changefreq></url>

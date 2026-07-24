@@ -68,7 +68,7 @@ near(M.futureValue(500, 50, 0, 12), 500 + 600, 1e-9, "FV zero rate");
 /* ---- tool specs sanity ---- */
 const TOOLS = Object.assign({}, require("../assets/js/tools-money.js"), require("../assets/js/tools-money2.js"));
 const ids = Object.keys(TOOLS);
-eq(ids.length, 33, "33 money tools defined");
+eq(ids.length, 40, "40 money tools defined");
 
 const VK = require("../data/catalog.js");
 ids.forEach(id => {
@@ -118,6 +118,33 @@ assert.ok(r.stats[0].value === "150.0%", "markup 40->100 is 150%, got " + r.stat
 /* Break-even: 4000 fixed, 49 price, 18 variable → ceil(4000/31)=130 units */
 r = T2["break-even"].compute({ fixed: 4000, price: 49, varCost: 18, cur: "USD" }, M);
 assert.ok(/130/.test(r.headline.value), "break-even 130 units, got " + r.headline.value); pass++;
+
+/* ---- E-commerce calculators (independently computed) ---- */
+/* Stripe net: $100 at 2.9% + $0.30 → fee $3.20, net $96.80 */
+r = T2["stripe-fee-calculator"].compute({ amount: 100, pct: 2.9, fixed: 0.30, mode: "net", cur: "USD" }, M);
+assert.ok(/96\.80/.test(r.headline.value), "stripe net 96.80, got " + r.headline.value); pass++;
+/* Stripe gross-up: to receive $100 → charge (100.30)/(0.971) = $103.30 */
+r = T2["stripe-fee-calculator"].compute({ amount: 100, pct: 2.9, fixed: 0.30, mode: "gross", cur: "USD" }, M);
+assert.ok(/103\.30/.test(r.headline.value), "stripe gross 103.30, got " + r.headline.value); pass++;
+/* Amazon FBA: 29.99 price, 6 cost, 15% referral (4.4985), 5.5 FBA, 1 ship → profit 12.99 */
+r = T2["amazon-fba-calculator"].compute({ price: 29.99, cost: 6, referral: 15, fba: 5.5, ship: 1, other: 0, cur: "USD" }, M);
+assert.ok(/12\.99/.test(r.headline.value), "fba profit 12.99, got " + r.headline.value); pass++;
+/* Etsy: 25 item + 5 ship, 6.5% txn, 3%+0.25 pay, 0.20 listing → payout 26.70 */
+r = T2["etsy-fee-calculator"].compute({ price: 25, ship: 5, cost: 6, txn: 6.5, procPct: 3, procFix: 0.25, cur: "USD" }, M);
+assert.ok(/26\.70/.test(r.headline.value), "etsy payout 26.70, got " + r.headline.value); pass++;
+/* ROAS: 5000 revenue / 1250 spend = 4.00x ; break-even at 40% margin = 2.50x */
+r = T2["roas-calculator"].compute({ revenue: 5000, spend: 1250, margin: 40, cur: "USD" }, M);
+assert.ok(/4\.00×/.test(r.headline.value), "roas 4.00x, got " + r.headline.value); pass++;
+assert.ok(/2\.50×/.test(r.headline.sub), "break-even roas 2.50x, got " + r.headline.sub); pass++;
+/* CAC/LTV: spend 10000 / 200 = $50 CAC ; LTV 60*4*3*0.5 = 360 → 7.2:1 */
+r = T2["cac-ltv-calculator"].compute({ spend: 10000, customers: 200, aov: 60, freq: 4, years: 3, margin: 50, cur: "USD" }, M);
+assert.ok(/7\.2 : 1/.test(r.headline.value), "ltv:cac 7.2:1, got " + r.headline.value); pass++;
+/* Discount: 80 at 25% off → 60 final, save 20 (25% off) */
+r = T2["discount-calculator"].compute({ price: 80, disc: 25, coupon: 0, tax: 0, cur: "USD" }, M);
+assert.ok(/60\.00/.test(r.headline.value), "discount final 60, got " + r.headline.value); pass++;
+/* Stacked: 100 at 25% then 10% coupon → 67.50 (32.5% off), NOT 65 */
+r = T2["discount-calculator"].compute({ price: 100, disc: 25, coupon: 10, tax: 0, cur: "USD" }, M);
+assert.ok(/67\.50/.test(r.headline.value), "stacked discount 67.50, got " + r.headline.value); pass++;
 
 /* Overtime: 22/hr, 40 normal, 8 OT at 1.5x → 880 + 264 = 1144 */
 r = T2["overtime-calculator"].compute({ rate: 22, normal: 40, otHours: 8, mult: 1.5, weeks: 1, cur: "USD" }, M);

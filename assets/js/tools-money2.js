@@ -718,6 +718,207 @@
           note: 'Check whether your lender allows overpayments without penalty, and whether they shorten the term or reduce the payment — you want the former.'
         };
       }
+    },
+
+    /* ================= E-COMMERCE & SELLER (high CPC) ================= */
+
+    'amazon-fba-calculator': {
+      fields: [
+        { k: 'price', label: 'Selling price', def: 29.99, min: 0, step: 0.5 },
+        { k: 'cost', label: 'Product cost (per unit)', def: 6, min: 0, step: 0.5, hint: 'What you pay your supplier' },
+        { k: 'referral', label: 'Amazon referral fee %', def: 15, min: 0, max: 45, step: 1, type: 'number', hint: 'Usually 8–15% by category' },
+        { k: 'fba', label: 'FBA fulfilment fee', def: 5.5, min: 0, step: 0.1, hint: 'From Amazon’s fee schedule' },
+        { k: 'ship', label: 'Shipping to Amazon (per unit)', def: 1, min: 0, step: 0.1 },
+        { k: 'other', label: 'Other costs (PPC, prep)', def: 0, min: 0, step: 0.5 },
+        CUR
+      ],
+      compute: function (v) {
+        var referralFee = v.price * v.referral / 100;
+        var invest = v.cost + v.ship + v.other;
+        var fees = referralFee + v.fba;
+        var profit = v.price - fees - invest;
+        var margin = v.price > 0 ? profit / v.price * 100 : 0;
+        var roi = invest > 0 ? profit / invest * 100 : 0;
+        return {
+          headline: { label: 'Net profit per unit', value: F.money2(profit, v.cur), sub: margin.toFixed(1) + '% margin · ' + roi.toFixed(0) + '% ROI' },
+          stats: [
+            { label: 'Referral fee', value: F.money2(referralFee, v.cur) },
+            { label: 'FBA + fees', value: F.money2(fees, v.cur) },
+            { label: 'Your cost / unit', value: F.money2(invest, v.cur) },
+            { label: 'Margin', value: margin.toFixed(1) + '%' }
+          ],
+          note: profit < 0 ? 'This product loses money at these numbers — raise the price or cut costs.' : 'ROI is profit ÷ your cost per unit; many sellers target 100%+. Amazon’s fee schedule changes — confirm current fees for your category.'
+        };
+      }
+    },
+
+    'etsy-fee-calculator': {
+      fields: [
+        { k: 'price', label: 'Item price', def: 25, min: 0, step: 0.5 },
+        { k: 'ship', label: 'Shipping you charge', def: 5, min: 0, step: 0.5 },
+        { k: 'cost', label: 'Your cost to make it', def: 6, min: 0, step: 0.5 },
+        { k: 'txn', label: 'Transaction fee %', def: 6.5, min: 0, step: 0.1, type: 'number', hint: 'Etsy standard is 6.5%' },
+        { k: 'procPct', label: 'Payment processing %', def: 3, min: 0, step: 0.1, type: 'number' },
+        { k: 'procFix', label: 'Payment fixed fee', def: 0.25, min: 0, step: 0.05 },
+        CUR
+      ],
+      compute: function (v) {
+        var revenue = v.price + v.ship;
+        var listing = 0.20;
+        var transaction = revenue * v.txn / 100;
+        var payment = revenue * v.procPct / 100 + v.procFix;
+        var fees = listing + transaction + payment;
+        var payout = revenue - fees;
+        var profit = payout - v.cost;
+        var effPct = revenue > 0 ? fees / revenue * 100 : 0;
+        return {
+          headline: { label: 'Your payout after fees', value: F.money2(payout, v.cur), sub: profit >= 0 ? F.money2(profit, v.cur) + ' profit after costs' : F.money2(-profit, v.cur) + ' loss after costs' },
+          stats: [
+            { label: 'Total Etsy fees', value: F.money2(fees, v.cur) },
+            { label: 'Transaction fee', value: F.money2(transaction, v.cur) },
+            { label: 'Payment fee', value: F.money2(payment, v.cur) },
+            { label: 'Effective fee', value: effPct.toFixed(1) + '%' }
+          ],
+          note: 'Includes the $0.20 listing fee, transaction fee and payment processing. Etsy also charges offsite-ads fees on some sales — not included here.'
+        };
+      }
+    },
+
+    'stripe-fee-calculator': {
+      fields: [
+        { k: 'amount', label: 'Amount', def: 100, min: 0, step: 1 },
+        { k: 'pct', label: 'Fee %', def: 2.9, min: 0, step: 0.1, type: 'number', hint: 'Stripe US card: 2.9%' },
+        { k: 'fixed', label: 'Fixed fee', def: 0.30, min: 0, step: 0.05 },
+        { k: 'mode', label: 'Calculate', type: 'select', def: 'net', options: [{ v: 'net', label: 'Fee & net I receive' }, { v: 'gross', label: 'What to charge to receive this' }] },
+        CUR
+      ],
+      compute: function (v) {
+        if (v.mode === 'gross') {
+          var charge = v.pct < 100 ? (v.amount + v.fixed) / (1 - v.pct / 100) : v.amount;
+          var fee = charge - v.amount;
+          return {
+            headline: { label: 'Charge this to receive ' + F.money2(v.amount, v.cur), value: F.money2(charge, v.cur), sub: F.money2(fee, v.cur) + ' fee' },
+            stats: [{ label: 'You receive', value: F.money2(v.amount, v.cur) }, { label: 'Fee', value: F.money2(fee, v.cur) }, { label: 'Effective', value: (charge > 0 ? fee / charge * 100 : 0).toFixed(2) + '%' }],
+            note: 'To net a specific amount you must gross-up the charge — the fee applies to the higher total.'
+          };
+        }
+        var feeN = v.amount * v.pct / 100 + v.fixed;
+        var net = v.amount - feeN;
+        return {
+          headline: { label: 'You receive', value: F.money2(net, v.cur), sub: F.money2(feeN, v.cur) + ' fee on ' + F.money2(v.amount, v.cur) },
+          stats: [{ label: 'Fee', value: F.money2(feeN, v.cur) }, { label: 'Effective', value: (v.amount > 0 ? feeN / v.amount * 100 : 0).toFixed(2) + '%' }, { label: 'Charged', value: F.money2(v.amount, v.cur) }],
+          note: 'Default is Stripe’s standard US card rate (2.9% + $0.30). International cards and currency conversion differ.'
+        };
+      }
+    },
+
+    'paypal-fee-calculator': {
+      fields: [
+        { k: 'amount', label: 'Amount', def: 100, min: 0, step: 1 },
+        { k: 'pct', label: 'Fee %', def: 2.99, min: 0, step: 0.1, type: 'number', hint: 'PayPal US goods & services: 2.99%' },
+        { k: 'fixed', label: 'Fixed fee', def: 0.49, min: 0, step: 0.05 },
+        { k: 'mode', label: 'Calculate', type: 'select', def: 'net', options: [{ v: 'net', label: 'Fee & net I receive' }, { v: 'gross', label: 'What to charge to receive this' }] },
+        CUR
+      ],
+      compute: function (v) {
+        if (v.mode === 'gross') {
+          var charge = v.pct < 100 ? (v.amount + v.fixed) / (1 - v.pct / 100) : v.amount;
+          var fee = charge - v.amount;
+          return {
+            headline: { label: 'Charge this to receive ' + F.money2(v.amount, v.cur), value: F.money2(charge, v.cur), sub: F.money2(fee, v.cur) + ' fee' },
+            stats: [{ label: 'You receive', value: F.money2(v.amount, v.cur) }, { label: 'Fee', value: F.money2(fee, v.cur) }, { label: 'Effective', value: (charge > 0 ? fee / charge * 100 : 0).toFixed(2) + '%' }],
+            note: 'Grossed up so you receive the exact amount after PayPal’s fee.'
+          };
+        }
+        var feeN = v.amount * v.pct / 100 + v.fixed;
+        var net = v.amount - feeN;
+        return {
+          headline: { label: 'You receive', value: F.money2(net, v.cur), sub: F.money2(feeN, v.cur) + ' fee on ' + F.money2(v.amount, v.cur) },
+          stats: [{ label: 'Fee', value: F.money2(feeN, v.cur) }, { label: 'Effective', value: (v.amount > 0 ? feeN / v.amount * 100 : 0).toFixed(2) + '%' }, { label: 'Charged', value: F.money2(v.amount, v.cur) }],
+          note: 'Default is PayPal’s US goods & services rate. Micropayment, international and currency-conversion rates differ.'
+        };
+      }
+    },
+
+    'roas-calculator': {
+      fields: [
+        { k: 'revenue', label: 'Revenue from ads', def: 5000, min: 0, step: 100 },
+        { k: 'spend', label: 'Ad spend', def: 1250, min: 0, step: 50 },
+        { k: 'margin', label: 'Profit margin %', def: 40, min: 0, max: 100, step: 1, type: 'number', hint: 'Gross margin on what you sell' },
+        CUR
+      ],
+      compute: function (v) {
+        var roas = v.spend > 0 ? v.revenue / v.spend : 0;
+        var roi = v.spend > 0 ? (v.revenue - v.spend) / v.spend * 100 : 0;
+        var beRoas = v.margin > 0 ? 100 / v.margin : 0;
+        var profit = v.revenue * v.margin / 100 - v.spend;
+        return {
+          headline: { label: 'ROAS', value: roas.toFixed(2) + '×', sub: 'break-even at ' + beRoas.toFixed(2) + '× for a ' + v.margin + '% margin' },
+          stats: [
+            { label: 'Profit / loss', value: F.money2(profit, v.cur) },
+            { label: 'ROI', value: roi.toFixed(0) + '%' },
+            { label: 'Revenue per $1', value: F.money2(roas, v.cur) },
+            { label: 'Break-even ROAS', value: beRoas.toFixed(2) + '×' }
+          ],
+          note: profit < 0 ? 'You’re below break-even ROAS — the ads cost more than the margin they bring in.' : 'ROAS is revenue ÷ ad spend. Break-even ROAS is 1 ÷ margin — below it, ads lose money even when ROAS looks positive.'
+        };
+      }
+    },
+
+    'cac-ltv-calculator': {
+      fields: [
+        { k: 'spend', label: 'Marketing & sales spend', def: 10000, min: 0, step: 500 },
+        { k: 'customers', label: 'New customers acquired', def: 200, min: 1, step: 1 },
+        { k: 'aov', label: 'Average order value', def: 60, min: 0, step: 5 },
+        { k: 'freq', label: 'Purchases per year', def: 4, min: 0, step: 1 },
+        { k: 'years', label: 'Customer lifespan (years)', def: 3, min: 0, step: 0.5 },
+        { k: 'margin', label: 'Gross margin %', def: 50, min: 0, max: 100, step: 1, type: 'number' },
+        CUR
+      ],
+      compute: function (v) {
+        var cac = v.customers > 0 ? v.spend / v.customers : 0;
+        var ltv = v.aov * v.freq * v.years * (v.margin / 100);
+        var ratio = cac > 0 ? ltv / cac : 0;
+        var annualValue = v.aov * v.freq * (v.margin / 100);
+        var payback = annualValue > 0 ? cac / (annualValue / 12) : 0;
+        return {
+          headline: { label: 'LTV : CAC', value: ratio.toFixed(1) + ' : 1', sub: F.money2(ltv, v.cur) + ' LTV vs ' + F.money2(cac, v.cur) + ' CAC' },
+          stats: [
+            { label: 'CAC', value: F.money2(cac, v.cur) },
+            { label: 'LTV', value: F.money2(ltv, v.cur) },
+            { label: 'Payback', value: payback > 0 ? payback.toFixed(1) + ' months' : '—' },
+            { label: 'Health', value: ratio >= 3 ? 'Healthy' : ratio >= 1 ? 'Thin' : 'Unprofitable' }
+          ],
+          note: 'A common benchmark is LTV:CAC of about 3:1. Below 1:1 you lose money on each customer; very high can mean you’re under-investing in growth.'
+        };
+      }
+    },
+
+    'discount-calculator': {
+      fields: [
+        { k: 'price', label: 'Original price', def: 80, min: 0, step: 1 },
+        { k: 'disc', label: 'Discount %', def: 25, min: 0, max: 100, step: 1, type: 'number' },
+        { k: 'coupon', label: 'Extra coupon % (optional)', def: 0, min: 0, max: 100, step: 1, type: 'number' },
+        { k: 'tax', label: 'Sales tax % (optional)', def: 0, min: 0, step: 0.1, type: 'number' },
+        CUR
+      ],
+      compute: function (v) {
+        var afterDisc = v.price * (1 - v.disc / 100);
+        var afterCoupon = afterDisc * (1 - v.coupon / 100);
+        var withTax = afterCoupon * (1 + v.tax / 100);
+        var saved = v.price - afterCoupon;
+        var totalOff = v.price > 0 ? saved / v.price * 100 : 0;
+        return {
+          headline: { label: 'Final price', value: F.money2(withTax, v.cur), sub: 'you save ' + F.money2(saved, v.cur) + ' (' + totalOff.toFixed(0) + '% off)' },
+          stats: [
+            { label: 'Before tax', value: F.money2(afterCoupon, v.cur) },
+            { label: 'You save', value: F.money2(saved, v.cur) },
+            { label: 'Total off', value: totalOff.toFixed(1) + '%' },
+            { label: 'Tax added', value: F.money2(withTax - afterCoupon, v.cur) }
+          ],
+          note: v.coupon > 0 ? 'Stacked discounts multiply, they don’t add — 25% then 10% off is 32.5% off, not 35%.' : ''
+        };
+      }
     }
   };
 

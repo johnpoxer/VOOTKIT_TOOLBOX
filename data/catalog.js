@@ -60,6 +60,7 @@
     t("currency-converter","finance","Currency Converter","Live exchange rates from European Central Bank data.",{tier:"money",status:"live",processing:"network",kw:"fx exchange rate"}),
     t("percentage-calculator","finance","Percentage Calculator","Percent of, is-what-percent, and percentage change.",{tier:"retention",status:"live",kw:"percent increase decrease"}),
     t("tip-split","finance","Tip & Bill Split","Split a bill with tip across any number of people.",{tier:"retention",status:"live",kw:"restaurant gratuity"}),
+    t("discount-calculator","finance","Discount Calculator","Final sale price and total savings, with stacked coupons and tax.",{tier:"retention",status:"live",kw:"percent off sale price coupon savings deal"}),
 
     /* ---------- MONEY: insurance (CPC $31.40 — highest on the internet) ---------- */
     t("life-insurance-needs","insurance","Life Cover Estimator","Estimate the life cover a household would actually need.",{tier:"money",status:"live",kw:"life insurance how much coverage"}),
@@ -89,6 +90,12 @@
     t("invoice-generator","business","Invoice Generator","Build a clean invoice with line items and export a PDF.",{tier:"money",status:"live",kw:"bill client pdf"}),
     t("quote-generator","business","Quote & Estimate","Send a professional estimate before the work starts.",{tier:"money",status:"live",kw:"proposal estimate client"}),
     t("hourly-rate","business","Hourly Rate Calculator","The rate you must charge to hit your income target.",{tier:"money",status:"live",kw:"freelance day rate pricing"}),
+    t("amazon-fba-calculator","business","Amazon FBA Profit Calculator","Net profit, margin and ROI per unit after Amazon and FBA fees.",{tier:"money",status:"live",kw:"amazon seller fba fees profit roi margin"}),
+    t("etsy-fee-calculator","business","Etsy Fee & Profit Calculator","See your payout after Etsy listing, transaction and payment fees.",{tier:"money",status:"live",kw:"etsy seller fees payout profit"}),
+    t("stripe-fee-calculator","business","Stripe Fee Calculator","Fee and net received, or what to charge to net an exact amount.",{tier:"money",status:"live",kw:"stripe payment processing fee net gross"}),
+    t("paypal-fee-calculator","business","PayPal Fee Calculator","Work out PayPal fees and your net, or gross-up a charge.",{tier:"money",status:"live",kw:"paypal fee net received goods services"}),
+    t("roas-calculator","business","ROAS Calculator","Return on ad spend, ROI and the break-even ROAS for your margin.",{tier:"money",status:"live",kw:"return on ad spend roi break even ppc facebook"}),
+    t("cac-ltv-calculator","business","CAC & LTV Calculator","Customer acquisition cost, lifetime value and the LTV:CAC ratio.",{tier:"money",status:"live",kw:"customer acquisition cost lifetime value ltv cac payback"}),
     t("profit-margin","business","Profit Margin","Margin, markup and selling price from cost.",{tier:"money",status:"live",kw:"markup gross margin"}),
     t("break-even","business","Break-Even Point","Units and revenue needed to cover fixed costs.",{tier:"money",status:"live",kw:"fixed variable cost"}),
     t("late-fee","business","Late Fee Calculator","Interest and fees on an overdue invoice.",{tier:"money",status:"live",kw:"overdue payment interest"}),
