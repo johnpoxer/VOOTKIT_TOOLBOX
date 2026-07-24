@@ -9,6 +9,23 @@
 <body>
   <!-- Netlify Identity handles the admin-only login (invite the admin email in Netlify) -->
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <!-- Restrict the admin to ONE email. Real security is Netlify "invite only" + only
+       inviting this address; this guard is an extra layer that signs out anyone else. -->
+  <script>
+    (function () {
+      var ADMIN_EMAIL = 'poxer7128@gmail.com';
+      function enforce(user) {
+        if (user && user.email && user.email.toLowerCase() !== ADMIN_EMAIL) {
+          try { window.netlifyIdentity.logout(); } catch (e) {}
+          document.body.innerHTML = '<p style="font-family:system-ui;max-width:32rem;margin:4rem auto;padding:0 1rem;color:#333">This admin area is restricted to the Vootkit owner. You have been signed out.</p>';
+        }
+      }
+      if (window.netlifyIdentity) {
+        window.netlifyIdentity.on('init', enforce);
+        window.netlifyIdentity.on('login', enforce);
+      }
+    })();
+  </script>
   <!-- Decap CMS (formerly Netlify CMS): the /admin/ editor UI -->
   <script src="https://unpkg.com/decap-cms@^3.3.3/dist/decap-cms.js"></script>
 </body>
