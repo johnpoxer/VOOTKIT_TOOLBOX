@@ -219,3 +219,18 @@ label { display: block; font-size: var(--t-sm); font-weight: 600; color: var(--i
 .acct-head .page-h1 { margin: 0; }
 .acct-avatar { width: 56px; height: 56px; border-radius: 50%; background: var(--accent); color: var(--accent-on); display: grid; place-items: center; font-size: var(--t-xl); font-weight: 800; flex: none; }
 .acct-head > button { margin-left: auto; }
+
+/* ============ Animated brand mark ============ */
+.brand svg { overflow: visible; }
+.brand svg circle[stroke-dasharray] { transform-origin: 22px 22px; }
+.brand svg circle[fill="#06b6d4"] { transform-origin: 33.5px 10.5px; }
+.brand svg path { stroke-dasharray: 34; stroke-dashoffset: 0; }
+@media (prefers-reduced-motion: no-preference) {
+  .brand svg circle[stroke-dasharray] { animation: vk-ring 14s linear infinite; }
+  .brand svg circle[fill="#06b6d4"] { animation: vk-dot 2.6s var(--ease) infinite; }
+  .brand:hover svg circle[stroke-dasharray] { animation-duration: 2.6s; }
+  .brand:hover svg path { animation: vk-check .6s var(--ease); }
+}
+@keyframes vk-ring { to { transform: rotate(360deg); } }
+@keyframes vk-dot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .45; transform: scale(1.3); } }
+@keyframes vk-check { from { stroke-dashoffset: 34; } to { stroke-dashoffset: 0; } }
