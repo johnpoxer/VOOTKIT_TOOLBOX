@@ -30,7 +30,20 @@ exports.handler = async function (event) {
   const secret = process.env.STRIPE_SECRET_KEY;
   const priceId = process.env[envName];
   if (!secret || !priceId) {
-    return json(503, { error: "Checkout isn't configured yet." });
+    // Safe diagnostic: booleans only — never the secret or price values.
+    return json(503, {
+      error: "Checkout isn't configured yet.",
+      debug: {
+        secretKeySet: !!secret,
+        lookingForPriceVar: envName,
+        priceVars: {
+          VK_PRICE_CREATOR_PRO_MONTHLY: !!process.env.VK_PRICE_CREATOR_PRO_MONTHLY,
+          VK_PRICE_CREATOR_PRO_ANNUAL: !!process.env.VK_PRICE_CREATOR_PRO_ANNUAL,
+          VK_PRICE_CREATOR_TEAMS_MONTHLY: !!process.env.VK_PRICE_CREATOR_TEAMS_MONTHLY,
+          VK_PRICE_CREATOR_TEAMS_ANNUAL: !!process.env.VK_PRICE_CREATOR_TEAMS_ANNUAL
+        }
+      }
+    });
   }
 
   let stripe;

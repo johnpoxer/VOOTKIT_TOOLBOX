@@ -30,10 +30,10 @@
        keys are env-only. */
     stripe: {
       plans: {
-        creator_pro_monthly:   { product: "prod_UhxCv4HRKfegkM", price: "", amount: 12,  interval: "month", label: "Creator Pro" },
-        creator_pro_annual:    { product: "prod_UhxF5IXhe6653t", price: "", amount: 120, interval: "year",  label: "Creator Pro" },
-        creator_teams_monthly: { product: "prod_UhxuUASj85k4eY", price: "", amount: 25,  interval: "month", label: "Creator Teams" },
-        creator_teams_annual:  { product: "prod_UhxnBrCi8RUYEa", price: "", amount: 250, interval: "year",  label: "Creator Teams" }
+        creator_pro_monthly:   { product: "prod_UhxCv4HRKfegkM", price: "", amount: 8,   interval: "month", label: "Creator Pro" },
+        creator_pro_annual:    { product: "prod_UhxF5IXhe6653t", price: "", amount: 80,  interval: "year",  label: "Creator Pro" },
+        creator_teams_monthly: { product: "prod_UhxuUASj85k4eY", price: "", amount: 20,  interval: "month", label: "Creator Teams" },
+        creator_teams_annual:  { product: "prod_UhxnBrCi8RUYEa", price: "", amount: 200, interval: "year",  label: "Creator Teams" }
       }
     },
 
