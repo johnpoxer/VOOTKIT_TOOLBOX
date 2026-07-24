@@ -10,6 +10,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const { marked } = require("marked");
 const ROOT = __dirname;
 const VK = require("./data/catalog.js");
 const MONEY = Object.assign({}, require("./assets/js/tools-money.js"), require("./assets/js/tools-money2.js"));
@@ -75,10 +76,10 @@ function head(o) {
 <meta property="og:site_name" content="Vootkit">
 <meta property="og:title" content="${esc(o.ogTitle || o.title)}">
 <meta property="og:description" content="${esc(o.desc)}">
-<meta property="og:url" content="${o.url}">
-<meta name="twitter:card" content="summary">
+<meta property="og:url" content="${o.url}">${o.image ? `\n<meta property="og:image" content="${o.image}">` : ""}
+<meta name="twitter:card" content="${o.image ? "summary_large_image" : "summary"}">
 <meta name="twitter:title" content="${esc(o.ogTitle || o.title)}">
-<meta name="twitter:description" content="${esc(o.desc)}">
+<meta name="twitter:description" content="${esc(o.desc)}">${o.image ? `\n<meta name="twitter:image" content="${o.image}">` : ""}
 <script type="application/ld+json">${JSON.stringify(o.ld)}</script>
 <link rel="icon" href="${up}assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -489,6 +490,102 @@ function infoPage(o) {
   </header>
   ${o.body}
 </div>` + foot(depth, o.scripts);
+}
+
+/* ---------- blog (Decap CMS writes markdown → content/blog/*.md) ---------- */
+function parseFrontmatter(raw) {
+  const m = /^---\s*\r?\n([\s\S]*?)\r?\n---\s*\r?\n?([\s\S]*)$/.exec(raw);
+  if (!m) return { data: {}, body: raw };
+  const data = {};
+  m[1].split(/\r?\n/).forEach((line) => {
+    const mm = /^([A-Za-z0-9_]+)\s*:\s*(.*)$/.exec(line);
+    if (!mm) return;
+    let v = mm[2].trim();
+    if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) v = v.slice(1, -1);
+    data[mm[1]] = v;
+  });
+  return { data, body: m[2] };
+}
+function loadPosts() {
+  const dir = path.join(ROOT, "content", "blog");
+  let files = [];
+  try { files = fs.readdirSync(dir).filter((f) => f.endsWith(".md")); } catch (e) { return []; }
+  const posts = files.map((f) => {
+    const { data, body } = parseFrontmatter(fs.readFileSync(path.join(dir, f), "utf8"));
+    const slug = (data.slug || f.replace(/\.md$/, "")).toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "");
+    const plain = body.replace(/[#>*_`~\-\[\]()!]/g, " ").split(/\n\s*\n/).map((s) => s.trim()).filter(Boolean)[0] || "";
+    return {
+      slug, title: data.title || slug, date: data.date || "",
+      description: data.description || plain.slice(0, 160),
+      thumbnail: data.thumbnail || "", author: data.author || "The Vootkit team",
+      draft: String(data.draft) === "true", html: marked.parse(body)
+    };
+  }).filter((p) => !p.draft && p.slug);
+  posts.sort((a, b) => String(b.date).localeCompare(String(a.date)));
+  return posts;
+}
+function fmtDate(d, long) {
+  if (!d) return "";
+  const dt = new Date(d); if (isNaN(dt)) return String(d);
+  return dt.toLocaleDateString("en-US", long ? { year: "numeric", month: "long", day: "numeric" } : { year: "numeric", month: "short", day: "numeric" });
+}
+function blogPostPage(post) {
+  const url = `${SITE}/blog/${post.slug}/`;
+  const img = post.thumbnail ? (post.thumbnail.startsWith("http") ? post.thumbnail : SITE + post.thumbnail) : "";
+  const ld = [
+    { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Vootkit", item: SITE + "/" },
+      { "@type": "ListItem", position: 2, name: "Blog", item: SITE + "/blog/" },
+      { "@type": "ListItem", position: 3, name: post.title, item: url }
+    ]},
+    { "@context": "https://schema.org", "@type": "BlogPosting", headline: post.title, description: post.description,
+      datePublished: post.date, dateModified: post.date, image: img || undefined,
+      author: { "@type": "Organization", name: post.author },
+      publisher: { "@type": "Organization", name: "Vootkit", url: SITE + "/" },
+      mainEntityOfPage: url, url }
+  ];
+  return head({ depth: 2, url, ads: true, ld, title: `${post.title} — Vootkit Blog`, ogTitle: post.title, desc: post.description, image: img || undefined }) +
+`<div class="wrap section blog-post">
+  <nav class="crumb" aria-label="Breadcrumb"><a href="../../">Vootkit</a> <span aria-hidden="true">›</span> <a href="../">Blog</a> <span aria-hidden="true">›</span> <span aria-current="page">${esc(post.title)}</span></nav>
+  <article>
+    <header class="blog-head">
+      <span class="eyebrow">Blog</span>
+      <h1 class="page-h1">${esc(post.title)}</h1>
+      <p class="blog-meta">${post.date ? esc(fmtDate(post.date, true)) + " · " : ""}${esc(post.author)}</p>
+    </header>
+    ${img ? `<img class="blog-hero" src="${esc(post.thumbnail)}" alt="${esc(post.title)}" width="1200" height="630" loading="eager">` : ""}
+    <div class="prose blog-body">${post.html}</div>
+  </article>
+  <div class="cta-band" style="margin-top:var(--s-7);padding:var(--s-6);border:1px solid var(--line);border-radius:var(--r-lg);text-align:center">
+    <h2 style="margin:0 0 var(--s-2)">Try it yourself</h2>
+    <p class="page-lede" style="margin:0 auto var(--s-4)">Every Vootkit tool runs free in your browser.</p>
+    <a class="btn btn-primary" href="../../tools/">Browse all tools</a>
+  </div>
+</div>` + foot(2);
+}
+function blogIndexPage(posts) {
+  const url = SITE + "/blog/";
+  const hasPosts = posts.length > 0;
+  const ld = { "@context": "https://schema.org", "@type": "Blog", name: "Vootkit Blog", url,
+    description: "Guides, tips and product updates for Vootkit's browser-based tools.",
+    blogPost: posts.slice(0, 20).map((p) => ({ "@type": "BlogPosting", headline: p.title, url: SITE + "/blog/" + p.slug + "/", datePublished: p.date })) };
+  let hd = head({ depth: 1, url, ads: false, ld, title: "Vootkit Blog — Guides, tips & updates", ogTitle: "Vootkit Blog",
+    desc: "Practical guides on PDF, image, video and finance tools, plus product updates from Vootkit." });
+  if (!hasPosts) hd = hd.replace("</head>", '<meta name="robots" content="noindex,follow">\n</head>');
+  const cards = posts.map((p) => `<a class="card blog-card" href="${p.slug}/">
+      ${p.thumbnail ? `<img class="blog-card-img" src="${esc(p.thumbnail)}" alt="${esc(p.title)}" loading="lazy">` : ""}
+      <div class="blog-card-b">
+        <span class="tc-cat">${esc(fmtDate(p.date) || "Blog")}</span>
+        <h3>${esc(p.title)}</h3>
+        <p>${esc(p.description)}</p>
+      </div>
+    </a>`).join("\n");
+  return hd + `<div class="wrap section">
+  <header class="sec-head" style="margin-top:var(--s-4)"><span class="eyebrow">Blog</span><h1 class="page-h1">The Vootkit blog</h1><p class="page-lede">Guides, tips and product updates for getting the most out of your browser-based toolkit.</p></header>
+  ${hasPosts
+    ? `<div class="blog-grid">${cards}</div>`
+    : `<div class="cta-band" style="padding:var(--s-6);border:1px solid var(--line);border-radius:var(--r-lg);text-align:center"><h2 style="margin:0 0 var(--s-2)">New guides are coming</h2><p class="page-lede" style="margin:0 auto var(--s-4)">The best way to learn Vootkit is to use it.</p><a class="btn btn-primary" href="../tools/">Explore the tools</a></div>`}
+</div>` + foot(1);
 }
 
 /* ---------- component gallery (internal reference, noindex) ---------- */
@@ -924,24 +1021,9 @@ write("contact-success/index.html", infoPage({
   </div>`
 }));
 
-write("blog/index.html", infoPage({
-  depth: 1, slug: "blog/", title: "Vootkit Blog", eyebrow: "Blog", noindex: true,
-  h1: "Guides, tips and product updates.",
-  desc: "The Vootkit blog — practical guides on PDFs, images, video, finance tools and getting the most out of your browser-based toolkit.",
-  lede: "Practical how-tos and product news are on the way. Here's what we're writing first.",
-  body: `
-  <div class="plans" style="grid-template-columns:repeat(auto-fit,minmax(230px,1fr))">
-    <div class="plan"><h2>PDF &amp; documents</h2><p class="plan-tag">Merging, splitting, compressing and converting PDFs the fast way.</p></div>
-    <div class="plan"><h2>Images &amp; design</h2><p class="plan-tag">Resizing, converting and optimising images without heavy software.</p></div>
-    <div class="plan"><h2>Video toolkit</h2><p class="plan-tag">Trimming, converting and compressing video right in your browser.</p></div>
-    <div class="plan"><h2>Money &amp; planning</h2><p class="plan-tag">Getting real answers from our finance, tax and real-estate calculators.</p></div>
-  </div>
-  <div class="cta-band" style="margin-top:var(--s-7);padding:var(--s-6);border:1px solid var(--line);border-radius:var(--r-lg);text-align:center">
-    <h2 style="margin:0 0 var(--s-2)">New guides are coming</h2>
-    <p class="page-lede" style="margin:0 auto var(--s-4)">In the meantime, the best way to learn Vootkit is to use it.</p>
-    <a class="btn btn-primary" href="../tools/">Explore the tools</a>
-  </div>`
-}));
+const POSTS = loadPosts();
+POSTS.forEach((p) => write(`blog/${p.slug}/index.html`, blogPostPage(p)));
+write("blog/index.html", blogIndexPage(POSTS));
 
 /* ---------- run ---------- */
 let pages = 2;
@@ -953,8 +1035,10 @@ console.log(`generated ${pages} pages`);
 
 /* sitemap */
 const urls = ["/", "/tools/", "/pricing.html", "/about.html", "/contact.html", "/privacy.html", "/terms.html"]
+  .concat(POSTS.length ? ["/blog/"] : [])                       // only list blog when it has posts
+  .concat(POSTS.map((p) => `/blog/${p.slug}/`))
   .concat(VK.CATEGORIES.map((c) => `/tools/${c.slug}/`))
-  .concat(VK.TOOLS.filter((t) => t.status === "live").map((t) => `/tools/${t.cat}/${t.id}/`));   // exclude noindexed under-construction tools + blog
+  .concat(VK.TOOLS.filter((t) => t.status === "live").map((t) => `/tools/${t.cat}/${t.id}/`));   // exclude noindexed under-construction tools
 fs.writeFileSync(path.join(ROOT, "sitemap.xml"),
 `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
