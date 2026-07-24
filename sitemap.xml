@@ -5,7 +5,6 @@
   <url><loc>https://www.vootkit.com/pricing.html</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://www.vootkit.com/about.html</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://www.vootkit.com/contact.html</loc><changefreq>monthly</changefreq></url>
-  <url><loc>https://www.vootkit.com/blog/</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://www.vootkit.com/privacy.html</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://www.vootkit.com/terms.html</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://www.vootkit.com/tools/pdf/</loc><changefreq>monthly</changefreq></url>
@@ -113,7 +112,6 @@
   <url><loc>https://www.vootkit.com/tools/accessibility/color-blind-simulator/</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://www.vootkit.com/tools/accessibility/heading-checker/</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://www.vootkit.com/tools/accessibility/alt-text-auditor/</loc><changefreq>monthly</changefreq></url>
-  <url><loc>https://www.vootkit.com/tools/accessibility/tap-target-checker/</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://www.vootkit.com/tools/accessibility/caption-validator/</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://www.vootkit.com/tools/privacy/metadata-remover/</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://www.vootkit.com/tools/privacy/url-cleaner/</loc><changefreq>monthly</changefreq></url>
@@ -155,7 +153,4 @@
   <url><loc>https://www.vootkit.com/tools/data/csv-viewer/</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://www.vootkit.com/tools/data/csv-to-chart/</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://www.vootkit.com/tools/data/json-csv/</loc><changefreq>monthly</changefreq></url>
-  <url><loc>https://www.vootkit.com/tools/ai/remove-background/</loc><changefreq>monthly</changefreq></url>
-  <url><loc>https://www.vootkit.com/tools/ai/image-to-text/</loc><changefreq>monthly</changefreq></url>
-  <url><loc>https://www.vootkit.com/tools/ai/transcribe-audio/</loc><changefreq>monthly</changefreq></url>
 </urlset>

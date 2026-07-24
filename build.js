@@ -241,7 +241,7 @@ function allToolsPage() {
     </section>`;
   }).join("");
 
-  return head({ depth: 1, url, ads: true, ld,
+  return head({ depth: 1, url, ads: false, ld,   // directory/navigation page — no ads (AdSense policy)
     title: `All ${VK.TOOLS.length} Tools — Vootkit`,
     ogTitle: "All Vootkit tools",
     desc: `Browse all ${VK.TOOLS.length} Vootkit tools across ${VK.CATEGORIES.length} categories. Most run entirely in your browser — no upload, no sign-up, 5 free uses a day.` }) +
@@ -360,10 +360,13 @@ function toolPage(t) {
          <a class="btn" href="../">Browse ${esc(c.name)} tools that work today</a>
        </div>`;
 
-  return head({ depth: 3, url, ads: false, ld, cat: t.cat,   // rule: no ads in an active tool workspace
+  let pageHead = head({ depth: 3, url, ads: false, ld, cat: t.cat,   // rule: no ads in an active tool workspace
     title: `${t.name} — Free Online ${c.name} Tool | Vootkit`,
     ogTitle: t.name,
-    desc: `${t.desc} ${local ? "Runs in your browser" : "No sign-up"}, no watermark, 5 free uses a day.` }) +
+    desc: `${t.desc} ${local ? "Runs in your browser" : "No sign-up"}, no watermark, 5 free uses a day.` });
+  // under-construction ("soon") tools are thin — keep them out of the index (AdSense quality)
+  if (!live) pageHead = pageHead.replace("</head>", '<meta name="robots" content="noindex,follow">\n</head>');
+  return pageHead +
 `<div class="wrap section tool-page">
   <nav class="crumb" aria-label="Breadcrumb"><a href="../../../">Vootkit</a> <span aria-hidden="true">›</span> <a href="../../">Tools</a> <span aria-hidden="true">›</span> <a href="../">${esc(c.name)}</a> <span aria-hidden="true">›</span> <span aria-current="page">${esc(t.name)}</span></nav>
 
@@ -475,7 +478,9 @@ function infoPage(o) {
   const up = "../".repeat(depth) || "./";
   const url = SITE + "/" + o.slug;
   const ld = { "@context": "https://schema.org", "@type": "WebPage", name: o.title, url, description: o.desc };
-  return head({ depth, url, ads: false, ld, title: `${o.title} — Vootkit`, ogTitle: o.title, desc: o.desc }) +
+  let pageHead = head({ depth, url, ads: false, ld, title: `${o.title} — Vootkit`, ogTitle: o.title, desc: o.desc });
+  if (o.noindex) pageHead = pageHead.replace("</head>", '<meta name="robots" content="noindex,follow">\n</head>');
+  return pageHead +
 `<div class="wrap section">
   <header class="sec-head" style="margin-top:var(--s-4)">
     <span class="eyebrow">${esc(o.eyebrow || o.title)}</span>
@@ -907,7 +912,7 @@ write("contact.html", infoPage({
 }));
 
 write("contact-success/index.html", infoPage({
-  depth: 1, slug: "contact-success/", title: "Message sent", eyebrow: "Contact & Support",
+  depth: 1, slug: "contact-success/", title: "Message sent", eyebrow: "Contact & Support", noindex: true,
   h1: "Thanks — your message is on its way.",
   desc: "Your message to Vootkit support was sent successfully.",
   lede: "We've received your message and will reply by email within a couple of business days.",
@@ -920,7 +925,7 @@ write("contact-success/index.html", infoPage({
 }));
 
 write("blog/index.html", infoPage({
-  depth: 1, slug: "blog/", title: "Vootkit Blog", eyebrow: "Blog",
+  depth: 1, slug: "blog/", title: "Vootkit Blog", eyebrow: "Blog", noindex: true,
   h1: "Guides, tips and product updates.",
   desc: "The Vootkit blog — practical guides on PDFs, images, video, finance tools and getting the most out of your browser-based toolkit.",
   lede: "Practical how-tos and product news are on the way. Here's what we're writing first.",
@@ -947,9 +952,9 @@ VK.TOOLS.forEach((t) => { write(`tools/${t.cat}/${t.id}/index.html`, toolPage(t)
 console.log(`generated ${pages} pages`);
 
 /* sitemap */
-const urls = ["/", "/tools/", "/pricing.html", "/about.html", "/contact.html", "/blog/", "/privacy.html", "/terms.html"]
+const urls = ["/", "/tools/", "/pricing.html", "/about.html", "/contact.html", "/privacy.html", "/terms.html"]
   .concat(VK.CATEGORIES.map((c) => `/tools/${c.slug}/`))
-  .concat(VK.TOOLS.map((t) => `/tools/${t.cat}/${t.id}/`));
+  .concat(VK.TOOLS.filter((t) => t.status === "live").map((t) => `/tools/${t.cat}/${t.id}/`));   // exclude noindexed under-construction tools + blog
 fs.writeFileSync(path.join(ROOT, "sitemap.xml"),
 `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
