@@ -47,6 +47,7 @@ const SITE = CFG.origin;
 const SUPPORT = CFG.supportEmail;
 const GA4 = CFG.ga4;
 const PUB = "ca-pub-5906583727409402";
+const V = "?v=" + Date.now();  // cache-bust all local assets on every build
 
 const esc = (v) => String(v == null ? "" : v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const write = (rel, html) => {
@@ -83,9 +84,9 @@ function head(o) {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@700;800&display=swap">
-<link rel="stylesheet" href="${up}assets/css/tokens.css">
-<link rel="stylesheet" href="${up}assets/css/base.css">
-<link rel="stylesheet" href="${up}assets/css/pages.css">
+<link rel="stylesheet" href="${up}assets/css/tokens.css${V}">
+<link rel="stylesheet" href="${up}assets/css/base.css${V}">
+<link rel="stylesheet" href="${up}assets/css/pages.css${V}">
 ${o.ads ? `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${PUB}" crossorigin="anonymous"></script>` : "<!-- no ads inside an active tool workspace -->"}
 <script async src="https://www.googletagmanager.com/gtag/js?id=${GA4}"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA4}');</script>
@@ -136,8 +137,8 @@ function foot(depth, extraScripts) {
     <p style="margin-top:var(--s-6);font-size:var(--t-sm)">&copy; <span id="yr"></span> Vootkit — every digital task, done in your browser.</p>
   </div>
 </footer>
-<script src="${up}data/site.config.js"></script>
-<script src="${up}data/catalog.js"></script>
+<script src="${up}data/site.config.js${V}"></script>
+<script src="${up}data/catalog.js${V}"></script>
 <script>
 document.getElementById('yr').textContent=new Date().getFullYear();
 (function(){var b=document.getElementById('burger'),n=document.getElementById('nav');
@@ -146,12 +147,12 @@ var t=document.getElementById('theme'),s=null;try{s=localStorage.getItem('vk-the
 if(s)document.documentElement.setAttribute('data-theme',s);
 t.addEventListener('click',function(){var c=document.documentElement.getAttribute('data-theme'),x=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',x);try{localStorage.setItem('vk-theme',x);}catch(e){}});})();
 </script>
-<script src="${up}assets/js/ui.js" defer></script>
-<script src="${up}assets/js/recent.js" defer></script>
-<script src="${up}assets/js/supabase-config.js" defer></script>
-<script src="${up}assets/js/auth.js" defer></script>
-<script src="${up}assets/js/usage.js" defer></script>
-${(extraScripts||[]).map(function(x){return '<script src="'+up+x+'" defer></script>';}).join("\n")}
+<script src="${up}assets/js/ui.js${V}" defer></script>
+<script src="${up}assets/js/recent.js${V}" defer></script>
+<script src="${up}assets/js/supabase-config.js${V}" defer></script>
+<script src="${up}assets/js/auth.js${V}" defer></script>
+<script src="${up}assets/js/usage.js${V}" defer></script>
+${(extraScripts||[]).map(function(x){return '<script src="'+up+x+V+'" defer></script>';}).join("\n")}
 </body>
 </html>
 `;
@@ -815,6 +816,10 @@ const hlines = [
   "  X-Content-Type-Options: nosniff",
   "  Referrer-Policy: strict-origin-when-cross-origin",
   "  X-Frame-Options: SAMEORIGIN",
+  "",
+  "# Always revalidate JS/CSS so a deploy is never masked by a stale cache.",
+  "/assets/*",
+  "  Cache-Control: public, max-age=0, must-revalidate",
   "",
   "# Cross-origin isolation for in-browser video processing (scoped — no ad pages).", ""];
 fxIds.forEach((id) => {
