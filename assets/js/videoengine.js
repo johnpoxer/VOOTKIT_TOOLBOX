@@ -19,9 +19,17 @@
   var VER = '0.12.10', UTIL = '0.12.1', CORE = '0.12.6';
   var BASE = 'https://unpkg.com/@ffmpeg/ffmpeg@' + VER + '/dist/umd/ffmpeg.js';
   var UTILURL = 'https://unpkg.com/@ffmpeg/util@' + UTIL + '/dist/umd/index.js';
+  // @ffmpeg/ffmpeg lazily spawns its engine as a MODULE worker from a webpack chunk
+  // whose URL is relative to ffmpeg.js. Loaded from a CDN that is a cross-origin
+  // Worker (forbidden by the browser), so we pass a same-origin blob of the chunk as
+  // classWorkerURL. NOTE: the chunk name is tied to VER — re-check if VER changes.
+  var CLASSWORKER = 'https://unpkg.com/@ffmpeg/ffmpeg@' + VER + '/dist/umd/814.ffmpeg.js';
+  // The module worker loads the core via dynamic import(), so the core must be the
+  // ESM build (the UMD build never exposes createFFmpegCore to a module worker).
+  // Single-threaded: works on every browser, needs no cross-origin isolation or
+  // SharedArrayBuffer, and sidesteps the core-mt pthread cross-origin worker problem.
+  var COREURL = 'https://unpkg.com/@ffmpeg/core@' + CORE + '/dist/esm/ffmpeg-core.js';
   var isolated = typeof root !== 'undefined' && root.crossOriginIsolated === true;
-  var CORE_PKG = isolated ? 'core-mt' : 'core';
-  var COREURL = 'https://unpkg.com/@ffmpeg/' + CORE_PKG + '@' + CORE + '/dist/umd/ffmpeg-core.js';
 
   /* ---------- pure helpers (unit-tested) ---------- */
 
@@ -88,8 +96,8 @@
     if (typeof WebAssembly !== 'object') {
       return { ok: false, reason: 'This browser has no WebAssembly support, which video processing needs. Try an up-to-date Chrome, Edge or Firefox.' };
     }
-    // Single-thread core works without SharedArrayBuffer; mt is a bonus when isolated.
-    return { ok: true, isolated: isolated, threads: isolated ? 'multi-threaded (faster)' : 'single-threaded' };
+    // Single-threaded core — no SharedArrayBuffer needed, works everywhere.
+    return { ok: true, isolated: isolated, threads: 'single-threaded' };
   }
 
   /* ---------- lazy loader ---------- */
@@ -115,10 +123,14 @@
       _util = root.FFmpegUtil;
       var ff = new FFmpeg();
       if (onLog) ff.on('log', function (e) { onLog(e.message); });
-      var cfg = { coreURL: await _util.toBlobURL(COREURL, 'text/javascript') };
-      // the .wasm sits next to the core js on the CDN
-      cfg.wasmURL = await _util.toBlobURL(COREURL.replace(/\.js$/, '.wasm'), 'application/wasm');
-      if (isolated) cfg.workerURL = await _util.toBlobURL(COREURL.replace(/\.js$/, '.worker.js'), 'text/javascript');
+      // Everything is fetched to a same-origin blob URL first, so cross-origin
+      // isolation / CORP never blocks the worker or the core. The .wasm sits next
+      // to the core .js on the CDN.
+      var cfg = {
+        classWorkerURL: await _util.toBlobURL(CLASSWORKER, 'text/javascript'),
+        coreURL: await _util.toBlobURL(COREURL, 'text/javascript'),
+        wasmURL: await _util.toBlobURL(COREURL.replace(/\.js$/, '.wasm'), 'application/wasm')
+      };
       await ff.load(cfg);
       _ff = ff;
       return { ff: _ff, util: _util };
