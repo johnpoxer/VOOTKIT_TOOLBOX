@@ -1,0 +1,113 @@
+/* skin.css — the Vootkit visual language: 70% refined-premium, 20% brutalist
+ * character, 10% OMEGA atmosphere. Loaded site-wide AFTER tokens/base/pages so
+ * it layers on top. Reuses the token system (no renames) — every tool still works.
+ * Performance-first: no particles, no heavy blur loops; one cheap fixed gradient,
+ * transform-only motion, all of it gated behind prefers-reduced-motion.
+ *
+ * The big idea: each category re-themes --accent, so the whole UI (buttons,
+ * links, icon tiles, focus rings) takes on that category's identity. */
+
+/* ---- derive weak/border tints from --accent so per-category theming cascades ---- */
+:root, [data-cat] {
+  --accent-weak: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  --accent-border: color-mix(in srgb, var(--accent) 38%, var(--surface));
+}
+
+/* ---------- 10% OMEGA: atmosphere (cheap, static, tasteful) ---------- */
+body { position: relative; }
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(60vw 50vh at 12% -5%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 60%),
+    radial-gradient(55vw 45vh at 100% 8%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 55%);
+}
+[data-theme="dark"] body::before {
+  background:
+    radial-gradient(60vw 50vh at 12% -5%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 60%),
+    radial-gradient(55vw 45vh at 100% 8%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 55%);
+}
+
+/* glassy sticky header — one tasteful use of blur */
+.hdr {
+  position: sticky; top: 0; z-index: 40;
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  -webkit-backdrop-filter: saturate(1.4) blur(12px); backdrop-filter: saturate(1.4) blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+
+/* ---------- 20% brutalist character: mono labels + tactile shadow ---------- */
+.eyebrow, .badge, .nav a, .res-cat, .catcard-n, .plan-flag, .bt-opt, .vk-cmd-cat, .card-foot .badge {
+  font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .06em;
+}
+.eyebrow { display: inline-block; border: 1px solid var(--accent-border); background: var(--accent-weak); color: var(--accent); padding: 5px 12px; border-radius: var(--r-sm); font-size: var(--t-xs); font-weight: 600; }
+.page-h1, .hero h1, .sec-head h2, .plan h2 { letter-spacing: -.015em; }
+
+/* buttons: premium base + a hint of brutalist tactility (accent offset on press) */
+.btn { font-weight: 600; letter-spacing: .01em; transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease); }
+.btn-primary { box-shadow: 0 1px 0 color-mix(in srgb, var(--accent) 60%, #000), var(--shadow-sm); }
+@media (prefers-reduced-motion: no-preference) {
+  .btn:hover { transform: translateY(-1px); }
+  .btn:active { transform: translateY(1px); }
+}
+
+/* ---------- 70% premium: refined cards with living hover ---------- */
+.tool-card, .catcard, .poptool, .card {
+  transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .tool-card:hover, .catcard:hover, .poptool:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg), 0 0 0 1px var(--accent-border);
+    border-color: var(--accent-border);
+  }
+}
+.tool-card:hover h3, .catcard:hover h3 { color: var(--accent); }
+/* icon tiles glow to the category accent */
+.catcard-ic, .poptool-ic, .res-ic { transition: transform var(--dur) var(--ease), background var(--dur) var(--ease); }
+@media (prefers-reduced-motion: no-preference) {
+  .catcard:hover .catcard-ic, .poptool:hover .poptool-ic { transform: scale(1.08) rotate(-3deg); }
+}
+
+/* refined search box */
+#q, .vk-cmd { box-shadow: var(--shadow-md), 0 0 0 1px var(--line) inset; }
+
+/* ---------- per-category identity: re-theme --accent ---------- */
+/* light-mode accents (all contrast-safe: white-on-accent AND accent-on-white ≥ AA) */
+[data-cat="pdf"]          { --accent:#4f46e5; --accent-hover:#4338ca; }
+[data-cat="images"]       { --accent:#9333ea; --accent-hover:#7e22ce; }
+[data-cat="video"]        { --accent:#c81e1e; --accent-hover:#a91616; }
+[data-cat="finance"]      { --accent:#047857; --accent-hover:#036249; }
+[data-cat="insurance"]    { --accent:#0f766e; --accent-hover:#0c5f59; }
+[data-cat="realestate"]   { --accent:#0369a1; --accent-hover:#075985; }
+[data-cat="tax"]          { --accent:#a21caf; --accent-hover:#86198f; }
+[data-cat="business"]     { --accent:#1d4ed8; --accent-hover:#1e40af; }
+[data-cat="seo"]          { --accent:#4d7c0f; --accent-hover:#3f6212; }
+[data-cat="accessibility"]{ --accent:#c2410c; --accent-hover:#9a3412; }
+[data-cat="privacy"]      { --accent:#0e7490; --accent-hover:#155e75; }
+[data-cat="text"]         { --accent:#be123c; --accent-hover:#9f1239; }
+[data-cat="design"]       { --accent:#db2777; --accent-hover:#be185d; }
+[data-cat="developer"]    { --accent:#6d28d9; --accent-hover:#5b21b6; }
+[data-cat="everyday"]     { --accent:#b45309; --accent-hover:#92400e; }
+[data-cat="data"]         { --accent:#116e8a; --accent-hover:#0e5c73; }
+[data-cat="ai"]           { --accent:#7c3aed; --accent-hover:#6d28d9; }
+
+/* dark-mode accents (lightened so white/dark text + surfaces stay legible) */
+[data-theme="dark"] [data-cat="pdf"]          { --accent:#818cf8; }
+[data-theme="dark"] [data-cat="images"]       { --accent:#c084fc; }
+[data-theme="dark"] [data-cat="video"]        { --accent:#f87171; }
+[data-theme="dark"] [data-cat="finance"]      { --accent:#34d399; }
+[data-theme="dark"] [data-cat="insurance"]    { --accent:#2dd4bf; }
+[data-theme="dark"] [data-cat="realestate"]   { --accent:#38bdf8; }
+[data-theme="dark"] [data-cat="tax"]          { --accent:#e879f9; }
+[data-theme="dark"] [data-cat="business"]     { --accent:#60a5fa; }
+[data-theme="dark"] [data-cat="seo"]          { --accent:#a3e635; }
+[data-theme="dark"] [data-cat="accessibility"]{ --accent:#fb923c; }
+[data-theme="dark"] [data-cat="privacy"]      { --accent:#22d3ee; }
+[data-theme="dark"] [data-cat="text"]         { --accent:#fb7185; }
+[data-theme="dark"] [data-cat="design"]       { --accent:#f472b6; }
+[data-theme="dark"] [data-cat="developer"]    { --accent:#a78bfa; }
+[data-theme="dark"] [data-cat="everyday"]     { --accent:#fbbf24; }
+[data-theme="dark"] [data-cat="data"]         { --accent:#22d3ee; }
+[data-theme="dark"] [data-cat="ai"]           { --accent:#a78bfa; }
+/* in dark mode the accent is light, so text on it must be dark */
+[data-theme="dark"] [data-cat] { --accent-on:#0b1220; }

@@ -87,11 +87,12 @@ function head(o) {
 <link rel="stylesheet" href="${up}assets/css/tokens.css${V}">
 <link rel="stylesheet" href="${up}assets/css/base.css${V}">
 <link rel="stylesheet" href="${up}assets/css/pages.css${V}">
+<link rel="stylesheet" href="${up}assets/css/skin.css${V}">
 ${o.ads ? `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${PUB}" crossorigin="anonymous"></script>` : "<!-- no ads inside an active tool workspace -->"}
 <script async src="https://www.googletagmanager.com/gtag/js?id=${GA4}"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA4}');</script>
 </head>
-<body>
+<body${o.cat ? ` data-cat="${o.cat}"` : ""}>
 <a class="skip" href="#main">Skip to content</a>
 <header class="hdr">
   <div class="wrap hdr-in">
@@ -317,7 +318,7 @@ function toolPage(t) {
          <a class="btn" href="../">Browse ${esc(c.name)} tools that work today</a>
        </div>`;
 
-  return head({ depth: 3, url, ads: false, ld,   // rule: no ads in an active tool workspace
+  return head({ depth: 3, url, ads: false, ld, cat: t.cat,   // rule: no ads in an active tool workspace
     title: `${t.name} — Free Online ${c.name} Tool | Vootkit`,
     ogTitle: t.name,
     desc: `${t.desc} Free, ${local ? "runs in your browser" : "no sign-up"}, no watermark, no daily limit.` }) +
