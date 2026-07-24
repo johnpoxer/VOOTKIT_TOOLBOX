@@ -91,6 +91,30 @@
     return { args: ['-i', inName, '-vn', '-c:a', 'libmp3lame', '-q:a', '2', '-y', outName] };
   }
 
+  function buildConvertArgs(inName, outName) {
+    // Convert any input (MOV/MKV/AVI/WebM/…) to universal MP4 (H.264/AAC).
+    // (VP9/WebM output is intentionally not offered — it overflows the wasm core's memory.)
+    return { args: ['-i', inName, '-c:v', 'libx264', '-preset', 'veryfast', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '160k', '-movflags', '+faststart', '-y', outName] };
+  }
+
+  function buildResizeArgs(inName, outName, opt) {
+    // opt: { height } — scale to target height, width auto-even, keep aspect
+    var h = clampInt(opt.height, 16);
+    return { args: ['-i', inName, '-vf', 'scale=-2:' + h + ':flags=lanczos', '-c:v', 'libx264', '-preset', 'veryfast', '-pix_fmt', 'yuv420p', '-c:a', 'copy', '-y', outName] };
+  }
+
+  function buildLoopArgs(inName, outName, opt) {
+    // opt: { count } total plays (>=2). stream_loop must precede -i. Stream-copy = fast.
+    var n = clampInt(opt.count, 2);
+    return { args: ['-stream_loop', String(n - 1), '-i', inName, '-c', 'copy', '-y', outName] };
+  }
+
+  function buildVolumeArgs(inName, outName, opt) {
+    // opt: { percent } 100 = unchanged, 200 = 2x, 50 = half. Video copied untouched.
+    var p = opt.percent > 0 ? opt.percent : 100;
+    return { args: ['-i', inName, '-af', 'volume=' + (p / 100).toFixed(3), '-c:v', 'copy', '-y', outName] };
+  }
+
   /* ---------- capability report ---------- */
   function capability() {
     if (typeof WebAssembly !== 'object') {
@@ -190,6 +214,8 @@
     buildCompressArgs: buildCompressArgs, buildTrimArgs: buildTrimArgs,
     buildGifArgs: buildGifArgs, buildReframeArgs: buildReframeArgs,
     buildMuteArgs: buildMuteArgs, buildExtractAudioArgs: buildExtractAudioArgs,
+    buildConvertArgs: buildConvertArgs, buildResizeArgs: buildResizeArgs,
+    buildLoopArgs: buildLoopArgs, buildVolumeArgs: buildVolumeArgs,
     targetVideoKbps: targetVideoKbps
   };
   if (typeof module === 'object' && module.exports) module.exports = root.VKVideo;

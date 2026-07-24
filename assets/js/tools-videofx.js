@@ -177,6 +177,85 @@
       }
     },
 
+    'convert-video': {
+      accept: 'video/*', action: 'Convert to MP4', dropLabel: 'Choose a video to convert', maxBytes: LIMIT,
+      options: [],
+      process: async function (files, o, api) {
+        warnCapability();
+        var f = files[0];
+        var built = root.VKVideo.buildConvertArgs('in.mp4', 'out.mp4', { format: 'mp4' });
+        var data = await root.VKVideo.run(f, 'in.mp4', 'out.mp4', built, api.progress);
+        var blob = outBlob(data, 'video/mp4');
+        return {
+          stats: [{ label: 'Format', value: 'MP4 (H.264)' }, { label: 'Original', value: api.bytes(f.size) }, { label: 'Output', value: api.bytes(blob.size) }],
+          downloads: [{ label: 'Download MP4', blob: blob, name: baseName(f.name) + '.mp4' }],
+          status: 'Converted to MP4',
+          note: 'MP4 (H.264) plays on virtually every device, browser and app.'
+        };
+      }
+    },
+
+    'resize-video': {
+      accept: 'video/*', action: 'Resize', dropLabel: 'Choose a video to resize', maxBytes: LIMIT,
+      options: [
+        { k: 'height', label: 'Resolution', type: 'select', def: 720, options: [{ v: 1080, label: '1080p (Full HD)' }, { v: 720, label: '720p (HD)' }, { v: 480, label: '480p (SD)' }, { v: 360, label: '360p (small)' }] }
+      ],
+      process: async function (files, o, api) {
+        warnCapability();
+        var f = files[0];
+        var built = root.VKVideo.buildResizeArgs('in.mp4', 'out.mp4', { height: o.height });
+        var data = await root.VKVideo.run(f, 'in.mp4', 'out.mp4', built, api.progress);
+        var blob = outBlob(data, 'video/mp4');
+        return {
+          stats: [{ label: 'Height', value: o.height + 'p' }, { label: 'Original', value: api.bytes(f.size) }, { label: 'Output', value: api.bytes(blob.size) }],
+          downloads: [{ label: 'Download MP4', blob: blob, name: baseName(f.name) + '-' + o.height + 'p.mp4' }],
+          status: 'Resized to ' + o.height + 'p',
+          note: 'Width scales automatically to keep the aspect ratio.'
+        };
+      }
+    },
+
+    'loop-video': {
+      accept: 'video/*', action: 'Loop', dropLabel: 'Choose a video to loop', maxBytes: LIMIT,
+      options: [
+        { k: 'count', label: 'Total plays', def: 3, min: 2, max: 20, step: 1, type: 'number' }
+      ],
+      process: async function (files, o, api) {
+        warnCapability();
+        var f = files[0];
+        var n = Math.max(2, Math.round(o.count || 2));
+        var built = root.VKVideo.buildLoopArgs('in.mp4', 'out.mp4', { count: n });
+        var data = await root.VKVideo.run(f, 'in.mp4', 'out.mp4', built, api.progress);
+        var blob = outBlob(data, 'video/mp4');
+        return {
+          stats: [{ label: 'Plays', value: n + '×' }, { label: 'Size', value: api.bytes(blob.size) }],
+          downloads: [{ label: 'Download MP4', blob: blob, name: baseName(f.name) + '-loop.mp4' }],
+          status: 'Looped ' + n + '×',
+          note: 'Loops by stream-copy, so it’s fast and keeps the original quality.'
+        };
+      }
+    },
+
+    'adjust-volume': {
+      accept: 'video/*', action: 'Adjust volume', dropLabel: 'Choose a video', maxBytes: LIMIT,
+      options: [
+        { k: 'percent', label: 'Volume', type: 'select', def: 150, options: [{ v: 50, label: '50% (quieter)' }, { v: 100, label: '100% (unchanged)' }, { v: 150, label: '150% (louder)' }, { v: 200, label: '200% (much louder)' }, { v: 300, label: '300% (max boost)' }] }
+      ],
+      process: async function (files, o, api) {
+        warnCapability();
+        var f = files[0];
+        var built = root.VKVideo.buildVolumeArgs('in.mp4', 'out.mp4', { percent: o.percent });
+        var data = await root.VKVideo.run(f, 'in.mp4', 'out.mp4', built, api.progress);
+        var blob = outBlob(data, 'video/mp4');
+        return {
+          stats: [{ label: 'Volume', value: o.percent + '%' }, { label: 'Size', value: api.bytes(blob.size) }],
+          downloads: [{ label: 'Download MP4', blob: blob, name: baseName(f.name) + '-volume.mp4' }],
+          status: 'Volume set to ' + o.percent + '%',
+          note: 'The video track is copied untouched — only the audio level changes.'
+        };
+      }
+    },
+
     'frame-grabber': {
       accept: 'video/*', action: 'Grab frame', dropLabel: 'Choose a video', maxBytes: LIMIT,
       options: [

@@ -96,6 +96,10 @@
   <url><loc>https://www.vootkit.com/tools/video/frame-grabber/</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://www.vootkit.com/tools/video/mute-video/</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://www.vootkit.com/tools/video/extract-audio/</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://www.vootkit.com/tools/video/convert-video/</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://www.vootkit.com/tools/video/resize-video/</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://www.vootkit.com/tools/video/loop-video/</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://www.vootkit.com/tools/video/adjust-volume/</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://www.vootkit.com/tools/video/stream-asset-sizer/</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://www.vootkit.com/tools/video/emote-resizer/</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://www.vootkit.com/tools/video/brb-overlay/</loc><changefreq>monthly</changefreq></url>

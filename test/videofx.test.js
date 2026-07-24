@@ -62,13 +62,31 @@ has(b.args, ["-c", "copy"], "mute copies video (instant)");
 ok(V.buildExtractAudioArgs("in.mp4", "o.mp3", { format: "mp3" }).args.join(" ").includes("libmp3lame"), "mp3 uses lame");
 ok(V.buildExtractAudioArgs("in.mp4", "o.wav", { format: "wav" }).args.join(" ").includes("pcm_s16le"), "wav uses pcm");
 
+/* --- convert: any input -> universal MP4 (H.264/AAC) --- */
+has(V.buildConvertArgs("in.mp4", "out.mp4").args, ["-c:v", "libx264"], "convert uses h264");
+has(V.buildConvertArgs("in.mp4", "out.mp4").args, ["-movflags", "+faststart"], "convert web-optimises MP4");
+
+/* --- resize: scale to height, width auto-even (keep aspect) --- */
+ok(V.buildResizeArgs("in.mp4", "out.mp4", { height: 720 }).args.join(" ").includes("scale=-2:720"), "resize scales to 720 keeping aspect");
+
+/* --- loop: stream_loop = count-1, and must precede -i --- */
+b = V.buildLoopArgs("in.mp4", "out.mp4", { count: 3 });
+has(b.args, ["-stream_loop", "2"], "loop 3 plays -> stream_loop 2");
+ok(b.args.indexOf("-stream_loop") < b.args.indexOf("-i"), "stream_loop precedes -i");
+has(b.args, ["-c", "copy"], "loop stream-copies (fast, lossless)");
+
+/* --- volume: percent -> multiplier, video untouched --- */
+b = V.buildVolumeArgs("in.mp4", "out.mp4", { percent: 200 });
+ok(b.args.join(" ").includes("volume=2.000"), "200% -> volume 2.0");
+has(b.args, ["-c:v", "copy"], "volume keeps the video track untouched");
+
 /* --- capability report is honest --- */
 const cap = V.capability();
 ok(typeof cap.ok === "boolean", "capability returns ok flag");
 
 /* --- catalog: 7 tools live, in video category, all local processing --- */
 const ids = Object.keys(FX);
-ok(ids.length === 7, "7 videofx tools");
+ok(ids.length === 11, "11 videofx tools");
 ids.forEach(id => {
   const t = VK.find(id);
   ok(t && t.status === "live", id + " live");
