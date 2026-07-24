@@ -135,7 +135,7 @@ function foot(depth, extraScripts) {
     <div class="ftr-grid">
       <div><h4>Categories</h4>${cats}</div>
       <div><h4>Vootkit</h4><a href="${up}tools/">All tools</a><a href="${up}pricing.html">Pricing</a><a href="${up}about.html">About</a><a href="${up}privacy.html">Privacy</a><a href="${up}terms.html">Terms</a><a href="${up}contact.html">Contact &amp; support</a></div>
-      <div><h4>How it works</h4><p style="font-size:var(--t-sm);color:var(--ink-soft)">Most tools run entirely in your browser. Your files aren't uploaded, so there's no queue and no daily limit.</p></div>
+      <div><h4>How it works</h4><p style="font-size:var(--t-sm);color:var(--ink-soft)">Most tools run entirely in your browser, so your files aren't uploaded and there's no queue. The free plan includes 5 tool runs a day.</p></div>
     </div>
     <p style="margin-top:var(--s-6);font-size:var(--t-sm)">&copy; <span id="yr"></span> Vootkit — every digital task, done in your browser.</p>
   </div>
@@ -244,7 +244,7 @@ function allToolsPage() {
   return head({ depth: 1, url, ads: true, ld,
     title: `All ${VK.TOOLS.length} Tools — Vootkit`,
     ogTitle: "All Vootkit tools",
-    desc: `Browse all ${VK.TOOLS.length} Vootkit tools across ${VK.CATEGORIES.length} categories. Most run entirely in your browser — no upload, no sign-up, no daily limit.` }) +
+    desc: `Browse all ${VK.TOOLS.length} Vootkit tools across ${VK.CATEGORIES.length} categories. Most run entirely in your browser — no upload, no sign-up, 5 free uses a day.` }) +
 `<div class="wrap section">
   <nav class="crumb" aria-label="Breadcrumb"><a href="../">Vootkit</a> <span aria-hidden="true">›</span> <span aria-current="page">All tools</span></nav>
   <h1 class="page-h1">All tools</h1>
@@ -303,7 +303,7 @@ function categoryPage(c) {
   <nav class="crumb" aria-label="Breadcrumb"><a href="../../">Vootkit</a> <span aria-hidden="true">›</span> <a href="../">Tools</a> <span aria-hidden="true">›</span> <span aria-current="page">${esc(c.name)}</span></nav>
   <h1 class="page-h1">${esc(c.name)} tools</h1>
   <p class="page-lede">${esc(c.blurb)}</p>
-  <p class="res-cat" style="margin-bottom:var(--s-5)">${list.length} tools · no sign-up · no daily limit</p>
+  <p class="res-cat" style="margin-bottom:var(--s-5)">${list.length} tools · no sign-up · 5 free a day</p>
   <div class="grid">${list.map((t) => toolCard(t, "../../")).join("")}</div>
 
   <section class="section">
@@ -322,14 +322,12 @@ function toolPage(t) {
   const related = VK.byCategory(t.cat).filter((x) => x.id !== t.id).slice(0, 6);
 
   const faqs = [
-    { q: `Is ${t.name} free?`, a: `Yes. ${t.name} is free to use on Vootkit, with no account, no watermark and no daily task limit.` },
+    { q: `Is ${t.name} free?`, a: `Yes. The Vootkit free plan includes 5 tool runs a day, with no account and no watermark. Upgrade to Vootkit Pro for unlimited daily use, faster processing and premium tools.` },
     { q: "Are my files uploaded?", a: local
         ? `No. ${t.name} runs entirely in your browser — your file is processed on your own device and never sent to a server. There is nothing for us to store or delete.`
         : `${t.name} needs the internet to work, so it calls an external service to fetch data. It does not require an account and does not track you.` },
     { q: "Do I need to install anything?", a: `No. ${t.name} works in any modern browser on desktop, tablet or phone. Open the page and start.` },
-    { q: "Is there a limit on how many times I can use it?", a: local
-        ? "No. Because the work happens on your device rather than our servers, there is no per-task cost and therefore no daily cap."
-        : "There are fair-use limits to keep the service available for everyone, but normal use is unlimited." }
+    { q: "How often can I use it? Is there a daily limit?", a: "On the free plan you get 5 tool runs a day. When you reach the limit you'll see a prompt to upgrade, and it resets the next day. Vootkit Pro removes the cap entirely for unlimited daily use." }
   ];
   const ld = [
     { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
@@ -365,7 +363,7 @@ function toolPage(t) {
   return head({ depth: 3, url, ads: false, ld, cat: t.cat,   // rule: no ads in an active tool workspace
     title: `${t.name} — Free Online ${c.name} Tool | Vootkit`,
     ogTitle: t.name,
-    desc: `${t.desc} Free, ${local ? "runs in your browser" : "no sign-up"}, no watermark, no daily limit.` }) +
+    desc: `${t.desc} ${local ? "Runs in your browser" : "No sign-up"}, no watermark, 5 free uses a day.` }) +
 `<div class="wrap section tool-page">
   <nav class="crumb" aria-label="Breadcrumb"><a href="../../../">Vootkit</a> <span aria-hidden="true">›</span> <a href="../../">Tools</a> <span aria-hidden="true">›</span> <a href="../">${esc(c.name)}</a> <span aria-hidden="true">›</span> <span aria-current="page">${esc(t.name)}</span></nav>
 
@@ -373,7 +371,7 @@ function toolPage(t) {
   <header class="tool-head">
     <h1 class="page-h1">${esc(t.name)}</h1>
     <p class="page-lede">${esc(t.desc)}</p>
-    <div class="trust">${badge(t)}<span class="badge">no sign-up</span><span class="badge">no watermark</span><span class="badge">no daily limit</span></div>
+    <div class="trust">${badge(t)}<span class="badge">no sign-up</span><span class="badge">no watermark</span><span class="badge">5 free a day</span></div>
   </header>
   ${workspace}
 
@@ -385,7 +383,7 @@ function toolPage(t) {
     <h2>Why use this one</h2>
     <ul>
       <li><strong>${local ? "Nothing is uploaded." : "No account needed."}</strong> ${local ? "Your file is processed on your own device, so it never travels to a server." : "Use it immediately — no sign-up, no email."}</li>
-      <li><strong>No daily limit.</strong> ${local ? "Your device does the work, so there's no per-task cost to ration." : "Fair-use limits only."}</li>
+      <li><strong>5 free uses a day.</strong> The free plan includes 5 tool runs a day — <a href="../../../pricing.html">upgrade to Pro</a> for unlimited daily use.</li>
       <li><strong>No watermark.</strong> What you get out is what you made.</li>
       <li><strong>Works on mobile.</strong> Same tool, thumb-friendly.</li>
     </ul>
