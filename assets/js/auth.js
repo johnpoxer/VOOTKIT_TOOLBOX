@@ -72,23 +72,30 @@
   async function onChange(cb) { var c = await client(); return c.auth.onAuthStateChange(function (e, session) { cb(e, session && session.user); }); }
 
   /* ---- header state (runs on every page) ---- */
-  async function renderHeader() {
-    if (!ENABLED || !doc) return;
-    var act = doc.querySelector('.hdr-act');
-    if (!act || doc.getElementById('vk-auth-slot')) return;
-    var slot = doc.createElement('span'); slot.id = 'vk-auth-slot'; slot.className = 'vk-auth-slot';
-    act.insertBefore(slot, act.firstChild);
-    var user = null; try { user = await getUser(); } catch (e) {}
+  function paintSlot(slot, user) {
     var u = up();
     if (user) {
       var name = (user.user_metadata && user.user_metadata.display_name) || user.email || 'Account';
       var initial = (name[0] || 'A').toUpperCase();
-      slot.innerHTML = '<a class="vk-avatar" href="' + u + 'account/" aria-label="Your account" title="' + name.replace(/"/g, '') + '">' + initial + '</a>';
+      slot.innerHTML = '<a class="vk-avatar" href="' + u + 'account/" aria-label="Your account" title="' + String(name).replace(/"/g, '') + '">' + initial + '</a>';
     } else {
       slot.innerHTML = '<a class="btn btn-sm" href="' + u + 'auth/sign-in/">Sign in</a>';
     }
-    // keep header in sync on login/logout in another tab
-    onChange(function () { var s = doc.getElementById('vk-auth-slot'); if (s) { s.remove(); renderHeader(); } }).catch(function () {});
+  }
+  var _subscribed = false;
+  async function renderHeader() {
+    if (!ENABLED || !doc) return;
+    var act = doc.querySelector('.hdr-act'); if (!act) return;
+    // reuse the slot if it already exists — never remove/recreate (that caused flicker)
+    var slot = doc.getElementById('vk-auth-slot');
+    if (!slot) { slot = doc.createElement('span'); slot.id = 'vk-auth-slot'; slot.className = 'vk-auth-slot'; act.insertBefore(slot, act.firstChild); }
+    var user = null; try { user = await getUser(); } catch (e) {}
+    paintSlot(slot, user);
+    // subscribe to auth changes EXACTLY ONCE; the handler only repaints (no re-render, no re-subscribe)
+    if (!_subscribed) {
+      _subscribed = true;
+      onChange(function (e, u2) { var s = doc.getElementById('vk-auth-slot'); if (s) paintSlot(s, u2); }).catch(function () {});
+    }
   }
 
   /* ---- guard: redirect to sign-in if not authed (for /account/) ---- */
