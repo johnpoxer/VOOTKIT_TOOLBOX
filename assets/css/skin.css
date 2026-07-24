@@ -167,6 +167,31 @@ body::before {
 .cmp-no { color: var(--ink-mute); }
 .cmp-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r-lg); }
 
+/* ---------- tool cards as mini-products (per-category identity via data-cat) ---------- */
+.tool-card { position: relative; overflow: hidden; }
+/* a faint category-tinted wash in the corner — gives each card its own personality */
+.tool-card::after {
+  content: ""; position: absolute; top: -40%; right: -30%; width: 160px; height: 160px;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 14%, transparent), transparent 68%);
+  pointer-events: none; opacity: .8; transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+.tc-top { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s-2); margin-bottom: var(--s-1); }
+.tool-card .ic { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent); }
+.tc-tags { display: flex; flex-wrap: wrap; gap: 5px; justify-content: flex-end; }
+.pill {
+  font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .05em;
+  font-size: 10px; font-weight: 700; line-height: 1; padding: 4px 8px; border-radius: var(--r-pill); white-space: nowrap;
+}
+.pill-pop { background: var(--accent); color: var(--accent-on); }
+.pill-new { background: var(--accent-weak); color: var(--accent); border: 1px solid var(--accent-border); }
+.tool-card .card-foot { display: flex; align-items: center; justify-content: space-between; gap: var(--s-2); }
+.tc-cat { font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .05em; font-size: 10px; font-weight: 600; color: var(--ink-mute); }
+@media (prefers-reduced-motion: no-preference) {
+  .tool-card:hover .ic { transform: scale(1.08) rotate(-4deg); }
+  .tool-card:hover::after { opacity: 1; transform: scale(1.15); }
+}
+.tool-card .ic { transition: transform var(--dur) var(--ease); }
+
 /* ---------- micro-interactions ---------- */
 .brand svg { transition: transform var(--dur) var(--ease); }
 @media (prefers-reduced-motion: no-preference) { .brand:hover svg { transform: rotate(-6deg) scale(1.06); } }

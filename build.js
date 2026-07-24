@@ -165,12 +165,54 @@ const badge = (t) => t.processing === "network"
   ? '<span class="badge badge-net">uses an API</span>'
   : '<span class="badge badge-local">runs on your device</span>';
 
+/* category lookup + icon set (mirrors assets/js/home.js so cards render at build time) */
+const CATBY = {};
+VK.CATEGORIES.forEach((c) => { CATBY[c.slug] = c; });
+function icon(name) {
+  const p = {
+    file: '<path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/>',
+    image: '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="9" r="1.6"/><path d="m4 18 5-5 4 3 3-3 4 4"/>',
+    video: '<rect x="3" y="5" width="14" height="14" rx="2"/><path d="M17 9l4-2v10l-4-2z"/>',
+    coins: '<circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5h4a1.8 1.8 0 0 1 0 3.5h-3a1.8 1.8 0 0 0 0 3.5h4"/>',
+    shield: '<path d="M12 3 4 6v6c0 5 3.4 7.7 8 8 4.6-.3 8-3 8-8V6z"/>',
+    home: '<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>',
+    receipt: '<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/>',
+    briefcase: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>',
+    search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/>',
+    eye: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>',
+    lock: '<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
+    type: '<path d="M4 6h16M4 12h16M4 18h10"/>',
+    palette: '<circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><path d="M12 22a3 3 0 0 0 3-3 2 2 0 0 0-2-2h-1.5a1.5 1.5 0 0 1 0-3H14a5 5 0 1 0-5-5"/>',
+    code: '<path d="m8 8-4 4 4 4M16 8l4 4-4 4"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    table: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 4v16"/>',
+    sparkles: '<path d="M12 3l1.8 4.7L18.5 9l-4.7 1.8L12 15l-1.8-4.2L5.5 9l4.7-1.3z"/><path d="M18 15l.9 2.3L21 18l-2.1.7L18 21l-.9-2.3L15 18l2.1-.7z"/>'
+  };
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (p[name] || p.file) + '</svg>';
+}
+/* curated badge sets — only real, live tool ids */
+const POPULAR = new Set([
+  "merge-pdf", "compress-pdf", "compress-image", "resize-image", "convert-image",
+  "compress-for-discord", "video-to-gif", "mortgage-calculator", "loan-calculator",
+  "json-formatter", "word-counter", "qr-generator", "password-generator",
+  "unit-converter", "meta-tag-generator", "color-converter"
+]);
+const NEW = new Set([
+  "trim-video", "vertical-reframe", "mute-video", "extract-audio", "frame-grabber",
+  "csv-to-chart", "markdown-editor", "schema-generator"
+]);
+
 function toolCard(t, up) {
   const soon = t.status !== "live";
-  return `<a class="card tool-card${soon ? " is-soon" : ""}" href="${up}tools/${t.cat}/${t.id}/">
+  const c = CATBY[t.cat] || {};
+  const pop = !soon && POPULAR.has(t.id);
+  const isNew = !soon && NEW.has(t.id);
+  const tags = (pop ? '<span class="pill pill-pop">Popular</span>' : "") + (isNew ? '<span class="pill pill-new">New</span>' : "");
+  return `<a class="card tool-card${soon ? " is-soon" : ""}" data-cat="${t.cat}" href="${up}tools/${t.cat}/${t.id}/">
+    <span class="tc-top"><span class="ic">${icon(c.icon)}</span><span class="tc-tags">${tags}</span></span>
     <h3>${esc(t.name)}${soon ? ' <span class="soon">soon</span>' : ""}</h3>
     <p>${esc(t.desc)}</p>
-    <span class="card-foot">${badge(t)}</span>
+    <span class="card-foot"><span class="tc-cat">${esc(c.name || t.cat)}</span>${badge(t)}</span>
   </a>`;
 }
 
