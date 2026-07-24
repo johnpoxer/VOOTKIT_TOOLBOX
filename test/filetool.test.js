@@ -36,7 +36,7 @@ assert.strictEqual(VKFile.bytes(5 * 1048576), "5.00 MB"); pass++;
 const IMG = require("../assets/js/tools-image.js");
 const VK = require("../data/catalog.js");
 const ids = Object.keys(IMG);
-assert.strictEqual(ids.length, 9, "9 image/canvas tools (incl. emote-resizer)"); pass++;
+assert.strictEqual(ids.length, 13, "13 image/canvas tools (incl. emote-resizer, flip, rotate, circle-crop, grayscale)"); pass++;
 ids.forEach(id => {
   const t = VK.find(id);
   ok(t, `${id} in catalog`);

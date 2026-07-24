@@ -122,6 +122,10 @@
     t("exif-viewer","images","EXIF Viewer & Stripper","See photo metadata and download a clean copy.",{tier:"edge",status:"live",kw:"metadata location remove"}),
     t("color-from-image","images","Image Palette Extractor","Pull the dominant colours out of any image.",{tier:"traffic",status:"live",kw:"dominant swatch"}),
     t("meme-generator","images","Meme Generator","Classic top and bottom captions on any image.",{tier:"retention",status:"live",kw:"caption impact text"}),
+    t("flip-image","images","Flip Image","Mirror an image horizontally or vertically.",{tier:"traffic",status:"live",kw:"mirror reflect horizontal vertical"}),
+    t("rotate-image","images","Rotate Image","Rotate a photo 90°, 180° or 270° with no quality loss.",{tier:"traffic",status:"live",kw:"turn sideways orientation straighten"}),
+    t("circle-crop","images","Round Profile Picture","Crop any photo into a round avatar with a transparent background.",{tier:"traffic",status:"live",kw:"circle avatar profile picture round dp"}),
+    t("grayscale-image","images","Black & White / Sepia","Convert a photo to grayscale or a warm sepia tone.",{tier:"traffic",status:"live",kw:"grayscale monochrome bw sepia filter"}),
 
     /* ---------- RETENTION: video & streaming ---------- */
     t("compress-for-discord","video","Compress for Discord","One-click 10 MB, 50 MB and 500 MB presets that actually fit.",{tier:"retention",status:"live",kw:"discord upload limit too big clip"}),

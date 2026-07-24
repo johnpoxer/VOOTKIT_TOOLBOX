@@ -358,6 +358,114 @@
             : 'PNG keeps transparency — the right choice for emotes.'
         };
       }
+    },
+
+    'flip-image': {
+      accept: 'image/*', action: 'Flip', dropLabel: 'Choose an image to flip',
+      options: [
+        { k: 'dir', label: 'Direction', type: 'select', def: 'h',
+          options: [{ v: 'h', label: 'Horizontal (mirror)' }, { v: 'v', label: 'Vertical' }] }
+      ],
+      process: async function (files, o, api) {
+        var f = files[0];
+        var img = await api.loadImage(f);
+        var k = canvasFrom(img, img.naturalWidth, img.naturalHeight);
+        if (o.dir === 'h') { k.ctx.translate(k.c.width, 0); k.ctx.scale(-1, 1); }
+        else { k.ctx.translate(0, k.c.height); k.ctx.scale(1, -1); }
+        k.ctx.drawImage(img, 0, 0);
+        api.progress(0.6);
+        var blob = await toBlob(k.c, 'image/png');
+        return {
+          previewUrl: api.urls.make(blob),
+          stats: [{ label: 'Direction', value: o.dir === 'h' ? 'Horizontal' : 'Vertical' }, { label: 'Size', value: img.naturalWidth + '×' + img.naturalHeight }, { label: 'File', value: api.bytes(blob.size) }],
+          downloads: [{ label: 'Download', blob: blob, name: baseName(f.name) + '-flipped.png' }],
+          status: 'Flipped'
+        };
+      }
+    },
+
+    'rotate-image': {
+      accept: 'image/*', action: 'Rotate', dropLabel: 'Choose an image to rotate',
+      options: [
+        { k: 'deg', label: 'Rotate', type: 'select', def: '90',
+          options: [{ v: '90', label: '90° right' }, { v: '180', label: '180°' }, { v: '270', label: '90° left' }] }
+      ],
+      process: async function (files, o, api) {
+        var f = files[0];
+        var img = await api.loadImage(f);
+        var deg = parseInt(o.deg, 10), w = img.naturalWidth, h = img.naturalHeight;
+        var swap = (deg === 90 || deg === 270);
+        var k = canvasFrom(img, swap ? h : w, swap ? w : h);
+        k.ctx.translate(k.c.width / 2, k.c.height / 2);
+        k.ctx.rotate(deg * Math.PI / 180);
+        k.ctx.drawImage(img, -w / 2, -h / 2);
+        api.progress(0.6);
+        var blob = await toBlob(k.c, 'image/png');
+        return {
+          previewUrl: api.urls.make(blob),
+          stats: [{ label: 'Rotation', value: deg + '°' }, { label: 'From', value: w + '×' + h }, { label: 'To', value: k.c.width + '×' + k.c.height }, { label: 'File', value: api.bytes(blob.size) }],
+          downloads: [{ label: 'Download', blob: blob, name: baseName(f.name) + '-rotated.png' }],
+          status: 'Rotated ' + deg + '°'
+        };
+      }
+    },
+
+    'circle-crop': {
+      accept: 'image/*', action: 'Make round', dropLabel: 'Choose a photo for a round avatar',
+      options: [
+        { k: 'bg', label: 'Background', type: 'select', def: 'transparent',
+          options: [{ v: 'transparent', label: 'Transparent' }, { v: '#ffffff', label: 'White' }, { v: '#0d1420', label: 'Dark' }] }
+      ],
+      process: async function (files, o, api) {
+        var f = files[0];
+        var img = await api.loadImage(f);
+        var side = Math.min(img.naturalWidth, img.naturalHeight);
+        var sx = (img.naturalWidth - side) / 2, sy = (img.naturalHeight - side) / 2;
+        var k = canvasFrom(img, side, side);
+        if (o.bg !== 'transparent') { k.ctx.fillStyle = o.bg; k.ctx.fillRect(0, 0, side, side); }
+        k.ctx.save();
+        k.ctx.beginPath(); k.ctx.arc(side / 2, side / 2, side / 2, 0, Math.PI * 2); k.ctx.closePath(); k.ctx.clip();
+        k.ctx.drawImage(img, sx, sy, side, side, 0, 0, side, side);
+        k.ctx.restore();
+        api.progress(0.6);
+        var blob = await toBlob(k.c, 'image/png');
+        return {
+          previewUrl: api.urls.make(blob),
+          stats: [{ label: 'Size', value: side + '×' + side }, { label: 'Shape', value: 'Circle' }, { label: 'File', value: api.bytes(blob.size) }],
+          downloads: [{ label: 'Download PNG', blob: blob, name: baseName(f.name) + '-round.png' }],
+          status: 'Round avatar ready',
+          note: img.naturalWidth !== img.naturalHeight ? 'Centre-cropped to a square first. PNG keeps the transparent corners.' : 'PNG keeps the transparent corners.'
+        };
+      }
+    },
+
+    'grayscale-image': {
+      accept: 'image/*', action: 'Convert', dropLabel: 'Choose an image',
+      options: [
+        { k: 'mode', label: 'Style', type: 'select', def: 'gray',
+          options: [{ v: 'gray', label: 'Black & white' }, { v: 'sepia', label: 'Sepia' }] }
+      ],
+      process: async function (files, o, api) {
+        var f = files[0];
+        var img = await api.loadImage(f);
+        var k = canvasFrom(img, img.naturalWidth, img.naturalHeight);
+        k.ctx.drawImage(img, 0, 0);
+        var d = k.ctx.getImageData(0, 0, k.c.width, k.c.height), a = d.data;
+        for (var i = 0; i < a.length; i += 4) {
+          var y = 0.299 * a[i] + 0.587 * a[i + 1] + 0.114 * a[i + 2];
+          if (o.mode === 'sepia') { a[i] = Math.min(255, y + 40); a[i + 1] = Math.min(255, y + 20); a[i + 2] = Math.max(0, y - 20); }
+          else { a[i] = a[i + 1] = a[i + 2] = y; }
+        }
+        k.ctx.putImageData(d, 0, 0);
+        api.progress(0.7);
+        var blob = await toBlob(k.c, 'image/png');
+        return {
+          previewUrl: api.urls.make(blob),
+          stats: [{ label: 'Style', value: o.mode === 'sepia' ? 'Sepia' : 'Black & white' }, { label: 'Size', value: img.naturalWidth + '×' + img.naturalHeight }, { label: 'File', value: api.bytes(blob.size) }],
+          downloads: [{ label: 'Download', blob: blob, name: baseName(f.name) + '-' + o.mode + '.png' }],
+          status: 'Done'
+        };
+      }
     }
   };
 
