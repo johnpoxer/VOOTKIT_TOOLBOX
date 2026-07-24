@@ -44,6 +44,19 @@
       downloadLimits: false      // no download limits
     },
 
+    /* Free-tier usage limit.
+     * IMPORTANT: keep `enabled:false` until BOTH Stripe checkout AND Supabase auth
+     * are live — otherwise a hard block traps real users with no way to pay, and it
+     * will hurt the SEO growth strategy (bounced first-time visitors). It's also a
+     * client-side counter (tools run in-browser), so it's a nudge, not a hard wall.
+     * exemptCategories keeps the free-forever downloaders/traffic tools unmetered. */
+    freeLimit: {
+      enabled: false,
+      count: 5,            // free uses per day before the gate
+      hard: true,          // true = block; false = nudge but allow continue
+      exemptCategories: [] // e.g. ["pdf","images"] to keep acquisition tools free
+    },
+
     launch: {
       growth: "SEO",
       blogLaunchArticles: 50,

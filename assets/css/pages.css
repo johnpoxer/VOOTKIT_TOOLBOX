@@ -210,3 +210,10 @@ video.wcode { padding: 0; }
 .plan-feats svg { width: 18px; height: 18px; flex: none; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; margin-top: 1px; }
 .plan-feats .yes svg { stroke: var(--ok); }
 .plan-feats .no { color: var(--ink-mute); } .plan-feats .no svg { stroke: var(--ink-mute); }
+
+/* ---------- free-tier usage gate ---------- */
+.usage-gate { text-align: center; padding: var(--s-8) var(--s-5); border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface-sunk); }
+.usage-gate svg { width: 44px; height: 44px; color: var(--accent); margin-bottom: var(--s-3); }
+.usage-gate h2 { font-size: var(--t-xl); margin: 0 0 var(--s-2); }
+.usage-gate .note { max-width: 46ch; margin: 0 auto var(--s-5); }
+.usage-gate-actions { display: flex; gap: var(--s-3); justify-content: center; flex-wrap: wrap; }

@@ -150,6 +150,7 @@ t.addEventListener('click',function(){var c=document.documentElement.getAttribut
 <script src="${up}assets/js/recent.js" defer></script>
 <script src="${up}assets/js/supabase-config.js" defer></script>
 <script src="${up}assets/js/auth.js" defer></script>
+<script src="${up}assets/js/usage.js" defer></script>
 ${(extraScripts||[]).map(function(x){return '<script src="'+up+x+'" defer></script>';}).join("\n")}
 </body>
 </html>
