@@ -6,18 +6,18 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#fbfcfe" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)">
-<title>Component Library — Vootkit</title>
-<meta name="description" content="Vootkit design-system components and their states.">
-<link rel="canonical" href="https://www.vootkit.com/components/">
+<title>Vootkit Blog — Vootkit</title>
+<meta name="description" content="The Vootkit blog — practical guides on PDFs, images, video, finance tools and getting the most out of your browser-based toolkit.">
+<link rel="canonical" href="https://www.vootkit.com/blog/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Vootkit">
-<meta property="og:title" content="Component Library — Vootkit">
-<meta property="og:description" content="Vootkit design-system components and their states.">
-<meta property="og:url" content="https://www.vootkit.com/components/">
+<meta property="og:title" content="Vootkit Blog">
+<meta property="og:description" content="The Vootkit blog — practical guides on PDFs, images, video, finance tools and getting the most out of your browser-based toolkit.">
+<meta property="og:url" content="https://www.vootkit.com/blog/">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Component Library — Vootkit">
-<meta name="twitter:description" content="Vootkit design-system components and their states.">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Component library","url":"https://www.vootkit.com/components/"}</script>
+<meta name="twitter:title" content="Vootkit Blog">
+<meta name="twitter:description" content="The Vootkit blog — practical guides on PDFs, images, video, finance tools and getting the most out of your browser-based toolkit.">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Vootkit Blog","url":"https://www.vootkit.com/blog/","description":"The Vootkit blog — practical guides on PDFs, images, video, finance tools and getting the most out of your browser-based toolkit."}</script>
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,7 +29,6 @@
 <!-- no ads inside an active tool workspace -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KLEWTJ8WG2"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-KLEWTJ8WG2');</script>
-<meta name="robots" content="noindex">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -62,67 +61,22 @@
   </div>
 </header>
 <main id="main" tabindex="-1"><div class="wrap section">
-  <nav class="crumb" aria-label="Breadcrumb"><a href="../">Vootkit</a> <span aria-hidden="true">›</span> <span aria-current="page">Components</span></nav>
-  <h1 class="page-h1">Component library</h1>
-  <p class="page-lede">The single design language. Every state, one place. See <code>docs/DESIGN_SYSTEM.md</code>.</p>
-
-  <section class="prose"><h2>Buttons</h2></section>
-  <div class="wbtns" style="margin-bottom:var(--s-6)">
-    <button class="btn btn-primary" type="button">Primary</button>
-    <button class="btn" type="button">Secondary</button>
-    <button class="icon-btn" type="button" aria-label="Icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg></button>
+  <header class="sec-head" style="margin-top:var(--s-4)">
+    <span class="eyebrow">Blog</span>
+    <h1 class="page-h1">Guides, tips and product updates.</h1>
+    <p class="page-lede">Practical how-tos and product news are on the way. Here's what we're writing first.</p>
+  </header>
+  
+  <div class="plans" style="grid-template-columns:repeat(auto-fit,minmax(230px,1fr))">
+    <div class="plan"><h2>PDF &amp; documents</h2><p class="plan-tag">Merging, splitting, compressing and converting PDFs the fast way.</p></div>
+    <div class="plan"><h2>Images &amp; design</h2><p class="plan-tag">Resizing, converting and optimising images without heavy software.</p></div>
+    <div class="plan"><h2>Video toolkit</h2><p class="plan-tag">Trimming, converting and compressing video right in your browser.</p></div>
+    <div class="plan"><h2>Money &amp; planning</h2><p class="plan-tag">Getting real answers from our finance, tax and real-estate calculators.</p></div>
   </div>
-
-  <section class="prose"><h2>Badges</h2></section>
-  <div class="wbtns" style="margin-bottom:var(--s-6)">
-    <span class="badge badge-local">runs on your device</span>
-    <span class="badge badge-net">uses an API</span>
-    <span class="badge">no sign-up</span>
-  </div>
-
-  <section class="prose"><h2>Fields</h2></section>
-  <div class="wgrid2" style="margin-bottom:var(--s-6)">
-    <label class="wfield"><span class="wlab">Text field</span><input class="field" type="text" placeholder="Type here"></label>
-    <label class="wfield"><span class="wlab">Select</span><select class="field"><option>Option A</option><option>Option B</option></select></label>
-  </div>
-
-  <section class="prose"><h2>Stats</h2></section>
-  <div class="calc-stats" style="margin-bottom:var(--s-6)">
-    <div class="calc-stat"><span>Words</span><b>1,240</b></div>
-    <div class="calc-stat"><span>Reading time</span><b>6 min</b></div>
-    <div class="calc-stat"><span>Saved</span><b>62%</b></div>
-  </div>
-
-  <section class="prose"><h2>Notes</h2></section>
-  <div style="display:grid;gap:var(--s-2);margin-bottom:var(--s-6)">
-    <p class="note">A neutral note — context or guidance.</p>
-    <p class="note err">An error note — something needs fixing.</p>
-  </div>
-
-  <section class="prose"><h2>Skeleton &amp; empty state</h2></section>
-  <div class="wgrid2" style="margin-bottom:var(--s-6)">
-    <div style="display:grid;gap:var(--s-2)"><div class="vk-skeleton" style="height:20px;width:70%"></div><div class="vk-skeleton" style="height:14px"></div><div class="vk-skeleton" style="height:14px;width:85%"></div></div>
-    <div class="vk-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg><h3>Nothing here yet</h3><p class="note">Search above to find a tool.</p></div>
-  </div>
-
-  <section class="prose"><h2>Upload target</h2></section>
-  <div class="vk-upload" style="margin-bottom:var(--s-6)"><strong>Choose a file or drag it here</strong><small class="note">Processed on your device — never uploaded</small></div>
-
-  <section class="prose"><h2>Tabs</h2></section>
-  <div data-tabs style="margin-bottom:var(--s-6)">
-    <div role="tablist" class="wbtns" aria-label="Example tabs">
-      <button class="btn" role="tab" id="t1" aria-controls="p1">Overview</button>
-      <button class="btn" role="tab" id="t2" aria-controls="p2">Details</button>
-    </div>
-    <div role="tabpanel" id="p1" aria-labelledby="t1"><p class="note">Overview panel — arrow keys switch tabs.</p></div>
-    <div role="tabpanel" id="p2" aria-labelledby="t2"><p class="note">Details panel.</p></div>
-  </div>
-
-  <section class="prose"><h2>Toast, modal &amp; command palette</h2></section>
-  <div class="wbtns" style="margin-bottom:var(--s-8)">
-    <button class="btn" type="button" onclick="VKUI.toast('Saved to your device',{type:'ok'})">Show toast</button>
-    <button class="btn" type="button" onclick="VKUI.modal({title:'Example dialog',content:'<p class=note>Focus-trapped, ESC to close, backdrop click to dismiss.</p>'})">Open modal</button>
-    <button class="btn" type="button" onclick="VKUI.openPalette&&VKUI.openPalette()">Open command palette (⌘K)</button>
+  <div class="cta-band" style="margin-top:var(--s-7);padding:var(--s-6);border:1px solid var(--line);border-radius:var(--r-lg);text-align:center">
+    <h2 style="margin:0 0 var(--s-2)">New guides are coming</h2>
+    <p class="page-lede" style="margin:0 auto var(--s-4)">In the meantime, the best way to learn Vootkit is to use it.</p>
+    <a class="btn btn-primary" href="../tools/">Explore the tools</a>
   </div>
 </div></main>
 <footer class="ftr">

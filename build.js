@@ -101,21 +101,23 @@ ${o.ads ? `<script async src="https://pagead2.googlesyndication.com/pagead/js/ad
       vootkit
     </a>
     <nav class="nav" id="nav" aria-label="Main">
-      <a href="${up}tools/">All tools</a>
-      <a href="${up}tools/pdf/">PDF</a>
-      <a href="${up}tools/images/">Images</a>
-      <a href="${up}tools/video/">Video</a>
-      <a href="${up}tools/finance/">Finance</a>
+      <a href="${up}tools/">Tools</a>
+      <a href="${up}pricing.html">Pricing</a>
+      <a href="${up}#features">Features</a>
+      <a href="${up}blog/">Blog</a>
+      <a href="${up}about.html">About</a>
+      <a href="${up}contact.html">Contact</a>
     </nav>
     <div class="hdr-act">
       <a class="icon-btn" href="${up}tools/" aria-label="Search tools">
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
       </a>
-      <button class="icon-btn" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav">
-        <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-      </button>
       <button class="icon-btn" id="theme" type="button" aria-label="Switch theme">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.5M12 19v2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M2.5 12H5M19 12h2.5M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8"/></svg>
+      </button>
+      <a class="hdr-cta" href="${up}pricing.html">Get Pro</a>
+      <button class="icon-btn" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav">
+        <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
       </button>
     </div>
   </div>
@@ -427,6 +429,23 @@ function legalPage(o) {
 </div>` + foot(0);
 }
 
+/* ---------- info pages (About, Contact, Blog) ---------- */
+function infoPage(o) {
+  const depth = o.depth || 0;
+  const up = "../".repeat(depth) || "./";
+  const url = SITE + "/" + o.slug;
+  const ld = { "@context": "https://schema.org", "@type": "WebPage", name: o.title, url, description: o.desc };
+  return head({ depth, url, ads: false, ld, title: `${o.title} — Vootkit`, ogTitle: o.title, desc: o.desc }) +
+`<div class="wrap section">
+  <header class="sec-head" style="margin-top:var(--s-4)">
+    <span class="eyebrow">${esc(o.eyebrow || o.title)}</span>
+    <h1 class="page-h1">${esc(o.h1)}</h1>
+    ${o.lede ? `<p class="page-lede">${o.lede}</p>` : ""}
+  </header>
+  ${o.body}
+</div>` + foot(depth);
+}
+
 /* ---------- component gallery (internal reference, noindex) ---------- */
 function componentsPage() {
   const url = SITE + "/components/";
@@ -587,19 +606,20 @@ function pricingPage() {
   const url = SITE + "/pricing.html";
   const P = CFG.stripe.plans;
   const ld = [
-    { "@context": "https://schema.org", "@type": "WebPage", name: "Pricing", url, description: "Vootkit pricing — every tool is free, no login, no limits. Upgrade for no ads, cloud history and premium features." },
+    { "@context": "https://schema.org", "@type": "WebPage", name: "Pricing", url, description: "Vootkit pricing — start free with 5 tool runs a day and unlimited core tools. Upgrade to Pro for unlimited usage, faster processing and premium tools." },
     { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
       { "@type": "ListItem", position: 1, name: "Vootkit", item: SITE + "/" },
       { "@type": "ListItem", position: 2, name: "Pricing", item: url }
     ]}
   ];
   const feat = (on, txt) => `<li class="${on ? "yes" : "no"}"><svg viewBox="0 0 24 24" aria-hidden="true">${on ? '<path d="M20 6 9 17l-5-5"/>' : '<path d="M6 6l12 12M18 6 6 18"/>'}</svg>${txt}</li>`;
-  return head({ depth: 0, url, ads: true, ld, title: "Pricing — Vootkit", ogTitle: "Vootkit Pricing", desc: "Every Vootkit tool is free, with no login and no limits. Upgrade to Creator Pro or Teams for no ads, cloud history, premium tools and priority support." }) +
+  const yn = (v) => v === true ? '<span class="cmp-yes" aria-label="Included">✓</span>' : v === false ? '<span class="cmp-no" aria-label="Not included">—</span>' : v;
+  return head({ depth: 0, url, ads: true, ld, title: "Pricing — Vootkit", ogTitle: "Vootkit Pricing", desc: "Start free with 5 tool runs a day and unlimited core tools. Upgrade to Creator Pro or Teams for unlimited usage, faster processing, premium tools and priority support." }) +
 `<div class="wrap section">
   <header class="sec-head" style="margin-top:var(--s-4)">
     <span class="eyebrow">Pricing</span>
-    <h1 class="page-h1">The tools are free. Forever.</h1>
-    <p class="page-lede">Every downloader and tool works with no login and no limits. Upgrade only if you want the extras — no ads, cloud history and premium processing.</p>
+    <h1 class="page-h1">Simple pricing that scales with you.</h1>
+    <p class="page-lede">Start free — 5 tool runs a day, with core tools and downloaders always unlimited. Upgrade when you want unlimited usage, faster processing and premium tools.</p>
   </header>
 
   <div class="bill-toggle" role="group" aria-label="Billing period">
@@ -614,12 +634,12 @@ function pricingPage() {
       <p class="plan-tag">Everything most people need.</p>
       <a class="btn btn-block" href="tools/">Start using tools</a>
       <ul class="plan-feats">
-        ${feat(true, "All " + VK.counts.live + " tools")}
-        ${feat(true, "No login, ever")}
-        ${feat(true, "No daily limits")}
+        ${feat(true, "Access to all " + VK.counts.live + " tools")}
+        ${feat(true, "5 tool runs per day")}
+        ${feat(true, "Core tools &amp; downloaders unlimited")}
+        ${feat(true, "No login required")}
         ${feat(true, "No watermarks")}
-        ${feat(true, "Runs on your device")}
-        ${feat(false, "Ads on content pages")}
+        ${feat(false, "Faster, premium processing")}
       </ul>
     </div>
 
@@ -630,10 +650,10 @@ function pricingPage() {
       <p class="plan-tag">For creators who live in these tools.</p>
       <button class="btn btn-primary btn-block" type="button" data-plan="creator_pro" data-plan-month="creator_pro_monthly" data-plan-year="creator_pro_annual">Upgrade to Pro</button>
       <ul class="plan-feats">
-        ${feat(true, "Everything in Free")}
-        ${feat(true, "No ads, anywhere")}
+        ${feat(true, "Unlimited tool runs — no daily cap")}
         ${feat(true, "Faster, higher-res processing")}
-        ${feat(true, "Premium & early-access tools")}
+        ${feat(true, "Premium &amp; early-access tools")}
+        ${feat(true, "Larger file-size limits")}
         ${feat(true, "Cloud history across devices")}
         ${feat(true, "Priority support")}
       </ul>
@@ -647,21 +667,48 @@ function pricingPage() {
       <ul class="plan-feats">
         ${feat(true, "Everything in Pro")}
         ${feat(true, "Shared team workspace")}
-        ${feat(true, "Higher processing limits")}
-        ${feat(true, "API access (coming)")}
+        ${feat(true, "Highest processing limits")}
+        ${feat(true, "More cloud storage")}
         ${feat(true, "Centralised billing")}
-        ${feat(true, "Onboarding support")}
+        ${feat(true, "API access (coming)")}
       </ul>
     </div>
   </div>
 
-  <p class="note" style="text-align:center;margin-top:var(--s-5)">Prices in USD. Cancel anytime. The core tools never require a subscription.</p>
+  <div class="upgrade-note" style="text-align:center;margin-top:var(--s-5);padding:var(--s-4);background:var(--accent-weak);border:1px solid var(--accent-border);border-radius:var(--r-md);max-width:640px;margin-inline:auto">
+    <p style="margin:0;color:var(--ink)"><strong>Reached today's free limit?</strong> Upgrade to Vootkit Pro for unlimited access and faster processing — cancel anytime.</p>
+  </div>
+
+  <p class="note" style="text-align:center;margin-top:var(--s-5)">Prices in USD. Cancel anytime. Core tools and downloaders never require a subscription.</p>
+
+  <section style="margin-top:var(--s-8)">
+    <div class="sec-head"><h2>Compare plans</h2></div>
+    <div class="cmp-wrap">
+      <table class="cmp-table">
+        <thead><tr><th scope="col" style="text-align:left">Feature</th><th scope="col">Free</th><th scope="col" class="cmp-hi">Creator Pro</th><th scope="col">Creator Teams</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Access to all ${VK.counts.live} tools</th><td>${yn(true)}</td><td class="cmp-hi">${yn(true)}</td><td>${yn(true)}</td></tr>
+          <tr><th scope="row">Daily tool runs</th><td>5 / day</td><td class="cmp-hi">Unlimited</td><td>Unlimited</td></tr>
+          <tr><th scope="row">Core tools &amp; downloaders</th><td>Unlimited</td><td class="cmp-hi">Unlimited</td><td>Unlimited</td></tr>
+          <tr><th scope="row">Login required</th><td>No</td><td class="cmp-hi">Optional</td><td>Yes</td></tr>
+          <tr><th scope="row">Processing speed</th><td>Standard</td><td class="cmp-hi">Faster</td><td>Fastest</td></tr>
+          <tr><th scope="row">File-size limits</th><td>Standard</td><td class="cmp-hi">Larger</td><td>Highest</td></tr>
+          <tr><th scope="row">Premium &amp; early-access tools</th><td>${yn(false)}</td><td class="cmp-hi">${yn(true)}</td><td>${yn(true)}</td></tr>
+          <tr><th scope="row">Cloud history across devices</th><td>${yn(false)}</td><td class="cmp-hi">${yn(true)}</td><td>${yn(true)}</td></tr>
+          <tr><th scope="row">Shared team workspace</th><td>${yn(false)}</td><td class="cmp-hi">${yn(false)}</td><td>${yn(true)}</td></tr>
+          <tr><th scope="row">Centralised billing</th><td>${yn(false)}</td><td class="cmp-hi">${yn(false)}</td><td>${yn(true)}</td></tr>
+          <tr><th scope="row">Support</th><td>Standard</td><td class="cmp-hi">Priority</td><td>Priority + onboarding</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 
   <section class="prose faq" style="margin-top:var(--s-8)">
     <h2>Questions</h2>
-    <details><summary>Are the tools really free?</summary><p>Yes. Every tool and downloader works free, with no account and no daily limit. Most run entirely in your browser, so there's nothing for us to meter. Paid plans only add conveniences like removing ads and syncing history.</p></details>
-    <details><summary>Do I need an account to use Vootkit?</summary><p>No. You can use everything without signing up. An account only exists to sync your history and manage a subscription if you choose to upgrade.</p></details>
-    <details><summary>What do I actually get with Pro?</summary><p>No ads across the whole site, faster and higher-resolution processing, premium and early-access tools, cloud history across your devices, and priority support.</p></details>
+    <details><summary>Is Vootkit free to use?</summary><p>Yes. The free plan gives you 5 tool runs a day across all ${VK.counts.live} tools, and core tools and downloaders stay unlimited. You only need Pro if you want unlimited daily usage, faster processing and premium tools.</p></details>
+    <details><summary>What counts toward the 5 free runs a day?</summary><p>Heavier processing tasks — like converting or compressing a file. Simple browser-based tools and downloaders don't count and stay unlimited. When you reach the daily limit, you'll see a friendly prompt to upgrade; it resets the next day.</p></details>
+    <details><summary>Do I need an account to use Vootkit?</summary><p>No. You can use the free tier without signing up. An account only exists to sync your history and manage a subscription if you choose to upgrade.</p></details>
+    <details><summary>What do I get with Pro?</summary><p>Unlimited daily usage, faster and higher-resolution processing, premium and early-access tools, larger file-size limits, cloud history across your devices, and priority support.</p></details>
     <details><summary>Can I cancel?</summary><p>Anytime, from your account. You keep Pro until the end of the period you've paid for, then drop back to the (still fully usable) free tier.</p></details>
     <details><summary>How do you handle payment?</summary><p>Payments are processed by Stripe. We never see or store your card details.</p></details>
   </section>
@@ -746,6 +793,72 @@ write("terms.html", legalPage({
     <p class="note" style="margin-top:var(--s-6)">These terms are written in plain language to be genuinely readable. They are not a substitute for legal advice tailored to your business.</p>`
 }));
 
+write("about.html", infoPage({
+  slug: "about.html", title: "About Vootkit", eyebrow: "About",
+  h1: "One home for every digital task.",
+  desc: "Vootkit is a growing ecosystem of fast, private, browser-based tools — PDF, image, video, finance, developer and more. No installs, no accounts required.",
+  lede: `Vootkit puts <strong>${VK.counts.live} tools</strong> in one place, most of them running entirely in your browser so your files never leave your device.`,
+  body: `
+  <section class="prose">
+    <h2>Why Vootkit exists</h2>
+    <p>The web is full of single-purpose tool sites — one for merging PDFs, another for resizing an image, a third for a quick calculation — each buried in ads and pop-ups. Vootkit brings them together into one clean, fast ecosystem you can trust, with a consistent experience across every tool.</p>
+
+    <h2>What we believe</h2>
+    <ul>
+      <li><strong>Privacy by default.</strong> Most tools process your files locally in the browser. If a tool needs the internet, we label it <span class="badge badge-net">uses an API</span> — we never hide it.</li>
+      <li><strong>Fast and frictionless.</strong> No installs, and no account required to use the tools. Open a tool and go.</li>
+      <li><strong>A generous free core.</strong> The essential tools stay free, and downloaders are always unlimited. Pro simply adds convenience for people who live in these tools.</li>
+      <li><strong>Built to grow.</strong> New tools ship constantly, each with its own identity inside the Vootkit ecosystem.</li>
+    </ul>
+
+    <h2>The ecosystem today</h2>
+    <p>Vootkit spans ${VK.CATEGORIES.length} categories — from PDF and image editing to video, finance, real estate, developer utilities and everyday helpers. Explore them all on the <a href="tools/">Tools</a> page, or see what Pro adds on <a href="pricing.html">Pricing</a>.</p>
+  </section>
+  <div class="cta-band" style="margin-top:var(--s-7);padding:var(--s-6);border:1px solid var(--line);border-radius:var(--r-lg);text-align:center">
+    <h2 style="margin:0 0 var(--s-2)">Find the tool you need</h2>
+    <p class="page-lede" style="margin:0 auto var(--s-4)">Every digital task, done in your browser.</p>
+    <a class="btn btn-primary" href="tools/">Browse all tools</a>
+  </div>`
+}));
+
+write("contact.html", infoPage({
+  slug: "contact.html", title: "Contact Vootkit", eyebrow: "Contact",
+  h1: "We'd love to hear from you.",
+  desc: "Get in touch with the Vootkit team — support, feedback, tool requests, partnerships and billing questions.",
+  lede: "Questions, feedback, a tool you wish existed, or a billing issue — reach out and we'll help.",
+  body: `
+  <div class="plans" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">
+    <div class="plan"><h2>Support &amp; feedback</h2><p class="plan-tag">Help with a tool, a bug, or an idea for something new.</p><a class="btn btn-primary btn-block" href="mailto:${SUPPORT}?subject=Vootkit%20support">Email support</a><p class="note" style="margin-top:var(--s-3)">${SUPPORT}</p></div>
+    <div class="plan"><h2>Billing &amp; Pro</h2><p class="plan-tag">Questions about a Pro or Teams subscription.</p><a class="btn btn-block" href="mailto:${SUPPORT}?subject=Vootkit%20billing">Email billing</a><p class="note" style="margin-top:var(--s-3)">Payments are handled securely by Stripe.</p></div>
+    <div class="plan"><h2>Partnerships</h2><p class="plan-tag">Press, partnerships, or business enquiries.</p><a class="btn btn-block" href="mailto:${SUPPORT}?subject=Vootkit%20partnership">Get in touch</a></div>
+  </div>
+  <section class="prose faq" style="margin-top:var(--s-8)">
+    <h2>Before you write</h2>
+    <details><summary>Do I need an account to use the tools?</summary><p>No. Every tool works without signing up. An account only syncs your history and manages a subscription if you upgrade.</p></details>
+    <details><summary>Is my file uploaded when I use a tool?</summary><p>For most tools, no — they run entirely in your browser. Tools that need the internet are clearly labelled on their page.</p></details>
+    <details><summary>How fast will I hear back?</summary><p>We read every message and aim to reply within a couple of business days.</p></details>
+  </section>`
+}));
+
+write("blog/index.html", infoPage({
+  depth: 1, slug: "blog/", title: "Vootkit Blog", eyebrow: "Blog",
+  h1: "Guides, tips and product updates.",
+  desc: "The Vootkit blog — practical guides on PDFs, images, video, finance tools and getting the most out of your browser-based toolkit.",
+  lede: "Practical how-tos and product news are on the way. Here's what we're writing first.",
+  body: `
+  <div class="plans" style="grid-template-columns:repeat(auto-fit,minmax(230px,1fr))">
+    <div class="plan"><h2>PDF &amp; documents</h2><p class="plan-tag">Merging, splitting, compressing and converting PDFs the fast way.</p></div>
+    <div class="plan"><h2>Images &amp; design</h2><p class="plan-tag">Resizing, converting and optimising images without heavy software.</p></div>
+    <div class="plan"><h2>Video toolkit</h2><p class="plan-tag">Trimming, converting and compressing video right in your browser.</p></div>
+    <div class="plan"><h2>Money &amp; planning</h2><p class="plan-tag">Getting real answers from our finance, tax and real-estate calculators.</p></div>
+  </div>
+  <div class="cta-band" style="margin-top:var(--s-7);padding:var(--s-6);border:1px solid var(--line);border-radius:var(--r-lg);text-align:center">
+    <h2 style="margin:0 0 var(--s-2)">New guides are coming</h2>
+    <p class="page-lede" style="margin:0 auto var(--s-4)">In the meantime, the best way to learn Vootkit is to use it.</p>
+    <a class="btn btn-primary" href="../tools/">Explore the tools</a>
+  </div>`
+}));
+
 /* ---------- run ---------- */
 let pages = 2;
 write("components/index.html", componentsPage()); pages++;
@@ -755,7 +868,7 @@ VK.TOOLS.forEach((t) => { write(`tools/${t.cat}/${t.id}/index.html`, toolPage(t)
 console.log(`generated ${pages} pages`);
 
 /* sitemap */
-const urls = ["/", "/tools/", "/pricing.html", "/privacy.html", "/terms.html"]
+const urls = ["/", "/tools/", "/pricing.html", "/about.html", "/contact.html", "/blog/", "/privacy.html", "/terms.html"]
   .concat(VK.CATEGORIES.map((c) => `/tools/${c.slug}/`))
   .concat(VK.TOOLS.map((t) => `/tools/${t.cat}/${t.id}/`));
 fs.writeFileSync(path.join(ROOT, "sitemap.xml"),

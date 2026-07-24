@@ -19,12 +19,12 @@
   --n-800:#1f2937;
   --n-900:#0d1420;
 
-  /* ---- ONE accent. Discipline is the design. ---- */
-  --accent:        #2563eb;
-  --accent-hover:  #1d4ed8;
-  --accent-active: #1a43bf;
-  --accent-weak:   #eaf0ff;   /* tinted surface */
-  --accent-border: #b9cdfb;
+  /* ---- brand accent: premium rose-pink (per-category overrides in skin.css) ---- */
+  --accent:        #d61f69;
+  --accent-hover:  #be185d;
+  --accent-active: #a3134f;
+  --accent-weak:   #fdeef5;   /* soft pink tinted surface */
+  --accent-border: #f6c2d9;
   --accent-on:     #ffffff;   /* text on accent */
 
   /* ---- semantic only. never decorative. ---- */
@@ -71,7 +71,7 @@
   --shadow-sm: 0 1px 2px rgb(13 20 32 / .04), 0 2px 8px rgb(13 20 32 / .04);
   --shadow-md: 0 2px 6px rgb(13 20 32 / .05), 0 10px 24px rgb(13 20 32 / .07);
   --shadow-lg: 0 8px 20px rgb(13 20 32 / .07), 0 24px 56px rgb(13 20 32 / .10);
-  --ring: 0 0 0 4px rgb(37 99 235 / .14);   /* micro-glow focus */
+  --ring: 0 0 0 4px rgb(214 31 105 / .16);   /* micro-glow focus */
 
   /* ---- motion ---- */
   --ease: cubic-bezier(.22,.8,.3,1);
@@ -95,12 +95,12 @@
   --ink-soft:    #a9b8cc;
   --ink-mute:    #8494ab;
 
-  --accent:        #5b8bf7;
-  --accent-hover:  #7ba3f9;
-  --accent-active: #96b6fb;
-  --accent-weak:   #16223a;
-  --accent-border: #2f4c86;
-  --accent-on:     #08111f;
+  --accent:        #f472b6;
+  --accent-hover:  #f9a8d4;
+  --accent-active: #fbcfe8;
+  --accent-weak:   #2a1420;
+  --accent-border: #7d2d52;
+  --accent-on:     #2a0a17;
 
   --ok:#5ed49b;  --ok-weak:#0f2b1f;  --ok-border:#1f5c40;
   --warn:#f0b352; --warn-weak:#2c2010; --warn-border:#6b4d17;
@@ -109,7 +109,7 @@
   --shadow-sm: 0 1px 2px rgb(0 0 0 / .3);
   --shadow-md: 0 2px 6px rgb(0 0 0 / .34), 0 10px 24px rgb(0 0 0 / .3);
   --shadow-lg: 0 8px 20px rgb(0 0 0 / .4), 0 24px 56px rgb(0 0 0 / .36);
-  --ring: 0 0 0 4px rgb(91 139 247 / .22);
+  --ring: 0 0 0 4px rgb(244 114 182 / .24);
 }
 
 /* respect OS preference when the user hasn't chosen */
@@ -119,21 +119,21 @@
     --canvas:#0b1220; --surface:#121b2b; --surface-sunk:#0e1727;
     --line:#24314a; --line-strong:#33425e;
     --ink:#eaf0f9; --ink-soft:#a9b8cc; --ink-mute:#8494ab;
-    --accent:#5b8bf7; --accent-hover:#7ba3f9; --accent-active:#96b6fb;
-    --accent-weak:#16223a; --accent-border:#2f4c86; --accent-on:#08111f;
+    --accent:#f472b6; --accent-hover:#f9a8d4; --accent-active:#fbcfe8;
+    --accent-weak:#2a1420; --accent-border:#7d2d52; --accent-on:#2a0a17;
     --ok:#5ed49b; --ok-weak:#0f2b1f; --ok-border:#1f5c40;
     --warn:#f0b352; --warn-weak:#2c2010; --warn-border:#6b4d17;
     --err:#ff8b90; --err-weak:#2e1517; --err-border:#6d2a2d;
     --shadow-sm:0 1px 2px rgb(0 0 0 / .3);
     --shadow-md:0 2px 6px rgb(0 0 0 / .34), 0 10px 24px rgb(0 0 0 / .3);
     --shadow-lg:0 8px 20px rgb(0 0 0 / .4), 0 24px 56px rgb(0 0 0 / .36);
-    --ring:0 0 0 4px rgb(91 139 247 / .22);
+    --ring:0 0 0 4px rgb(244 114 182 / .24);
   }
 }
 
 /* the single sanctioned gradient — max ONE element per page */
 .grad-text {
-  background: linear-gradient(100deg, var(--accent), #6d5dfc 60%, #06b6d4);
+  background: linear-gradient(100deg, var(--accent), #d946a6 55%, #e11d64);
   -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent;
 }
