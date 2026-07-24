@@ -2,6 +2,9 @@
   "name": "vootkit",
   "version": "1.0.0",
   "private": true,
+  "dependencies": {
+    "stripe": "^16.12.0"
+  },
   "scripts": {
     "build": "node build.js",
     "test": "node test/calc.test.js && node test/filetool.test.js && node test/pdf.test.js && node test/video.test.js && node test/videofx.test.js && node test/text.test.js && node test/dev.test.js && node test/widgets2.test.js && node test/seo.test.js && node test/dataimg.test.js && node test/codes.test.js && node test/a11y.test.js && node test/misc.test.js && node test/business.test.js && node test/ui.test.js && node test/auth.test.js && node test/usage.test.js",
