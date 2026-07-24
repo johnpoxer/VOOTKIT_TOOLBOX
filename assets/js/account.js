@@ -15,6 +15,8 @@
   if (!A || !A.enabled) { notice('Sign-in isn’t switched on yet. The tools all work without an account in the meantime.'); return; }
 
   var user, client;
+  var LIMIT = (root.VK_CONFIG && root.VK_CONFIG.freeLimit && root.VK_CONFIG.freeLimit.count) || 5;
+  var stat = {};       // references to overview stat value nodes
 
   async function init() {
     user = await A.requireAuth(); if (!user) return; // redirected
@@ -24,6 +26,42 @@
 
   function tabButton(id, label) { return el('button', { class: 'btn', role: 'tab', id: 'at-' + id, 'aria-controls': 'ap-' + id, text: label }); }
 
+  /* ---- overview: at-a-glance stats + usage meter ---- */
+  function statCard(key, label, value) {
+    var v = el('b', { class: 'acct-stat-v', text: value });
+    stat[key] = v;
+    return el('div', { class: 'acct-stat' }, [el('span', { class: 'acct-stat-l', text: label }), v]);
+  }
+  function usageCard() {
+    var used = root.VKUsage ? root.VKUsage.readCount() : 0;
+    var pct = LIMIT ? Math.min(100, Math.round((used / LIMIT) * 100)) : 0;
+    var v = el('b', { class: 'acct-stat-v', text: used + ' / ' + LIMIT });
+    stat.use = v;
+    var fill = el('i', { style: 'width:' + pct + '%' }); stat.useBar = fill;
+    return el('div', { class: 'acct-stat acct-stat--wide' }, [
+      el('span', { class: 'acct-stat-l', text: 'Free runs today' }), v,
+      el('div', { class: 'acct-bar' }, [fill]),
+      el('span', { class: 'acct-stat-s', text: 'Resets at midnight. Core tools & downloaders are always unlimited.' })
+    ]);
+  }
+  function overview() {
+    return el('div', { class: 'acct-overview' }, [
+      statCard('plan', 'Plan', 'Free'),
+      usageCard(),
+      statCard('fav', 'Saved tools', '—'),
+      statCard('hist', 'Tools used', '—')
+    ]);
+  }
+  function upgradeCard() {
+    return el('div', { class: 'acct-upgrade', id: 'acct-upgrade' }, [
+      el('div', { class: 'acct-upgrade-tx' }, [
+        el('h3', { text: 'Unlock Vootkit Pro' }),
+        el('p', { text: 'Unlimited daily runs, faster processing, premium tools and cloud history that syncs across your devices.' })
+      ]),
+      el('a', { class: 'acct-upgrade-cta', href: up() + 'pricing.html', text: 'Upgrade' })
+    ]);
+  }
+
   async function render() {
     var name = (user.user_metadata && user.user_metadata.display_name) || user.email;
     host.innerHTML = '';
@@ -32,6 +70,9 @@
       el('div', {}, [el('h1', { class: 'page-h1', text: name }), el('p', { class: 'note', text: user.email })]),
       el('button', { class: 'btn', type: 'button', text: 'Sign out', onClick: function () { A.signOut(); } })
     ]));
+
+    host.appendChild(overview());
+    host.appendChild(upgradeCard());
 
     var tabs = el('div', { 'data-tabs': '' }, [
       el('div', { role: 'tablist', class: 'wbtns', 'aria-label': 'Account sections' }, [
@@ -54,6 +95,7 @@
     try {
       var r = await client.from('favorites').select('tool_id, created_at').order('created_at', { ascending: false });
       var rows = (r.data || []);
+      if (stat.fav) stat.fav.textContent = String(rows.length);
       wrap.innerHTML = '';
       if (!rows.length) { wrap.appendChild(emptyState('No favorites yet', 'Open any tool and tap the ☆ to pin it here.')); return; }
       var grid = el('div', { class: 'popular-grid' });
@@ -69,6 +111,7 @@
     try {
       var r = await client.from('history').select('tool_id, used_at').order('used_at', { ascending: false }).limit(40);
       var rows = (r.data || []);
+      if (stat.hist) stat.hist.textContent = String(rows.length);
       wrap.innerHTML = '';
       if (!rows.length) { wrap.appendChild(emptyState('No history yet', 'Tools you use while signed in show up here, synced across your devices.')); return; }
       var list = el('div', { class: 'popular-grid' });
@@ -83,9 +126,18 @@
     var wrap = doc.getElementById('plan-wrap'); if (!wrap) return;
     var plan = 'free';
     try { var r = await client.from('profiles').select('plan').eq('id', user.id).single(); if (r.data && r.data.plan) plan = r.data.plan; } catch (e) {}
+    var isPro = plan !== 'free';
+    var label = plan === 'creator_pro' ? 'Creator Pro' : plan === 'creator_teams' ? 'Creator Teams' : 'Free';
+    // reflect plan into the overview + toggle the upgrade card / usage meter
+    if (stat.plan) stat.plan.textContent = label;
+    if (isPro) {
+      if (stat.use) stat.use.textContent = 'Unlimited';
+      if (stat.useBar) stat.useBar.style.width = '100%';
+      var up1 = doc.getElementById('acct-upgrade'); if (up1) up1.remove();
+    }
     wrap.innerHTML = '';
-    wrap.appendChild(el('div', { class: 'calc-stats' }, [el('div', { class: 'calc-stat' }, [el('span', { text: 'Current plan' }), el('b', { text: plan === 'free' ? 'Free' : plan })])]));
-    if (plan === 'free') wrap.appendChild(el('p', { class: 'note', html: 'You’re on the free plan — every tool works with no limits. <a href="' + up() + 'pricing.html" style="color:var(--accent);font-weight:600">See Pro</a> for no ads, cloud history and premium tools.' }));
+    wrap.appendChild(el('div', { class: 'calc-stats' }, [el('div', { class: 'calc-stat' }, [el('span', { text: 'Current plan' }), el('b', { text: label })])]));
+    if (!isPro) wrap.appendChild(el('p', { class: 'note', html: 'You’re on the free plan — 5 tool runs a day, with core tools and downloaders always unlimited. <a href="' + up() + 'pricing.html" style="color:var(--accent);font-weight:600">See Pro</a> for unlimited usage, faster processing and cloud history.' }));
     else wrap.appendChild(el('p', { class: 'note', text: 'Thanks for supporting Vootkit. Manage billing from the receipt email’s Stripe portal link.' }));
   }
 

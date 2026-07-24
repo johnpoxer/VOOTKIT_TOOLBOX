@@ -192,6 +192,38 @@ body::before {
 }
 .tool-card .ic { transition: transform var(--dur) var(--ease); }
 
+/* ---------- account dashboard ---------- */
+.acct-overview {
+  display: grid; gap: var(--s-3); margin: var(--s-5) 0;
+  grid-template-columns: repeat(4, 1fr);
+}
+.acct-stat {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg);
+  padding: var(--s-4); display: flex; flex-direction: column; gap: 4px; box-shadow: var(--shadow-sm);
+}
+.acct-stat--wide { grid-column: span 2; }
+.acct-stat-l { font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .05em; font-size: 10px; font-weight: 600; color: var(--ink-mute); }
+.acct-stat-v { font-family: var(--font-display); font-size: var(--t-2xl); font-weight: 800; line-height: 1.05; color: var(--ink); }
+.acct-stat-s { font-size: var(--t-xs); color: var(--ink-mute); }
+.acct-bar { height: 8px; border-radius: var(--r-pill); background: var(--surface-sunk); overflow: hidden; margin: 6px 0 2px; }
+.acct-bar i { display: block; height: 100%; border-radius: var(--r-pill); background: linear-gradient(90deg, var(--accent), #d946a6); transition: width var(--dur-slow) var(--ease); }
+@media (max-width: 720px) { .acct-overview { grid-template-columns: repeat(2, 1fr); } .acct-stat--wide { grid-column: span 2; } }
+
+.acct-upgrade {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); flex-wrap: wrap;
+  margin-bottom: var(--s-6); padding: var(--s-5); border-radius: var(--r-lg);
+  background: linear-gradient(120deg, var(--accent), #c62a92 55%, #c0186a); color: #fff;
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+.acct-upgrade-tx h3 { margin: 0 0 4px; font-size: var(--t-lg); color: #fff; }
+.acct-upgrade-tx p { margin: 0; font-size: var(--t-sm); color: rgb(255 255 255 / .9); max-width: 52ch; }
+.acct-upgrade-cta {
+  flex: none; background: #fff; color: var(--accent); font-weight: 700; text-decoration: none;
+  padding: 10px 22px; border-radius: var(--r-pill); white-space: nowrap;
+  transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+}
+@media (prefers-reduced-motion: no-preference) { .acct-upgrade-cta:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgb(0 0 0 / .18); } }
+
 /* ---------- micro-interactions ---------- */
 .brand svg { transition: transform var(--dur) var(--ease); }
 @media (prefers-reduced-motion: no-preference) { .brand:hover svg { transform: rotate(-6deg) scale(1.06); } }
