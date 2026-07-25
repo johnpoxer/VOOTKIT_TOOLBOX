@@ -5,8 +5,15 @@ exports.handler = async function (event) {
   var origin = process.env.VK_ORIGIN || "https://www.vootkit.com";
   var notFound = origin + "/tools/seo/url-shortener/?e=notfound";
 
-  var code = (event.queryStringParameters && event.queryStringParameters.code) || "";
-  code = String(code).replace(/[^a-zA-Z0-9-]/g, "").slice(0, 32);
+  // Read the code from the path (/s/<code>) — reliable — falling back to the
+  // ?code= query param. (Netlify doesn't always substitute :code into the query.)
+  var qp = (event.queryStringParameters && event.queryStringParameters.code) || "";
+  var fromPath = "";
+  try {
+    var m = /\/s\/([^/?#]+)/.exec(event.path || event.rawUrl || "");
+    if (m) fromPath = decodeURIComponent(m[1]);
+  } catch (e) {}
+  var code = String(qp || fromPath).replace(/[^a-zA-Z0-9-]/g, "").slice(0, 32);
 
   var SUPA = process.env.SUPABASE_URL, KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!code || !SUPA || !KEY) return redirect(notFound);

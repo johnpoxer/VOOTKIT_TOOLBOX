@@ -14,11 +14,11 @@
   status = 301
   force = true
 
-# Short links: /s/<code> is served by the redirect function, which looks the
-# code up in Supabase and 302s to the real destination.
+# Short links: /s/<code> is served by the redirect function, which reads the
+# code from the path, looks it up in Supabase and 302s to the real destination.
 [[redirects]]
-  from = "/s/:code"
-  to = "/.netlify/functions/redirect?code=:code"
+  from = "/s/*"
+  to = "/.netlify/functions/redirect?code=:splat"
   status = 200
 
 # Serverless functions (Stripe Checkout) need their deps.
