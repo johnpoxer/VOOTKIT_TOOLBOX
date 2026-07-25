@@ -44,6 +44,7 @@ function widgetScriptsFor(id) {
   return null;
 }
 const LINKTOOLS = ["url-shortener"];   // server-backed tools (Supabase + Netlify functions)
+const I18N = require("./data/i18n.js");
 const CFG = require("./data/site.config.js");
 const SITE = CFG.origin;
 const SUPPORT = CFG.supportEmail;
@@ -59,11 +60,30 @@ const write = (rel, html) => {
 };
 
 /* ---------- shared chrome ---------- */
+function hreflangTags(alts) {
+  if (!alts || alts.length < 2) return "";
+  const links = alts.map((a) => `<link rel="alternate" hreflang="${a.code}" href="${a.href}">`);
+  const en = alts.filter((a) => a.code === "en")[0] || alts[0];
+  links.push(`<link rel="alternate" hreflang="x-default" href="${en.href}">`);
+  return "\n" + links.join("\n");
+}
+function langLabel(code) {
+  if (code === "en") return "English";
+  const l = I18N.LOCALES.filter((x) => x.code === code)[0];
+  return l ? l.label : code;
+}
+function langSwitcher(alts, lang) {
+  if (!alts || alts.length < 2) return "";
+  const items = alts.map((a) => `<a href="${a.href}"${a.code === lang ? ' aria-current="true"' : ""}>${esc(langLabel(a.code))}</a>`).join("");
+  return `<details class="lang-switch"><summary title="Language">🌐 ${esc(langLabel(lang))}</summary><div class="lang-menu">${items}</div></details>`;
+}
+
 function head(o) {
   // depth = how many ../ to reach site root
   const up = "../".repeat(o.depth) || "./";
+  const lang = o.lang || "en";
   return `<!doctype html>
-<html lang="en">
+<html lang="${lang}"${o.dir === "rtl" ? ' dir="rtl"' : ""}>
 <head>
 <meta charset="utf-8">
 <meta name="google-adsense-account" content="${PUB}">
@@ -72,7 +92,7 @@ function head(o) {
 <meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)">
 <title>${esc(o.title)}</title>
 <meta name="description" content="${esc(o.desc)}">
-<link rel="canonical" href="${o.url}">
+<link rel="canonical" href="${o.url}">${hreflangTags(o.alts)}
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Vootkit">
 <meta property="og:title" content="${esc(o.ogTitle || o.title)}">
@@ -114,6 +134,7 @@ ${o.ads ? `<script async src="https://pagead2.googlesyndication.com/pagead/js/ad
       <a class="icon-btn" href="${up}tools/" aria-label="Search tools">
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
       </a>
+      ${langSwitcher(o.alts, lang)}
       <button class="icon-btn" id="theme" type="button" aria-label="Switch theme">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.5M12 19v2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M2.5 12H5M19 12h2.5M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8"/></svg>
       </button>
@@ -203,6 +224,31 @@ const NEW = new Set([
   "trim-video", "vertical-reframe", "mute-video", "extract-audio", "frame-grabber",
   "csv-to-chart", "markdown-editor", "schema-generator"
 ]);
+
+/* which script bundle a tool page loads — shared by English + localised pages */
+function toolScripts(t) {
+  if (VIDEO[t.id]) return ['assets/js/calc.js', 'assets/js/tools-video.js'];
+  if (MONEY[t.id]) return ['assets/js/calc.js', 'assets/js/tools-money.js', 'assets/js/tools-money2.js'];
+  if (IMAGE[t.id]) return ['assets/js/filetool.js', 'assets/js/tools-image.js'];
+  if (PDF[t.id]) return ['assets/js/filetool.js', 'assets/js/tools-pdf.js'];
+  if (VIDEOFX[t.id]) return ['assets/js/filetool.js', 'assets/js/videoengine.js', 'assets/js/tools-videofx.js'];
+  if (LINKTOOLS.indexOf(t.id) !== -1) return ['assets/js/tools-linktools.js'];
+  return widgetScriptsFor(t.id) || [];
+}
+
+/* locales for which a given tool is fully translated (chrome + name/desc) */
+function localesForTool(id) {
+  return I18N.LOCALES.filter(function (l) {
+    return I18N.chrome[l.code] && I18N.tools[l.code] && I18N.tools[l.code][id];
+  });
+}
+/* hreflang alternates for a tool: English + any fully-translated locales */
+function altsForTool(t) {
+  const base = "/tools/" + t.cat + "/" + t.id + "/";
+  const arr = [{ code: "en", href: SITE + base }];
+  localesForTool(t.id).forEach((l) => arr.push({ code: l.code, href: SITE + "/" + l.code + base }));
+  return arr;
+}
 
 function toolCard(t, up) {
   const soon = t.status !== "live";
@@ -363,7 +409,7 @@ function toolPage(t) {
          <a class="btn" href="../">Browse ${esc(c.name)} tools that work today</a>
        </div>`;
 
-  let pageHead = head({ depth: 3, url, ads: false, ld, cat: t.cat,   // rule: no ads in an active tool workspace
+  let pageHead = head({ depth: 3, url, ads: false, ld, cat: t.cat, lang: "en", alts: altsForTool(t),   // rule: no ads in an active tool workspace
     title: `${t.name} — Free Online ${c.name} Tool | Vootkit`,
     ogTitle: t.name,
     desc: `${t.desc} ${local ? "Runs in your browser" : "No sign-up"}, no watermark, 5 free uses a day.` });
@@ -432,12 +478,78 @@ function toolPage(t) {
       ? "This tool processes everything locally in your browser. You can disconnect from the internet after the page loads and it will still work."
       : "This tool calls an external service to fetch live data. It does not require an account and does not track you."}</p>
   </section>
-</div>` + foot(3, hasCalc ? (VIDEO[t.id] ? ['assets/js/calc.js','assets/js/tools-video.js'] : ['assets/js/calc.js','assets/js/tools-money.js','assets/js/tools-money2.js'])
-    : hasFile ? ['assets/js/filetool.js','assets/js/tools-image.js']
-    : hasPdf ? ['assets/js/filetool.js','assets/js/tools-pdf.js']
-    : hasVideoFx ? ['assets/js/filetool.js','assets/js/videoengine.js','assets/js/tools-videofx.js']
-    : hasLink ? ['assets/js/tools-linktools.js']
-    : widgetScripts ? widgetScripts : []);
+</div>` + foot(3, toolScripts(t));
+}
+
+/* ---------- localised tool page (one per translated locale) ---------- */
+function fillStr(s, m) { return String(s == null ? "" : s).replace(/\{(\w+)\}/g, function (_, k) { return m[k] != null ? m[k] : ""; }); }
+function badgeI18n(t, C) {
+  return t.processing === "network"
+    ? `<span class="badge badge-net">${esc(C.badge_net)}</span>`
+    : `<span class="badge badge-local">${esc(C.badge_local)}</span>`;
+}
+function localizedToolPage(t, c, loc) {
+  const code = loc.code, C = I18N.chrome[code], TT = I18N.tools[code][t.id];
+  const local = t.processing !== "network";
+  const name = TT.name, desc = TT.desc;
+  const M = { name: name, cat: c.name, count: VK.TOOLS.length };
+  const base = "/tools/" + t.cat + "/" + t.id + "/";
+  const url = SITE + "/" + code + base;
+  const up = "../../../../";
+  const related = VK.byCategory(t.cat).filter((x) => x.id !== t.id && x.status === "live" && I18N.tools[code] && I18N.tools[code][x.id]).slice(0, 6);
+  const faqs = [
+    { q: fillStr(C.faq1_q, M), a: fillStr(C.faq1_a, M) },
+    { q: fillStr(C.faq2_q, M), a: fillStr(local ? C.faq2_a_local : C.faq2_a_net, M) },
+    { q: fillStr(C.faq3_q, M), a: fillStr(C.faq3_a, M) },
+    { q: fillStr(C.faq4_q, M), a: fillStr(C.faq4_a, M) }
+  ];
+  const title = name + " — " + fillStr(C.title_suffix, M);
+  const metaDesc = fillStr(C.meta_desc, { desc: desc, mode: local ? C.mode_local : C.mode_net });
+  const ld = [
+    { "@context": "https://schema.org", "@type": "SoftwareApplication", name: name, applicationCategory: "UtilitiesApplication", operatingSystem: "Any (web browser)", offers: { "@type": "Offer", price: "0", priceCurrency: "USD" }, description: desc, url, inLanguage: code },
+    { "@context": "https://schema.org", "@type": "FAQPage", inLanguage: code, mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) }
+  ];
+  const pageHead = head({ depth: 4, url, ads: false, ld, cat: t.cat, lang: code, dir: loc.dir, alts: altsForTool(t), title: title, ogTitle: name, desc: metaDesc });
+  const relHtml = related.length
+    ? `<section class="section"><h2 class="h-sm">${esc(fillStr(C.sec_next, M))}</h2><div class="grid">${related.map((r) => {
+        const rc = CATBY[r.cat] || {}, rt = I18N.tools[code][r.id];
+        return `<a class="card tool-card" data-cat="${r.cat}" href="../${r.id}/"><span class="tc-top"><span class="ic">${icon(rc.icon)}</span></span><h3>${esc(rt.name)}</h3><p>${esc(rt.desc)}</p><span class="card-foot"><span class="tc-cat">${esc(rc.name || r.cat)}</span>${badgeI18n(r, C)}</span></a>`;
+      }).join("")}</div></section>`
+    : "";
+  return pageHead +
+`<div class="wrap section tool-page">
+  <nav class="crumb" aria-label="Breadcrumb"><a href="${up}">Vootkit</a> <span aria-hidden="true">›</span> <a href="${up}tools/">${esc(C.crumb_tools)}</a> <span aria-hidden="true">›</span> <a href="${up}tools/${t.cat}/">${esc(c.name)}</a> <span aria-hidden="true">›</span> <span aria-current="page">${esc(name)}</span></nav>
+  <header class="tool-head">
+    <h1 class="page-h1">${esc(name)}</h1>
+    <p class="page-lede">${esc(desc)}</p>
+    <div class="trust">${badgeI18n(t, C)}<span class="badge">${esc(C.badge_nosignup)}</span><span class="badge">${esc(C.badge_nowatermark)}</span><span class="badge">${esc(C.badge_free)}</span></div>
+  </header>
+  <div class="ws" id="workspace" data-tool="${t.id}"></div>
+  <section class="prose">
+    <h2>${esc(fillStr(C.sec_what, M))}</h2>
+    <p>${esc(fillStr(C.what_body, { desc: desc, count: VK.TOOLS.length }))}</p>
+    <h2>${esc(fillStr(C.sec_why, M))}</h2>
+    <ul>
+      <li><strong>${esc(local ? C.why_local_b : C.why_net_b)}</strong> ${esc(local ? C.why_local_d : C.why_net_d)}</li>
+      <li><strong>${esc(C.why_free_b)}</strong> ${esc(C.why_free_d)} <a href="${up}pricing.html">Pro</a></li>
+      <li><strong>${esc(C.why_watermark_b)}</strong> ${esc(C.why_watermark_d)}</li>
+      <li><strong>${esc(C.why_mobile_b)}</strong> ${esc(C.why_mobile_d)}</li>
+    </ul>
+    <h2>${esc(fillStr(C.sec_how, M))}</h2>
+    <ol>
+      <li>${esc(fillStr(C.how1, M))}</li>
+      <li>${esc(local ? C.how2_local : C.how2_net)}</li>
+      <li>${esc(C.how3)}</li>
+      <li>${esc(C.how4)}</li>
+    </ol>
+  </section>
+  <section class="prose faq">
+    <h2>${esc(fillStr(C.sec_faq, M))}</h2>
+    ${faqs.map((f) => `<details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join("\n    ")}
+  </section>
+  ${relHtml}
+  <section class="trust-note"><p class="note">${esc(local ? C.trust_local : C.trust_net)}</p></section>
+</div>` + foot(4, toolScripts(t));
 }
 
 function exampleFor(t, c) {
@@ -1049,14 +1161,28 @@ write("components/index.html", componentsPage()); pages++;
 write("tools/index.html", allToolsPage()); pages++;
 VK.CATEGORIES.forEach((c) => { write(`tools/${c.slug}/index.html`, categoryPage(c)); pages++; });
 VK.TOOLS.forEach((t) => { write(`tools/${t.cat}/${t.id}/index.html`, toolPage(t)); pages++; });
-console.log(`generated ${pages} pages`);
+
+/* localised tool pages — only where the tool is fully translated (chrome + name/desc) */
+let localizedPages = 0;
+I18N.LOCALES.forEach((loc) => {
+  if (!I18N.chrome[loc.code] || !I18N.tools[loc.code]) return;
+  VK.TOOLS.forEach((t) => {
+    if (t.status !== "live" || !I18N.tools[loc.code][t.id]) return;
+    write(`${loc.code}/tools/${t.cat}/${t.id}/index.html`, localizedToolPage(t, CATBY[t.cat], loc));
+    pages++; localizedPages++;
+  });
+});
+console.log(`generated ${pages} pages (${localizedPages} localised)`);
 
 /* sitemap */
 const urls = ["/", "/tools/", "/pricing.html", "/about.html", "/contact.html", "/privacy.html", "/terms.html"]
   .concat(POSTS.length ? ["/blog/"] : [])                       // only list blog when it has posts
   .concat(POSTS.map((p) => `/blog/${p.slug}/`))
   .concat(VK.CATEGORIES.map((c) => `/tools/${c.slug}/`))
-  .concat(VK.TOOLS.filter((t) => t.status === "live").map((t) => `/tools/${t.cat}/${t.id}/`));   // exclude noindexed under-construction tools
+  .concat(VK.TOOLS.filter((t) => t.status === "live").map((t) => `/tools/${t.cat}/${t.id}/`))   // exclude noindexed under-construction tools
+  .concat([].concat.apply([], I18N.LOCALES.map((loc) => (I18N.chrome[loc.code] && I18N.tools[loc.code])
+    ? VK.TOOLS.filter((t) => t.status === "live" && I18N.tools[loc.code][t.id]).map((t) => `/${loc.code}/tools/${t.cat}/${t.id}/`)
+    : [])));
 fs.writeFileSync(path.join(ROOT, "sitemap.xml"),
 `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

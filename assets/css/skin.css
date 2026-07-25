@@ -301,6 +301,18 @@ body::before {
 .adm-foot { text-align: center; margin-top: var(--s-4); }
 @media (max-width: 820px) { .adm-kpis { grid-template-columns: repeat(2, 1fr); } .adm-cols { grid-template-columns: 1fr; } }
 
+/* ---------- language switcher (i18n) ---------- */
+.lang-switch { position: relative; }
+.lang-switch > summary { list-style: none; cursor: pointer; font-size: var(--t-xs); font-weight: 600; color: var(--ink-soft); padding: 8px 10px; border-radius: var(--r-sm); white-space: nowrap; }
+.lang-switch > summary::-webkit-details-marker { display: none; }
+.lang-switch > summary:hover { background: var(--surface-sunk); color: var(--ink); }
+.lang-menu { position: absolute; right: 0; top: 100%; margin-top: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); box-shadow: var(--shadow-lg); min-width: 170px; padding: 6px; z-index: 50; display: flex; flex-direction: column; }
+.lang-menu a { padding: 8px 12px; border-radius: var(--r-sm); font-size: var(--t-sm); color: var(--ink); text-decoration: none; }
+.lang-menu a:hover { background: var(--accent-weak); color: var(--accent); }
+.lang-menu a[aria-current="true"] { color: var(--accent); font-weight: 600; }
+[dir="rtl"] .lang-menu { right: auto; left: 0; }
+[dir="rtl"] body { text-align: right; }
+
 /* ---------- micro-interactions ---------- */
 .brand svg { transition: transform var(--dur) var(--ease); }
 @media (prefers-reduced-motion: no-preference) { .brand:hover svg { transform: rotate(-6deg) scale(1.06); } }
