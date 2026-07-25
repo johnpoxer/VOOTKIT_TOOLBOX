@@ -61,6 +61,32 @@
       trust_net: "Esta herramienta llama a un servicio externo para obtener datos en vivo. No requiere cuenta y no te rastrea.",
       foot_how: "Cómo funciona", foot_how_body: "La mayoría de las herramientas funcionan por completo en tu navegador, así que tus archivos no se suben y no hay cola. El plan gratuito incluye 5 usos al día.",
       lang_label: "Idioma"
+    },
+    pt: {
+      nav_tools: "Ferramentas", nav_pricing: "Preços", nav_features: "Recursos", nav_blog: "Blog", nav_about: "Sobre", nav_contact: "Contato",
+      cta_pro: "Obter Pro", skip: "Ir para o conteúdo",
+      badge_local: "funciona no seu dispositivo", badge_net: "usa uma API",
+      badge_nosignup: "sem cadastro", badge_nowatermark: "sem marca d'água", badge_free: "5 usos grátis por dia",
+      crumb_tools: "Ferramentas",
+      title_suffix: "Ferramenta Online Gratuita de {cat} | Vootkit",
+      meta_desc: "{desc} {mode}, sem marca d'água, 5 usos grátis por dia.",
+      mode_local: "Funciona no seu navegador", mode_net: "Sem cadastro",
+      sec_what: "O que {name} faz", sec_why: "Por que usar esta ferramenta", sec_how: "Como funciona", sec_faq: "Perguntas frequentes", sec_next: "Próximas em {cat}",
+      what_body: "{desc} É uma das {count} ferramentas do ecossistema Vootkit, criada para fazer uma única tarefa com excelência — abra, obtenha o resultado e continue.",
+      why_local_b: "Nada é enviado.", why_local_d: "Seu arquivo é processado no seu próprio dispositivo, por isso nunca chega a um servidor.",
+      why_net_b: "Sem necessidade de conta.", why_net_d: "Use imediatamente — sem cadastro e sem e-mail.",
+      why_free_b: "5 usos grátis por dia.", why_free_d: "O plano gratuito inclui 5 usos de ferramentas por dia — faça upgrade para o Pro e tenha uso diário ilimitado.",
+      why_watermark_b: "Sem marca d'água.", why_watermark_d: "O resultado final é exatamente o que você criou.",
+      why_mobile_b: "Funciona no celular.", why_mobile_d: "A mesma ferramenta, otimizada para toque.",
+      how1: "Abra {name} — nada para instalar.", how2_local: "Adicione seu arquivo ou entrada. Tudo permanece no seu dispositivo.", how2_net: "Digite o que deseja pesquisar.", how3: "Ajuste as opções para obter o resultado que precisa.", how4: "Baixe ou copie seu resultado.",
+      faq1_q: "{name} é grátis?", faq1_a: "Sim. O plano gratuito do Vootkit inclui 5 usos de ferramentas por dia, sem conta e sem marca d'água. Faça upgrade para o Vootkit Pro para uso diário ilimitado, processamento mais rápido e ferramentas premium.",
+      faq2_q: "Meus arquivos são enviados?", faq2_a_local: "Não. {name} funciona totalmente no seu navegador — seu arquivo é processado no próprio dispositivo e nunca é enviado para um servidor.", faq2_a_net: "{name} precisa da internet para funcionar, então utiliza um serviço externo para buscar dados. Não exige conta e não rastreia você.",
+      faq3_q: "Preciso instalar alguma coisa?", faq3_a: "Não. {name} funciona em qualquer navegador moderno no computador, tablet ou celular. Abra a página e comece.",
+      faq4_q: "Com que frequência posso usar? Existe limite diário?", faq4_a: "No plano gratuito você recebe 5 usos de ferramentas por dia. Quando atingir o limite, verá uma opção para fazer upgrade e o limite será renovado no dia seguinte. O Vootkit Pro remove o limite completamente.",
+      trust_local: "Esta ferramenta processa tudo localmente no seu navegador. Você pode desconectar da internet depois que a página carregar e ela continuará funcionando.",
+      trust_net: "Esta ferramenta utiliza um serviço externo para buscar dados em tempo real. Não exige conta e não rastreia você.",
+      foot_how: "Como funciona", foot_how_body: "A maioria das ferramentas funciona totalmente no seu navegador, então seus arquivos não são enviados e não existe fila de espera. O plano gratuito inclui 5 usos de ferramentas por dia.",
+      lang_label: "Idioma"
     }
   };
 
@@ -84,6 +110,25 @@
       "json-formatter": { name: "Formateador de JSON", desc: "Formatea, valida y minimiza JSON con detección de errores." },
       "mortgage-calculator": { name: "Calculadora de hipoteca", desc: "Cuota mensual, interés total y tabla de amortización completa." },
       "color-converter": { name: "Convertidor de color", desc: "HEX, RGB, HSL y OKLCH con vista previa en vivo." }
+    },
+    pt: {
+      "merge-pdf": { name: "Juntar PDF", desc: "Combine vários PDFs em um único arquivo e reordene páginas — tudo no seu dispositivo." },
+      "compress-pdf": { name: "Comprimir PDF", desc: "Reduza o tamanho de um PDF mantendo boa qualidade." },
+      "split-pdf": { name: "Dividir PDF", desc: "Separe um PDF em vários arquivos por intervalo de páginas." },
+      "pdf-to-jpg": { name: "PDF para JPG", desc: "Converta cada página de um PDF em uma imagem JPG." },
+      "jpg-to-pdf": { name: "JPG para PDF", desc: "Converta suas imagens em um único PDF organizado." },
+      "compress-image": { name: "Comprimir imagem", desc: "Reduza o peso de uma imagem sem perda visível de qualidade." },
+      "resize-image": { name: "Redimensionar imagem", desc: "Altere o tamanho de uma imagem para os pixels exatos que precisar." },
+      "convert-image": { name: "Converter imagem", desc: "Converta entre PNG, JPG e WebP no seu navegador." },
+      "compress-for-discord": { name: "Comprimir vídeo para o Discord", desc: "Predefinições de um clique para 10 MB, 50 MB e 500 MB que realmente cabem." },
+      "video-to-gif": { name: "Vídeo para GIF", desc: "Converta um clipe curto em um GIF com paleta de cores nítida." },
+      "url-shortener": { name: "Encurtador de URL", desc: "Transforme um link longo em um link curto para compartilhar, com nome personalizado opcional." },
+      "qr-generator": { name: "Gerador de QR Code", desc: "Crie um QR code para qualquer link, texto ou wi-fi." },
+      "password-generator": { name: "Gerador de senhas", desc: "Crie senhas fortes e aleatórias na hora." },
+      "word-counter": { name: "Contador de palavras", desc: "Conte palavras, caracteres e frases enquanto digita." },
+      "json-formatter": { name: "Formatador de JSON", desc: "Formate, valide e minifique JSON com detecção de erros." },
+      "mortgage-calculator": { name: "Calculadora de financiamento", desc: "Parcela mensal, juros totais e tabela de amortização completa." },
+      "color-converter": { name: "Conversor de cores", desc: "HEX, RGB, HSL e OKLCH com pré-visualização ao vivo." }
     }
   };
 
