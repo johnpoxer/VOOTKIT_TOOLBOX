@@ -1,0 +1,70 @@
+{
+  "merge-pdf": {
+    "name": "Unir PDF",
+    "desc": "Combina varios PDF en un solo archivo, reordena páginas — todo en tu dispositivo."
+  },
+  "compress-pdf": {
+    "name": "Comprimir PDF",
+    "desc": "Reduce el tamaño de un PDF manteniendo una buena calidad."
+  },
+  "split-pdf": {
+    "name": "Dividir PDF",
+    "desc": "Separa un PDF en varios archivos por rango de páginas."
+  },
+  "pdf-to-jpg": {
+    "name": "PDF a JPG",
+    "desc": "Convierte cada página de un PDF en una imagen JPG."
+  },
+  "jpg-to-pdf": {
+    "name": "JPG a PDF",
+    "desc": "Convierte tus imágenes en un único PDF ordenado."
+  },
+  "compress-image": {
+    "name": "Comprimir imagen",
+    "desc": "Reduce el peso de una imagen sin perder calidad visible."
+  },
+  "resize-image": {
+    "name": "Redimensionar imagen",
+    "desc": "Cambia el tamaño de una imagen a los píxeles exactos que necesites."
+  },
+  "convert-image": {
+    "name": "Convertir imagen",
+    "desc": "Convierte entre PNG, JPG y WebP en tu navegador."
+  },
+  "compress-for-discord": {
+    "name": "Comprimir vídeo para Discord",
+    "desc": "Ajustes de un clic para 10 MB, 50 MB y 500 MB que sí caben."
+  },
+  "video-to-gif": {
+    "name": "Vídeo a GIF",
+    "desc": "Convierte un clip corto en un GIF con buena paleta de color."
+  },
+  "url-shortener": {
+    "name": "Acortador de URL",
+    "desc": "Convierte un enlace largo en un enlace corto para compartir, con nombre personalizado opcional."
+  },
+  "qr-generator": {
+    "name": "Generador de códigos QR",
+    "desc": "Crea un código QR para cualquier enlace, texto o wifi."
+  },
+  "password-generator": {
+    "name": "Generador de contraseñas",
+    "desc": "Crea contraseñas fuertes y aleatorias al instante."
+  },
+  "word-counter": {
+    "name": "Contador de palabras",
+    "desc": "Cuenta palabras, caracteres y frases mientras escribes."
+  },
+  "json-formatter": {
+    "name": "Formateador de JSON",
+    "desc": "Formatea, valida y minimiza JSON con detección de errores."
+  },
+  "mortgage-calculator": {
+    "name": "Calculadora de hipoteca",
+    "desc": "Cuota mensual, interés total y tabla de amortización completa."
+  },
+  "color-converter": {
+    "name": "Convertidor de color",
+    "desc": "HEX, RGB, HSL y OKLCH con vista previa en vivo."
+  }
+}
