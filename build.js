@@ -591,6 +591,20 @@ function blogIndexPage(posts) {
 </div>` + foot(1);
 }
 
+/* ---------- admin Command Center (owner-only, noindex) ---------- */
+function adminConsolePage(posts) {
+  const url = SITE + "/admin-console/";
+  const ld = { "@context": "https://schema.org", "@type": "WebPage", name: "Vootkit Command Center", url };
+  let hd = head({ depth: 1, url, ads: false, ld, title: "Command Center — Vootkit", desc: "Vootkit admin command center." });
+  hd = hd.replace("</head>", '<meta name="robots" content="noindex,nofollow">\n</head>');
+  const data = JSON.stringify({ tools: VK.counts.live, categories: VK.CATEGORIES.length, blogPosts: posts.length });
+  return hd +
+`<div class="wrap section"><div id="admin-console" class="admin-console"><div class="vk-skeleton" style="height:120px;max-width:520px"></div></div></div>
+<script>window.__VK_ADMIN=${data};</script>
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+` + foot(1, ["assets/js/admin-console.js"]);
+}
+
 /* ---------- component gallery (internal reference, noindex) ---------- */
 function componentsPage() {
   const url = SITE + "/components/";
@@ -1027,6 +1041,7 @@ write("contact-success/index.html", infoPage({
 const POSTS = loadPosts();
 POSTS.forEach((p) => write(`blog/${p.slug}/index.html`, blogPostPage(p)));
 write("blog/index.html", blogIndexPage(POSTS));
+write("admin-console/index.html", adminConsolePage(POSTS));
 
 /* ---------- run ---------- */
 let pages = 2;
