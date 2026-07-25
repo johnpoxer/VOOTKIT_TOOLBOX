@@ -50,7 +50,18 @@ const SITE = CFG.origin;
 const SUPPORT = CFG.supportEmail;
 const GA4 = CFG.ga4;
 const PUB = "ca-pub-5906583727409402";
-const V = "?v=" + Date.now();  // cache-bust all local assets on every build
+/* Cache-bust key derived from the CONTENT of the CSS/JS assets, so it only
+ * changes when those files actually change — a rebuild with no asset changes
+ * produces byte-identical pages (no more 600-file git churn every build). */
+const V = "?v=" + (function () {
+  const crypto = require("crypto");
+  const h = crypto.createHash("sha1");
+  const css = ["tokens", "base", "pages", "skin"].map((n) => "assets/css/" + n + ".css");
+  let js = [];
+  try { js = fs.readdirSync(path.join(ROOT, "assets/js")).filter((f) => f.endsWith(".js")).sort().map((f) => "assets/js/" + f); } catch (e) {}
+  css.concat(js).forEach((rel) => { try { h.update(fs.readFileSync(path.join(ROOT, rel))); } catch (e) {} });
+  return h.digest("hex").slice(0, 10);
+})();
 
 const esc = (v) => String(v == null ? "" : v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const write = (rel, html) => {
