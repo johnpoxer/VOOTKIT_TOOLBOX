@@ -46,7 +46,9 @@ exports.handler = async function (event) {
 
   var SUPA = process.env.SUPABASE_URL, KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!SUPA || !KEY) return json(503, { error: "The link shortener isn’t configured yet." });
-  var origin = process.env.VK_ORIGIN || "https://www.vootkit.com";
+  // Shortest form on the brand domain — no "www." (set VK_SHORT_ORIGIN to a real
+  // short domain like https://vkt.co once you register one, and links get tiny).
+  var origin = process.env.VK_SHORT_ORIGIN || "https://vootkit.com";
 
   var alias = cleanAlias(body.alias);
   if (alias && RESERVED.indexOf(alias) !== -1) return json(400, { error: "That custom name is reserved. Try another." });
