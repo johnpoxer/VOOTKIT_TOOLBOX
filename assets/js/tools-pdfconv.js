@@ -159,6 +159,35 @@
       host.appendChild(status); host.appendChild(out);
       host.appendChild(W.el('div', { class: 'wbtns' }, [W.copyBtn('Copy text', function () { return out.value; }), W.el('button', { class: 'btn', type: 'button', text: 'Download .txt', onClick: function () { W.download(out.value, 'ocr.txt', 'text/plain'); } })]));
       host.appendChild(W.el('p', { class: 'note', text: 'Optical character recognition runs entirely in your browser (Tesseract.js). The first run downloads the language model, so it is slower; scanned PDFs are limited to the first 20 pages.' }));
+    },
+
+    /* ---------- image OCR (image -> text) ---------- */
+    'image-to-text': function (host, W) {
+      var input = W.el('input', { type: 'file', class: 'field', accept: 'image/*', 'aria-label': 'Choose an image' });
+      var lang = W.el('select', { class: 'field', 'aria-label': 'Language' }, [['eng', 'English'], ['spa', 'Spanish'], ['fra', 'French'], ['deu', 'German'], ['ita', 'Italian'], ['por', 'Portuguese']].map(function (o) { return W.el('option', { value: o[0], text: o[1] }); }));
+      var status = W.el('p', { class: 'note', role: 'status', 'aria-live': 'polite' });
+      var out = W.el('textarea', { class: 'field wtext', rows: '12', readonly: 'readonly', 'aria-label': 'Recognised text', spellcheck: 'false' });
+      var btn = W.el('button', { class: 'btn btn-primary', type: 'button', text: 'Extract text', disabled: 'disabled', onClick: async function () {
+        var f = input.files[0]; if (!f) return;
+        out.value = ''; status.className = 'note'; status.textContent = 'Loading OCR engine…'; btn.disabled = true;
+        try {
+          await loadScript(URLS.tesseract, function () { return !!root.Tesseract; });
+          var url = URL.createObjectURL(f);
+          var img = await new Promise(function (res, rej) { var im = new Image(); im.onload = function () { res(im); }; im.onerror = function () { rej(new Error('Could not read that image.')); }; im.src = url; });
+          var c = document.createElement('canvas'); c.width = img.naturalWidth; c.height = img.naturalHeight; c.getContext('2d').drawImage(img, 0, 0); URL.revokeObjectURL(url);
+          status.textContent = 'Reading text… (first run downloads the language model)';
+          var r = await root.Tesseract.recognize(c, lang.value);
+          out.value = r.data.text.trim();
+          status.textContent = out.value.length > 5 ? 'Done.' : 'Very little text found — the image may be low-resolution or blank.';
+        } catch (e) { status.className = 'note err'; status.textContent = e.message || 'OCR failed.'; }
+        btn.disabled = false;
+      } });
+      input.addEventListener('change', function () { btn.disabled = !input.files[0]; });
+      host.appendChild(fld(W, 'Image', input));
+      host.appendChild(W.el('div', { class: 'wbtns' }, [W.el('label', { class: 'winline' }, [W.el('span', { class: 'wlab', text: 'Language' }), lang]), btn]));
+      host.appendChild(status); host.appendChild(out);
+      host.appendChild(W.el('div', { class: 'wbtns' }, [W.copyBtn('Copy text', function () { return out.value; }), W.el('button', { class: 'btn', type: 'button', text: 'Download .txt', onClick: function () { W.download(out.value, 'text.txt', 'text/plain'); } })]));
+      host.appendChild(W.el('p', { class: 'note', text: 'Reads text from a photo or screenshot entirely in your browser (Tesseract.js). Clear, high-contrast images work best.' }));
     }
 
   };

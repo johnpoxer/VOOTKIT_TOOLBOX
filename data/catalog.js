@@ -169,6 +169,12 @@
     t("svg-to-png","images","SVG to PNG","Rasterise an SVG vector into a PNG image.",{tier:"traffic",status:"live",kw:"svg to png rasterize vector convert"}),
     t("filter-studio","images","Photo Filter Studio","Apply one-click filters — B&W, sepia, vintage and more.",{tier:"traffic",status:"live",kw:"filters instagram vintage sepia bw effects photo"}),
     t("image-sharpen","images","Image Sharpener","Sharpen a soft or slightly blurry photo.",{tier:"traffic",status:"live",kw:"sharpen unsharp crisp detail enhance clarity"}),
+    t("thumbnail-maker","images","Thumbnail Maker","Resize and crop to YouTube, blog and square thumbnail sizes.",{tier:"traffic",status:"live",kw:"thumbnail youtube blog og preview resize crop"}),
+    t("social-media-image","images","Social Media Image Sizer","Crop images to Instagram, Facebook, X and LinkedIn sizes.",{tier:"traffic",status:"live",kw:"social media instagram facebook twitter linkedin size crop story post"}),
+    t("passport-photo-maker","images","Passport Photo Maker","Crop a photo to US, UK/EU, Canada or Australia passport sizes.",{tier:"traffic",status:"live",kw:"passport photo id visa 2x2 35x45 size crop"}),
+    t("collage-maker","images","Collage Maker","Combine several images into a clean grid collage.",{tier:"traffic",status:"live",kw:"collage grid combine photos montage"}),
+    t("batch-compress","images","Batch Image Compressor","Compress many images at once to JPG or WebP.",{tier:"traffic",status:"live",kw:"batch bulk compress multiple images jpg webp reduce"}),
+    t("image-to-text","images","Image to Text (OCR)","Extract text from a photo or screenshot with OCR.",{tier:"traffic",status:"live",kw:"image to text ocr photo screenshot extract recognize"}),
 
     /* ---------- RETENTION: video & streaming ---------- */
     t("compress-for-discord","video","Compress for Discord","One-click 10 MB, 50 MB and 500 MB presets that actually fit.",{tier:"retention",status:"live",kw:"discord upload limit too big clip"}),

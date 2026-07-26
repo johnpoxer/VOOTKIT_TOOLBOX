@@ -48,6 +48,41 @@
     };
   }
 
+  function coverInto(ctx, img, x, y, tw, th) {
+    var s = Math.max(tw / img.naturalWidth, th / img.naturalHeight);
+    var w = img.naturalWidth * s, h = img.naturalHeight * s;
+    ctx.drawImage(img, x + (tw - w) / 2, y + (th - h) / 2, w, h);
+  }
+  /* factory: resize/crop to one of a set of named target dimensions */
+  function presetResizeTool(spec) {
+    return {
+      accept: 'image/*', action: 'Resize', dropLabel: spec.drop || 'Choose an image',
+      options: [
+        { k: 'preset', label: spec.presetLabel || 'Size', type: 'select', def: spec.def, options: spec.presets.map(function (p) { return { v: p.v, label: p.label }; }) },
+        { k: 'mode', label: 'Fit', type: 'select', def: 'cover', options: [{ v: 'cover', label: 'Fill & crop' }, { v: 'contain', label: 'Fit (no crop)' }] },
+        { k: 'bg', label: 'Background (fit mode)', type: 'select', def: '#ffffff', options: [{ v: '#ffffff', label: 'White' }, { v: '#000000', label: 'Black' }, { v: '#0d1420', label: 'Dark' }] }
+      ],
+      process: async function (files, o, api) {
+        var p = null; spec.presets.forEach(function (x) { if (x.v === o.preset) p = x; }); if (!p) p = spec.presets[0];
+        var f = files[0], img = await api.loadImage(f), k = canvasFrom(p.w, p.h);
+        if (o.mode === 'contain') {
+          k.ctx.fillStyle = o.bg; k.ctx.fillRect(0, 0, p.w, p.h);
+          var s = Math.min(p.w / img.naturalWidth, p.h / img.naturalHeight), w = img.naturalWidth * s, h = img.naturalHeight * s;
+          k.ctx.drawImage(img, (p.w - w) / 2, (p.h - h) / 2, w, h);
+        } else coverInto(k.ctx, img, 0, 0, p.w, p.h);
+        api.progress(0.6);
+        var blob = await toBlob(k.c, 'image/png');
+        return {
+          previewUrl: api.urls.make(blob),
+          stats: [{ label: 'Preset', value: p.label }, { label: 'Size', value: p.w + '×' + p.h }, { label: 'File', value: api.bytes(blob.size) }],
+          downloads: [{ label: 'Download', blob: blob, name: baseName(f.name) + '-' + p.v + '.png' }],
+          status: 'Resized to ' + p.w + '×' + p.h,
+          note: spec.note || ''
+        };
+      }
+    };
+  }
+
   var T = {
 
     /* ---------- PNG → JPG (flatten transparency onto a matte) ---------- */
@@ -244,6 +279,92 @@
           stats: [{ label: 'Amount', value: o.amount }, { label: 'Size', value: w + '×' + h }, { label: 'File', value: api.bytes(blob.size) }],
           downloads: [{ label: 'Download', blob: blob, name: baseName(f.name) + '-sharp.png' }],
           status: 'Sharpened'
+        };
+      }
+    },
+
+    /* ---------- thumbnail maker ---------- */
+    'thumbnail-maker': presetResizeTool({ drop: 'Choose an image for a thumbnail', def: 'yt', presets: [
+      { v: 'yt', label: 'YouTube 1280×720', w: 1280, h: 720 },
+      { v: 'blog', label: 'Blog / OG 1200×630', w: 1200, h: 630 },
+      { v: 'square', label: 'Square 1080×1080', w: 1080, h: 1080 },
+      { v: 'wide', label: 'Wide 1600×900', w: 1600, h: 900 },
+      { v: 'small', label: 'Small 640×360', w: 640, h: 360 }
+    ] }),
+
+    /* ---------- social media sizer ---------- */
+    'social-media-image': presetResizeTool({ drop: 'Choose an image', presetLabel: 'Platform / format', def: 'ig-post', presets: [
+      { v: 'ig-post', label: 'Instagram post 1080×1080', w: 1080, h: 1080 },
+      { v: 'ig-portrait', label: 'Instagram portrait 1080×1350', w: 1080, h: 1350 },
+      { v: 'ig-story', label: 'Instagram / TikTok story 1080×1920', w: 1080, h: 1920 },
+      { v: 'fb-post', label: 'Facebook post 1200×630', w: 1200, h: 630 },
+      { v: 'x-post', label: 'X / Twitter post 1600×900', w: 1600, h: 900 },
+      { v: 'x-header', label: 'X / Twitter header 1500×500', w: 1500, h: 500 },
+      { v: 'li-post', label: 'LinkedIn post 1200×627', w: 1200, h: 627 },
+      { v: 'yt-thumb', label: 'YouTube thumbnail 1280×720', w: 1280, h: 720 },
+      { v: 'pin', label: 'Pinterest pin 1000×1500', w: 1000, h: 1500 }
+    ] }),
+
+    /* ---------- passport photo ---------- */
+    'passport-photo-maker': presetResizeTool({ drop: 'Choose a head-and-shoulders photo', presetLabel: 'Passport size', def: 'us', note: 'Crops to the correct size and shape at 300 DPI. It does not check official head-position or background rules — review your government’s photo guidance.', presets: [
+      { v: 'us', label: 'US / India 2×2 in (600×600)', w: 600, h: 600 },
+      { v: 'uk-eu', label: 'UK / EU / Schengen 35×45 mm (413×531)', w: 413, h: 531 },
+      { v: 'ca', label: 'Canada 50×70 mm (590×826)', w: 590, h: 826 },
+      { v: 'au', label: 'Australia 35×45 mm (413×531)', w: 413, h: 531 }
+    ] }),
+
+    /* ---------- collage maker ---------- */
+    'collage-maker': {
+      accept: 'image/*', multiple: true, maxFiles: 12, action: 'Make collage', dropLabel: 'Choose 2–12 images',
+      options: [
+        { k: 'cols', label: 'Columns', type: 'select', def: '2', options: [{ v: '1', label: '1' }, { v: '2', label: '2' }, { v: '3', label: '3' }, { v: '4', label: '4' }] },
+        { k: 'cell', label: 'Cell size (px)', def: 400, min: 120, max: 1000, step: 20 },
+        { k: 'gap', label: 'Gap (px)', def: 8, min: 0, max: 60, step: 2 },
+        { k: 'bg', label: 'Background', type: 'select', def: '#ffffff', options: [{ v: '#ffffff', label: 'White' }, { v: '#000000', label: 'Black' }, { v: '#0d1420', label: 'Dark' }] }
+      ],
+      process: async function (files, o, api) {
+        var imgs = [];
+        for (var i = 0; i < files.length; i++) { imgs.push(await api.loadImage(files[i])); api.progress(i / files.length * 0.5); }
+        var cols = +o.cols, rows = Math.ceil(imgs.length / cols), cell = o.cell, gap = o.gap;
+        var W = cols * cell + (cols + 1) * gap, H = rows * cell + (rows + 1) * gap;
+        var k = canvasFrom(W, H); k.ctx.fillStyle = o.bg; k.ctx.fillRect(0, 0, W, H);
+        imgs.forEach(function (img, idx) {
+          var c = idx % cols, r = Math.floor(idx / cols), x = gap + c * (cell + gap), y = gap + r * (cell + gap);
+          k.ctx.save(); k.ctx.beginPath(); k.ctx.rect(x, y, cell, cell); k.ctx.clip();
+          coverInto(k.ctx, img, x, y, cell, cell); k.ctx.restore();
+        });
+        api.progress(0.9);
+        var blob = await toBlob(k.c, 'image/png');
+        return {
+          previewUrl: api.urls.make(blob),
+          stats: [{ label: 'Images', value: imgs.length }, { label: 'Grid', value: cols + '×' + rows }, { label: 'Size', value: W + '×' + H }, { label: 'File', value: api.bytes(blob.size) }],
+          downloads: [{ label: 'Download collage', blob: blob, name: 'collage.png' }],
+          status: 'Collage ready'
+        };
+      }
+    },
+
+    /* ---------- batch compressor ---------- */
+    'batch-compress': {
+      accept: 'image/*', multiple: true, maxFiles: 20, action: 'Compress all', dropLabel: 'Choose images to compress',
+      options: [QUALITY, { k: 'format', label: 'Output', type: 'select', def: 'image/jpeg', options: [{ v: 'image/jpeg', label: 'JPEG' }, { v: 'image/webp', label: 'WebP' }] }],
+      process: async function (files, o, api) {
+        var downloads = [], totalIn = 0, totalOut = 0, ext = o.format === 'image/webp' ? 'webp' : 'jpg';
+        for (var i = 0; i < files.length; i++) {
+          var f = files[i]; totalIn += f.size;
+          var img = await api.loadImage(f), k = canvasFrom(img.naturalWidth, img.naturalHeight);
+          if (o.format === 'image/jpeg') { k.ctx.fillStyle = '#fff'; k.ctx.fillRect(0, 0, k.c.width, k.c.height); }
+          k.ctx.drawImage(img, 0, 0);
+          var blob = await toBlob(k.c, o.format, o.quality / 100); totalOut += blob.size;
+          downloads.push({ label: baseName(f.name) + '.' + ext + ' — ' + api.bytes(blob.size), blob: blob, name: baseName(f.name) + '-min.' + ext });
+          api.progress((i + 1) / files.length * 0.9);
+        }
+        var saved = totalIn ? Math.round((1 - totalOut / totalIn) * 100) : 0;
+        return {
+          stats: [{ label: 'Images', value: files.length }, { label: 'Before', value: api.bytes(totalIn) }, { label: 'After', value: api.bytes(totalOut) }, { label: 'Saved', value: saved + '%' }],
+          downloads: downloads,
+          status: 'Compressed ' + files.length + ' images',
+          note: 'Click each button to download a compressed image.'
         };
       }
     }
