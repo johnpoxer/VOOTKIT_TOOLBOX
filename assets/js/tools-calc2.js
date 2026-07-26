@@ -324,6 +324,145 @@
           note: 'A general hydration guideline. Food, coffee and tea also count toward fluid intake. Drink to thirst and check with a clinician for medical conditions.'
         };
       }
+    },
+
+    /* ---------- fuel cost ---------- */
+    'fuel-cost-calculator': {
+      fields: [
+        { k: 'unit', label: 'Units', type: 'select', def: 'metric',
+          options: [{ v: 'metric', label: 'Metric (km, L/100km, price/L)' }, { v: 'imperial', label: 'Imperial (miles, MPG, price/gal)' }] },
+        { k: 'distance', label: 'Trip distance', def: 300, min: 0, step: 1 },
+        { k: 'economy', label: 'Fuel economy (L/100km or MPG)', def: 7, min: 0.1, step: 0.1 },
+        { k: 'price', label: 'Fuel price (per L or gallon)', def: 1.6, min: 0, step: 0.01 },
+        CUR
+      ],
+      compute: function (v) {
+        var used, cost, unitLabel, perDist;
+        if (v.unit === 'imperial') {
+          used = v.economy > 0 ? v.distance / v.economy : 0;         // gallons
+          cost = used * v.price;
+          unitLabel = used.toFixed(1) + ' gal';
+          perDist = v.distance ? F.money2(cost / v.distance, v.cur) + ' / mile' : '—';
+        } else {
+          used = v.distance / 100 * v.economy;                       // litres
+          cost = used * v.price;
+          unitLabel = used.toFixed(1) + ' L';
+          perDist = v.distance ? F.money2(cost / v.distance * 100, v.cur) + ' / 100km' : '—';
+        }
+        return {
+          headline: { label: 'Trip fuel cost', value: F.money2(cost, v.cur), sub: unitLabel + ' used' },
+          stats: [
+            { label: 'Fuel used', value: unitLabel },
+            { label: 'Cost per distance', value: perDist },
+            { label: 'Round trip', value: F.money2(cost * 2, v.cur) }
+          ],
+          note: 'Real consumption varies with speed, load, terrain and traffic. Nothing you enter is stored.'
+        };
+      }
+    },
+
+    /* ---------- fuel economy converter ---------- */
+    'fuel-economy-converter': {
+      fields: [
+        { k: 'value', label: 'Value', def: 30, min: 0.1, step: 0.1 },
+        { k: 'from', label: 'From', type: 'select', def: 'mpgus',
+          options: [
+            { v: 'mpgus', label: 'MPG (US)' }, { v: 'mpguk', label: 'MPG (UK)' },
+            { v: 'l100km', label: 'L/100km' }, { v: 'kml', label: 'km/L' }
+          ] }
+      ],
+      compute: function (v) {
+        var l100;
+        if (v.from === 'mpgus') l100 = 235.215 / v.value;
+        else if (v.from === 'mpguk') l100 = 282.481 / v.value;
+        else if (v.from === 'kml') l100 = 100 / v.value;
+        else l100 = v.value;
+        return {
+          headline: { label: 'L/100km', value: isFinite(l100) ? l100.toFixed(2) : '—', sub: 'lower is more efficient' },
+          stats: [
+            { label: 'MPG (US)', value: (235.215 / l100).toFixed(1) },
+            { label: 'MPG (UK)', value: (282.481 / l100).toFixed(1) },
+            { label: 'km/L', value: (100 / l100).toFixed(2) },
+            { label: 'L/100km', value: l100.toFixed(2) }
+          ],
+          note: 'US and UK gallons differ (3.785 L vs 4.546 L), so their MPG figures are not the same.'
+        };
+      }
+    },
+
+    /* ---------- trip cost splitter ---------- */
+    'trip-cost-splitter': {
+      fields: [
+        { k: 'total', label: 'Total trip cost', def: 1200, min: 0, step: 10 },
+        { k: 'people', label: 'Number of people', def: 4, min: 1, max: 100, step: 1 },
+        CUR
+      ],
+      compute: function (v) {
+        var n = Math.max(1, Math.round(v.people));
+        var per = v.total / n;
+        return {
+          headline: { label: 'Each person pays', value: F.money2(per, v.cur), sub: 'Split ' + n + ' ways' },
+          stats: [
+            { label: 'Total cost', value: F.money2(v.total, v.cur) },
+            { label: 'People', value: n },
+            { label: 'Per person', value: F.money2(per, v.cur) }
+          ],
+          note: 'Splits a shared total evenly. For uneven shares, work out each person’s portion separately.'
+        };
+      }
+    },
+
+    /* ---------- tip by country ---------- */
+    'tip-by-country': {
+      fields: [
+        { k: 'bill', label: 'Bill amount', def: 50, min: 0, step: 1 },
+        { k: 'country', label: 'Country', type: 'select', def: 'us',
+          options: [
+            { v: 'us', label: 'United States' }, { v: 'ca', label: 'Canada' }, { v: 'uk', label: 'United Kingdom' },
+            { v: 'de', label: 'Germany' }, { v: 'fr', label: 'France' }, { v: 'it', label: 'Italy' },
+            { v: 'es', label: 'Spain' }, { v: 'au', label: 'Australia' }, { v: 'jp', label: 'Japan' }, { v: 'ae', label: 'UAE' }
+          ] },
+        CUR
+      ],
+      compute: function (v) {
+        var T = { us: [18, 'Tipping is expected; 15–20% is standard.'], ca: [15, '15–20% is normal at table service.'],
+          uk: [12.5, 'Often a 12.5% service charge is added — check the bill first.'], de: [10, 'Round up or ~10%; say the total you want to pay.'],
+          fr: [10, 'Service is included by law; a few euros extra is a kind gesture.'], it: [10, '“Coperto” cover charge is common; small extra tip optional.'],
+          es: [7, 'Small tips only; rounding up is normal.'], au: [10, 'Not expected; 10% for great service.'],
+          jp: [0, 'No tipping — it can cause confusion or offence.'], ae: [12, '10–15% common; check for a service charge.'] };
+        var e = T[v.country] || T.us, pct = e[0];
+        var tip = v.bill * pct / 100, total = v.bill + tip;
+        return {
+          headline: { label: 'Suggested tip', value: F.money2(tip, v.cur), sub: pct + '% · total ' + F.money2(total, v.cur) },
+          stats: [
+            { label: 'Customary rate', value: pct + '%' },
+            { label: 'Tip', value: F.money2(tip, v.cur) },
+            { label: 'Total to pay', value: F.money2(total, v.cur) }
+          ],
+          note: e[1] + ' Customs vary by region and venue — this is a general guide.'
+        };
+      }
+    },
+
+    /* ---------- mileage reimbursement ---------- */
+    'mileage-reimbursement': {
+      fields: [
+        { k: 'distance', label: 'Distance driven', def: 250, min: 0, step: 1 },
+        { k: 'rate', label: 'Rate per mile/km', def: 0.67, min: 0, step: 0.01, hint: 'Enter your org’s current rate' },
+        CUR
+      ],
+      compute: function (v) {
+        var amount = v.distance * v.rate;
+        return {
+          headline: { label: 'Reimbursement', value: F.money2(amount, v.cur), sub: v.distance.toLocaleString() + ' × ' + F.money2(v.rate, v.cur) },
+          stats: [
+            { label: 'Distance', value: v.distance.toLocaleString() },
+            { label: 'Rate', value: F.money2(v.rate, v.cur) },
+            { label: 'Total claim', value: F.money2(amount, v.cur) }
+          ],
+          note: 'Reimbursement rates are set by your employer or tax authority and change yearly — enter the current rate that applies to you.'
+        };
+      }
     }
 
   };

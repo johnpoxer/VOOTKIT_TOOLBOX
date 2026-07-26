@@ -32,6 +32,7 @@
     { slug: "everyday",      name: "Everyday",         icon: "clock",    blurb: "Timers, converters, dates and the small things you need most days." },
     { slug: "data",          name: "Data",             icon: "table",    blurb: "Open, sort and chart CSV files without a spreadsheet app." },
     { slug: "health",        name: "Health & Fitness", icon: "heart",    blurb: "Calorie, macro, body and hydration calculators — run the numbers privately, nothing is stored." },
+    { slug: "travel",        name: "Travel",           icon: "plane",    blurb: "Fuel, tipping, trip-splitting and distance tools for planning a trip — all offline." },
     { slug: "ai",            name: "AI (on-device)",   icon: "sparkles", blurb: "Background removal, OCR and transcription. The model downloads once, then runs on your machine." }
   ];
 
@@ -205,6 +206,13 @@
     t("body-fat-calculator","health","Body Fat Calculator","Estimate body-fat percentage with the US Navy method.",{tier:"retention",status:"live",kw:"body fat percentage navy waist neck hip"}),
     t("ideal-weight-calculator","health","Ideal Weight Calculator","Target weight range by height with Devine and Robinson formulas.",{tier:"retention",status:"live",kw:"ideal body weight devine robinson healthy range"}),
     t("water-intake-calculator","health","Water Intake Calculator","How much water to drink a day by weight, activity and climate.",{tier:"retention",status:"live",kw:"daily water hydration ml glasses per day"}),
+
+    /* ---------- TRAVEL ---------- */
+    t("fuel-cost-calculator","travel","Fuel Cost Calculator","Trip fuel cost from distance, economy and fuel price.",{tier:"retention",status:"live",kw:"gas petrol trip cost mileage fuel price journey"}),
+    t("fuel-economy-converter","travel","Fuel Economy Converter","Convert between MPG, L/100km and km/L.",{tier:"retention",status:"live",kw:"mpg l100km km per litre fuel consumption convert"}),
+    t("trip-cost-splitter","travel","Trip Cost Splitter","Split shared travel costs evenly between people.",{tier:"retention",status:"live",kw:"split trip expenses group holiday per person"}),
+    t("tip-by-country","travel","Tipping Calculator by Country","Suggested tip and total by country custom.",{tier:"retention",status:"live",kw:"tipping guide country restaurant gratuity abroad"}),
+    t("mileage-reimbursement","travel","Mileage Reimbursement","Work out mileage reimbursement from distance and rate.",{tier:"retention",status:"live",kw:"business miles reimbursement rate expense claim"}),
     t("countdown","everyday","Event Countdown","Count down to any date and time.",{tier:"retention",status:"live",kw:"days until timer event"}),
     t("pomodoro","everyday","Pomodoro & Countdown","A focus timer that chimes when it's done.",{tier:"retention",status:"live",kw:"focus study timer"}),
     t("stopwatch","everyday","Stopwatch","Precise stopwatch with lap times.",{tier:"retention",status:"live",kw:"lap timer"}),
