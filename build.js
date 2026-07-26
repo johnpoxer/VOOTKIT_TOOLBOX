@@ -14,6 +14,7 @@ const { marked } = require("marked");
 const ROOT = __dirname;
 const VK = require("./data/catalog.js");
 const MONEY = Object.assign({}, require("./assets/js/tools-money.js"), require("./assets/js/tools-money2.js"));
+const CALC2 = require("./assets/js/tools-calc2.js");
 const IMAGE = require("./assets/js/tools-image.js");
 const PDF = require("./assets/js/tools-pdf.js");
 const VIDEO = require("./assets/js/tools-video.js");
@@ -240,6 +241,7 @@ const NEW = new Set([
 function toolScripts(t) {
   if (VIDEO[t.id]) return ['assets/js/calc.js', 'assets/js/tools-video.js'];
   if (MONEY[t.id]) return ['assets/js/calc.js', 'assets/js/tools-money.js', 'assets/js/tools-money2.js'];
+  if (CALC2[t.id]) return ['assets/js/calc.js', 'assets/js/tools-calc2.js'];
   if (IMAGE[t.id]) return ['assets/js/filetool.js', 'assets/js/tools-image.js'];
   if (PDF[t.id]) return ['assets/js/filetool.js', 'assets/js/tools-pdf.js'];
   if (VIDEOFX[t.id]) return ['assets/js/filetool.js', 'assets/js/videoengine.js', 'assets/js/tools-videofx.js'];

@@ -61,6 +61,9 @@
     t("percentage-calculator","finance","Percentage Calculator","Percent of, is-what-percent, and percentage change.",{tier:"retention",status:"live",kw:"percent increase decrease"}),
     t("tip-split","finance","Tip & Bill Split","Split a bill with tip across any number of people.",{tier:"retention",status:"live",kw:"restaurant gratuity"}),
     t("discount-calculator","finance","Discount Calculator","Final sale price and total savings, with stacked coupons and tax.",{tier:"retention",status:"live",kw:"percent off sale price coupon savings deal"}),
+    t("simple-interest","finance","Simple Interest Calculator","Interest and total value from principal, rate and time.",{tier:"money",status:"live",kw:"simple interest principal rate time"}),
+    t("investment-calculator","finance","Investment Growth Calculator","Project an investment with monthly contributions and returns.",{tier:"money",status:"live",kw:"investment return future value contributions portfolio"}),
+    t("budget-calculator","finance","50/30/20 Budget Calculator","Split take-home pay into needs, wants and savings.",{tier:"money",status:"live",kw:"budget 50 30 20 needs wants savings monthly"}),
 
     /* ---------- MONEY: insurance (CPC $31.40 — highest on the internet) ---------- */
     t("life-insurance-needs","insurance","Life Cover Estimator","Estimate the life cover a household would actually need.",{tier:"money",status:"live",kw:"life insurance how much coverage"}),
@@ -192,6 +195,8 @@
     t("markdown-editor","text","Markdown Editor","Write Markdown with live preview and HTML export.",{tier:"retention",status:"live",kw:"md preview readme"}),
     t("unit-converter","everyday","Unit Converter","Length, mass, temperature, area, volume, speed and data.",{tier:"retention",status:"live",kw:"metric imperial convert"}),
     t("age-calculator","everyday","Age & Date Difference","Exact age, or the gap between two dates.",{tier:"retention",status:"live",kw:"how old days between"}),
+    t("bmi-calculator","everyday","BMI Calculator","Body mass index and healthy weight range, metric or imperial.",{tier:"retention",status:"live",kw:"body mass index weight height healthy range"}),
+    t("fraction-calculator","everyday","Fraction Calculator","Add, subtract, multiply and divide fractions, simplified.",{tier:"retention",status:"live",kw:"fractions add subtract multiply divide simplify"}),
     t("countdown","everyday","Event Countdown","Count down to any date and time.",{tier:"retention",status:"live",kw:"days until timer event"}),
     t("pomodoro","everyday","Pomodoro & Countdown","A focus timer that chimes when it's done.",{tier:"retention",status:"live",kw:"focus study timer"}),
     t("stopwatch","everyday","Stopwatch","Precise stopwatch with lap times.",{tier:"retention",status:"live",kw:"lap timer"}),
