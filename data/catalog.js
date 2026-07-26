@@ -33,6 +33,7 @@
     { slug: "data",          name: "Data",             icon: "table",    blurb: "Open, sort and chart CSV files without a spreadsheet app." },
     { slug: "health",        name: "Health & Fitness", icon: "heart",    blurb: "Calorie, macro, body and hydration calculators — run the numbers privately, nothing is stored." },
     { slug: "travel",        name: "Travel",           icon: "plane",    blurb: "Fuel, tipping, trip-splitting and distance tools for planning a trip — all offline." },
+    { slug: "audio",         name: "Audio & Voice",    icon: "mic",      blurb: "Convert, trim, record and transcribe audio — processed in your browser." },
     { slug: "ai",            name: "AI (on-device)",   icon: "sparkles", blurb: "Background removal, OCR and transcription. The model downloads once, then runs on your machine." }
   ];
 
@@ -256,6 +257,14 @@
     t("body-fat-calculator","health","Body Fat Calculator","Estimate body-fat percentage with the US Navy method.",{tier:"retention",status:"live",kw:"body fat percentage navy waist neck hip"}),
     t("ideal-weight-calculator","health","Ideal Weight Calculator","Target weight range by height with Devine and Robinson formulas.",{tier:"retention",status:"live",kw:"ideal body weight devine robinson healthy range"}),
     t("water-intake-calculator","health","Water Intake Calculator","How much water to drink a day by weight, activity and climate.",{tier:"retention",status:"live",kw:"daily water hydration ml glasses per day"}),
+
+    /* ---------- AUDIO & VOICE ---------- */
+    t("audio-converter","audio","Audio Converter","Convert audio to WAV or MP3 in your browser.",{tier:"traffic",status:"live",kw:"audio convert mp3 wav ogg m4a format"}),
+    t("audio-compressor","audio","Audio Compressor","Shrink audio files by re-encoding to a lower bitrate.",{tier:"traffic",status:"live",kw:"compress audio mp3 bitrate smaller reduce size"}),
+    t("audio-trimmer","audio","Audio Trimmer","Cut a section from an audio file and save it.",{tier:"traffic",status:"live",kw:"trim cut audio clip section wav"}),
+    t("voice-recorder","audio","Voice Recorder","Record from your microphone and download the audio.",{tier:"retention",status:"live",kw:"record voice microphone audio memo"}),
+    t("text-to-speech","audio","Text to Speech","Read any text aloud with your device's voices.",{tier:"retention",status:"live",kw:"tts read aloud speech synthesis voice"}),
+    t("speech-to-text","audio","Speech to Text","Dictate and transcribe speech live in the browser.",{tier:"retention",status:"live",kw:"stt dictation transcribe voice typing speech recognition"}),
 
     /* ---------- TRAVEL ---------- */
     t("fuel-cost-calculator","travel","Fuel Cost Calculator","Trip fuel cost from distance, economy and fuel price.",{tier:"retention",status:"live",kw:"gas petrol trip cost mileage fuel price journey"}),

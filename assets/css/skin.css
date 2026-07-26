@@ -103,6 +103,7 @@ body::before {
 [data-cat="ai"]           { --accent:#7c3aed; --accent-hover:#6d28d9; }
 [data-cat="health"]       { --accent:#15803d; --accent-hover:#166534; }
 [data-cat="travel"]       { --accent:#0369a1; --accent-hover:#075985; }
+[data-cat="audio"]        { --accent:#7e22ce; --accent-hover:#6b21a8; }
 
 /* dark-mode accents (lightened so white/dark text + surfaces stay legible) */
 [data-theme="dark"] [data-cat="pdf"]          { --accent:#818cf8; }
@@ -124,6 +125,7 @@ body::before {
 [data-theme="dark"] [data-cat="ai"]           { --accent:#a78bfa; }
 [data-theme="dark"] [data-cat="health"]       { --accent:#4ade80; }
 [data-theme="dark"] [data-cat="travel"]       { --accent:#38bdf8; }
+[data-theme="dark"] [data-cat="audio"]        { --accent:#d8b4fe; }
 /* in dark mode the accent is light, so text on it must be dark */
 [data-theme="dark"] [data-cat] { --accent-on:#0b1220; }
 
