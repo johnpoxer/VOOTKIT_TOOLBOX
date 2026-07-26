@@ -12,6 +12,40 @@
 
   function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { var t = b; b = a % b; a = t; } return a || 1; }
 
+  function fmtNum(n) {
+    if (!isFinite(n)) return '—';
+    var a = Math.abs(n);
+    if (a !== 0 && (a < 1e-4 || a >= 1e12)) return n.toExponential(4);
+    return (Math.round(n * 1e6) / 1e6).toLocaleString(undefined, { maximumFractionDigits: 6 });
+  }
+  function labelFor(units, key) { var l = key; units.forEach(function (u) { if (u.v === key) l = u.label; }); return l; }
+  // factor-based converter (base unit factor = f). value * fromF / toF.
+  function converterTool(units, defFrom, defTo) {
+    var opts = units.map(function (u) { return { v: u.v, label: u.label }; });
+    return {
+      fields: [
+        { k: 'value', label: 'Value', def: 1, step: 'any' },
+        { k: 'from', label: 'From', type: 'select', def: defFrom, options: opts },
+        { k: 'to', label: 'To', type: 'select', def: defTo, options: opts }
+      ],
+      compute: function (v) {
+        var fF = 1, tF = 1; units.forEach(function (u) { if (u.v === v.from) fF = u.f; if (u.v === v.to) tF = u.f; });
+        var out = v.value * fF / tF;
+        return {
+          headline: { label: 'Result', value: fmtNum(out) + ' ' + labelFor(units, v.to), sub: fmtNum(v.value) + ' ' + labelFor(units, v.from) },
+          stats: units.filter(function (u) { return u.v !== v.from; }).slice(0, 5).map(function (u) { return { label: u.label, value: fmtNum(v.value * fF / u.f) }; }),
+          note: 'Converted locally with standard factors.'
+        };
+      }
+    };
+  }
+  var U_LENGTH = [{ v: 'm', label: 'Metres', f: 1 }, { v: 'km', label: 'Kilometres', f: 1000 }, { v: 'cm', label: 'Centimetres', f: 0.01 }, { v: 'mm', label: 'Millimetres', f: 0.001 }, { v: 'mi', label: 'Miles', f: 1609.344 }, { v: 'yd', label: 'Yards', f: 0.9144 }, { v: 'ft', label: 'Feet', f: 0.3048 }, { v: 'in', label: 'Inches', f: 0.0254 }, { v: 'nmi', label: 'Nautical miles', f: 1852 }];
+  var U_WEIGHT = [{ v: 'kg', label: 'Kilograms', f: 1 }, { v: 'g', label: 'Grams', f: 0.001 }, { v: 'mg', label: 'Milligrams', f: 1e-6 }, { v: 't', label: 'Tonnes', f: 1000 }, { v: 'lb', label: 'Pounds', f: 0.45359237 }, { v: 'oz', label: 'Ounces', f: 0.0283495231 }, { v: 'st', label: 'Stone', f: 6.35029318 }];
+  var U_SPEED = [{ v: 'mps', label: 'm/s', f: 1 }, { v: 'kmh', label: 'km/h', f: 0.2777777778 }, { v: 'mph', label: 'mph', f: 0.44704 }, { v: 'knot', label: 'Knots', f: 0.5144444444 }, { v: 'fps', label: 'ft/s', f: 0.3048 }];
+  var U_AREA = [{ v: 'm2', label: 'm²', f: 1 }, { v: 'km2', label: 'km²', f: 1e6 }, { v: 'cm2', label: 'cm²', f: 1e-4 }, { v: 'ha', label: 'Hectares', f: 1e4 }, { v: 'acre', label: 'Acres', f: 4046.8564224 }, { v: 'ft2', label: 'ft²', f: 0.09290304 }, { v: 'yd2', label: 'yd²', f: 0.83612736 }, { v: 'mi2', label: 'mi²', f: 2589988.11 }];
+  var U_VOLUME = [{ v: 'l', label: 'Litres', f: 1 }, { v: 'ml', label: 'Millilitres', f: 0.001 }, { v: 'm3', label: 'm³', f: 1000 }, { v: 'galus', label: 'US gallons', f: 3.785411784 }, { v: 'galuk', label: 'UK gallons', f: 4.54609 }, { v: 'qt', label: 'US quarts', f: 0.946352946 }, { v: 'pt', label: 'US pints', f: 0.473176473 }, { v: 'cup', label: 'US cups', f: 0.2365882365 }, { v: 'floz', label: 'US fl oz', f: 0.0295735296 }, { v: 'tbsp', label: 'Tablespoons', f: 0.0147867648 }, { v: 'tsp', label: 'Teaspoons', f: 0.00492892159 }];
+  var U_DATA = [{ v: 'b', label: 'Bytes', f: 1 }, { v: 'kb', label: 'Kilobytes', f: 1024 }, { v: 'mb', label: 'Megabytes', f: 1048576 }, { v: 'gb', label: 'Gigabytes', f: 1073741824 }, { v: 'tb', label: 'Terabytes', f: 1099511627776 }, { v: 'bit', label: 'Bits', f: 0.125 }, { v: 'kbit', label: 'Kilobits', f: 128 }, { v: 'mbit', label: 'Megabits', f: 131072 }, { v: 'gbit', label: 'Gigabits', f: 134217728 }];
+
   var TOOLS = {
 
     /* ---------- simple interest ---------- */
@@ -542,6 +576,78 @@
             { label: 'Audio bitrate', value: '160 kbps' }
           ],
           note: warn + 'Use hardware encoding (NVENC / AV1) if your GPU supports it, otherwise x264 “veryfast”. ' + (v.platform === 'twitch' ? 'Twitch caps most non-partners around 6000 kbps.' : '')
+        };
+      }
+    },
+
+    /* ---------- unit converters ---------- */
+    'length-converter': converterTool(U_LENGTH, 'mi', 'km'),
+    'weight-converter': converterTool(U_WEIGHT, 'lb', 'kg'),
+    'speed-converter': converterTool(U_SPEED, 'mph', 'kmh'),
+    'area-converter': converterTool(U_AREA, 'acre', 'ha'),
+    'volume-converter': converterTool(U_VOLUME, 'galus', 'l'),
+    'data-converter': converterTool(U_DATA, 'mb', 'gb'),
+
+    'temperature-converter': {
+      fields: [
+        { k: 'value', label: 'Temperature', def: 100, step: 'any' },
+        { k: 'from', label: 'From', type: 'select', def: 'c', options: [{ v: 'c', label: 'Celsius' }, { v: 'f', label: 'Fahrenheit' }, { v: 'k', label: 'Kelvin' }] },
+        { k: 'to', label: 'To', type: 'select', def: 'f', options: [{ v: 'c', label: 'Celsius' }, { v: 'f', label: 'Fahrenheit' }, { v: 'k', label: 'Kelvin' }] }
+      ],
+      compute: function (v) {
+        var c = v.from === 'f' ? (v.value - 32) * 5 / 9 : v.from === 'k' ? v.value - 273.15 : v.value;
+        function to(u) { return u === 'f' ? c * 9 / 5 + 32 : u === 'k' ? c + 273.15 : c; }
+        var sym = { c: '°C', f: '°F', k: 'K' };
+        return {
+          headline: { label: 'Result', value: fmtNum(to(v.to)) + ' ' + sym[v.to], sub: fmtNum(v.value) + ' ' + sym[v.from] },
+          stats: [{ label: 'Celsius', value: fmtNum(c) + ' °C' }, { label: 'Fahrenheit', value: fmtNum(to('f')) + ' °F' }, { label: 'Kelvin', value: fmtNum(to('k')) + ' K' }],
+          note: 'Exact conversions. Absolute zero is −273.15 °C.'
+        };
+      }
+    },
+
+    /* ---------- electricity cost ---------- */
+    'electricity-cost': {
+      fields: [
+        { k: 'power', label: 'Power (watts)', def: 100, min: 0, step: 10 },
+        { k: 'hours', label: 'Hours used per day', def: 5, min: 0, max: 24, step: 0.5 },
+        { k: 'days', label: 'Number of days', def: 30, min: 1, step: 1 },
+        { k: 'rate', label: 'Price per kWh', def: 0.15, min: 0, step: 0.01 },
+        CUR
+      ],
+      compute: function (v) {
+        var kwh = v.power / 1000 * v.hours * v.days, cost = kwh * v.rate;
+        return {
+          headline: { label: 'Cost', value: F.money2(cost, v.cur), sub: fmtNum(kwh) + ' kWh over ' + v.days + ' days' },
+          stats: [
+            { label: 'Energy used', value: fmtNum(kwh) + ' kWh' },
+            { label: 'Per day', value: F.money2(cost / v.days, v.cur) },
+            { label: 'Per year (same use)', value: F.money2(v.power / 1000 * v.hours * 365 * v.rate, v.cur) }
+          ],
+          note: 'kWh = watts ÷ 1000 × hours × days. Check your bill for the exact price per kWh.'
+        };
+      }
+    },
+
+    /* ---------- hourly wage ---------- */
+    'hourly-wage': {
+      fields: [
+        { k: 'rate', label: 'Hourly rate', def: 15, min: 0, step: 0.5 },
+        { k: 'hours', label: 'Hours per week', def: 40, min: 0, max: 168, step: 1 },
+        { k: 'weeks', label: 'Weeks worked per year', def: 52, min: 1, max: 52, step: 1 },
+        CUR
+      ],
+      compute: function (v) {
+        var weekly = v.rate * v.hours, annual = weekly * v.weeks;
+        return {
+          headline: { label: 'Annual pay', value: F.money(annual, v.cur), sub: F.money2(annual / 12, v.cur) + ' a month' },
+          stats: [
+            { label: 'Hourly', value: F.money2(v.rate, v.cur) },
+            { label: 'Daily (÷5)', value: F.money2(weekly / 5, v.cur) },
+            { label: 'Weekly', value: F.money2(weekly, v.cur) },
+            { label: 'Monthly', value: F.money2(annual / 12, v.cur) }
+          ],
+          note: 'Gross pay before tax and deductions.'
         };
       }
     }
