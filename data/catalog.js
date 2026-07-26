@@ -138,6 +138,11 @@
     t("rotate-image","images","Rotate Image","Rotate a photo 90°, 180° or 270° with no quality loss.",{tier:"traffic",status:"live",kw:"turn sideways orientation straighten"}),
     t("circle-crop","images","Round Profile Picture","Crop any photo into a round avatar with a transparent background.",{tier:"traffic",status:"live",kw:"circle avatar profile picture round dp"}),
     t("grayscale-image","images","Black & White / Sepia","Convert a photo to grayscale or a warm sepia tone.",{tier:"traffic",status:"live",kw:"grayscale monochrome bw sepia filter"}),
+    t("png-to-jpg","images","PNG to JPG","Convert PNG to JPG, flattening transparency onto a matte.",{tier:"traffic",status:"live",kw:"png jpg jpeg convert transparent white background"}),
+    t("jpg-to-png","images","JPG to PNG","Convert JPG to lossless PNG in the browser.",{tier:"traffic",status:"live",kw:"jpg jpeg png convert lossless"}),
+    t("image-blur","images","Image Blur Tool","Blur a whole image by an adjustable amount.",{tier:"traffic",status:"live",kw:"blur photo soften gaussian"}),
+    t("image-brightness","images","Brightness & Contrast","Adjust brightness, contrast and saturation of a photo.",{tier:"traffic",status:"live",kw:"brightness contrast saturation adjust photo exposure"}),
+    t("round-corners","images","Rounded Corners","Round the corners of an image and keep them transparent.",{tier:"traffic",status:"live",kw:"round corners radius png transparent rounded rectangle"}),
 
     /* ---------- RETENTION: video & streaming ---------- */
     t("compress-for-discord","video","Compress for Discord","One-click 10 MB, 50 MB and 500 MB presets that actually fit.",{tier:"retention",status:"live",kw:"discord upload limit too big clip"}),

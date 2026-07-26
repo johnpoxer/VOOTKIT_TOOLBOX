@@ -16,6 +16,7 @@ const VK = require("./data/catalog.js");
 const MONEY = Object.assign({}, require("./assets/js/tools-money.js"), require("./assets/js/tools-money2.js"));
 const CALC2 = require("./assets/js/tools-calc2.js");
 const IMAGE = require("./assets/js/tools-image.js");
+const IMAGE2 = require("./assets/js/tools-image2.js");
 const PDF = require("./assets/js/tools-pdf.js");
 const VIDEO = require("./assets/js/tools-video.js");
 const VIDEOFX = require("./assets/js/tools-videofx.js");
@@ -246,6 +247,7 @@ function toolScripts(t) {
   if (MONEY[t.id]) return ['assets/js/calc.js', 'assets/js/tools-money.js', 'assets/js/tools-money2.js'];
   if (CALC2[t.id]) return ['assets/js/calc.js', 'assets/js/tools-calc2.js'];
   if (IMAGE[t.id]) return ['assets/js/filetool.js', 'assets/js/tools-image.js'];
+  if (IMAGE2[t.id]) return ['assets/js/filetool.js', 'assets/js/tools-image2.js'];
   if (PDF[t.id]) return ['assets/js/filetool.js', 'assets/js/tools-pdf.js'];
   if (VIDEOFX[t.id]) return ['assets/js/filetool.js', 'assets/js/videoengine.js', 'assets/js/tools-videofx.js'];
   if (LINKTOOLS.indexOf(t.id) !== -1) return ['assets/js/tools-linktools.js'];
