@@ -46,6 +46,6 @@ ids.forEach(id => {
   ok(s.accept, `${id} declares accept`);
   ok(Array.isArray(s.options), `${id} has options`);
 });
-ok(liveCount === 9, `all 9 pdf specs present (catalog live=${liveCount})`);
+ok(liveCount === 11, `all 11 pdf specs present (catalog live=${liveCount})`);
 
 console.log(`pdf: ${pass} assertions passed`);
