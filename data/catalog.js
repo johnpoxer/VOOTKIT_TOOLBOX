@@ -133,6 +133,9 @@
     t("extract-pdf-pages","pdf","Extract PDF Pages","Save selected pages as separate single-page PDFs.",{tier:"traffic",status:"live",kw:"extract pages separate individual split single"}),
     t("remove-pdf-password","pdf","Remove PDF Password","Strip owner/permission restrictions from a PDF.",{tier:"traffic",status:"live",kw:"unlock remove password restrictions permissions decrypt"}),
     t("pdf-repair","pdf","Repair PDF","Rebuild a PDF's structure to fix open and reference errors.",{tier:"traffic",status:"live",kw:"repair fix corrupt broken pdf wont open recover"}),
+    t("scan-to-pdf","pdf","Scan to PDF","Snap pages with your camera and build a PDF.",{tier:"traffic",status:"live",kw:"scan camera photo document to pdf mobile"}),
+    t("pdf-signature","pdf","Sign PDF","Draw a signature and stamp it onto a PDF page.",{tier:"traffic",status:"live",kw:"sign signature esign draw pdf stamp"}),
+    t("pdf-form-filler","pdf","PDF Form Filler","Fill in AcroForm fields and download the completed PDF.",{tier:"traffic",status:"live",kw:"fill form fields acroform pdf complete"}),
 
     /* ---------- TRAFFIC: images ---------- */
     t("compress-image","images","Image Compressor","Shrink JPG, PNG or WebP with a quality slider.",{tier:"traffic",status:"live",kw:"reduce photo size smaller"}),
