@@ -28,7 +28,45 @@
     return lib.getDocument({ data: buf }).promise;
   }
 
+  /* generic PDF → raster-image tool (jpg / png / webp) */
+  function rasterTool(mime, ext, quality) {
+    return function (host, W) {
+      var scale = W.el('select', { class: 'field' }); [['1.5', 'Standard'], ['2', 'High'], ['3', 'Very high (print)']].forEach(function (o) { scale.appendChild(W.el('option', { value: o[0], text: o[1] })); }); scale.value = '2';
+      var input = W.el('input', { type: 'file', class: 'field', accept: 'application/pdf,.pdf', 'aria-label': 'Choose a PDF' });
+      var status = W.el('p', { class: 'note', role: 'status', 'aria-live': 'polite' });
+      var grid = W.el('div', { class: 'wpages' });
+      input.addEventListener('change', async function () {
+        var f = input.files[0]; if (!f) return;
+        grid.innerHTML = ''; status.className = 'note'; status.textContent = 'Loading PDF…';
+        try {
+          var doc = await getDoc(f);
+          var n = Math.min(doc.numPages, 100);
+          status.textContent = 'Rendering ' + n + ' page' + (n > 1 ? 's' : '') + '…';
+          for (var i = 1; i <= n; i++) {
+            var page = await doc.getPage(i);
+            var vp = page.getViewport({ scale: +scale.value });
+            var canvas = document.createElement('canvas'); canvas.width = vp.width; canvas.height = vp.height;
+            await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+            (function (idx, cv) {
+              var thumb = cv.cloneNode(true); thumb.getContext('2d').drawImage(cv, 0, 0); thumb.className = 'wpage-thumb';
+              var cell = W.el('div', { class: 'wpage' }, [thumb, W.el('button', { class: 'btn', type: 'button', text: 'Page ' + idx + ' — ' + ext.toUpperCase(), onClick: function () { cv.toBlob(function (b) { if (b) W.download(b, baseName(f.name) + '-p' + idx + '.' + ext); }, mime, quality); } })]);
+              grid.appendChild(cell);
+            })(i, canvas);
+            status.textContent = 'Rendered ' + i + ' / ' + n;
+          }
+          status.textContent = 'Done — ' + n + ' page' + (n > 1 ? 's' : '') + (doc.numPages > 100 ? ' (first 100 shown)' : '') + '. Click a page to save it as ' + ext.toUpperCase() + '.';
+        } catch (e) { status.className = 'note err'; status.textContent = /encrypt|password/i.test(e.message) ? 'This PDF is password-protected — remove the password first.' : 'Could not read that PDF.'; }
+      });
+      host.appendChild(W.el('div', { class: 'wgrid2' }, [fld(W, 'PDF file', input), fld(W, 'Quality', scale)]));
+      host.appendChild(status); host.appendChild(grid);
+      host.appendChild(W.el('p', { class: 'note', text: 'Each page is rendered to an image in your browser — the PDF is never uploaded. Higher quality means larger files.' }));
+    };
+  }
+
   var T = {
+
+    'pdf-to-png': rasterTool('image/png', 'png', undefined),
+    'pdf-to-webp': rasterTool('image/webp', 'webp', 0.92),
 
     'pdf-to-jpg': function (host, W) {
       var scale = W.el('select', { class: 'field' }); [['1.5', 'Standard'], ['2', 'High'], ['3', 'Very high (print)']].forEach(function (o) { scale.appendChild(W.el('option', { value: o[0], text: o[1] })); }); scale.value = '2';

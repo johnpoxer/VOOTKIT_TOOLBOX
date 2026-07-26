@@ -125,6 +125,10 @@
     t("markdown-to-pdf","pdf","Markdown to PDF","Convert Markdown headings, lists and text into a PDF.",{tier:"traffic",status:"live",kw:"md markdown to pdf export convert readme"}),
     t("crop-pdf","pdf","Crop PDF","Trim page margins across a whole PDF.",{tier:"traffic",status:"live",kw:"crop trim margins pdf pages whitespace"}),
     t("duplicate-pdf-pages","pdf","Duplicate PDF Pages","Repeat selected pages any number of times.",{tier:"traffic",status:"live",kw:"duplicate copy repeat pdf pages"}),
+    t("png-to-pdf","pdf","PNG to PDF","Combine PNG images into a single PDF.",{tier:"traffic",status:"live",kw:"png images to pdf combine convert"}),
+    t("webp-to-pdf","pdf","WebP to PDF","Combine WebP images into a single PDF.",{tier:"traffic",status:"live",kw:"webp images to pdf combine convert"}),
+    t("pdf-to-png","pdf","PDF to PNG","Render each PDF page to a downloadable PNG image.",{tier:"traffic",status:"live",kw:"pdf to png image export rasterize pages"}),
+    t("pdf-to-webp","pdf","PDF to WebP","Render each PDF page to a compact WebP image.",{tier:"traffic",status:"live",kw:"pdf to webp image export rasterize pages"}),
 
     /* ---------- TRAFFIC: images ---------- */
     t("compress-image","images","Image Compressor","Shrink JPG, PNG or WebP with a quality slider.",{tier:"traffic",status:"live",kw:"reduce photo size smaller"}),

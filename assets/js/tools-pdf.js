@@ -43,6 +43,44 @@
     return out;
   }
 
+  /* rasterise any browser-decodable image (webp, png, jpg…) to PNG bytes,
+     so pdf-lib (which only embeds PNG/JPG) can place it. */
+  function imageFileToPngBytes(file) {
+    return new Promise(function (res, rej) {
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function () {
+        var c = document.createElement('canvas');
+        c.width = img.naturalWidth; c.height = img.naturalHeight;
+        c.getContext('2d').drawImage(img, 0, 0);
+        URL.revokeObjectURL(url);
+        c.toBlob(function (b) { b ? b.arrayBuffer().then(res, rej) : rej(new Error('Could not convert “' + file.name + '”.')); }, 'image/png');
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); rej(new Error('“' + file.name + '” could not be read as an image.')); };
+      img.src = url;
+    });
+  }
+  var IMG_PAGE = { a4: [595.28, 841.89], letter: [612, 792] };
+  async function buildImagePdf(PDFLib, files, o, api) {
+    var pdf = await PDFLib.PDFDocument.create();
+    for (var i = 0; i < files.length; i++) {
+      var img = await pdf.embedPng(await imageFileToPngBytes(files[i]));
+      var dims = o.size === 'fit' ? [img.width, img.height] : IMG_PAGE[o.size];
+      var page = pdf.addPage(dims);
+      var m = o.margin || 0, maxW = page.getWidth() - m * 2, maxH = page.getHeight() - m * 2;
+      var scale = o.size === 'fit' ? 1 : Math.min(maxW / img.width, maxH / img.height, 1);
+      var w = img.width * scale, h = img.height * scale;
+      page.drawImage(img, { x: (page.getWidth() - w) / 2, y: (page.getHeight() - h) / 2, width: w, height: h });
+      api.progress((i + 1) / files.length * 0.9);
+    }
+    return pdf.save();
+  }
+  var IMG_TO_PDF_OPTS = [
+    { k: 'size', label: 'Page size', type: 'select', def: 'fit',
+      options: [{ v: 'fit', label: 'Fit to each image' }, { v: 'a4', label: 'A4 portrait' }, { v: 'letter', label: 'US Letter' }] },
+    { k: 'margin', label: 'Margin (pt)', def: 0, min: 0, max: 100, step: 5 }
+  ];
+
   var T = {
 
     'merge-pdf': {
@@ -366,6 +404,36 @@
           stats: [{ label: 'Original pages', value: total }, { label: 'New total', value: order.length }, { label: 'Size', value: api.bytes(bytes.length) }],
           downloads: [{ label: 'Download', blob: pdfBlob(bytes), name: baseName(files[0].name) + '-duplicated.pdf' }],
           status: 'Duplicated pages'
+        };
+      }
+    },
+
+    'png-to-pdf': {
+      accept: 'image/png,image/*', multiple: true, maxFiles: 30, action: 'Build PDF',
+      dropLabel: 'Choose PNG images', maxBytes: 40 * 1024 * 1024,
+      options: IMG_TO_PDF_OPTS,
+      process: async function (files, o, api) {
+        var PDFLib = await loadPdfLib();
+        var bytes = await buildImagePdf(PDFLib, files, o, api);
+        return {
+          stats: [{ label: 'Images', value: files.length }, { label: 'Pages', value: files.length }, { label: 'Size', value: api.bytes(bytes.length) }],
+          downloads: [{ label: 'Download PDF', blob: pdfBlob(bytes), name: 'images.pdf' }],
+          status: 'Built a ' + files.length + '-page PDF'
+        };
+      }
+    },
+
+    'webp-to-pdf': {
+      accept: 'image/webp,image/*', multiple: true, maxFiles: 30, action: 'Build PDF',
+      dropLabel: 'Choose WebP images', maxBytes: 40 * 1024 * 1024,
+      options: IMG_TO_PDF_OPTS,
+      process: async function (files, o, api) {
+        var PDFLib = await loadPdfLib();
+        var bytes = await buildImagePdf(PDFLib, files, o, api);
+        return {
+          stats: [{ label: 'Images', value: files.length }, { label: 'Pages', value: files.length }, { label: 'Size', value: api.bytes(bytes.length) }],
+          downloads: [{ label: 'Download PDF', blob: pdfBlob(bytes), name: 'images.pdf' }],
+          status: 'Built a ' + files.length + '-page PDF'
         };
       }
     }

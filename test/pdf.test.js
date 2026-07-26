@@ -33,7 +33,7 @@ eq(parseRanges("3,1,2", 10), [2, 0, 1], "preserves given order (for reorder)");
 
 /* PDF tools, all wired into the catalog and marked live */
 const ids = Object.keys(T);
-eq(ids.length, 11, "11 pdf tools");
+eq(ids.length, 13, "13 pdf tools");
 let liveCount = 0;
 ids.forEach(id => {
   const t = VK.find(id);
@@ -46,6 +46,6 @@ ids.forEach(id => {
   ok(s.accept, `${id} declares accept`);
   ok(Array.isArray(s.options), `${id} has options`);
 });
-ok(liveCount === 11, `all 11 pdf specs present (catalog live=${liveCount})`);
+ok(liveCount === 13, `all 13 pdf specs present (catalog live=${liveCount})`);
 
 console.log(`pdf: ${pass} assertions passed`);

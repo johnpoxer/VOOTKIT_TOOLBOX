@@ -36,7 +36,7 @@ const WIDGETS = {
   "assets/js/tools-data.js": ["csv-viewer","json-csv","csv-to-chart"],
   "assets/js/tools-imaging.js": ["exif-viewer","color-from-image","meme-generator"],
   "assets/js/tools-codes.js": ["qr-generator","qr-scanner","barcode-generator"],
-  "assets/js/tools-pdfview.js": ["pdf-to-jpg","pdf-to-text"],
+  "assets/js/tools-pdfview.js": ["pdf-to-jpg","pdf-to-text","pdf-to-png","pdf-to-webp"],
   "assets/js/tools-a11y.js": ["accessible-palette","color-blind-simulator","heading-checker","alt-text-auditor","caption-validator"],
   "assets/js/tools-privacy2.js": ["url-cleaner","metadata-remover","screenshot-redactor"],
   "assets/js/tools-misc.js": ["salary-converter","typing-test","brb-overlay"],
