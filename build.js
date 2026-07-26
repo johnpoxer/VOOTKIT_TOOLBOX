@@ -47,6 +47,7 @@ const WIDGETS = {
   "assets/js/tools-business2.js": ["business-name-generator","inventory-tracker","business-card-maker","qr-business-card"],
   "assets/js/tools-audio.js": ["audio-converter","audio-compressor","audio-trimmer","voice-recorder","text-to-speech","speech-to-text"],
   "assets/js/tools-stream.js": ["giveaway-picker","starting-soon-screen","stream-overlay-creator","stream-alert-creator","stream-schedule-planner","chat-overlay-tool"],
+  "assets/js/tools-mathdate.js": ["math-solver","equation-solver","date-calculator","time-calculator"],
   "assets/js/tools-pdfedit.js": ["compress-pdf","pdf-redact","compare-pdf"],
   "assets/js/tools-currency.js": ["currency-converter"]
 };
