@@ -34,6 +34,7 @@
     { slug: "health",        name: "Health & Fitness", icon: "heart",    blurb: "Calorie, macro, body and hydration calculators — run the numbers privately, nothing is stored." },
     { slug: "travel",        name: "Travel",           icon: "plane",    blurb: "Fuel, tipping, trip-splitting and distance tools for planning a trip — all offline." },
     { slug: "audio",         name: "Audio & Voice",    icon: "mic",      blurb: "Convert, trim, record and transcribe audio — processed in your browser." },
+    { slug: "education",     name: "Education & Study",icon: "book",     blurb: "Flashcards, citations, mind maps and study tools — saved on your device." },
     { slug: "ai",            name: "AI (on-device)",   icon: "sparkles", blurb: "Background removal, OCR and transcription. The model downloads once, then runs on your machine." }
   ];
 
@@ -286,6 +287,16 @@
     t("voice-recorder","audio","Voice Recorder","Record from your microphone and download the audio.",{tier:"retention",status:"live",kw:"record voice microphone audio memo"}),
     t("text-to-speech","audio","Text to Speech","Read any text aloud with your device's voices.",{tier:"retention",status:"live",kw:"tts read aloud speech synthesis voice"}),
     t("speech-to-text","audio","Speech to Text","Dictate and transcribe speech live in the browser.",{tier:"retention",status:"live",kw:"stt dictation transcribe voice typing speech recognition"}),
+
+    /* ---------- EDUCATION & STUDY ---------- */
+    t("flashcard-maker","education","Flashcard Maker","Create flashcards and study them with flip and shuffle.",{tier:"retention",status:"live",kw:"flashcards study cards revision flip memorize"}),
+    t("vocabulary-builder","education","Vocabulary Builder","Build a word list and practise definitions.",{tier:"retention",status:"live",kw:"vocabulary words definitions language learning practice"}),
+    t("citation-generator","education","Citation Generator","Format references in APA, MLA or Chicago style.",{tier:"retention",status:"live",kw:"citation apa mla chicago reference bibliography generator"}),
+    t("mind-map-generator","education","Mind Map Generator","Draw a radial mind map and download it as an image.",{tier:"retention",status:"live",kw:"mind map brainstorm radial diagram ideas"}),
+    t("diagram-maker","education","Diagram Maker","Turn Mermaid text into flowcharts and diagrams.",{tier:"retention",status:"live",kw:"diagram flowchart mermaid sequence chart maker"}),
+    t("learning-tracker","education","Learning Tracker","Log study sessions and track your total time.",{tier:"retention",status:"live",kw:"study tracker learning log hours progress habit"}),
+    t("quiz-maker","education","Quiz Maker","Write a multiple-choice quiz and take it.",{tier:"retention",status:"live",kw:"quiz maker multiple choice test questions study"}),
+    t("study-planner","education","Study Planner","Balance study subjects against your weekly hours.",{tier:"retention",status:"live",kw:"study planner schedule subjects revision timetable"}),
 
     /* ---------- TRAVEL ---------- */
     t("fuel-cost-calculator","travel","Fuel Cost Calculator","Trip fuel cost from distance, economy and fuel price.",{tier:"retention",status:"live",kw:"gas petrol trip cost mileage fuel price journey"}),
