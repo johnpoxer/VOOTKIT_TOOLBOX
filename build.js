@@ -43,6 +43,7 @@ const WIDGETS = {
   "assets/js/tools-privacy2.js": ["url-cleaner","metadata-remover","screenshot-redactor"],
   "assets/js/tools-misc.js": ["salary-converter","typing-test","brb-overlay"],
   "assets/js/tools-business.js": ["invoice-generator","quote-generator","receipt-generator"],
+  "assets/js/tools-docs.js": ["proposal-generator","contract-generator","resume-builder","swot-generator","landing-page-generator"],
   "assets/js/tools-pdfedit.js": ["compress-pdf","pdf-redact","compare-pdf"],
   "assets/js/tools-currency.js": ["currency-converter"]
 };
