@@ -129,6 +129,10 @@
     t("webp-to-pdf","pdf","WebP to PDF","Combine WebP images into a single PDF.",{tier:"traffic",status:"live",kw:"webp images to pdf combine convert"}),
     t("pdf-to-png","pdf","PDF to PNG","Render each PDF page to a downloadable PNG image.",{tier:"traffic",status:"live",kw:"pdf to png image export rasterize pages"}),
     t("pdf-to-webp","pdf","PDF to WebP","Render each PDF page to a compact WebP image.",{tier:"traffic",status:"live",kw:"pdf to webp image export rasterize pages"}),
+    t("pdf-creator","pdf","PDF Creator","Create a fresh blank PDF with a chosen size and page count.",{tier:"traffic",status:"live",kw:"create blank new pdf maker generator"}),
+    t("extract-pdf-pages","pdf","Extract PDF Pages","Save selected pages as separate single-page PDFs.",{tier:"traffic",status:"live",kw:"extract pages separate individual split single"}),
+    t("remove-pdf-password","pdf","Remove PDF Password","Strip owner/permission restrictions from a PDF.",{tier:"traffic",status:"live",kw:"unlock remove password restrictions permissions decrypt"}),
+    t("pdf-repair","pdf","Repair PDF","Rebuild a PDF's structure to fix open and reference errors.",{tier:"traffic",status:"live",kw:"repair fix corrupt broken pdf wont open recover"}),
 
     /* ---------- TRAFFIC: images ---------- */
     t("compress-image","images","Image Compressor","Shrink JPG, PNG or WebP with a quality slider.",{tier:"traffic",status:"live",kw:"reduce photo size smaller"}),

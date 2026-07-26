@@ -142,9 +142,47 @@
     };
   }
 
+  async function buildBlankPdf(PDFLib, opts) {
+    var pdf = await PDFLib.PDFDocument.create();
+    var dims = PAGE[opts.page || 'a4'];
+    var font = await pdf.embedFont(PDFLib.StandardFonts.HelveticaBold);
+    var n = Math.max(1, Math.min(200, opts.count || 1));
+    for (var i = 0; i < n; i++) {
+      var p = pdf.addPage(dims);
+      if (i === 0 && opts.title) p.drawText(String(opts.title).slice(0, 80), { x: 56, y: dims[1] - 96, size: 24, font: font, color: PDFLib.rgb(0.05, 0.07, 0.1) });
+    }
+    return pdf.save();
+  }
+
   var T = {
     'text-to-pdf': makeTool('Paste or type your text here.\n\nEach blank line starts a new paragraph. Long lines wrap automatically to the page width.', buildTextPdf, 'document.pdf', true),
-    'markdown-to-pdf': makeTool('# Heading\n\nSome **markdown** text with a list:\n\n- First point\n- Second point\n\n## Subheading\n\nAnother paragraph.', buildMarkdownPdf, 'markdown.pdf', false)
+    'markdown-to-pdf': makeTool('# Heading\n\nSome **markdown** text with a list:\n\n- First point\n- Second point\n\n## Subheading\n\nAnother paragraph.', buildMarkdownPdf, 'markdown.pdf', false),
+
+    'pdf-creator': function (host, W) {
+      var pageSel = sel(W, 'Page size', [['a4', 'A4'], ['letter', 'US Letter']]);
+      var count = W.el('input', { class: 'field', type: 'number', value: '1', min: '1', max: '200', 'aria-label': 'Number of pages' });
+      var title = W.el('input', { class: 'field', type: 'text', placeholder: 'Optional title on page 1', 'aria-label': 'Title' });
+      var status = W.el('p', { class: 'note' });
+      var err = W.el('p', { class: 'note err', hidden: 'hidden', role: 'alert' });
+      var btn = W.el('button', { class: 'btn btn-primary', type: 'button', text: 'Create PDF', onClick: async function () {
+        err.hidden = true; status.textContent = 'Building PDF…'; btn.disabled = true;
+        try {
+          var PDFLib = await loadPdfLib();
+          var bytes = await buildBlankPdf(PDFLib, { page: pageSel.value, count: +count.value, title: title.value.trim() });
+          download(new Blob([bytes], { type: 'application/pdf' }), 'blank.pdf');
+          status.textContent = 'Done — your PDF has downloaded.';
+        } catch (e) { status.textContent = ''; err.hidden = false; err.textContent = e.message || 'Could not build the PDF.'; }
+        btn.disabled = false;
+      } });
+      host.appendChild(W.el('div', { class: 'wbtns' }, [
+        W.el('label', { class: 'winline' }, [W.el('span', { class: 'wlab', text: 'Page' }), pageSel]),
+        W.el('label', { class: 'winline' }, [W.el('span', { class: 'wlab', text: 'Pages' }), count])
+      ]));
+      host.appendChild(W.el('label', { class: 'wfield' }, [W.el('span', { class: 'wlab', text: 'Title (optional)' }), title]));
+      host.appendChild(W.el('div', { class: 'wbtns' }, [btn]));
+      host.appendChild(status); host.appendChild(err);
+      host.appendChild(W.el('p', { class: 'note', text: 'Creates a fresh blank PDF you can print, annotate or fill. Built in your browser — nothing is uploaded.' }));
+    }
   };
 
   root.VKPdfMake = { wrapText: wrapText, parseMarkdown: parseMarkdown };

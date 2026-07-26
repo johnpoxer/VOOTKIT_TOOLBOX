@@ -436,6 +436,76 @@
           status: 'Built a ' + files.length + '-page PDF'
         };
       }
+    },
+
+    'extract-pdf-pages': {
+      accept: 'application/pdf', action: 'Extract to separate PDFs',
+      dropLabel: 'Choose a PDF',
+      options: [{ k: 'which', label: 'Pages to extract', type: 'text', def: 'all' }],
+      process: async function (files, o, api) {
+        var PDFLib = await loadPdfLib();
+        var doc = await loadDoc(PDFLib, files[0]);
+        var total = doc.getPageCount();
+        var raw = String((document.getElementById('ft-which') || {}).value || 'all').trim();
+        var sel = raw.toLowerCase() === 'all' ? doc.getPageIndices() : parseRanges(raw, total);
+        if (!sel.length) throw new Error('No pages matched “' + raw + '”. Use “all” or a range like 1-3.');
+        if (sel.length > 50) throw new Error('That’s ' + sel.length + ' pages — extract up to 50 at once to keep your browser happy.');
+        var downloads = [];
+        for (var j = 0; j < sel.length; j++) {
+          var out = await PDFLib.PDFDocument.create();
+          var copied = await out.copyPages(doc, [sel[j]]);
+          out.addPage(copied[0]);
+          var bytes = await out.save();
+          downloads.push({ label: 'Page ' + (sel[j] + 1), blob: pdfBlob(bytes), name: baseName(files[0].name) + '-p' + (sel[j] + 1) + '.pdf' });
+          api.progress((j + 1) / sel.length * 0.9);
+        }
+        return {
+          stats: [{ label: 'Original pages', value: total }, { label: 'Extracted files', value: downloads.length }],
+          downloads: downloads,
+          status: 'Extracted ' + downloads.length + ' single-page PDFs',
+          note: 'Each selected page is saved as its own PDF. Click each button to download.'
+        };
+      }
+    },
+
+    'remove-pdf-password': {
+      accept: 'application/pdf', action: 'Remove restrictions',
+      dropLabel: 'Choose a restricted PDF',
+      options: [],
+      process: async function (files, o, api) {
+        var PDFLib = await loadPdfLib();
+        var doc;
+        try { doc = await PDFLib.PDFDocument.load(await files[0].arrayBuffer(), { ignoreEncryption: true }); }
+        catch (e) { throw new Error('This PDF needs its open password to be read. A password that stops the file from opening cannot be removed without it — open it in your PDF viewer with the password first, then re-save.'); }
+        api.progress(0.6);
+        var bytes = await doc.save();
+        return {
+          stats: [{ label: 'Pages', value: doc.getPageCount() }, { label: 'Size', value: api.bytes(bytes.length) }],
+          downloads: [{ label: 'Download unlocked PDF', blob: pdfBlob(bytes), name: baseName(files[0].name) + '-unlocked.pdf' }],
+          status: 'Restrictions removed',
+          note: 'Removes owner/permission restrictions (no-print, no-copy) by re-saving. It cannot bypass an open password that blocks the file from opening — that legitimately requires the password.'
+        };
+      }
+    },
+
+    'pdf-repair': {
+      accept: 'application/pdf', action: 'Repair',
+      dropLabel: 'Choose a PDF to repair',
+      options: [],
+      process: async function (files, o, api) {
+        var PDFLib = await loadPdfLib();
+        var doc;
+        try { doc = await PDFLib.PDFDocument.load(await files[0].arrayBuffer(), { ignoreEncryption: true }); }
+        catch (e) { throw new Error('This file is too damaged to rebuild, or it isn’t a PDF.'); }
+        api.progress(0.6);
+        var bytes = await doc.save();
+        return {
+          stats: [{ label: 'Pages', value: doc.getPageCount() }, { label: 'Rebuilt size', value: api.bytes(bytes.length) }],
+          downloads: [{ label: 'Download repaired PDF', blob: pdfBlob(bytes), name: baseName(files[0].name) + '-repaired.pdf' }],
+          status: 'Rebuilt',
+          note: 'Re-writes the PDF structure, which fixes many “won’t open” and cross-reference errors. It can’t recover data that is genuinely missing or corrupted.'
+        };
+      }
     }
   };
 
