@@ -19,6 +19,35 @@
   }
   function baseName(name) { return String(name || 'image').replace(/\.[^.]+$/, ''); }
 
+  var QUALITY = { k: 'quality', label: 'Quality', type: 'range', min: 40, max: 100, def: 90, suffix: '%' };
+  var MATTE = { k: 'bg', label: 'Background (fills transparency)', type: 'select', def: '#ffffff',
+    options: [{ v: '#ffffff', label: 'White' }, { v: '#000000', label: 'Black' }, { v: '#0d1420', label: 'Dark' }] };
+
+  /* factory: decode any image the browser can read, redraw, re-encode to `mime` */
+  function convertTool(spec) {
+    var options = [];
+    if (spec.quality) options.push(QUALITY);
+    if (spec.matte) options.push(MATTE);
+    return {
+      accept: spec.accept || 'image/*', action: 'Convert', dropLabel: spec.drop || 'Choose an image', options: options,
+      process: async function (files, o, api) {
+        var f = files[0], img = await api.loadImage(f);
+        var w = img.naturalWidth || 512, h = img.naturalHeight || 512;
+        var k = canvasFrom(w, h);
+        if (spec.matte) { k.ctx.fillStyle = o.bg || '#ffffff'; k.ctx.fillRect(0, 0, w, h); }
+        k.ctx.drawImage(img, 0, 0, w, h);
+        api.progress(0.6);
+        var blob = await toBlob(k.c, spec.mime, spec.quality ? o.quality / 100 : undefined);
+        return {
+          previewUrl: api.urls.make(blob),
+          stats: [{ label: 'Format', value: spec.ext.toUpperCase() }, { label: 'Size', value: w + '×' + h }, { label: 'File', value: api.bytes(blob.size) }],
+          downloads: [{ label: 'Download ' + spec.ext.toUpperCase(), blob: blob, name: baseName(f.name) + '.' + spec.ext }],
+          status: 'Converted to ' + spec.ext.toUpperCase()
+        };
+      }
+    };
+  }
+
   var T = {
 
     /* ---------- PNG → JPG (flatten transparency onto a matte) ---------- */
@@ -139,6 +168,82 @@
           downloads: [{ label: 'Download PNG', blob: blob, name: baseName(f.name) + '-rounded.png' }],
           status: 'Rounded',
           note: 'Saved as PNG so the rounded corners stay transparent.'
+        };
+      }
+    },
+
+    /* ---------- dedicated converters ---------- */
+    'jpg-to-webp': convertTool({ accept: 'image/jpeg,image/*', drop: 'Choose a JPG', mime: 'image/webp', ext: 'webp', quality: true }),
+    'png-to-webp': convertTool({ accept: 'image/png,image/*', drop: 'Choose a PNG', mime: 'image/webp', ext: 'webp', quality: true }),
+    'webp-to-png': convertTool({ accept: 'image/webp,image/*', drop: 'Choose a WebP', mime: 'image/png', ext: 'png' }),
+    'webp-to-jpg': convertTool({ accept: 'image/webp,image/*', drop: 'Choose a WebP', mime: 'image/jpeg', ext: 'jpg', quality: true, matte: true }),
+    'svg-to-png': convertTool({ accept: '.svg,image/svg+xml', drop: 'Choose an SVG', mime: 'image/png', ext: 'png' }),
+
+    /* ---------- filter studio ---------- */
+    'filter-studio': {
+      accept: 'image/*', action: 'Apply filter', dropLabel: 'Choose a photo',
+      options: [
+        { k: 'filter', label: 'Filter', type: 'select', def: 'grayscale',
+          options: [
+            { v: 'grayscale', label: 'Black & white' }, { v: 'sepia', label: 'Sepia' }, { v: 'invert', label: 'Invert' },
+            { v: 'vintage', label: 'Vintage' }, { v: 'cool', label: 'Cool' }, { v: 'warm', label: 'Warm' },
+            { v: 'contrast', label: 'High contrast' }, { v: 'film', label: 'B&W film' }, { v: 'bright', label: 'Bright & punchy' }
+          ] }
+      ],
+      process: async function (files, o, api) {
+        var F = { grayscale: 'grayscale(1)', sepia: 'sepia(0.75)', invert: 'invert(1)',
+          vintage: 'sepia(0.4) contrast(1.1) saturate(1.25) brightness(1.05)',
+          cool: 'saturate(1.1) hue-rotate(-15deg) brightness(1.02)',
+          warm: 'saturate(1.2) hue-rotate(12deg) brightness(1.03)',
+          contrast: 'contrast(1.4)', film: 'grayscale(1) contrast(1.2)', bright: 'brightness(1.1) contrast(1.1) saturate(1.2)' };
+        var f = files[0], img = await api.loadImage(f);
+        var k = canvasFrom(img.naturalWidth, img.naturalHeight);
+        k.ctx.filter = F[o.filter] || 'none';
+        k.ctx.drawImage(img, 0, 0);
+        api.progress(0.6);
+        var blob = await toBlob(k.c, 'image/png');
+        return {
+          previewUrl: api.urls.make(blob),
+          stats: [{ label: 'Filter', value: o.filter }, { label: 'Size', value: img.naturalWidth + '×' + img.naturalHeight }, { label: 'File', value: api.bytes(blob.size) }],
+          downloads: [{ label: 'Download', blob: blob, name: baseName(f.name) + '-' + o.filter + '.png' }],
+          status: 'Filter applied'
+        };
+      }
+    },
+
+    /* ---------- sharpen (convolution) ---------- */
+    'image-sharpen': {
+      accept: 'image/*', action: 'Sharpen', dropLabel: 'Choose an image to sharpen',
+      options: [{ k: 'amount', label: 'Sharpen amount', type: 'range', min: 1, max: 10, def: 4 }],
+      process: async function (files, o, api) {
+        var f = files[0], img = await api.loadImage(f);
+        var w = img.naturalWidth, h = img.naturalHeight, k = canvasFrom(w, h);
+        k.ctx.drawImage(img, 0, 0);
+        var src = k.ctx.getImageData(0, 0, w, h), dst = k.ctx.createImageData(w, h);
+        var s = src.data, d = dst.data, a = o.amount / 5;         // strength
+        var center = 1 + 4 * a, side = -a;
+        for (var y = 0; y < h; y++) {
+          for (var x = 0; x < w; x++) {
+            var i = (y * w + x) * 4;
+            for (var c = 0; c < 3; c++) {
+              var v = center * s[i + c];
+              if (x > 0) v += side * s[i - 4 + c];
+              if (x < w - 1) v += side * s[i + 4 + c];
+              if (y > 0) v += side * s[i - w * 4 + c];
+              if (y < h - 1) v += side * s[i + w * 4 + c];
+              d[i + c] = v < 0 ? 0 : v > 255 ? 255 : v;
+            }
+            d[i + 3] = s[i + 3];
+          }
+          if (y % 64 === 0) api.progress(0.2 + 0.6 * y / h);
+        }
+        k.ctx.putImageData(dst, 0, 0);
+        var blob = await toBlob(k.c, 'image/png');
+        return {
+          previewUrl: api.urls.make(blob),
+          stats: [{ label: 'Amount', value: o.amount }, { label: 'Size', value: w + '×' + h }, { label: 'File', value: api.bytes(blob.size) }],
+          downloads: [{ label: 'Download', blob: blob, name: baseName(f.name) + '-sharp.png' }],
+          status: 'Sharpened'
         };
       }
     }

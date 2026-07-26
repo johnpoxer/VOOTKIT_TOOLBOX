@@ -162,6 +162,13 @@
     t("image-blur","images","Image Blur Tool","Blur a whole image by an adjustable amount.",{tier:"traffic",status:"live",kw:"blur photo soften gaussian"}),
     t("image-brightness","images","Brightness & Contrast","Adjust brightness, contrast and saturation of a photo.",{tier:"traffic",status:"live",kw:"brightness contrast saturation adjust photo exposure"}),
     t("round-corners","images","Rounded Corners","Round the corners of an image and keep them transparent.",{tier:"traffic",status:"live",kw:"round corners radius png transparent rounded rectangle"}),
+    t("jpg-to-webp","images","JPG to WebP","Convert JPG to smaller, modern WebP.",{tier:"traffic",status:"live",kw:"jpg jpeg to webp convert smaller"}),
+    t("png-to-webp","images","PNG to WebP","Convert PNG to WebP with transparency support.",{tier:"traffic",status:"live",kw:"png to webp convert smaller transparent"}),
+    t("webp-to-png","images","WebP to PNG","Convert WebP to widely-supported PNG.",{tier:"traffic",status:"live",kw:"webp to png convert lossless"}),
+    t("webp-to-jpg","images","WebP to JPG","Convert WebP to JPG, flattening transparency.",{tier:"traffic",status:"live",kw:"webp to jpg jpeg convert"}),
+    t("svg-to-png","images","SVG to PNG","Rasterise an SVG vector into a PNG image.",{tier:"traffic",status:"live",kw:"svg to png rasterize vector convert"}),
+    t("filter-studio","images","Photo Filter Studio","Apply one-click filters — B&W, sepia, vintage and more.",{tier:"traffic",status:"live",kw:"filters instagram vintage sepia bw effects photo"}),
+    t("image-sharpen","images","Image Sharpener","Sharpen a soft or slightly blurry photo.",{tier:"traffic",status:"live",kw:"sharpen unsharp crisp detail enhance clarity"}),
 
     /* ---------- RETENTION: video & streaming ---------- */
     t("compress-for-discord","video","Compress for Discord","One-click 10 MB, 50 MB and 500 MB presets that actually fit.",{tier:"retention",status:"live",kw:"discord upload limit too big clip"}),
