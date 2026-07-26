@@ -24,6 +24,7 @@
     { code: "de", label: "Deutsch",           dir: "ltr", name: "German" },
     { code: "hi", label: "हिन्दी",             dir: "ltr", name: "Hindi" },
     { code: "id", label: "Bahasa Indonesia",  dir: "ltr", name: "Indonesian" },
+    { code: "it", label: "Italiano",          dir: "ltr", name: "Italian" },
     { code: "ar", label: "العربية",           dir: "rtl", name: "Arabic" },
     { code: "ja", label: "日本語",             dir: "ltr", name: "Japanese" }
   ];
