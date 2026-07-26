@@ -27,6 +27,7 @@ const WIDGETS = {
   "assets/js/tools-text.js": ["word-counter","case-converter","text-diff","readability","line-tools","lorem-ipsum","markdown-editor"],
   "assets/js/tools-dev.js": ["json-formatter","base64","jwt-decoder","uuid-generator","hash-generator","regex-tester","url-encoder","timestamp-converter"],
   "assets/js/tools-dev2.js": ["xml-formatter","html-formatter","css-formatter","sql-formatter","cron-generator"],
+  "assets/js/tools-sec.js": ["passphrase-generator","totp-generator","random-number-generator","credit-card-validator","iban-validator"],
   "assets/js/tools-everyday.js": ["unit-converter","age-calculator","countdown","pomodoro","stopwatch","timezone-converter","random-picker"],
   "assets/js/tools-privacy.js": ["password-generator","password-strength","text-encrypt","file-checksum"],
   "assets/js/tools-design.js": ["color-converter","contrast-checker","gradient-generator","palette-generator","shadow-generator"],

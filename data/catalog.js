@@ -191,6 +191,8 @@
     t("password-strength","privacy","Password Strength Checker","How strong a password is — checked locally.",{tier:"retention",status:"live",kw:"secure weak entropy"}),
     t("text-encrypt","privacy","Text Encrypt / Decrypt","AES-encrypt a message with a password.",{tier:"edge",status:"live",kw:"aes cipher secret"}),
     t("file-checksum","privacy","File Checksum","Verify a download with its SHA-256 hash.",{tier:"edge",status:"live",kw:"sha256 verify integrity"}),
+    t("passphrase-generator","privacy","Passphrase Generator","Memorable word-based passwords from a secure RNG.",{tier:"retention",status:"live",kw:"diceware memorable passphrase words secure password"}),
+    t("totp-generator","privacy","2FA / TOTP Code Generator","Generate the current 6-digit authenticator code from a secret.",{tier:"retention",status:"live",kw:"totp 2fa authenticator otp code rfc6238"}),
 
     /* ---------- RETENTION: everyday ---------- */
     t("word-counter","text","Word & Character Counter","Live counts, sentences and reading time.",{tier:"retention",status:"live",kw:"how many words essay limit"}),
@@ -226,6 +228,7 @@
     t("qr-scanner","everyday","QR Code Scanner","Scan a QR code with your camera or from an image.",{tier:"retention",status:"live",kw:"read decode qr"}),
     t("barcode-generator","everyday","Barcode Generator","CODE128 and EAN barcodes, ready to download.",{tier:"retention",status:"live",kw:"ean upc code128"}),
     t("random-picker","everyday","Random Picker","Pick a winner fairly from a list.",{tier:"retention",status:"live",kw:"raffle giveaway choose"}),
+    t("random-number-generator","everyday","Random Number Generator","Cryptographically random numbers in any range.",{tier:"retention",status:"live",kw:"rng random integer range dice draw unique"}),
     t("typing-test","everyday","Typing Speed Test","Words per minute and accuracy.",{tier:"retention",status:"live",kw:"wpm keyboard speed"}),
 
     /* ---------- design / developer / data / ai (kept, frozen) ---------- */
@@ -246,6 +249,8 @@
     t("css-formatter","developer","CSS Formatter","Beautify or minify CSS with clean indentation.",{tier:"retention",status:"live",kw:"beautify minify css stylesheet"}),
     t("sql-formatter","developer","SQL Formatter","Lay out SQL with uppercased keywords and line breaks.",{tier:"retention",status:"live",kw:"beautify sql query pretty print"}),
     t("cron-generator","developer","Cron Expression Generator","Build a cron schedule and read it in plain English.",{tier:"retention",status:"live",kw:"crontab schedule expression explain"}),
+    t("credit-card-validator","developer","Credit Card Validator","Check a card number with Luhn and detect its brand.",{tier:"retention",status:"live",kw:"luhn check card number brand visa mastercard validate"}),
+    t("iban-validator","developer","IBAN Validator","Validate an IBAN's structure and mod-97 check digits.",{tier:"retention",status:"live",kw:"iban bank account validate mod97 check"}),
     t("csv-viewer","data","CSV Viewer & Sorter","Open a CSV as a sortable, filterable table.",{tier:"traffic",status:"live",kw:"spreadsheet open sort"}),
     t("csv-to-chart","data","CSV to Chart","Turn two columns into a bar or line chart.",{tier:"traffic",status:"live",kw:"graph visualise plot"}),
     t("json-csv","data","JSON ↔ CSV","Convert a JSON array to CSV and back.",{tier:"traffic",status:"live",kw:"convert tabular"}),
