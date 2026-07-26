@@ -306,6 +306,68 @@
           note: 'Keep the password safe — a protected PDF cannot be opened without it, and we don’t store it.'
         };
       }
+    },
+
+    'crop-pdf': {
+      accept: 'application/pdf', action: 'Crop',
+      dropLabel: 'Choose a PDF to crop',
+      options: [
+        { k: 'top', label: 'Trim top (pt)', def: 36, min: 0, max: 400, step: 2 },
+        { k: 'bottom', label: 'Trim bottom (pt)', def: 36, min: 0, max: 400, step: 2 },
+        { k: 'left', label: 'Trim left (pt)', def: 36, min: 0, max: 400, step: 2 },
+        { k: 'right', label: 'Trim right (pt)', def: 36, min: 0, max: 400, step: 2 }
+      ],
+      process: async function (files, o, api) {
+        var PDFLib = await loadPdfLib();
+        var doc = await loadDoc(PDFLib, files[0]);
+        var pages = doc.getPages();
+        pages.forEach(function (pg) {
+          var sz = pg.getSize();
+          var w = sz.width - o.left - o.right, h = sz.height - o.top - o.bottom;
+          if (w > 10 && h > 10) pg.setCropBox(o.left, o.bottom, w, h);
+        });
+        api.progress(0.8);
+        var bytes = await doc.save();
+        return {
+          stats: [{ label: 'Pages', value: pages.length }, { label: 'Trimmed', value: o.top + '/' + o.right + '/' + o.bottom + '/' + o.left + ' pt' }, { label: 'Size', value: api.bytes(bytes.length) }],
+          downloads: [{ label: 'Download cropped PDF', blob: pdfBlob(bytes), name: baseName(files[0].name) + '-cropped.pdf' }],
+          status: 'Cropped',
+          note: 'Crops the visible area (crop box) by the margins you set — the same on every page.'
+        };
+      }
+    },
+
+    'duplicate-pdf-pages': {
+      accept: 'application/pdf', action: 'Duplicate pages',
+      dropLabel: 'Choose a PDF',
+      options: [
+        { k: 'which', label: 'Pages to duplicate', type: 'text', def: 'all' },
+        { k: 'copies', label: 'Extra copies of each', def: 1, min: 1, max: 20, step: 1 }
+      ],
+      process: async function (files, o, api) {
+        var PDFLib = await loadPdfLib();
+        var doc = await loadDoc(PDFLib, files[0]);
+        var total = doc.getPageCount();
+        var raw = String((document.getElementById('ft-which') || {}).value || 'all').trim();
+        var sel = raw.toLowerCase() === 'all' ? doc.getPageIndices() : parseRanges(raw, total);
+        if (!sel.length) throw new Error('No pages matched “' + raw + '”. Use “all” or a range like 1-3.');
+        var selSet = {}; sel.forEach(function (i) { selSet[i] = 1; });
+        var order = [];
+        doc.getPageIndices().forEach(function (i) {
+          order.push(i);
+          if (selSet[i]) for (var c = 0; c < o.copies; c++) order.push(i);
+        });
+        var out = await PDFLib.PDFDocument.create();
+        var copied = await out.copyPages(doc, order);
+        copied.forEach(function (p) { out.addPage(p); });
+        api.progress(0.8);
+        var bytes = await out.save();
+        return {
+          stats: [{ label: 'Original pages', value: total }, { label: 'New total', value: order.length }, { label: 'Size', value: api.bytes(bytes.length) }],
+          downloads: [{ label: 'Download', blob: pdfBlob(bytes), name: baseName(files[0].name) + '-duplicated.pdf' }],
+          status: 'Duplicated pages'
+        };
+      }
     }
   };
 

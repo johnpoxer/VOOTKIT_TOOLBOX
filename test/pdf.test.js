@@ -31,9 +31,9 @@ eq(parseRanges("abc", 10), [], "rejects garbage");
 eq(parseRanges("", 10), [], "empty string -> nothing");
 eq(parseRanges("3,1,2", 10), [2, 0, 1], "preserves given order (for reorder)");
 
-/* 9 PDF tools, all wired into the catalog and marked live */
+/* PDF tools, all wired into the catalog and marked live */
 const ids = Object.keys(T);
-eq(ids.length, 9, "9 pdf tools");
+eq(ids.length, 11, "11 pdf tools");
 let liveCount = 0;
 ids.forEach(id => {
   const t = VK.find(id);

@@ -121,6 +121,10 @@
     t("protect-pdf","pdf","Protect PDF","Add a password to a document before sharing it.",{tier:"traffic",status:"live",kw:"encrypt password lock"}),
     t("pdf-redact","pdf","Redact PDF","Black out sensitive text before you send a file.",{tier:"edge",status:"live",kw:"black out censor private"}),
     t("compare-pdf","pdf","Compare PDFs","Spot what changed between two versions.",{tier:"traffic",status:"live",kw:"diff versions changes"}),
+    t("text-to-pdf","pdf","Text to PDF","Turn plain text into a clean, paginated PDF.",{tier:"traffic",status:"live",kw:"txt text to pdf create document convert"}),
+    t("markdown-to-pdf","pdf","Markdown to PDF","Convert Markdown headings, lists and text into a PDF.",{tier:"traffic",status:"live",kw:"md markdown to pdf export convert readme"}),
+    t("crop-pdf","pdf","Crop PDF","Trim page margins across a whole PDF.",{tier:"traffic",status:"live",kw:"crop trim margins pdf pages whitespace"}),
+    t("duplicate-pdf-pages","pdf","Duplicate PDF Pages","Repeat selected pages any number of times.",{tier:"traffic",status:"live",kw:"duplicate copy repeat pdf pages"}),
 
     /* ---------- TRAFFIC: images ---------- */
     t("compress-image","images","Image Compressor","Shrink JPG, PNG or WebP with a quality slider.",{tier:"traffic",status:"live",kw:"reduce photo size smaller"}),
