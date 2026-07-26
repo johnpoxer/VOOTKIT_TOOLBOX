@@ -136,6 +136,10 @@
     t("scan-to-pdf","pdf","Scan to PDF","Snap pages with your camera and build a PDF.",{tier:"traffic",status:"live",kw:"scan camera photo document to pdf mobile"}),
     t("pdf-signature","pdf","Sign PDF","Draw a signature and stamp it onto a PDF page.",{tier:"traffic",status:"live",kw:"sign signature esign draw pdf stamp"}),
     t("pdf-form-filler","pdf","PDF Form Filler","Fill in AcroForm fields and download the completed PDF.",{tier:"traffic",status:"live",kw:"fill form fields acroform pdf complete"}),
+    t("html-to-pdf","pdf","HTML to PDF","Render HTML with inline CSS into a PDF.",{tier:"traffic",status:"live",kw:"html css to pdf convert webpage render"}),
+    t("word-to-pdf","pdf","Word to PDF","Convert a .docx document into a PDF in your browser.",{tier:"traffic",status:"live",kw:"word docx to pdf convert document"}),
+    t("excel-to-pdf","pdf","Excel to PDF","Turn spreadsheet sheets into a paginated PDF.",{tier:"traffic",status:"live",kw:"excel xlsx csv to pdf convert spreadsheet table"}),
+    t("pdf-ocr","pdf","PDF & Image OCR","Extract text from scanned PDFs and images with OCR.",{tier:"traffic",status:"live",kw:"ocr scan image pdf to text recognize tesseract"}),
 
     /* ---------- TRAFFIC: images ---------- */
     t("compress-image","images","Image Compressor","Shrink JPG, PNG or WebP with a quality slider.",{tier:"traffic",status:"live",kw:"reduce photo size smaller"}),

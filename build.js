@@ -30,6 +30,7 @@ const WIDGETS = {
   "assets/js/tools-sec.js": ["passphrase-generator","totp-generator","random-number-generator","credit-card-validator","iban-validator"],
   "assets/js/tools-pdfmake.js": ["text-to-pdf","markdown-to-pdf","pdf-creator"],
   "assets/js/tools-pdftools.js": ["scan-to-pdf","pdf-signature","pdf-form-filler"],
+  "assets/js/tools-pdfconv.js": ["html-to-pdf","word-to-pdf","excel-to-pdf","pdf-ocr"],
   "assets/js/tools-everyday.js": ["unit-converter","age-calculator","countdown","pomodoro","stopwatch","timezone-converter","random-picker"],
   "assets/js/tools-privacy.js": ["password-generator","password-strength","text-encrypt","file-checksum"],
   "assets/js/tools-design.js": ["color-converter","contrast-checker","gradient-generator","palette-generator","shadow-generator"],
