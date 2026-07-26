@@ -205,6 +205,14 @@
     t("emote-resizer","video","Emote & Sticker Resizer","Resize to Discord and Twitch emote limits.",{tier:"retention",status:"live",kw:"discord 128 twitch emote"}),
     t("brb-overlay","video","BRB & Countdown Overlay","A styled page to drop into OBS as a browser source.",{tier:"retention",status:"live",kw:"obs browser source stream starting soon"}),
     t("upload-time","video","Upload Time Estimator","How long a file will take on your connection.",{tier:"retention",status:"live",kw:"how long to upload"}),
+    t("stream-overlay-creator","video","Stream Overlay Creator","Design a transparent webcam overlay for OBS.",{tier:"retention",status:"live",kw:"stream overlay webcam frame obs twitch design"}),
+    t("starting-soon-screen","video","Starting Soon Screen","Make a starting-soon screen with countdown for OBS.",{tier:"retention",status:"live",kw:"starting soon screen obs browser source countdown stream"}),
+    t("stream-alert-creator","video","Stream Alert Creator","Design follower, sub and donation alert graphics.",{tier:"retention",status:"live",kw:"stream alert follower subscriber donation graphic design"}),
+    t("chat-overlay-tool","video","Chat Overlay CSS","Generate custom CSS to style your chat overlay.",{tier:"retention",status:"live",kw:"chat overlay css streamelements streamlabs style twitch"}),
+    t("stream-revenue-calculator","video","Stream Revenue Calculator","Estimate monthly income from subs, bits, tips and ads.",{tier:"money",status:"live",kw:"twitch revenue income subs bits donations ads earnings"}),
+    t("obs-settings-assistant","video","OBS Settings Assistant","Recommended bitrate and encoder settings for your setup.",{tier:"retention",status:"live",kw:"obs settings bitrate encoder resolution fps stream quality"}),
+    t("stream-schedule-planner","video","Stream Schedule Planner","Make a shareable weekly stream schedule graphic.",{tier:"retention",status:"live",kw:"stream schedule weekly planner graphic twitch panel"}),
+    t("giveaway-picker","video","Giveaway Picker","Draw fair random winners for a stream giveaway.",{tier:"retention",status:"live",kw:"giveaway winner picker random raffle stream draw"}),
 
     /* ---------- GAP: SEO & marketing ---------- */
     t("meta-tag-generator","seo","Meta Tag Generator","Title, description and Open Graph tags, ready to paste.",{tier:"gap",status:"live",kw:"og tags head html"}),

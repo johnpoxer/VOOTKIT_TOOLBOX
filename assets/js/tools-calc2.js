@@ -490,6 +490,60 @@
           note: 'A simplified estimate — real payroll depends on tax brackets, allowances and local rules. Nothing you enter is stored.'
         };
       }
+    },
+
+    /* ---------- stream revenue ---------- */
+    'stream-revenue-calculator': {
+      fields: [
+        { k: 'subs', label: 'Subscribers', def: 100, min: 0, step: 1 },
+        { k: 'subnet', label: 'Your $ per sub', def: 2.5, min: 0, step: 0.1, hint: 'Usually ~50% of the sub price' },
+        { k: 'bits', label: 'Bits cheered per month', def: 5000, min: 0, step: 100 },
+        { k: 'donations', label: 'Donations / tips (a month)', def: 100, min: 0, step: 10 },
+        { k: 'ads', label: 'Ad revenue (a month)', def: 50, min: 0, step: 10 },
+        CUR
+      ],
+      compute: function (v) {
+        var sub = v.subs * v.subnet, bits = v.bits * 0.01, total = sub + bits + v.donations + v.ads;
+        return {
+          headline: { label: 'Estimated monthly revenue', value: F.money2(total, v.cur), sub: F.money(total * 12, v.cur) + ' a year' },
+          stats: [
+            { label: 'Subscriptions', value: F.money2(sub, v.cur) },
+            { label: 'Bits', value: F.money2(bits, v.cur) },
+            { label: 'Donations', value: F.money2(v.donations, v.cur) },
+            { label: 'Ads', value: F.money2(v.ads, v.cur) }
+          ],
+          note: 'Bits pay about $0.01 each; subscriber payout is usually ~50% of the sub price (higher for larger partners). A rough estimate before platform taxes and fees.'
+        };
+      }
+    },
+
+    /* ---------- OBS settings assistant (rule-based) ---------- */
+    'obs-settings-assistant': {
+      fields: [
+        { k: 'upload', label: 'Upload speed (Mbps)', def: 10, min: 0.5, max: 1000, step: 0.5 },
+        { k: 'res', label: 'Resolution', type: 'select', def: '1080', options: [{ v: '1080', label: '1080p' }, { v: '720', label: '720p' }, { v: '480', label: '480p' }] },
+        { k: 'fps', label: 'Frame rate', type: 'select', def: '60', options: [{ v: '60', label: '60 fps' }, { v: '30', label: '30 fps' }] },
+        { k: 'platform', label: 'Platform', type: 'select', def: 'twitch', options: [{ v: 'twitch', label: 'Twitch' }, { v: 'youtube', label: 'YouTube' }, { v: 'kick', label: 'Kick' }, { v: 'facebook', label: 'Facebook' }] }
+      ],
+      compute: function (v) {
+        var base = { '1080_60': 6000, '1080_30': 4500, '720_60': 4500, '720_30': 3000, '480_60': 2000, '480_30': 1500 };
+        var rec = base[v.res + '_' + v.fps] || 4500;
+        var caps = { twitch: 8500, youtube: 12000, kick: 8000, facebook: 6000 };
+        rec = Math.min(rec, caps[v.platform] || 6000);
+        var safe = Math.round(v.upload * 1000 * 0.6);
+        var bitrate = Math.max(500, Math.min(rec, safe));
+        var warn = safe < rec ? 'Your upload limits you to about ' + bitrate + ' kbps — below the ideal ' + rec + ' for this quality. Consider a lower resolution or 30 fps. ' : '';
+        return {
+          headline: { label: 'Recommended video bitrate', value: bitrate + ' kbps', sub: v.res + 'p' + v.fps },
+          stats: [
+            { label: 'Ideal for quality', value: rec + ' kbps' },
+            { label: 'Your safe max', value: safe + ' kbps' },
+            { label: 'Keyframe interval', value: '2 s' },
+            { label: 'Audio bitrate', value: '160 kbps' }
+          ],
+          note: warn + 'Use hardware encoding (NVENC / AV1) if your GPU supports it, otherwise x264 “veryfast”. ' + (v.platform === 'twitch' ? 'Twitch caps most non-partners around 6000 kbps.' : '')
+        };
+      }
     }
 
   };
