@@ -94,6 +94,8 @@
     /* ---------- MONEY: freelance & business ---------- */
     t("invoice-generator","business","Invoice Generator","Build a clean invoice with line items and export a PDF.",{tier:"money",status:"live",kw:"bill client pdf"}),
     t("quote-generator","business","Quote & Estimate","Send a professional estimate before the work starts.",{tier:"money",status:"live",kw:"proposal estimate client"}),
+    t("receipt-generator","business","Receipt Generator","Create a paid receipt with line items and totals.",{tier:"money",status:"live",kw:"receipt paid payment proof invoice"}),
+    t("payroll-calculator","tax","Payroll Calculator","Net pay, deductions and the employer's total cost.",{tier:"money",status:"live",kw:"payroll net pay deductions employer cost gross"}),
     t("hourly-rate","business","Hourly Rate Calculator","The rate you must charge to hit your income target.",{tier:"money",status:"live",kw:"freelance day rate pricing"}),
     t("amazon-fba-calculator","business","Amazon FBA Profit Calculator","Net profit, margin and ROI per unit after Amazon and FBA fees.",{tier:"money",status:"live",kw:"amazon seller fba fees profit roi margin"}),
     t("etsy-fee-calculator","business","Etsy Fee & Profit Calculator","See your payout after Etsy listing, transaction and payment fees.",{tier:"money",status:"live",kw:"etsy seller fees payout profit"}),

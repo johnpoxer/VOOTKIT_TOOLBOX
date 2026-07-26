@@ -463,6 +463,33 @@
           note: 'Reimbursement rates are set by your employer or tax authority and change yearly — enter the current rate that applies to you.'
         };
       }
+    },
+
+    /* ---------- payroll ---------- */
+    'payroll-calculator': {
+      fields: [
+        { k: 'gross', label: 'Annual gross salary', def: 60000, min: 0, step: 1000 },
+        { k: 'tax', label: 'Income tax (%)', def: 20, min: 0, max: 60, step: 0.5 },
+        { k: 'pension', label: 'Pension / retirement (%)', def: 5, min: 0, max: 50, step: 0.5 },
+        { k: 'other', label: 'Other deductions (a year)', def: 0, min: 0, step: 100 },
+        { k: 'ertax', label: 'Employer tax / NI (%)', def: 8, min: 0, max: 40, step: 0.5 },
+        CUR
+      ],
+      compute: function (v) {
+        var tax = v.gross * v.tax / 100, pension = v.gross * v.pension / 100;
+        var net = Math.max(0, v.gross - tax - pension - v.other);
+        var employerCost = v.gross + v.gross * v.ertax / 100;
+        return {
+          headline: { label: 'Net pay (a year)', value: F.money(net, v.cur), sub: F.money2(net / 12, v.cur) + ' a month' },
+          stats: [
+            { label: 'Gross', value: F.money(v.gross, v.cur) },
+            { label: 'Income tax', value: F.money(tax, v.cur) },
+            { label: 'Pension + other', value: F.money(pension + v.other, v.cur) },
+            { label: 'Employer total cost', value: F.money(employerCost, v.cur) }
+          ],
+          note: 'A simplified estimate — real payroll depends on tax brackets, allowances and local rules. Nothing you enter is stored.'
+        };
+      }
     }
 
   };

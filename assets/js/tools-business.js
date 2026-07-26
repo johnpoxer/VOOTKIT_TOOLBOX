@@ -19,7 +19,8 @@
 
   function docHtml(kind, data) {
     var t = computeTotals(data.items, data.tax, data.discount);
-    var label = kind === 'quote' ? 'QUOTE' : 'INVOICE';
+    var label = kind === 'quote' ? 'QUOTE' : kind === 'receipt' ? 'RECEIPT' : 'INVOICE';
+    var paidBadge = kind === 'receipt' ? '<span style="display:inline-block;margin-left:12px;padding:3px 10px;border:2px solid #16a34a;color:#16a34a;border-radius:6px;font-size:13px;font-weight:700;letter-spacing:.08em;vertical-align:middle">PAID</span>' : '';
     var rows = data.items.map(function (it) {
       return '<tr><td>' + esc(it.desc) + '</td><td class="r">' + esc(it.qty) + '</td><td class="r">' + money(+it.price || 0, data.cur) + '</td><td class="r">' + money((+it.qty || 0) * (+it.price || 0), data.cur) + '</td></tr>';
     }).join('');
@@ -31,9 +32,9 @@
       'th,td{padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:left;font-size:14px}th{color:#666;font-weight:600;font-size:12px;text-transform:uppercase}' +
       '.r{text-align:right}tfoot td{border:0;padding:4px 8px}tfoot .tot{font-weight:700;font-size:16px;border-top:2px solid #111}' +
       '.notes{margin-top:28px;font-size:13px;color:#444;white-space:pre-wrap}@media print{body{margin:0}}' +
-      '</style></head><body><div class="top"><div><h1>' + label + '</h1><div class="muted">#' + esc(data.number) + ' · ' + esc(data.date) + '</div></div>' +
+      '</style></head><body><div class="top"><div><h1>' + label + paidBadge + '</h1><div class="muted">#' + esc(data.number) + ' · ' + esc(data.date) + '</div></div>' +
       '<div class="box"><strong>' + esc(data.fromName) + '</strong><br>' + esc(data.fromInfo).replace(/\n/g, '<br>') + '</div></div>' +
-      '<div style="display:flex;gap:48px;margin-bottom:12px"><div class="box"><div class="muted">' + (kind === 'quote' ? 'Prepared for' : 'Bill to') + '</div><strong>' + esc(data.toName) + '</strong><br>' + esc(data.toInfo).replace(/\n/g, '<br>') + '</div></div>' +
+      '<div style="display:flex;gap:48px;margin-bottom:12px"><div class="box"><div class="muted">' + (kind === 'quote' ? 'Prepared for' : kind === 'receipt' ? 'Received from' : 'Bill to') + '</div><strong>' + esc(data.toName) + '</strong><br>' + esc(data.toInfo).replace(/\n/g, '<br>') + '</div></div>' +
       '<table><thead><tr><th>Description</th><th class="r">Qty</th><th class="r">Price</th><th class="r">Amount</th></tr></thead><tbody>' + rows + '</tbody>' +
       '<tfoot><tr><td colspan="3" class="r">Subtotal</td><td class="r">' + money(t.subtotal, data.cur) + '</td></tr>' +
       (t.discount ? '<tr><td colspan="3" class="r">Discount</td><td class="r">-' + money(t.discount, data.cur) + '</td></tr>' : '') +
@@ -84,14 +85,14 @@
       host.appendChild(W.el('p', { class: 'wlab', text: 'Preview' })); host.appendChild(preview);
       host.appendChild(W.el('div', { class: 'wbtns' }, [
         W.el('button', { class: 'btn btn-primary', type: 'button', text: 'Print / Save as PDF', onClick: function () { var w = window.open('', '_blank'); if (w) { w.document.write(docHtml(kind, gather())); w.document.close(); w.focus(); setTimeout(function () { w.print(); }, 300); } } }),
-        W.el('button', { class: 'btn', type: 'button', text: 'Download HTML', onClick: function () { W.download(docHtml(kind, gather()), (kind === 'quote' ? 'quote' : 'invoice') + '-' + number.value + '.html', 'text/html'); } })
+        W.el('button', { class: 'btn', type: 'button', text: 'Download HTML', onClick: function () { W.download(docHtml(kind, gather()), kind + '-' + number.value + '.html', 'text/html'); } })
       ]));
       host.appendChild(W.el('p', { class: 'note', text: 'Built entirely in your browser — no data leaves your device. “Print / Save as PDF” opens a clean printable version; choose “Save as PDF” in the print dialog.' }));
       render();
     };
   }
 
-  var T = { 'invoice-generator': build('invoice'), 'quote-generator': build('quote') };
+  var T = { 'invoice-generator': build('invoice'), 'quote-generator': build('quote'), 'receipt-generator': build('receipt') };
 
   root.VKBusiness = { computeTotals: computeTotals };
   if (typeof module === 'object' && module.exports) module.exports = root.VKBusiness;
