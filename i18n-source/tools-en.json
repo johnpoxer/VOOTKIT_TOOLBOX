@@ -1,0 +1,582 @@
+{
+  "mortgage-calculator": {
+    "name": "Mortgage Calculator",
+    "desc": "Monthly payment, total interest and full amortisation schedule."
+  },
+  "loan-calculator": {
+    "name": "Loan Calculator",
+    "desc": "Payment, interest and payoff for any personal or business loan."
+  },
+  "auto-loan-calculator": {
+    "name": "Auto Loan Calculator",
+    "desc": "Car payment, total cost and interest by term and rate."
+  },
+  "refinance-calculator": {
+    "name": "Refinance Break-Even",
+    "desc": "See how many months until refinancing pays for itself."
+  },
+  "credit-card-payoff": {
+    "name": "Credit Card Payoff",
+    "desc": "How long to clear a balance, and what extra payments save."
+  },
+  "compound-interest": {
+    "name": "Compound Interest",
+    "desc": "Grow savings with regular contributions over time."
+  },
+  "savings-goal": {
+    "name": "Savings Goal Planner",
+    "desc": "How much to set aside each month to hit a target."
+  },
+  "retirement-calculator": {
+    "name": "Retirement Projection",
+    "desc": "Project a pension or 401k pot at your chosen retirement age."
+  },
+  "crypto-profit": {
+    "name": "Crypto Profit & DCA",
+    "desc": "Profit, loss and dollar-cost-average entry across buys."
+  },
+  "currency-converter": {
+    "name": "Currency Converter",
+    "desc": "Live exchange rates from European Central Bank data."
+  },
+  "percentage-calculator": {
+    "name": "Percentage Calculator",
+    "desc": "Percent of, is-what-percent, and percentage change."
+  },
+  "tip-split": {
+    "name": "Tip & Bill Split",
+    "desc": "Split a bill with tip across any number of people."
+  },
+  "discount-calculator": {
+    "name": "Discount Calculator",
+    "desc": "Final sale price and total savings, with stacked coupons and tax."
+  },
+  "life-insurance-needs": {
+    "name": "Life Cover Estimator",
+    "desc": "Estimate the life cover a household would actually need."
+  },
+  "auto-insurance-estimator": {
+    "name": "Auto Cover Estimator",
+    "desc": "Work out sensible liability and deductible levels."
+  },
+  "deductible-calculator": {
+    "name": "Deductible Trade-off",
+    "desc": "Compare premium savings against out-of-pocket risk."
+  },
+  "income-protection": {
+    "name": "Income Protection Estimator",
+    "desc": "How much monthly benefit would cover your commitments."
+  },
+  "rent-vs-buy": {
+    "name": "Rent vs Buy",
+    "desc": "Compare renting against buying over your real time horizon."
+  },
+  "cap-rate": {
+    "name": "Cap Rate Calculator",
+    "desc": "Capitalisation rate from income and property value."
+  },
+  "cash-on-cash": {
+    "name": "Cash-on-Cash Return",
+    "desc": "Annual return on the actual cash you put in."
+  },
+  "closing-costs": {
+    "name": "Closing Costs Estimator",
+    "desc": "Estimate the fees on top of the purchase price."
+  },
+  "home-affordability": {
+    "name": "Home Affordability",
+    "desc": "What price you can support on your income and deposit."
+  },
+  "rental-yield": {
+    "name": "Rental Yield",
+    "desc": "Gross and net yield on a rental property."
+  },
+  "mortgage-payoff": {
+    "name": "Mortgage Payoff",
+    "desc": "How much time and interest extra payments save."
+  },
+  "paycheck-calculator": {
+    "name": "Take-Home Pay",
+    "desc": "Estimate net pay from gross salary."
+  },
+  "income-tax-estimator": {
+    "name": "Income Tax Estimator",
+    "desc": "Rough tax due or refund on a year's income."
+  },
+  "self-employment-tax": {
+    "name": "Self-Employment Tax",
+    "desc": "Estimate tax and national insurance for the self-employed."
+  },
+  "overtime-calculator": {
+    "name": "Overtime Pay",
+    "desc": "Overtime and premium hours at any multiplier."
+  },
+  "pto-accrual": {
+    "name": "PTO Accrual",
+    "desc": "Holiday accrued to date from your entitlement."
+  },
+  "employee-cost": {
+    "name": "True Employee Cost",
+    "desc": "Salary plus benefits, taxes, equipment and overhead."
+  },
+  "salary-converter": {
+    "name": "Salary Converter",
+    "desc": "Hourly, weekly, monthly and annual, both ways."
+  },
+  "invoice-generator": {
+    "name": "Invoice Generator",
+    "desc": "Build a clean invoice with line items and export a PDF."
+  },
+  "quote-generator": {
+    "name": "Quote & Estimate",
+    "desc": "Send a professional estimate before the work starts."
+  },
+  "hourly-rate": {
+    "name": "Hourly Rate Calculator",
+    "desc": "The rate you must charge to hit your income target."
+  },
+  "amazon-fba-calculator": {
+    "name": "Amazon FBA Profit Calculator",
+    "desc": "Net profit, margin and ROI per unit after Amazon and FBA fees."
+  },
+  "etsy-fee-calculator": {
+    "name": "Etsy Fee & Profit Calculator",
+    "desc": "See your payout after Etsy listing, transaction and payment fees."
+  },
+  "stripe-fee-calculator": {
+    "name": "Stripe Fee Calculator",
+    "desc": "Fee and net received, or what to charge to net an exact amount."
+  },
+  "paypal-fee-calculator": {
+    "name": "PayPal Fee Calculator",
+    "desc": "Work out PayPal fees and your net, or gross-up a charge."
+  },
+  "roas-calculator": {
+    "name": "ROAS Calculator",
+    "desc": "Return on ad spend, ROI and the break-even ROAS for your margin."
+  },
+  "cac-ltv-calculator": {
+    "name": "CAC & LTV Calculator",
+    "desc": "Customer acquisition cost, lifetime value and the LTV:CAC ratio."
+  },
+  "profit-margin": {
+    "name": "Profit Margin",
+    "desc": "Margin, markup and selling price from cost."
+  },
+  "break-even": {
+    "name": "Break-Even Point",
+    "desc": "Units and revenue needed to cover fixed costs."
+  },
+  "late-fee": {
+    "name": "Late Fee Calculator",
+    "desc": "Interest and fees on an overdue invoice."
+  },
+  "vat-gst": {
+    "name": "VAT / GST Calculator",
+    "desc": "Add or remove sales tax from any price."
+  },
+  "merge-pdf": {
+    "name": "Merge PDFs",
+    "desc": "Combine several PDFs into one, in the order you choose."
+  },
+  "split-pdf": {
+    "name": "Split PDF",
+    "desc": "Pull a page range out into a new document."
+  },
+  "compress-pdf": {
+    "name": "Compress PDF",
+    "desc": "Shrink a PDF below an upload or email limit."
+  },
+  "rotate-pdf": {
+    "name": "Rotate PDF",
+    "desc": "Rotate every page 90, 180 or 270 degrees."
+  },
+  "delete-pdf-pages": {
+    "name": "Delete PDF Pages",
+    "desc": "Remove pages you don't need and re-save."
+  },
+  "reorder-pdf": {
+    "name": "Organise PDF Pages",
+    "desc": "Drag pages into a new order."
+  },
+  "pdf-to-jpg": {
+    "name": "PDF to JPG",
+    "desc": "Render every page to a downloadable image."
+  },
+  "jpg-to-pdf": {
+    "name": "Images to PDF",
+    "desc": "Turn photos or scans into a single PDF."
+  },
+  "pdf-to-text": {
+    "name": "PDF Text Extractor",
+    "desc": "Pull selectable text out of a PDF."
+  },
+  "pdf-page-numbers": {
+    "name": "Add Page Numbers",
+    "desc": "Stamp page numbers in any corner."
+  },
+  "pdf-watermark": {
+    "name": "PDF Watermark",
+    "desc": "Stamp text across pages to mark a draft or copy."
+  },
+  "protect-pdf": {
+    "name": "Protect PDF",
+    "desc": "Add a password to a document before sharing it."
+  },
+  "pdf-redact": {
+    "name": "Redact PDF",
+    "desc": "Black out sensitive text before you send a file."
+  },
+  "compare-pdf": {
+    "name": "Compare PDFs",
+    "desc": "Spot what changed between two versions."
+  },
+  "compress-image": {
+    "name": "Image Compressor",
+    "desc": "Shrink JPG, PNG or WebP with a quality slider."
+  },
+  "resize-image": {
+    "name": "Image Resizer",
+    "desc": "Resize to exact pixels or a percentage."
+  },
+  "convert-image": {
+    "name": "Image Converter",
+    "desc": "Convert between PNG, JPG and WebP."
+  },
+  "heic-converter": {
+    "name": "HEIC Converter",
+    "desc": "Turn iPhone HEIC photos into JPG or PNG."
+  },
+  "crop-image": {
+    "name": "Crop Image",
+    "desc": "Crop to a ratio or exact selection."
+  },
+  "bulk-resize": {
+    "name": "Bulk Image Resizer",
+    "desc": "Resize a batch of images in one pass."
+  },
+  "favicon-generator": {
+    "name": "Favicon Generator",
+    "desc": "Every favicon size and the HTML to go with it."
+  },
+  "image-watermark": {
+    "name": "Image Watermark",
+    "desc": "Stamp text across a photo to protect it."
+  },
+  "exif-viewer": {
+    "name": "EXIF Viewer & Stripper",
+    "desc": "See photo metadata and download a clean copy."
+  },
+  "color-from-image": {
+    "name": "Image Palette Extractor",
+    "desc": "Pull the dominant colours out of any image."
+  },
+  "meme-generator": {
+    "name": "Meme Generator",
+    "desc": "Classic top and bottom captions on any image."
+  },
+  "flip-image": {
+    "name": "Flip Image",
+    "desc": "Mirror an image horizontally or vertically."
+  },
+  "rotate-image": {
+    "name": "Rotate Image",
+    "desc": "Rotate a photo 90°, 180° or 270° with no quality loss."
+  },
+  "circle-crop": {
+    "name": "Round Profile Picture",
+    "desc": "Crop any photo into a round avatar with a transparent background."
+  },
+  "grayscale-image": {
+    "name": "Black & White / Sepia",
+    "desc": "Convert a photo to grayscale or a warm sepia tone."
+  },
+  "compress-for-discord": {
+    "name": "Compress for Discord",
+    "desc": "One-click 10 MB, 50 MB and 500 MB presets that actually fit."
+  },
+  "trim-video": {
+    "name": "Video Trimmer",
+    "desc": "Cut the segment you want and save it."
+  },
+  "bitrate-calculator": {
+    "name": "Streaming Bitrate Calculator",
+    "desc": "Best bitrate for your upload speed, resolution and platform."
+  },
+  "vertical-reframe": {
+    "name": "Vertical Reframe 9:16",
+    "desc": "Reframe a clip for Shorts, TikTok and Reels."
+  },
+  "video-to-gif": {
+    "name": "Video to GIF",
+    "desc": "Turn a short clip into a shareable GIF."
+  },
+  "frame-grabber": {
+    "name": "Frame Grabber",
+    "desc": "Pull a still frame out for a thumbnail."
+  },
+  "mute-video": {
+    "name": "Mute / Strip Audio",
+    "desc": "Remove the audio track to avoid copyright strikes."
+  },
+  "extract-audio": {
+    "name": "Extract Audio",
+    "desc": "Save the audio from a video as MP3 or WAV."
+  },
+  "convert-video": {
+    "name": "Video Converter",
+    "desc": "Convert MOV, MKV, AVI, WebM and more to universal MP4."
+  },
+  "resize-video": {
+    "name": "Video Resizer",
+    "desc": "Resize a video to 1080p, 720p, 480p or 360p, keeping aspect."
+  },
+  "loop-video": {
+    "name": "Loop Video",
+    "desc": "Repeat a clip a set number of times into one file."
+  },
+  "adjust-volume": {
+    "name": "Video Volume Booster",
+    "desc": "Make a video louder or quieter without touching the picture."
+  },
+  "stream-asset-sizer": {
+    "name": "Stream Asset Sizer",
+    "desc": "Correct sizes for Twitch and YouTube banners, avatars and panels."
+  },
+  "emote-resizer": {
+    "name": "Emote & Sticker Resizer",
+    "desc": "Resize to Discord and Twitch emote limits."
+  },
+  "brb-overlay": {
+    "name": "BRB & Countdown Overlay",
+    "desc": "A styled page to drop into OBS as a browser source."
+  },
+  "upload-time": {
+    "name": "Upload Time Estimator",
+    "desc": "How long a file will take on your connection."
+  },
+  "meta-tag-generator": {
+    "name": "Meta Tag Generator",
+    "desc": "Title, description and Open Graph tags, ready to paste."
+  },
+  "serp-preview": {
+    "name": "SERP Snippet Preview",
+    "desc": "See how your page looks in Google before publishing."
+  },
+  "og-preview": {
+    "name": "Social Share Preview",
+    "desc": "Preview how a link unfurls on social platforms."
+  },
+  "robots-generator": {
+    "name": "robots.txt Generator",
+    "desc": "Build a valid robots.txt with the rules you need."
+  },
+  "sitemap-generator": {
+    "name": "Sitemap Generator",
+    "desc": "Turn a URL list into a valid XML sitemap."
+  },
+  "schema-generator": {
+    "name": "Schema Markup Generator",
+    "desc": "JSON-LD for FAQ, article, product and breadcrumbs."
+  },
+  "keyword-density": {
+    "name": "Keyword Density",
+    "desc": "Term frequency and stuffing check for a page."
+  },
+  "slug-generator": {
+    "name": "URL Slug Generator",
+    "desc": "Clean, readable slugs from any title."
+  },
+  "utm-builder": {
+    "name": "UTM Link Builder",
+    "desc": "Build tagged campaign URLs consistently."
+  },
+  "url-shortener": {
+    "name": "URL Shortener",
+    "desc": "Turn a long link into a short, shareable vootkit.com/s/ link — with an optional custom name."
+  },
+  "contrast-checker": {
+    "name": "Contrast Checker",
+    "desc": "Check text against WCAG AA and AAA."
+  },
+  "accessible-palette": {
+    "name": "Accessible Palette",
+    "desc": "Build a palette that passes contrast at every pairing."
+  },
+  "color-blind-simulator": {
+    "name": "Colour-Blindness Simulator",
+    "desc": "See a design as different types of colour vision do."
+  },
+  "heading-checker": {
+    "name": "Heading Structure Checker",
+    "desc": "Find skipped levels and broken document outlines."
+  },
+  "alt-text-auditor": {
+    "name": "Alt Text Auditor",
+    "desc": "Find missing or unhelpful image alt text."
+  },
+  "caption-validator": {
+    "name": "Caption / SRT Validator",
+    "desc": "Check subtitle timing and formatting."
+  },
+  "metadata-remover": {
+    "name": "Metadata Remover",
+    "desc": "Strip hidden data from images and documents."
+  },
+  "url-cleaner": {
+    "name": "URL Tracker Cleaner",
+    "desc": "Remove utm_, fbclid and other tracking parameters."
+  },
+  "screenshot-redactor": {
+    "name": "Screenshot Redactor",
+    "desc": "Black out private details before sharing a screenshot."
+  },
+  "password-generator": {
+    "name": "Password Generator",
+    "desc": "Strong random passwords, generated on your device."
+  },
+  "password-strength": {
+    "name": "Password Strength Checker",
+    "desc": "How strong a password is — checked locally."
+  },
+  "text-encrypt": {
+    "name": "Text Encrypt / Decrypt",
+    "desc": "AES-encrypt a message with a password."
+  },
+  "file-checksum": {
+    "name": "File Checksum",
+    "desc": "Verify a download with its SHA-256 hash."
+  },
+  "word-counter": {
+    "name": "Word & Character Counter",
+    "desc": "Live counts, sentences and reading time."
+  },
+  "case-converter": {
+    "name": "Case Converter",
+    "desc": "Upper, lower, title, sentence, camel and kebab."
+  },
+  "text-diff": {
+    "name": "Text Diff",
+    "desc": "Compare two texts line by line."
+  },
+  "readability": {
+    "name": "Readability Score",
+    "desc": "Flesch reading ease and grade level."
+  },
+  "line-tools": {
+    "name": "Line Tools",
+    "desc": "Sort, reverse, dedupe and shuffle lines."
+  },
+  "lorem-ipsum": {
+    "name": "Lorem Ipsum Generator",
+    "desc": "Placeholder text by paragraph or word count."
+  },
+  "markdown-editor": {
+    "name": "Markdown Editor",
+    "desc": "Write Markdown with live preview and HTML export."
+  },
+  "unit-converter": {
+    "name": "Unit Converter",
+    "desc": "Length, mass, temperature, area, volume, speed and data."
+  },
+  "age-calculator": {
+    "name": "Age & Date Difference",
+    "desc": "Exact age, or the gap between two dates."
+  },
+  "countdown": {
+    "name": "Event Countdown",
+    "desc": "Count down to any date and time."
+  },
+  "pomodoro": {
+    "name": "Pomodoro & Countdown",
+    "desc": "A focus timer that chimes when it's done."
+  },
+  "stopwatch": {
+    "name": "Stopwatch",
+    "desc": "Precise stopwatch with lap times."
+  },
+  "timezone-converter": {
+    "name": "Time Zone Converter",
+    "desc": "Compare a time across cities worldwide."
+  },
+  "qr-generator": {
+    "name": "QR Code Generator",
+    "desc": "Turn any link or text into a downloadable QR code."
+  },
+  "qr-scanner": {
+    "name": "QR Code Scanner",
+    "desc": "Scan a QR code with your camera or from an image."
+  },
+  "barcode-generator": {
+    "name": "Barcode Generator",
+    "desc": "CODE128 and EAN barcodes, ready to download."
+  },
+  "random-picker": {
+    "name": "Random Picker",
+    "desc": "Pick a winner fairly from a list."
+  },
+  "typing-test": {
+    "name": "Typing Speed Test",
+    "desc": "Words per minute and accuracy."
+  },
+  "color-converter": {
+    "name": "Colour Converter",
+    "desc": "HEX, RGB and HSL with a live swatch."
+  },
+  "gradient-generator": {
+    "name": "CSS Gradient Generator",
+    "desc": "Blend colours into copy-ready CSS."
+  },
+  "palette-generator": {
+    "name": "Colour Palette Generator",
+    "desc": "Harmonious five-colour palettes instantly."
+  },
+  "shadow-generator": {
+    "name": "Box-Shadow Generator",
+    "desc": "Dial in a CSS shadow with live preview."
+  },
+  "json-formatter": {
+    "name": "JSON Formatter",
+    "desc": "Pretty-print, minify and validate JSON."
+  },
+  "base64": {
+    "name": "Base64 Encode / Decode",
+    "desc": "Convert text to and from Base64."
+  },
+  "jwt-decoder": {
+    "name": "JWT Decoder",
+    "desc": "Inspect the header and payload of a token."
+  },
+  "uuid-generator": {
+    "name": "UUID Generator",
+    "desc": "Random v4 UUIDs, as many as you need."
+  },
+  "hash-generator": {
+    "name": "Hash Generator",
+    "desc": "SHA-256, SHA-1 and SHA-512 of any text."
+  },
+  "regex-tester": {
+    "name": "Regex Tester",
+    "desc": "Test a pattern against text and count matches."
+  },
+  "url-encoder": {
+    "name": "URL Encode / Decode",
+    "desc": "Percent-encode URLs and query values."
+  },
+  "timestamp-converter": {
+    "name": "Timestamp Converter",
+    "desc": "Unix time to human dates and back."
+  },
+  "csv-viewer": {
+    "name": "CSV Viewer & Sorter",
+    "desc": "Open a CSV as a sortable, filterable table."
+  },
+  "csv-to-chart": {
+    "name": "CSV to Chart",
+    "desc": "Turn two columns into a bar or line chart."
+  },
+  "json-csv": {
+    "name": "JSON ↔ CSV",
+    "desc": "Convert a JSON array to CSV and back."
+  }
+}
