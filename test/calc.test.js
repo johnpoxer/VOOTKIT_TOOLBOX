@@ -102,9 +102,23 @@ edge.forEach(([id, v]) => {
 
 /* ---- Wave 1b reference values (independently computed) ---- */
 const T2 = require("../assets/js/tools-money2.js");
+const C2 = require("../assets/js/tools-calc2.js");
+
+/* ---- Calc2 health/travel additions ---- */
+let r = C2["pace-calculator"].compute({ distance: 13.1094, unit: "mi", hh: 2, mm: 0, ss: 0 }, M);
+eq(r.headline.value, "9:09 / mi", "half marathon pace is per mile");
+eq(r.stats.find(s => s.label === "Half marathon").value, "2:00:00", "mile half marathon uses 13.1 miles");
+eq(r.stats.find(s => s.label === "Per km").value, "5:41 / km", "mile pace converts to per-km pace");
+r = C2["heart-rate-calculator"].compute({ age: 30, resting: 60 }, M);
+eq(r.headline.value, "190 bpm", "heart-rate max estimate");
+assert.ok(/125.*138 bpm/.test(r.stats[0].value), "warm-up zone uses heart-rate reserve"); pass++;
+r = C2["heart-rate-calculator"].compute({ age: 120, resting: 120 }, M);
+eq(r.stats[0].value, "120 bpm", "heart-rate edge case avoids inverted zones");
+r = C2["distance-calculator"].compute({ distance: 119.9, unit: "km", speed: 60 }, M);
+eq(r.headline.value, "2 h 00 min", "travel time rounds up without 60-minute rollover");
 
 /* VAT: £100 net at 20% → £120 gross, £20 tax */
-let r = T2["vat-gst"].compute({ amount: 100, rate: 20, mode: "net", cur: "GBP" }, M);
+r = T2["vat-gst"].compute({ amount: 100, rate: 20, mode: "net", cur: "GBP" }, M);
 assert.ok(/120/.test(r.headline.value), "VAT add: 100 +20% = 120, got " + r.headline.value); pass++;
 /* Reverse: £120 gross at 20% → £100 net (the classic mistake is 120*0.8=96) */
 r = T2["vat-gst"].compute({ amount: 120, rate: 20, mode: "gross", cur: "GBP" }, M);

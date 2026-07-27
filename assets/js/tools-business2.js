@@ -17,6 +17,8 @@
   function fld(W, l, n) { return W.el('label', { class: 'wfield' }, [W.el('span', { class: 'wlab', text: l }), n]); }
   function inp(W, ph, v) { var e = W.el('input', { class: 'field', type: 'text', placeholder: ph || '', 'aria-label': ph || 'field' }); if (v != null) e.value = v; return e; }
   function money(n) { return (Math.round(n * 100) / 100).toLocaleString(); }
+  function store(key, def) { try { return JSON.parse(localStorage.getItem(key) || 'null') || def; } catch (e) { return def; } }
+  function save(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {} }
 
   /* ---------- pure: name generator ---------- */
   function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
@@ -134,6 +136,47 @@
       host.appendChild(W.el('div', { class: 'wbtns' }, [W.el('button', { class: 'btn btn-primary', type: 'button', text: 'Download PNG', onClick: function () { canvas.toBlob(function (b) { if (b) W.download(b, 'business-card.png'); }, 'image/png'); } })]));
       host.appendChild(W.el('p', { class: 'note', text: 'A standard 3.5×2 in card at 300 DPI, drawn in your browser. Great as a digital card or for print.' }));
       draw();
+    },
+
+    'packing-list': function (host, W) {
+      var KEY = 'vk_packing_v1';
+      var PRESETS = {
+        essentials: ['Passport / ID', 'Phone + charger', 'Wallet & cards', 'Keys', 'Medication', 'Toiletries', 'Chargers & cables', 'Headphones'],
+        beach: ['Swimwear', 'Sunscreen', 'Sunglasses', 'Sandals', 'Beach towel', 'Hat', 'After-sun'],
+        business: ['Suit / formal wear', 'Dress shoes', 'Laptop + charger', 'Notebook & pen', 'Business cards', 'Belt'],
+        winter: ['Warm coat', 'Gloves', 'Scarf & hat', 'Thermals', 'Boots', 'Moisturiser', 'Lip balm'],
+        hiking: ['Hiking boots', 'Backpack', 'Water bottle', 'Rain jacket', 'First-aid kit', 'Map / GPS', 'Snacks']
+      };
+      var items = store(KEY, null);
+      if (!Array.isArray(items)) items = [];
+      var trip = W.el('select', { class: 'field', 'aria-label': 'Trip type' }, [['beach', 'Beach holiday'], ['business', 'Business trip'], ['winter', 'Winter trip'], ['hiking', 'Hiking / outdoors']].map(function (o) { return W.el('option', { value: o[0], text: o[1] }); }));
+      var list = W.el('div', {});
+      var custom = inp(W, 'Add your own item');
+      function render() {
+        list.innerHTML = '';
+        if (!items || !items.length) { list.appendChild(W.el('p', { class: 'note', text: 'Pick a trip type and generate a list, or add your own items.' })); return; }
+        var done = 0;
+        items.forEach(function (it, i) {
+          if (it.done) done++;
+          var cb = W.el('input', { type: 'checkbox', 'aria-label': it.t }); if (it.done) cb.checked = true;
+          cb.addEventListener('change', function () { it.done = cb.checked; save(KEY, items); render(); });
+          list.appendChild(W.el('div', { class: 'winline', style: 'display:flex;align-items:center;gap:8px;padding:3px 0' + (it.done ? ';opacity:.5;text-decoration:line-through' : '') }, [
+            W.el('label', { style: 'flex:1' }, [cb, W.el('span', { text: ' ' + it.t })]),
+            W.el('button', { class: 'btn', type: 'button', text: '✕', 'aria-label': 'Remove ' + it.t, onClick: function () { items.splice(i, 1); save(KEY, items); render(); } })
+          ]));
+        });
+        list.appendChild(W.el('p', { class: 'note', text: done + ' of ' + items.length + ' packed.' }));
+      }
+      function gen() {
+        var picked = PRESETS.essentials.concat(PRESETS[trip.value] || []);
+        items = picked.map(function (t) { return { t: t, done: false }; });
+        save(KEY, items); render();
+      }
+      host.appendChild(W.el('div', { class: 'wbtns' }, [W.el('label', { class: 'winline' }, [W.el('span', { class: 'wlab', text: 'Trip' }), trip]), W.el('button', { class: 'btn btn-primary', type: 'button', text: 'Generate list', onClick: gen }), W.el('button', { class: 'btn', type: 'button', text: 'Clear', onClick: function () { items = []; save(KEY, items); render(); } })]));
+      host.appendChild(W.el('div', { class: 'wbtns' }, [custom, W.el('button', { class: 'btn', type: 'button', text: 'Add', onClick: function () { if (custom.value.trim()) { items = items || []; items.push({ t: custom.value.trim(), done: false }); custom.value = ''; save(KEY, items); render(); } } })]));
+      host.appendChild(list);
+      host.appendChild(W.el('p', { class: 'note', text: 'Your list is saved in this browser only. Tick items as you pack; add anything specific to your trip.' }));
+      render();
     },
 
     'qr-business-card': function (host, W) {

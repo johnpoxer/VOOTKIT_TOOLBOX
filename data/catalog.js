@@ -279,6 +279,8 @@
     t("body-fat-calculator","health","Body Fat Calculator","Estimate body-fat percentage with the US Navy method.",{tier:"retention",status:"live",kw:"body fat percentage navy waist neck hip"}),
     t("ideal-weight-calculator","health","Ideal Weight Calculator","Target weight range by height with Devine and Robinson formulas.",{tier:"retention",status:"live",kw:"ideal body weight devine robinson healthy range"}),
     t("water-intake-calculator","health","Water Intake Calculator","How much water to drink a day by weight, activity and climate.",{tier:"retention",status:"live",kw:"daily water hydration ml glasses per day"}),
+    t("pace-calculator","health","Running Pace Calculator","Pace, speed and race times from a distance and time.",{tier:"retention",status:"live",kw:"running pace speed min per km mile marathon 5k 10k"}),
+    t("heart-rate-calculator","health","Heart Rate Zone Calculator","Max heart rate and training zones from your age.",{tier:"retention",status:"live",kw:"heart rate zones max hr karvonen cardio fat burn training"}),
 
     /* ---------- AUDIO & VOICE ---------- */
     t("audio-converter","audio","Audio Converter","Convert audio to WAV or MP3 in your browser.",{tier:"traffic",status:"live",kw:"audio convert mp3 wav ogg m4a format"}),
@@ -304,6 +306,8 @@
     t("trip-cost-splitter","travel","Trip Cost Splitter","Split shared travel costs evenly between people.",{tier:"retention",status:"live",kw:"split trip expenses group holiday per person"}),
     t("tip-by-country","travel","Tipping Calculator by Country","Suggested tip and total by country custom.",{tier:"retention",status:"live",kw:"tipping guide country restaurant gratuity abroad"}),
     t("mileage-reimbursement","travel","Mileage Reimbursement","Work out mileage reimbursement from distance and rate.",{tier:"retention",status:"live",kw:"business miles reimbursement rate expense claim"}),
+    t("distance-calculator","travel","Travel Time Calculator","How long a trip takes from distance and average speed.",{tier:"retention",status:"live",kw:"travel time distance speed how long drive journey eta"}),
+    t("packing-list","travel","Packing List Generator","Build a trip packing checklist you can tick off.",{tier:"retention",status:"live",kw:"packing list checklist travel trip holiday essentials"}),
     t("countdown","everyday","Event Countdown","Count down to any date and time.",{tier:"retention",status:"live",kw:"days until timer event"}),
     t("pomodoro","everyday","Pomodoro & Countdown","A focus timer that chimes when it's done.",{tier:"retention",status:"live",kw:"focus study timer"}),
     t("stopwatch","everyday","Stopwatch","Precise stopwatch with lap times.",{tier:"retention",status:"live",kw:"lap timer"}),

@@ -650,6 +650,97 @@
           note: 'Gross pay before tax and deductions.'
         };
       }
+    },
+
+    /* ---------- running pace ---------- */
+    'pace-calculator': {
+      fields: [
+        { k: 'distance', label: 'Distance', def: 5, min: 0.01, step: 0.1 },
+        { k: 'unit', label: 'Unit', type: 'select', def: 'km', options: [{ v: 'km', label: 'Kilometres' }, { v: 'mi', label: 'Miles' }] },
+        { k: 'hh', label: 'Hours', def: 0, min: 0, max: 99, step: 1 },
+        { k: 'mm', label: 'Minutes', def: 25, min: 0, max: 59, step: 1 },
+        { k: 'ss', label: 'Seconds', def: 0, min: 0, max: 59, step: 1 }
+      ],
+      compute: function (v) {
+        var tot = v.hh * 3600 + v.mm * 60 + v.ss;
+        if (v.distance <= 0 || tot <= 0) return { headline: { label: 'Pace', value: '—', sub: 'Enter a distance and time' }, stats: [] };
+        function duration(s) {
+          s = Math.max(0, Math.round(s));
+          var h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
+          return h ? h + ':' + ('0' + m).slice(-2) + ':' + ('0' + sec).slice(-2) : m + ':' + ('0' + sec).slice(-2);
+        }
+        var pace = tot / v.distance, speed = v.distance / (tot / 3600), u = v.unit;
+        var altPace = u === 'km' ? pace * 1.609344 : pace / 1.609344, altU = u === 'km' ? 'mi' : 'km';
+        var halfDistance = u === 'km' ? 21.0975 : 13.1094;
+        var marathonDistance = u === 'km' ? 42.195 : 26.2188;
+        return {
+          headline: { label: 'Pace', value: duration(pace) + ' / ' + u, sub: speed.toFixed(2) + ' ' + u + '/h' },
+          stats: [
+            { label: 'Speed', value: speed.toFixed(2) + ' ' + u + '/h' },
+            { label: 'Per ' + altU, value: duration(altPace) + ' / ' + altU },
+            { label: '10 ' + u + ' time', value: duration(pace * 10) },
+            { label: 'Half marathon', value: duration(pace * halfDistance) },
+            { label: 'Marathon', value: duration(pace * marathonDistance) }
+          ],
+          note: 'Pace = time ÷ distance. Predicted race times assume you hold this pace.'
+        };
+      }
+    },
+
+    /* ---------- heart rate zones ---------- */
+    'heart-rate-calculator': {
+      fields: [
+        { k: 'age', label: 'Age', def: 30, min: 5, max: 120, step: 1 },
+        { k: 'resting', label: 'Resting heart rate (bpm)', def: 60, min: 30, max: 120, step: 1 }
+      ],
+      compute: function (v) {
+        var max = 220 - v.age, reserve = max - v.resting;
+        if (reserve <= 0) {
+          return {
+            headline: { label: 'Max heart rate', value: max + ' bpm', sub: 'Resting rate must be below estimated max' },
+            stats: [{ label: 'Resting heart rate', value: v.resting + ' bpm' }],
+            note: 'The 220 − age estimate is rough. If your resting rate is near or above that estimate, use measured zones from a clinician or coach.'
+          };
+        }
+        function z(lo, hi) { return Math.round(reserve * lo + v.resting) + '–' + Math.round(reserve * hi + v.resting) + ' bpm'; }
+        return {
+          headline: { label: 'Max heart rate', value: max + ' bpm', sub: 'Estimate: 220 − age' },
+          stats: [
+            { label: 'Warm-up (50–60%)', value: z(0.5, 0.6) },
+            { label: 'Fat burn (60–70%)', value: z(0.6, 0.7) },
+            { label: 'Cardio (70–80%)', value: z(0.7, 0.8) },
+            { label: 'Peak (80–90%)', value: z(0.8, 0.9) }
+          ],
+          note: 'Zones use the Karvonen method (heart-rate reserve) with your resting rate. 220 − age is a rough max — a lab test is more accurate. Talk to a doctor before intense training.'
+        };
+      }
+    },
+
+    /* ---------- distance / travel time ---------- */
+    'distance-calculator': {
+      fields: [
+        { k: 'distance', label: 'Distance', def: 100, min: 0, step: 1 },
+        { k: 'unit', label: 'Unit', type: 'select', def: 'km', options: [{ v: 'km', label: 'km (speed in km/h)' }, { v: 'mi', label: 'miles (speed in mph)' }] },
+        { k: 'speed', label: 'Average speed', def: 60, min: 1, step: 1 }
+      ],
+      compute: function (v) {
+        var hours = v.distance / v.speed;
+        function tripTime(h) {
+          var mins = Math.round(Math.max(0, h) * 60);
+          return Math.floor(mins / 60) + ' h ' + ('0' + (mins % 60)).slice(-2) + ' min';
+        }
+        var breaks = Math.max(0, Math.ceil(hours / 2) - 1);
+        var withBreaks = hours + breaks * 0.25;
+        return {
+          headline: { label: 'Travel time', value: tripTime(hours), sub: v.distance + ' ' + v.unit + ' at ' + v.speed + ' ' + (v.unit === 'mi' ? 'mph' : 'km/h') },
+          stats: [
+            { label: 'Time', value: hours.toFixed(2) + ' hours' },
+            { label: 'With a 15-min break every 2 h', value: tripTime(withBreaks) },
+            { label: 'Distance', value: v.distance + ' ' + v.unit }
+          ],
+          note: 'Assumes a constant average speed. Real journeys vary with traffic, stops and terrain.'
+        };
+      }
     }
 
   };
