@@ -17,12 +17,12 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Vootkit — free tools that run in your browser">
 <meta name="twitter:description" content="Your files never leave your device. No sign-up, no watermark, instant results.">
+<link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@700;800&display=swap">
-<link rel="stylesheet" href="assets/css/tokens.css?v=20260724d">
-<link rel="stylesheet" href="assets/css/base.css?v=20260724d">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="stylesheet" href="assets/css/tokens.css?v=20260727perf">
+<link rel="stylesheet" href="assets/css/base.css?v=20260727perf">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"WebSite","name":"Vootkit","url":"https://www.vootkit.com/",
 "description":"Free online tools that run in your browser.",
@@ -105,7 +105,7 @@
 .catcard-n { grid-column: 2; font-size: var(--t-xs); font-weight: 600; color: var(--accent); }
 @media (max-width: 640px) { .catcard { padding: var(--s-4); } }
 </style>
-<link rel="stylesheet" href="assets/css/skin.css?v=20260724d">
+<link rel="stylesheet" href="assets/css/skin.css?v=20260727perf">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -250,12 +250,12 @@
   </div>
 </footer>
 
-<script src="data/catalog.js?v=20260724d"></script>
-<script src="assets/js/home.js?v=20260724d" defer></script>
-<script src="assets/js/ui.js?v=20260724d" defer></script>
-<script src="assets/js/supabase-config.js?v=20260724d" defer></script>
-<script src="assets/js/usage.js?v=20260724d" defer></script>
-<script src="assets/js/auth.js?v=20260724d" defer></script>
+<script src="data/catalog.js?v=20260727perf"></script>
+<script src="assets/js/home.js?v=20260727perf" defer></script>
+<script src="assets/js/ui.js?v=20260727perf" defer></script>
+<script src="assets/js/supabase-config.js?v=20260727perf" defer></script>
+<script src="assets/js/usage.js?v=20260727perf" defer></script>
+<script src="assets/js/auth.js?v=20260727perf" defer></script>
 <script>
 document.getElementById('yr').textContent = new Date().getFullYear();
 (function () {
@@ -276,16 +276,20 @@ document.getElementById('yr').textContent = new Date().getFullYear();
   });
 })();
 </script>
-<!-- Netlify Identity: processes the admin invite/confirmation link, then sends the admin to /admin/ -->
-<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <script>
-if (window.netlifyIdentity) {
-  window.netlifyIdentity.on('init', function (user) {
-    if (!user) {
-      window.netlifyIdentity.on('login', function () { document.location.href = '/admin/'; });
-    }
-  });
-}
+(function () {
+  var token = /(?:invite_token|confirmation_token|recovery_token|email_change_token|access_token)=/.test(location.hash + location.search);
+  if (!token) return;
+  var s = document.createElement('script');
+  s.src = 'https://identity.netlify.com/v1/netlify-identity-widget.js';
+  s.onload = function () {
+    if (!window.netlifyIdentity) return;
+    window.netlifyIdentity.on('init', function (user) {
+      if (!user) window.netlifyIdentity.on('login', function () { document.location.href = '/admin/'; });
+    });
+  };
+  document.head.appendChild(s);
+})();
 </script>
 </body>
 </html>

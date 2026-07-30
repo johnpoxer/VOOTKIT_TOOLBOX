@@ -126,10 +126,10 @@ function head(o) {
 <meta name="twitter:title" content="${esc(o.ogTitle || o.title)}">
 <meta name="twitter:description" content="${esc(o.desc)}">${o.image ? `\n<meta name="twitter:image" content="${o.image}">` : ""}
 <script type="application/ld+json">${JSON.stringify(o.ld)}</script>
+<link rel="icon" href="${up}favicon.ico" sizes="any">
 <link rel="icon" href="${up}assets/favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@700;800&display=swap">
+<link rel="apple-touch-icon" href="${up}apple-touch-icon.png">
+<link rel="manifest" href="${up}site.webmanifest">
 <link rel="stylesheet" href="${up}assets/css/tokens.css${V}">
 <link rel="stylesheet" href="${up}assets/css/base.css${V}">
 <link rel="stylesheet" href="${up}assets/css/pages.css${V}">
