@@ -26,7 +26,36 @@
   }
   function outBlob(data, mime) { return new Blob([data.buffer || data], { type: mime }); }
 
-  var LIMIT = 500 * 1024 * 1024; // ffmpeg.wasm is memory-bound; keep clips sane
+  /* ffmpeg.wasm writes the whole input into a virtual filesystem inside a single
+     wasm heap that maxes out near 2 GB, and the encoder needs working room on top
+     of that. The old 500 MB cap let files through that always ended in an
+     out-of-memory crash mid-encode, which read to users as "the tool is broken".
+     200 MB is what actually completes reliably in a single-threaded core. */
+  var LIMIT = 200 * 1024 * 1024;
+
+  /* ffmpeg demuxes by content, but giving the real extension lets it pick the
+     right demuxer immediately instead of guessing — and makes its error messages
+     intelligible when a file is genuinely malformed. */
+  function inputName(file) {
+    var m = /\.([A-Za-z0-9]{1,5})$/.exec(String(file && file.name || ''));
+    var ext = m ? m[1].toLowerCase() : 'mp4';
+    return 'in.' + ext;
+  }
+
+  /* Guard the cases that cannot finish in a browser tab before burning minutes
+     of the user's CPU on them. */
+  function guardSize(meta, file) {
+    var pixels = (meta.w || 0) * (meta.h || 0);
+    if (meta.duration > 1800) {
+      throw new Error('That clip is ' + clock(meta.duration) + ' long. In-browser conversion tops out around 30 minutes — trim it first, or use a desktop encoder.');
+    }
+    if (pixels > 3840 * 2160) {
+      throw new Error('That video is larger than 4K (' + meta.w + '×' + meta.h + '). Resize it below 4K first — the in-browser encoder runs out of memory above that.');
+    }
+    if (file && file.size > LIMIT) {
+      throw new Error('That file is bigger than the 200 MB limit for in-browser processing. Trim or compress it first.');
+    }
+  }
 
   var T = {
 
@@ -43,8 +72,10 @@
         var f = files[0];
         var meta = await probe(f);
         if (!(meta.duration > 0)) throw new Error('Could not read this video’s length — it may be a format the browser can’t open. MP4 (H.264) is safest.');
-        var built = root.VKVideo.buildCompressArgs('in.mp4', 'out.mp4', { targetMB: o.target, durationSec: meta.duration, audioKbps: o.audio });
-        var data = await root.VKVideo.run(f, 'in.mp4', 'out.mp4', built, api.progress);
+        guardSize(meta, f);
+        var inName = inputName(f);
+        var built = root.VKVideo.buildCompressArgs(inName, 'out.mp4', { targetMB: o.target, durationSec: meta.duration, audioKbps: o.audio });
+        var data = await root.VKVideo.run(f, inName, 'out.mp4', built, api.progress);
         var blob = outBlob(data, 'video/mp4');
         var fit = blob.size <= o.target * 1048576;
         return {
@@ -179,18 +210,32 @@
 
     'convert-video': {
       accept: 'video/*', action: 'Convert to MP4', dropLabel: 'Choose a video to convert', maxBytes: LIMIT,
-      options: [],
+      options: [
+        { k: 'fps', label: 'Frame rate', type: 'select', def: 30,
+          options: [{ v: 24, label: '24 fps (film)' }, { v: 30, label: '30 fps (standard)' }, { v: 60, label: '60 fps (smooth)' }] }
+      ],
       process: async function (files, o, api) {
         warnCapability();
         var f = files[0];
-        var built = root.VKVideo.buildConvertArgs('in.mp4', 'out.mp4', { format: 'mp4' });
-        var data = await root.VKVideo.run(f, 'in.mp4', 'out.mp4', built, api.progress);
+        var meta = await probe(f);
+        guardSize(meta, f);
+        var inName = inputName(f);
+        var built = root.VKVideo.buildConvertArgs(inName, 'out.mp4', { fps: o.fps });
+        var data = await root.VKVideo.run(f, inName, 'out.mp4', built, api.progress);
         var blob = outBlob(data, 'video/mp4');
+        if (!blob.size) throw new Error('The converted file came back empty — this clip may use a codec the in-browser encoder can’t read. MP4 (H.264) and WebM inputs are the most reliable.');
+        var stats = [
+          { label: 'Format', value: 'MP4 (H.264)' },
+          { label: 'Frame rate', value: o.fps + ' fps' },
+          { label: 'Original', value: api.bytes(f.size) },
+          { label: 'Output', value: api.bytes(blob.size) }
+        ];
+        if (meta.w && meta.h) stats.splice(2, 0, { label: 'Resolution', value: meta.w + '×' + meta.h });
         return {
-          stats: [{ label: 'Format', value: 'MP4 (H.264)' }, { label: 'Original', value: api.bytes(f.size) }, { label: 'Output', value: api.bytes(blob.size) }],
+          stats: stats,
           downloads: [{ label: 'Download MP4', blob: blob, name: baseName(f.name) + '.mp4' }],
           status: 'Converted to MP4',
-          note: 'MP4 (H.264) plays on virtually every device, browser and app.'
+          note: 'MP4 (H.264) plays on virtually every device, browser and app. Output is constant frame rate, so it stays in sync in every editor.'
         };
       }
     },

@@ -50,12 +50,13 @@
     if (vk < 50) return { error: 'That size is too small for this clip — even at minimum quality it won’t fit. Pick a larger size or a shorter clip.' };
     var buf = vk * 2;
     return {
-      args: ['-i', inName,
-        '-c:v', 'libx264', '-preset', 'veryfast',
-        '-b:v', vk + 'k', '-maxrate', ceil(vk * 1.1) + 'k', '-bufsize', buf + 'k',
-        '-pix_fmt', 'yuv420p',
-        '-c:a', 'aac', '-b:a', opt.audioKbps + 'k',
-        '-movflags', '+faststart', '-y', outName],
+      args: ['-i', inName]
+        .concat(cfrFlags(opt.fps))
+        .concat(['-c:v', 'libx264', '-preset', 'veryfast',
+          '-b:v', vk + 'k', '-maxrate', ceil(vk * 1.1) + 'k', '-bufsize', buf + 'k',
+          '-pix_fmt', 'yuv420p',
+          '-c:a', 'aac', '-b:a', opt.audioKbps + 'k',
+          '-movflags', '+faststart', '-y', outName]),
       videoKbps: vk
     };
   }
@@ -91,16 +92,49 @@
     return { args: ['-i', inName, '-vn', '-c:a', 'libmp3lame', '-q:a', '2', '-y', outName] };
   }
 
-  function buildConvertArgs(inName, outName) {
+  /* Output frame rate, clamped to something the wasm encoder can actually finish.
+     WHY THIS EXISTS: variable-frame-rate sources — screen recordings, phone
+     captures, anything from MediaRecorder — carry a 1/1000s timebase. Without an
+     explicit rate ffmpeg matches that timebase and duplicates frames to fill it:
+     a 2-second clip encoded 1,989 frames (dup=1,894) at 0.34x realtime. On a real
+     phone video that is minutes of 100% CPU and usually an out-of-memory crash,
+     which is exactly how this tool "stopped working". Forcing constant frame rate
+     makes output frames a function of duration, not of the source timebase. */
+  function clampFps(fps) {
+    var n = Number(fps);
+    if (!isFinite(n) || n <= 0) return 30;
+    return Math.max(1, Math.min(60, Math.round(n)));
+  }
+
+  // Shared CFR flags: constant frame rate at a sane ceiling, and a muxing queue
+  // big enough for sources whose audio and video streams start far apart.
+  function cfrFlags(fps) {
+    return ['-fps_mode', 'cfr', '-r', String(clampFps(fps)), '-max_muxing_queue_size', '1024'];
+  }
+
+  function buildConvertArgs(inName, outName, opt) {
     // Convert any input (MOV/MKV/AVI/WebM/…) to universal MP4 (H.264/AAC).
     // (VP9/WebM output is intentionally not offered — it overflows the wasm core's memory.)
-    return { args: ['-i', inName, '-c:v', 'libx264', '-preset', 'veryfast', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '160k', '-movflags', '+faststart', '-y', outName] };
+    opt = opt || {};
+    return {
+      args: ['-i', inName]
+        .concat(cfrFlags(opt.fps))
+        .concat(['-c:v', 'libx264', '-preset', 'veryfast', '-crf', '23', '-pix_fmt', 'yuv420p',
+                 '-c:a', 'aac', '-b:a', '160k', '-movflags', '+faststart', '-y', outName])
+    };
   }
 
   function buildResizeArgs(inName, outName, opt) {
-    // opt: { height } — scale to target height, width auto-even, keep aspect
+    // opt: { height, fps } — scale to target height, width auto-even, keep aspect
     var h = clampInt(opt.height, 16);
-    return { args: ['-i', inName, '-vf', 'scale=-2:' + h + ':flags=lanczos', '-c:v', 'libx264', '-preset', 'veryfast', '-pix_fmt', 'yuv420p', '-c:a', 'copy', '-y', outName] };
+    return {
+      args: ['-i', inName, '-vf', 'scale=-2:' + h + ':flags=lanczos']
+        .concat(cfrFlags(opt.fps))
+        // Re-encode audio rather than copy: a copied stream from WebM/Opus or
+        // MKV/Vorbis is not a legal MP4 audio track and the mux fails.
+        .concat(['-c:v', 'libx264', '-preset', 'veryfast', '-pix_fmt', 'yuv420p',
+                 '-c:a', 'aac', '-b:a', '160k', '-movflags', '+faststart', '-y', outName])
+    };
   }
 
   function buildLoopArgs(inName, outName, opt) {
@@ -216,6 +250,7 @@
     buildMuteArgs: buildMuteArgs, buildExtractAudioArgs: buildExtractAudioArgs,
     buildConvertArgs: buildConvertArgs, buildResizeArgs: buildResizeArgs,
     buildLoopArgs: buildLoopArgs, buildVolumeArgs: buildVolumeArgs,
+    clampFps: clampFps,
     targetVideoKbps: targetVideoKbps
   };
   if (typeof module === 'object' && module.exports) module.exports = root.VKVideo;

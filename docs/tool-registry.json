@@ -1,0 +1,2671 @@
+{
+  "registry": [
+    {
+      "tool": "accessible-palette",
+      "page": "tools/accessibility/accessible-palette/index.html",
+      "category": "accessibility",
+      "module": "tools-a11y.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "alt-text-auditor",
+      "page": "tools/accessibility/alt-text-auditor/index.html",
+      "category": "accessibility",
+      "module": "tools-a11y.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "caption-validator",
+      "page": "tools/accessibility/caption-validator/index.html",
+      "category": "accessibility",
+      "module": "tools-a11y.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "color-blind-simulator",
+      "page": "tools/accessibility/color-blind-simulator/index.html",
+      "category": "accessibility",
+      "module": "tools-a11y.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "contrast-checker",
+      "page": "tools/accessibility/contrast-checker/index.html",
+      "category": "accessibility",
+      "module": "tools-design.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "heading-checker",
+      "page": "tools/accessibility/heading-checker/index.html",
+      "category": "accessibility",
+      "module": "tools-a11y.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "audio-compressor",
+      "page": "tools/audio/audio-compressor/index.html",
+      "category": "audio",
+      "module": "tools-audio.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "audio-converter",
+      "page": "tools/audio/audio-converter/index.html",
+      "category": "audio",
+      "module": "tools-audio.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "audio-trimmer",
+      "page": "tools/audio/audio-trimmer/index.html",
+      "category": "audio",
+      "module": "tools-audio.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "speech-to-text",
+      "page": "tools/audio/speech-to-text/index.html",
+      "category": "audio",
+      "module": "tools-audio.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "text-to-speech",
+      "page": "tools/audio/text-to-speech/index.html",
+      "category": "audio",
+      "module": "tools-audio.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "voice-recorder",
+      "page": "tools/audio/voice-recorder/index.html",
+      "category": "audio",
+      "module": "tools-audio.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "amazon-fba-calculator",
+      "page": "tools/business/amazon-fba-calculator/index.html",
+      "category": "business",
+      "module": "tools-money2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "break-even",
+      "page": "tools/business/break-even/index.html",
+      "category": "business",
+      "module": "tools-money2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "business-card-maker",
+      "page": "tools/business/business-card-maker/index.html",
+      "category": "business",
+      "module": "tools-business2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "business-name-generator",
+      "page": "tools/business/business-name-generator/index.html",
+      "category": "business",
+      "module": "tools-business2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "cac-ltv-calculator",
+      "page": "tools/business/cac-ltv-calculator/index.html",
+      "category": "business",
+      "module": "tools-money2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "contract-generator",
+      "page": "tools/business/contract-generator/index.html",
+      "category": "business",
+      "module": "tools-docs.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "etsy-fee-calculator",
+      "page": "tools/business/etsy-fee-calculator/index.html",
+      "category": "business",
+      "module": "tools-money2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "hourly-rate",
+      "page": "tools/business/hourly-rate/index.html",
+      "category": "business",
+      "module": "tools-money2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "inventory-tracker",
+      "page": "tools/business/inventory-tracker/index.html",
+      "category": "business",
+      "module": "tools-business2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "invoice-generator",
+      "page": "tools/business/invoice-generator/index.html",
+      "category": "business",
+      "module": "tools-business.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "landing-page-generator",
+      "page": "tools/business/landing-page-generator/index.html",
+      "category": "business",
+      "module": "tools-docs.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "late-fee",
+      "page": "tools/business/late-fee/index.html",
+      "category": "business",
+      "module": "tools-money2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "paypal-fee-calculator",
+      "page": "tools/business/paypal-fee-calculator/index.html",
+      "category": "business",
+      "module": "tools-money2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "profit-margin",
+      "page": "tools/business/profit-margin/index.html",
+      "category": "business",
+      "module": "tools-money2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "proposal-generator",
+      "page": "tools/business/proposal-generator/index.html",
+      "category": "business",
+      "module": "tools-docs.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "qr-business-card",
+      "page": "tools/business/qr-business-card/index.html",
+      "category": "business",
+      "module": "tools-business2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "quote-generator",
+      "page": "tools/business/quote-generator/index.html",
+      "category": "business",
+      "module": "tools-business.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "receipt-generator",
+      "page": "tools/business/receipt-generator/index.html",
+      "category": "business",
+      "module": "tools-business.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "resume-builder",
+      "page": "tools/business/resume-builder/index.html",
+      "category": "business",
+      "module": "tools-docs.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "roas-calculator",
+      "page": "tools/business/roas-calculator/index.html",
+      "category": "business",
+      "module": "tools-money2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "stripe-fee-calculator",
+      "page": "tools/business/stripe-fee-calculator/index.html",
+      "category": "business",
+      "module": "tools-money2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "swot-generator",
+      "page": "tools/business/swot-generator/index.html",
+      "category": "business",
+      "module": "tools-docs.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "vat-gst",
+      "page": "tools/business/vat-gst/index.html",
+      "category": "business",
+      "module": "tools-money2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "csv-to-chart",
+      "page": "tools/data/csv-to-chart/index.html",
+      "category": "data",
+      "module": "tools-data.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "csv-viewer",
+      "page": "tools/data/csv-viewer/index.html",
+      "category": "data",
+      "module": "tools-data.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "json-csv",
+      "page": "tools/data/json-csv/index.html",
+      "category": "data",
+      "module": "tools-data.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "color-converter",
+      "page": "tools/design/color-converter/index.html",
+      "category": "design",
+      "module": "tools-design.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "gradient-generator",
+      "page": "tools/design/gradient-generator/index.html",
+      "category": "design",
+      "module": "tools-design.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "palette-generator",
+      "page": "tools/design/palette-generator/index.html",
+      "category": "design",
+      "module": "tools-design.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "shadow-generator",
+      "page": "tools/design/shadow-generator/index.html",
+      "category": "design",
+      "module": "tools-design.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "base64",
+      "page": "tools/developer/base64/index.html",
+      "category": "developer",
+      "module": "tools-dev.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "credit-card-validator",
+      "page": "tools/developer/credit-card-validator/index.html",
+      "category": "developer",
+      "module": "tools-sec.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "cron-generator",
+      "page": "tools/developer/cron-generator/index.html",
+      "category": "developer",
+      "module": "tools-dev2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "css-formatter",
+      "page": "tools/developer/css-formatter/index.html",
+      "category": "developer",
+      "module": "tools-dev2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "hash-generator",
+      "page": "tools/developer/hash-generator/index.html",
+      "category": "developer",
+      "module": "tools-dev.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "html-formatter",
+      "page": "tools/developer/html-formatter/index.html",
+      "category": "developer",
+      "module": "tools-dev2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "iban-validator",
+      "page": "tools/developer/iban-validator/index.html",
+      "category": "developer",
+      "module": "tools-sec.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "json-formatter",
+      "page": "tools/developer/json-formatter/index.html",
+      "category": "developer",
+      "module": "tools-dev.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "jwt-decoder",
+      "page": "tools/developer/jwt-decoder/index.html",
+      "category": "developer",
+      "module": "tools-dev.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "regex-tester",
+      "page": "tools/developer/regex-tester/index.html",
+      "category": "developer",
+      "module": "tools-dev.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "sql-formatter",
+      "page": "tools/developer/sql-formatter/index.html",
+      "category": "developer",
+      "module": "tools-dev2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "timestamp-converter",
+      "page": "tools/developer/timestamp-converter/index.html",
+      "category": "developer",
+      "module": "tools-dev.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "url-encoder",
+      "page": "tools/developer/url-encoder/index.html",
+      "category": "developer",
+      "module": "tools-dev.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "uuid-generator",
+      "page": "tools/developer/uuid-generator/index.html",
+      "category": "developer",
+      "module": "tools-dev.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "xml-formatter",
+      "page": "tools/developer/xml-formatter/index.html",
+      "category": "developer",
+      "module": "tools-dev2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "citation-generator",
+      "page": "tools/education/citation-generator/index.html",
+      "category": "education",
+      "module": "tools-edu.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "diagram-maker",
+      "page": "tools/education/diagram-maker/index.html",
+      "category": "education",
+      "module": "tools-edu.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "flashcard-maker",
+      "page": "tools/education/flashcard-maker/index.html",
+      "category": "education",
+      "module": "tools-edu.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "learning-tracker",
+      "page": "tools/education/learning-tracker/index.html",
+      "category": "education",
+      "module": "tools-edu.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "mind-map-generator",
+      "page": "tools/education/mind-map-generator/index.html",
+      "category": "education",
+      "module": "tools-edu.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "quiz-maker",
+      "page": "tools/education/quiz-maker/index.html",
+      "category": "education",
+      "module": "tools-edu.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "study-planner",
+      "page": "tools/education/study-planner/index.html",
+      "category": "education",
+      "module": "tools-edu.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "vocabulary-builder",
+      "page": "tools/education/vocabulary-builder/index.html",
+      "category": "education",
+      "module": "tools-edu.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "age-calculator",
+      "page": "tools/everyday/age-calculator/index.html",
+      "category": "everyday",
+      "module": "tools-everyday.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "area-converter",
+      "page": "tools/everyday/area-converter/index.html",
+      "category": "everyday",
+      "module": "tools-calc2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "barcode-generator",
+      "page": "tools/everyday/barcode-generator/index.html",
+      "category": "everyday",
+      "module": "tools-codes.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "bmi-calculator",
+      "page": "tools/everyday/bmi-calculator/index.html",
+      "category": "everyday",
+      "module": "tools-calc2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "countdown",
+      "page": "tools/everyday/countdown/index.html",
+      "category": "everyday",
+      "module": "tools-everyday.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "data-converter",
+      "page": "tools/everyday/data-converter/index.html",
+      "category": "everyday",
+      "module": "tools-calc2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "date-calculator",
+      "page": "tools/everyday/date-calculator/index.html",
+      "category": "everyday",
+      "module": "tools-mathdate.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "electricity-cost",
+      "page": "tools/everyday/electricity-cost/index.html",
+      "category": "everyday",
+      "module": "tools-calc2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "equation-solver",
+      "page": "tools/everyday/equation-solver/index.html",
+      "category": "everyday",
+      "module": "tools-mathdate.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "fraction-calculator",
+      "page": "tools/everyday/fraction-calculator/index.html",
+      "category": "everyday",
+      "module": "tools-calc2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "length-converter",
+      "page": "tools/everyday/length-converter/index.html",
+      "category": "everyday",
+      "module": "tools-calc2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "math-solver",
+      "page": "tools/everyday/math-solver/index.html",
+      "category": "everyday",
+      "module": "tools-mathdate.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "pomodoro",
+      "page": "tools/everyday/pomodoro/index.html",
+      "category": "everyday",
+      "module": "tools-everyday.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "qr-generator",
+      "page": "tools/everyday/qr-generator/index.html",
+      "category": "everyday",
+      "module": "tools-codes.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "qr-scanner",
+      "page": "tools/everyday/qr-scanner/index.html",
+      "category": "everyday",
+      "module": "tools-codes.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "random-number-generator",
+      "page": "tools/everyday/random-number-generator/index.html",
+      "category": "everyday",
+      "module": "tools-sec.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "random-picker",
+      "page": "tools/everyday/random-picker/index.html",
+      "category": "everyday",
+      "module": "tools-everyday.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "speed-converter",
+      "page": "tools/everyday/speed-converter/index.html",
+      "category": "everyday",
+      "module": "tools-calc2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "stopwatch",
+      "page": "tools/everyday/stopwatch/index.html",
+      "category": "everyday",
+      "module": "tools-everyday.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "temperature-converter",
+      "page": "tools/everyday/temperature-converter/index.html",
+      "category": "everyday",
+      "module": "tools-calc2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "time-calculator",
+      "page": "tools/everyday/time-calculator/index.html",
+      "category": "everyday",
+      "module": "tools-mathdate.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "timezone-converter",
+      "page": "tools/everyday/timezone-converter/index.html",
+      "category": "everyday",
+      "module": "tools-everyday.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "typing-test",
+      "page": "tools/everyday/typing-test/index.html",
+      "category": "everyday",
+      "module": "tools-misc.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "unit-converter",
+      "page": "tools/everyday/unit-converter/index.html",
+      "category": "everyday",
+      "module": "tools-everyday.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "volume-converter",
+      "page": "tools/everyday/volume-converter/index.html",
+      "category": "everyday",
+      "module": "tools-calc2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "weight-converter",
+      "page": "tools/everyday/weight-converter/index.html",
+      "category": "everyday",
+      "module": "tools-calc2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "auto-loan-calculator",
+      "page": "tools/finance/auto-loan-calculator/index.html",
+      "category": "finance",
+      "module": "tools-money.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "budget-calculator",
+      "page": "tools/finance/budget-calculator/index.html",
+      "category": "finance",
+      "module": "tools-calc2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "compound-interest",
+      "page": "tools/finance/compound-interest/index.html",
+      "category": "finance",
+      "module": "tools-money2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "credit-card-payoff",
+      "page": "tools/finance/credit-card-payoff/index.html",
+      "category": "finance",
+      "module": "tools-money.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "crypto-profit",
+      "page": "tools/finance/crypto-profit/index.html",
+      "category": "finance",
+      "module": "tools-money2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "currency-converter",
+      "page": "tools/finance/currency-converter/index.html",
+      "category": "finance",
+      "module": "tools-currency.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "discount-calculator",
+      "page": "tools/finance/discount-calculator/index.html",
+      "category": "finance",
+      "module": "tools-money2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "investment-calculator",
+      "page": "tools/finance/investment-calculator/index.html",
+      "category": "finance",
+      "module": "tools-calc2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "loan-calculator",
+      "page": "tools/finance/loan-calculator/index.html",
+      "category": "finance",
+      "module": "tools-money.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "mortgage-calculator",
+      "page": "tools/finance/mortgage-calculator/index.html",
+      "category": "finance",
+      "module": "tools-money.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "percentage-calculator",
+      "page": "tools/finance/percentage-calculator/index.html",
+      "category": "finance",
+      "module": "tools-money2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "refinance-calculator",
+      "page": "tools/finance/refinance-calculator/index.html",
+      "category": "finance",
+      "module": "tools-money.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "retirement-calculator",
+      "page": "tools/finance/retirement-calculator/index.html",
+      "category": "finance",
+      "module": "tools-money2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "savings-goal",
+      "page": "tools/finance/savings-goal/index.html",
+      "category": "finance",
+      "module": "tools-money2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "simple-interest",
+      "page": "tools/finance/simple-interest/index.html",
+      "category": "finance",
+      "module": "tools-calc2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "tip-split",
+      "page": "tools/finance/tip-split/index.html",
+      "category": "finance",
+      "module": "tools-money2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "bmr-calculator",
+      "page": "tools/health/bmr-calculator/index.html",
+      "category": "health",
+      "module": "tools-calc2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "body-fat-calculator",
+      "page": "tools/health/body-fat-calculator/index.html",
+      "category": "health",
+      "module": "tools-calc2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "heart-rate-calculator",
+      "page": "tools/health/heart-rate-calculator/index.html",
+      "category": "health",
+      "module": "tools-calc2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "ideal-weight-calculator",
+      "page": "tools/health/ideal-weight-calculator/index.html",
+      "category": "health",
+      "module": "tools-calc2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "macro-calculator",
+      "page": "tools/health/macro-calculator/index.html",
+      "category": "health",
+      "module": "tools-calc2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "pace-calculator",
+      "page": "tools/health/pace-calculator/index.html",
+      "category": "health",
+      "module": "tools-calc2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "water-intake-calculator",
+      "page": "tools/health/water-intake-calculator/index.html",
+      "category": "health",
+      "module": "tools-calc2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "batch-compress",
+      "page": "tools/images/batch-compress/index.html",
+      "category": "images",
+      "module": "tools-image2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "bulk-resize",
+      "page": "tools/images/bulk-resize/index.html",
+      "category": "images",
+      "module": "tools-image.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "circle-crop",
+      "page": "tools/images/circle-crop/index.html",
+      "category": "images",
+      "module": "tools-image.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "collage-maker",
+      "page": "tools/images/collage-maker/index.html",
+      "category": "images",
+      "module": "tools-image2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "color-from-image",
+      "page": "tools/images/color-from-image/index.html",
+      "category": "images",
+      "module": "tools-imaging.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "compress-image",
+      "page": "tools/images/compress-image/index.html",
+      "category": "images",
+      "module": "tools-image.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "convert-image",
+      "page": "tools/images/convert-image/index.html",
+      "category": "images",
+      "module": "tools-image.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "crop-image",
+      "page": "tools/images/crop-image/index.html",
+      "category": "images",
+      "module": "tools-image.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "exif-viewer",
+      "page": "tools/images/exif-viewer/index.html",
+      "category": "images",
+      "module": "tools-imaging.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "favicon-generator",
+      "page": "tools/images/favicon-generator/index.html",
+      "category": "images",
+      "module": "tools-image.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "filter-studio",
+      "page": "tools/images/filter-studio/index.html",
+      "category": "images",
+      "module": "tools-image2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "flip-image",
+      "page": "tools/images/flip-image/index.html",
+      "category": "images",
+      "module": "tools-image.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "grayscale-image",
+      "page": "tools/images/grayscale-image/index.html",
+      "category": "images",
+      "module": "tools-image.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "heic-converter",
+      "page": "tools/images/heic-converter/index.html",
+      "category": "images",
+      "module": "tools-image.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "image-blur",
+      "page": "tools/images/image-blur/index.html",
+      "category": "images",
+      "module": "tools-image2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "image-brightness",
+      "page": "tools/images/image-brightness/index.html",
+      "category": "images",
+      "module": "tools-image2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "image-sharpen",
+      "page": "tools/images/image-sharpen/index.html",
+      "category": "images",
+      "module": "tools-image2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "image-to-text",
+      "page": "tools/images/image-to-text/index.html",
+      "category": "images",
+      "module": "tools-pdfconv.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "image-watermark",
+      "page": "tools/images/image-watermark/index.html",
+      "category": "images",
+      "module": "tools-image.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "jpg-to-png",
+      "page": "tools/images/jpg-to-png/index.html",
+      "category": "images",
+      "module": "tools-image2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "jpg-to-webp",
+      "page": "tools/images/jpg-to-webp/index.html",
+      "category": "images",
+      "module": "tools-image2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "meme-generator",
+      "page": "tools/images/meme-generator/index.html",
+      "category": "images",
+      "module": "tools-imaging.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "passport-photo-maker",
+      "page": "tools/images/passport-photo-maker/index.html",
+      "category": "images",
+      "module": "tools-image2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "png-to-jpg",
+      "page": "tools/images/png-to-jpg/index.html",
+      "category": "images",
+      "module": "tools-image2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "png-to-webp",
+      "page": "tools/images/png-to-webp/index.html",
+      "category": "images",
+      "module": "tools-image2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "resize-image",
+      "page": "tools/images/resize-image/index.html",
+      "category": "images",
+      "module": "tools-image.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "rotate-image",
+      "page": "tools/images/rotate-image/index.html",
+      "category": "images",
+      "module": "tools-image.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "round-corners",
+      "page": "tools/images/round-corners/index.html",
+      "category": "images",
+      "module": "tools-image2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "social-media-image",
+      "page": "tools/images/social-media-image/index.html",
+      "category": "images",
+      "module": "tools-image2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "svg-to-png",
+      "page": "tools/images/svg-to-png/index.html",
+      "category": "images",
+      "module": "tools-image2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "thumbnail-maker",
+      "page": "tools/images/thumbnail-maker/index.html",
+      "category": "images",
+      "module": "tools-image2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "webp-to-jpg",
+      "page": "tools/images/webp-to-jpg/index.html",
+      "category": "images",
+      "module": "tools-image2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "webp-to-png",
+      "page": "tools/images/webp-to-png/index.html",
+      "category": "images",
+      "module": "tools-image2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "auto-insurance-estimator",
+      "page": "tools/insurance/auto-insurance-estimator/index.html",
+      "category": "insurance",
+      "module": "tools-money2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "deductible-calculator",
+      "page": "tools/insurance/deductible-calculator/index.html",
+      "category": "insurance",
+      "module": "tools-money2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "income-protection",
+      "page": "tools/insurance/income-protection/index.html",
+      "category": "insurance",
+      "module": "tools-money2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "life-insurance-needs",
+      "page": "tools/insurance/life-insurance-needs/index.html",
+      "category": "insurance",
+      "module": "tools-money2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "compare-pdf",
+      "page": "tools/pdf/compare-pdf/index.html",
+      "category": "pdf",
+      "module": "tools-pdfedit.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "compress-pdf",
+      "page": "tools/pdf/compress-pdf/index.html",
+      "category": "pdf",
+      "module": "tools-pdfedit.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "crop-pdf",
+      "page": "tools/pdf/crop-pdf/index.html",
+      "category": "pdf",
+      "module": "tools-pdf.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "delete-pdf-pages",
+      "page": "tools/pdf/delete-pdf-pages/index.html",
+      "category": "pdf",
+      "module": "tools-pdf.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "duplicate-pdf-pages",
+      "page": "tools/pdf/duplicate-pdf-pages/index.html",
+      "category": "pdf",
+      "module": "tools-pdf.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "excel-to-pdf",
+      "page": "tools/pdf/excel-to-pdf/index.html",
+      "category": "pdf",
+      "module": "tools-pdfconv.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "extract-pdf-pages",
+      "page": "tools/pdf/extract-pdf-pages/index.html",
+      "category": "pdf",
+      "module": "tools-pdf.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "html-to-pdf",
+      "page": "tools/pdf/html-to-pdf/index.html",
+      "category": "pdf",
+      "module": "tools-pdfconv.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "jpg-to-pdf",
+      "page": "tools/pdf/jpg-to-pdf/index.html",
+      "category": "pdf",
+      "module": "tools-pdf.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "markdown-to-pdf",
+      "page": "tools/pdf/markdown-to-pdf/index.html",
+      "category": "pdf",
+      "module": "tools-pdfmake.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "merge-pdf",
+      "page": "tools/pdf/merge-pdf/index.html",
+      "category": "pdf",
+      "module": "tools-pdf.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "pdf-creator",
+      "page": "tools/pdf/pdf-creator/index.html",
+      "category": "pdf",
+      "module": "tools-pdfmake.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "pdf-form-filler",
+      "page": "tools/pdf/pdf-form-filler/index.html",
+      "category": "pdf",
+      "module": "tools-pdftools.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "pdf-ocr",
+      "page": "tools/pdf/pdf-ocr/index.html",
+      "category": "pdf",
+      "module": "tools-pdfconv.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "pdf-page-numbers",
+      "page": "tools/pdf/pdf-page-numbers/index.html",
+      "category": "pdf",
+      "module": "tools-pdf.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "pdf-redact",
+      "page": "tools/pdf/pdf-redact/index.html",
+      "category": "pdf",
+      "module": "tools-pdfedit.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "pdf-repair",
+      "page": "tools/pdf/pdf-repair/index.html",
+      "category": "pdf",
+      "module": "tools-pdf.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "pdf-signature",
+      "page": "tools/pdf/pdf-signature/index.html",
+      "category": "pdf",
+      "module": "tools-pdftools.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "pdf-to-jpg",
+      "page": "tools/pdf/pdf-to-jpg/index.html",
+      "category": "pdf",
+      "module": "tools-pdfview.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "pdf-to-png",
+      "page": "tools/pdf/pdf-to-png/index.html",
+      "category": "pdf",
+      "module": "tools-pdfview.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "pdf-to-text",
+      "page": "tools/pdf/pdf-to-text/index.html",
+      "category": "pdf",
+      "module": "tools-pdfview.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "pdf-to-webp",
+      "page": "tools/pdf/pdf-to-webp/index.html",
+      "category": "pdf",
+      "module": "tools-pdfview.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "pdf-watermark",
+      "page": "tools/pdf/pdf-watermark/index.html",
+      "category": "pdf",
+      "module": "tools-pdf.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "png-to-pdf",
+      "page": "tools/pdf/png-to-pdf/index.html",
+      "category": "pdf",
+      "module": "tools-pdf.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "protect-pdf",
+      "page": "tools/pdf/protect-pdf/index.html",
+      "category": "pdf",
+      "module": "tools-pdf.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "remove-pdf-password",
+      "page": "tools/pdf/remove-pdf-password/index.html",
+      "category": "pdf",
+      "module": "tools-pdf.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "reorder-pdf",
+      "page": "tools/pdf/reorder-pdf/index.html",
+      "category": "pdf",
+      "module": "tools-pdf.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "rotate-pdf",
+      "page": "tools/pdf/rotate-pdf/index.html",
+      "category": "pdf",
+      "module": "tools-pdf.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "scan-to-pdf",
+      "page": "tools/pdf/scan-to-pdf/index.html",
+      "category": "pdf",
+      "module": "tools-pdftools.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "split-pdf",
+      "page": "tools/pdf/split-pdf/index.html",
+      "category": "pdf",
+      "module": "tools-pdf.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "text-to-pdf",
+      "page": "tools/pdf/text-to-pdf/index.html",
+      "category": "pdf",
+      "module": "tools-pdfmake.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "webp-to-pdf",
+      "page": "tools/pdf/webp-to-pdf/index.html",
+      "category": "pdf",
+      "module": "tools-pdf.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "word-to-pdf",
+      "page": "tools/pdf/word-to-pdf/index.html",
+      "category": "pdf",
+      "module": "tools-pdfconv.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "file-checksum",
+      "page": "tools/privacy/file-checksum/index.html",
+      "category": "privacy",
+      "module": "tools-privacy.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "metadata-remover",
+      "page": "tools/privacy/metadata-remover/index.html",
+      "category": "privacy",
+      "module": "tools-privacy2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "passphrase-generator",
+      "page": "tools/privacy/passphrase-generator/index.html",
+      "category": "privacy",
+      "module": "tools-sec.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "password-generator",
+      "page": "tools/privacy/password-generator/index.html",
+      "category": "privacy",
+      "module": "tools-privacy.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "password-strength",
+      "page": "tools/privacy/password-strength/index.html",
+      "category": "privacy",
+      "module": "tools-privacy.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "screenshot-redactor",
+      "page": "tools/privacy/screenshot-redactor/index.html",
+      "category": "privacy",
+      "module": "tools-privacy2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "text-encrypt",
+      "page": "tools/privacy/text-encrypt/index.html",
+      "category": "privacy",
+      "module": "tools-privacy.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "totp-generator",
+      "page": "tools/privacy/totp-generator/index.html",
+      "category": "privacy",
+      "module": "tools-sec.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "url-cleaner",
+      "page": "tools/privacy/url-cleaner/index.html",
+      "category": "privacy",
+      "module": "tools-privacy2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "cap-rate",
+      "page": "tools/realestate/cap-rate/index.html",
+      "category": "realestate",
+      "module": "tools-money.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "cash-on-cash",
+      "page": "tools/realestate/cash-on-cash/index.html",
+      "category": "realestate",
+      "module": "tools-money2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "closing-costs",
+      "page": "tools/realestate/closing-costs/index.html",
+      "category": "realestate",
+      "module": "tools-money2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "home-affordability",
+      "page": "tools/realestate/home-affordability/index.html",
+      "category": "realestate",
+      "module": "tools-money.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "mortgage-payoff",
+      "page": "tools/realestate/mortgage-payoff/index.html",
+      "category": "realestate",
+      "module": "tools-money2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "rent-vs-buy",
+      "page": "tools/realestate/rent-vs-buy/index.html",
+      "category": "realestate",
+      "module": "tools-money.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "rental-yield",
+      "page": "tools/realestate/rental-yield/index.html",
+      "category": "realestate",
+      "module": "tools-money2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "keyword-density",
+      "page": "tools/seo/keyword-density/index.html",
+      "category": "seo",
+      "module": "tools-seo.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "meta-tag-generator",
+      "page": "tools/seo/meta-tag-generator/index.html",
+      "category": "seo",
+      "module": "tools-seo.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "og-preview",
+      "page": "tools/seo/og-preview/index.html",
+      "category": "seo",
+      "module": "tools-seo.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "robots-generator",
+      "page": "tools/seo/robots-generator/index.html",
+      "category": "seo",
+      "module": "tools-seo.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "schema-generator",
+      "page": "tools/seo/schema-generator/index.html",
+      "category": "seo",
+      "module": "tools-seo.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "serp-preview",
+      "page": "tools/seo/serp-preview/index.html",
+      "category": "seo",
+      "module": "tools-seo.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "sitemap-generator",
+      "page": "tools/seo/sitemap-generator/index.html",
+      "category": "seo",
+      "module": "tools-seo.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "slug-generator",
+      "page": "tools/seo/slug-generator/index.html",
+      "category": "seo",
+      "module": "tools-seo.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "url-shortener",
+      "page": "tools/seo/url-shortener/index.html",
+      "category": "seo",
+      "module": "tools-linktools.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "utm-builder",
+      "page": "tools/seo/utm-builder/index.html",
+      "category": "seo",
+      "module": "tools-seo.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "employee-cost",
+      "page": "tools/tax/employee-cost/index.html",
+      "category": "tax",
+      "module": "tools-money2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "hourly-wage",
+      "page": "tools/tax/hourly-wage/index.html",
+      "category": "tax",
+      "module": "tools-calc2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "income-tax-estimator",
+      "page": "tools/tax/income-tax-estimator/index.html",
+      "category": "tax",
+      "module": "tools-money2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "overtime-calculator",
+      "page": "tools/tax/overtime-calculator/index.html",
+      "category": "tax",
+      "module": "tools-money2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "paycheck-calculator",
+      "page": "tools/tax/paycheck-calculator/index.html",
+      "category": "tax",
+      "module": "tools-money2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "payroll-calculator",
+      "page": "tools/tax/payroll-calculator/index.html",
+      "category": "tax",
+      "module": "tools-calc2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "pto-accrual",
+      "page": "tools/tax/pto-accrual/index.html",
+      "category": "tax",
+      "module": "tools-money2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "salary-converter",
+      "page": "tools/tax/salary-converter/index.html",
+      "category": "tax",
+      "module": "tools-misc.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "self-employment-tax",
+      "page": "tools/tax/self-employment-tax/index.html",
+      "category": "tax",
+      "module": "tools-money2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "case-converter",
+      "page": "tools/text/case-converter/index.html",
+      "category": "text",
+      "module": "tools-text.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "line-tools",
+      "page": "tools/text/line-tools/index.html",
+      "category": "text",
+      "module": "tools-text.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "lorem-ipsum",
+      "page": "tools/text/lorem-ipsum/index.html",
+      "category": "text",
+      "module": "tools-text.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "markdown-editor",
+      "page": "tools/text/markdown-editor/index.html",
+      "category": "text",
+      "module": "tools-text.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "readability",
+      "page": "tools/text/readability/index.html",
+      "category": "text",
+      "module": "tools-text.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "text-diff",
+      "page": "tools/text/text-diff/index.html",
+      "category": "text",
+      "module": "tools-text.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "word-counter",
+      "page": "tools/text/word-counter/index.html",
+      "category": "text",
+      "module": "tools-text.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "distance-calculator",
+      "page": "tools/travel/distance-calculator/index.html",
+      "category": "travel",
+      "module": "tools-calc2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "fuel-cost-calculator",
+      "page": "tools/travel/fuel-cost-calculator/index.html",
+      "category": "travel",
+      "module": "tools-calc2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "fuel-economy-converter",
+      "page": "tools/travel/fuel-economy-converter/index.html",
+      "category": "travel",
+      "module": "tools-calc2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "mileage-reimbursement",
+      "page": "tools/travel/mileage-reimbursement/index.html",
+      "category": "travel",
+      "module": "tools-calc2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "packing-list",
+      "page": "tools/travel/packing-list/index.html",
+      "category": "travel",
+      "module": "tools-business2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "tip-by-country",
+      "page": "tools/travel/tip-by-country/index.html",
+      "category": "travel",
+      "module": "tools-calc2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "trip-cost-splitter",
+      "page": "tools/travel/trip-cost-splitter/index.html",
+      "category": "travel",
+      "module": "tools-calc2.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "adjust-volume",
+      "page": "tools/video/adjust-volume/index.html",
+      "category": "video",
+      "module": "tools-videofx.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "bitrate-calculator",
+      "page": "tools/video/bitrate-calculator/index.html",
+      "category": "video",
+      "module": "tools-video.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "brb-overlay",
+      "page": "tools/video/brb-overlay/index.html",
+      "category": "video",
+      "module": "tools-misc.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "chat-overlay-tool",
+      "page": "tools/video/chat-overlay-tool/index.html",
+      "category": "video",
+      "module": "tools-stream.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "compress-for-discord",
+      "page": "tools/video/compress-for-discord/index.html",
+      "category": "video",
+      "module": "tools-videofx.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "convert-video",
+      "page": "tools/video/convert-video/index.html",
+      "category": "video",
+      "module": "tools-videofx.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "emote-resizer",
+      "page": "tools/video/emote-resizer/index.html",
+      "category": "video",
+      "module": "tools-image.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "extract-audio",
+      "page": "tools/video/extract-audio/index.html",
+      "category": "video",
+      "module": "tools-videofx.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "frame-grabber",
+      "page": "tools/video/frame-grabber/index.html",
+      "category": "video",
+      "module": "tools-videofx.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "giveaway-picker",
+      "page": "tools/video/giveaway-picker/index.html",
+      "category": "video",
+      "module": "tools-stream.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "loop-video",
+      "page": "tools/video/loop-video/index.html",
+      "category": "video",
+      "module": "tools-videofx.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "mute-video",
+      "page": "tools/video/mute-video/index.html",
+      "category": "video",
+      "module": "tools-videofx.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "obs-settings-assistant",
+      "page": "tools/video/obs-settings-assistant/index.html",
+      "category": "video",
+      "module": "tools-calc2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "resize-video",
+      "page": "tools/video/resize-video/index.html",
+      "category": "video",
+      "module": "tools-videofx.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "starting-soon-screen",
+      "page": "tools/video/starting-soon-screen/index.html",
+      "category": "video",
+      "module": "tools-stream.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "stream-alert-creator",
+      "page": "tools/video/stream-alert-creator/index.html",
+      "category": "video",
+      "module": "tools-stream.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "stream-asset-sizer",
+      "page": "tools/video/stream-asset-sizer/index.html",
+      "category": "video",
+      "module": "tools-video.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "stream-overlay-creator",
+      "page": "tools/video/stream-overlay-creator/index.html",
+      "category": "video",
+      "module": "tools-stream.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "stream-revenue-calculator",
+      "page": "tools/video/stream-revenue-calculator/index.html",
+      "category": "video",
+      "module": "tools-calc2.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "stream-schedule-planner",
+      "page": "tools/video/stream-schedule-planner/index.html",
+      "category": "video",
+      "module": "tools-stream.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "trim-video",
+      "page": "tools/video/trim-video/index.html",
+      "category": "video",
+      "module": "tools-videofx.js",
+      "issues": [],
+      "score": 100
+    },
+    {
+      "tool": "upload-time",
+      "page": "tools/video/upload-time/index.html",
+      "category": "video",
+      "module": "tools-video.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "vertical-reframe",
+      "page": "tools/video/vertical-reframe/index.html",
+      "category": "video",
+      "module": "tools-videofx.js",
+      "issues": [
+        "long-title"
+      ],
+      "score": 98
+    },
+    {
+      "tool": "video-to-gif",
+      "page": "tools/video/video-to-gif/index.html",
+      "category": "video",
+      "module": "tools-videofx.js",
+      "issues": [],
+      "score": 100
+    }
+  ],
+  "findings": [
+    {
+      "sev": "LOW",
+      "tool": "tools/accessibility/caption-validator/index.html",
+      "issue": "title is 66 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/accessibility/color-blind-simulator/index.html",
+      "issue": "title is 69 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/accessibility/heading-checker/index.html",
+      "issue": "title is 68 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/business/amazon-fba-calculator/index.html",
+      "issue": "title is 82 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/business/break-even/index.html",
+      "issue": "title is 70 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/business/business-card-maker/index.html",
+      "issue": "title is 73 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/business/business-name-generator/index.html",
+      "issue": "title is 77 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/business/cac-ltv-calculator/index.html",
+      "issue": "title is 78 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/business/contract-generator/index.html",
+      "issue": "title is 72 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/business/etsy-fee-calculator/index.html",
+      "issue": "title is 86 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/business/hourly-rate/index.html",
+      "issue": "title is 76 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/business/inventory-tracker/index.html",
+      "issue": "title is 71 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/business/invoice-generator/index.html",
+      "issue": "title is 71 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/business/landing-page-generator/index.html",
+      "issue": "title is 76 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/business/late-fee/index.html",
+      "issue": "title is 73 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/business/paypal-fee-calculator/index.html",
+      "issue": "title is 75 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/business/profit-margin/index.html",
+      "issue": "title is 67 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/business/proposal-generator/index.html",
+      "issue": "title is 72 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/business/qr-business-card/index.html",
+      "issue": "title is 78 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/business/quote-generator/index.html",
+      "issue": "title is 74 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/business/receipt-generator/index.html",
+      "issue": "title is 71 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/business/resume-builder/index.html",
+      "issue": "title is 73 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/business/roas-calculator/index.html",
+      "issue": "title is 69 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/business/stripe-fee-calculator/index.html",
+      "issue": "title is 75 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/business/swot-generator/index.html",
+      "issue": "title is 73 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/business/vat-gst/index.html",
+      "issue": "title is 74 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/education/citation-generator/index.html",
+      "issue": "title is 69 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/education/flashcard-maker/index.html",
+      "issue": "title is 66 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/education/learning-tracker/index.html",
+      "issue": "title is 67 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/education/mind-map-generator/index.html",
+      "issue": "title is 69 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/education/vocabulary-builder/index.html",
+      "issue": "title is 69 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/finance/auto-loan-calculator/index.html",
+      "issue": "title is 69 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/finance/budget-calculator/index.html",
+      "issue": "title is 75 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/finance/compound-interest/index.html",
+      "issue": "title is 66 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/finance/credit-card-payoff/index.html",
+      "issue": "title is 67 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/finance/crypto-profit/index.html",
+      "issue": "title is 72 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/finance/currency-converter/index.html",
+      "issue": "title is 67 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/finance/discount-calculator/index.html",
+      "issue": "title is 68 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/finance/investment-calculator/index.html",
+      "issue": "title is 77 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/finance/mortgage-calculator/index.html",
+      "issue": "title is 68 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/finance/percentage-calculator/index.html",
+      "issue": "title is 70 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/finance/refinance-calculator/index.html",
+      "issue": "title is 69 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/finance/retirement-calculator/index.html",
+      "issue": "title is 70 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/finance/savings-goal/index.html",
+      "issue": "title is 69 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/finance/simple-interest/index.html",
+      "issue": "title is 75 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/finance/tip-split/index.html",
+      "issue": "title is 69 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/health/bmr-calculator/index.html",
+      "issue": "title is 79 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/health/body-fat-calculator/index.html",
+      "issue": "title is 69 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/health/heart-rate-calculator/index.html",
+      "issue": "title is 76 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/health/ideal-weight-calculator/index.html",
+      "issue": "title is 73 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/health/macro-calculator/index.html",
+      "issue": "title is 66 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/health/pace-calculator/index.html",
+      "issue": "title is 73 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/health/water-intake-calculator/index.html",
+      "issue": "title is 73 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/insurance/income-protection/index.html",
+      "issue": "title is 66 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/seo/meta-tag-generator/index.html",
+      "issue": "title is 67 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/seo/og-preview/index.html",
+      "issue": "title is 69 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/seo/robots-generator/index.html",
+      "issue": "title is 69 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/seo/schema-generator/index.html",
+      "issue": "title is 72 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/seo/serp-preview/index.html",
+      "issue": "title is 69 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/seo/sitemap-generator/index.html",
+      "issue": "title is 66 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/seo/slug-generator/index.html",
+      "issue": "title is 67 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/tax/employee-cost/index.html",
+      "issue": "title is 69 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/tax/hourly-wage/index.html",
+      "issue": "title is 73 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/tax/income-tax-estimator/index.html",
+      "issue": "title is 71 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/tax/payroll-calculator/index.html",
+      "issue": "title is 69 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/tax/salary-converter/index.html",
+      "issue": "title is 67 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/tax/self-employment-tax/index.html",
+      "issue": "title is 70 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/text/lorem-ipsum/index.html",
+      "issue": "title is 69 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/text/word-counter/index.html",
+      "issue": "title is 76 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/video/adjust-volume/index.html",
+      "issue": "title is 71 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/video/bitrate-calculator/index.html",
+      "issue": "title is 79 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/video/brb-overlay/index.html",
+      "issue": "title is 78 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/video/chat-overlay-tool/index.html",
+      "issue": "title is 67 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/video/compress-for-discord/index.html",
+      "issue": "title is 71 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/video/convert-video/index.html",
+      "issue": "title is 66 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/video/emote-resizer/index.html",
+      "issue": "title is 78 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/video/giveaway-picker/index.html",
+      "issue": "title is 66 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/video/mute-video/index.html",
+      "issue": "title is 69 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/video/obs-settings-assistant/index.html",
+      "issue": "title is 73 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/video/starting-soon-screen/index.html",
+      "issue": "title is 71 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/video/stream-alert-creator/index.html",
+      "issue": "title is 71 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/video/stream-asset-sizer/index.html",
+      "issue": "title is 69 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/video/stream-overlay-creator/index.html",
+      "issue": "title is 73 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/video/stream-revenue-calculator/index.html",
+      "issue": "title is 76 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/video/stream-schedule-planner/index.html",
+      "issue": "title is 74 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/video/upload-time/index.html",
+      "issue": "title is 72 chars (Google truncates past ~60)"
+    },
+    {
+      "sev": "LOW",
+      "tool": "tools/video/vertical-reframe/index.html",
+      "issue": "title is 72 chars (Google truncates past ~60)"
+    }
+  ]
+}

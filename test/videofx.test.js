@@ -66,8 +66,30 @@ ok(V.buildExtractAudioArgs("in.mp4", "o.wav", { format: "wav" }).args.join(" ").
 has(V.buildConvertArgs("in.mp4", "out.mp4").args, ["-c:v", "libx264"], "convert uses h264");
 has(V.buildConvertArgs("in.mp4", "out.mp4").args, ["-movflags", "+faststart"], "convert web-optimises MP4");
 
+/* --- constant frame rate: the fix for VFR sources (screen/phone captures).
+   Without this ffmpeg inherits the source's 1/1000s timebase and duplicates
+   frames to fill it — a 2s clip encoded 1,989 frames at 0.34x realtime, which
+   on a real video means an OOM crash. --- */
+b = V.buildConvertArgs("in.mp4", "out.mp4", {});
+has(b.args, ["-fps_mode", "cfr"], "convert forces constant frame rate");
+has(b.args, ["-r", "30"], "convert defaults to 30 fps");
+ok(b.args.indexOf("-max_muxing_queue_size") !== -1, "convert raises the muxing queue for offset streams");
+has(V.buildConvertArgs("in.mp4", "out.mp4", { fps: 60 }).args, ["-r", "60"], "convert honours a 60 fps request");
+has(V.buildCompressArgs("in.mp4", "out.mp4", { targetMB: 10, durationSec: 60, audioKbps: 128 }).args, ["-fps_mode", "cfr"], "compress forces constant frame rate too");
+
+/* --- fps clamping: never 0, never absurd (wasm cannot finish 240 fps) --- */
+ok(V.clampFps(0) === 30, "fps 0 falls back to 30");
+ok(V.clampFps(-5) === 30, "negative fps falls back to 30");
+ok(V.clampFps(NaN) === 30, "NaN fps falls back to 30");
+ok(V.clampFps(240) === 60, "fps clamps to 60 ceiling");
+ok(V.clampFps(23.976) === 24, "fractional fps rounds");
+
 /* --- resize: scale to height, width auto-even (keep aspect) --- */
 ok(V.buildResizeArgs("in.mp4", "out.mp4", { height: 720 }).args.join(" ").includes("scale=-2:720"), "resize scales to 720 keeping aspect");
+/* Copying audio from WebM/Opus or MKV/Vorbis into MP4 is an illegal mux and
+   fails — resize must re-encode audio to AAC. */
+has(V.buildResizeArgs("in.mp4", "out.mp4", { height: 720 }).args, ["-c:a", "aac"], "resize re-encodes audio to AAC for a legal MP4");
+ok(!V.buildResizeArgs("in.mp4", "out.mp4", { height: 720 }).args.join(" ").includes("-c:a copy"), "resize never stream-copies audio into MP4");
 
 /* --- loop: stream_loop = count-1, and must precede -i --- */
 b = V.buildLoopArgs("in.mp4", "out.mp4", { count: 3 });
