@@ -7,14 +7,42 @@
 (function (root) {
   'use strict';
 
+  /* Read duration + dimensions without decoding the whole file.
+   *
+   * MUST NOT HANG. A <video> element fed a container the browser cannot demux —
+   * AVI, MKV, and many MOV variants — fires NEITHER loadedmetadata NOR error.
+   * It just sits there. Verified in Chrome: AVI, MKV, an empty file and a
+   * garbage MP4 all left the promise unresolved indefinitely.
+   *
+   * Those are precisely the formats a *converter* is handed, so an un-timed
+   * probe deadlocks the tool before ffmpeg is ever reached — no progress bar,
+   * no error, nothing. ffmpeg demuxes far more than the browser does, so
+   * unknown metadata is not a failure: we resolve with zeros and let ffmpeg
+   * decide. Callers must treat 0 as "unknown", never as "empty". */
+  var PROBE_TIMEOUT_MS = 5000;
+
   function probe(file) {
-    // read duration + dimensions without decoding the whole file
     return new Promise(function (res) {
       var url = URL.createObjectURL(file);
       var v = document.createElement('video');
+      var done = false;
+      function finish(out) {
+        if (done) return;
+        done = true;
+        clearTimeout(timer);
+        URL.revokeObjectURL(url);
+        v.removeAttribute('src');
+        try { v.load(); } catch (e) {}   // release the decoder
+        res(out);
+      }
+      var timer = setTimeout(function () {
+        finish({ duration: 0, w: 0, h: 0, unknown: true });
+      }, PROBE_TIMEOUT_MS);
       v.preload = 'metadata'; v.muted = true; v.src = url;
-      v.onloadedmetadata = function () { URL.revokeObjectURL(url); res({ duration: v.duration || 0, w: v.videoWidth || 0, h: v.videoHeight || 0 }); };
-      v.onerror = function () { URL.revokeObjectURL(url); res({ duration: 0, w: 0, h: 0 }); };
+      v.onloadedmetadata = function () {
+        finish({ duration: v.duration || 0, w: v.videoWidth || 0, h: v.videoHeight || 0, unknown: false });
+      };
+      v.onerror = function () { finish({ duration: 0, w: 0, h: 0, unknown: true }); };
     });
   }
   function baseName(n) { return String(n || 'video').replace(/\.[^.]+$/, ''); }
@@ -43,17 +71,22 @@
   }
 
   /* Guard the cases that cannot finish in a browser tab before burning minutes
-     of the user's CPU on them. */
+     of the user's CPU on them.
+     Metadata may be unknown (see probe) — an AVI or MKV tells us nothing until
+     ffmpeg opens it. Unknown must never block the conversion: the file-size
+     limit is the only check that always applies, because it is the only input
+     we can always measure. */
   function guardSize(meta, file) {
+    if (file && file.size > LIMIT) {
+      throw new Error('That file is bigger than the 200 MB limit for in-browser processing. Trim or compress it first.');
+    }
+    if (!meta || meta.unknown) return;   // let ffmpeg decide
     var pixels = (meta.w || 0) * (meta.h || 0);
     if (meta.duration > 1800) {
       throw new Error('That clip is ' + clock(meta.duration) + ' long. In-browser conversion tops out around 30 minutes — trim it first, or use a desktop encoder.');
     }
     if (pixels > 3840 * 2160) {
       throw new Error('That video is larger than 4K (' + meta.w + '×' + meta.h + '). Resize it below 4K first — the in-browser encoder runs out of memory above that.');
-    }
-    if (file && file.size > LIMIT) {
-      throw new Error('That file is bigger than the 200 MB limit for in-browser processing. Trim or compress it first.');
     }
   }
 

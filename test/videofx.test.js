@@ -118,3 +118,37 @@ ids.forEach(id => {
 });
 
 console.log(`videofx: ${pass} assertions passed`);
+
+/* ---------------------------------------------------------------------------
+ * probe() must never hang — REGRESSION GUARD
+ *
+ * A <video> element fed a container the browser cannot demux (AVI, MKV, many
+ * MOV variants, a truncated file) fires NEITHER loadedmetadata NOR error. It
+ * hangs silently. Verified in Chrome: AVI, MKV, an empty file and a garbage
+ * MP4 all left the promise unresolved indefinitely.
+ *
+ * Those are exactly the inputs a converter receives, so an un-timed probe
+ * deadlocks the tool before ffmpeg is reached — no progress, no error. This is
+ * how convert-video broke after probing was added to it.
+ * ------------------------------------------------------------------------- */
+const vfxSrc = require("fs").readFileSync(require("path").join(__dirname, "../assets/js/tools-videofx.js"), "utf8");
+
+ok(/PROBE_TIMEOUT_MS/.test(vfxSrc), "probe defines a timeout constant");
+ok(/setTimeout\(function \(\) \{\s*finish\(\{ duration: 0, w: 0, h: 0, unknown: true \}\)/.test(vfxSrc),
+   "probe resolves with unknown metadata when the timeout fires");
+ok(/function finish\(out\) \{[\s\S]*?if \(done\) return;/.test(vfxSrc),
+   "probe guards against double-resolution");
+ok(/clearTimeout\(timer\)/.test(vfxSrc), "probe clears its timer on the success path");
+ok(/v\.onerror = function \(\) \{ finish\(/.test(vfxSrc), "probe still handles the error event");
+
+/* Unknown metadata must never block a conversion — ffmpeg demuxes far more
+   than the browser does, so "the browser couldn't read it" is not a failure. */
+ok(/if \(!meta \|\| meta\.unknown\) return;/.test(vfxSrc),
+   "guardSize lets unknown metadata through to ffmpeg");
+const guardBody = /function guardSize\(meta, file\) \{([\s\S]*?)\n  \}/.exec(vfxSrc)[1];
+ok(guardBody.indexOf("file.size > LIMIT") < guardBody.indexOf("meta.unknown"),
+   "the file-size check runs BEFORE the unknown-metadata bail-out, so it always applies");
+ok(/convert-video[\s\S]{0,1200}guardSize\(meta, f\)/.test(vfxSrc),
+   "convert-video still guards, but now on non-blocking metadata");
+
+console.log(`videofx probe: ${pass} total assertions passed`);
