@@ -192,6 +192,10 @@
         renderResult(out);
         status.textContent = out.status || 'Done';
       } catch (e) {
+        // Report before showing the user anything: this is the only place a file
+        // tool's failure is observable, and until now it was observable only to
+        // the person it happened to.
+        if (root.VKErr) root.VKErr.report(host.getAttribute('data-tool'), e);
         fail(e && e.message ? e.message : 'Something went wrong processing that file.');
       } finally {
         runBtn.disabled = false;

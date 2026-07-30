@@ -156,7 +156,13 @@
 
       var r;
       try { r = spec.compute(v, M); }
-      catch (e) { errBox.textContent = 'Could not calculate with those numbers.'; errBox.hidden = false; return; }
+      catch (e) {
+        // A calculator that silently refuses to compute looks like a broken tool
+        // to the user and like nothing at all to us. Report it.
+        var G = typeof window !== 'undefined' ? window : globalThis;
+        if (G.VKErr) G.VKErr.report(host.getAttribute('data-tool'), e, { type: 'ComputeError' });
+        errBox.textContent = 'Could not calculate with those numbers.'; errBox.hidden = false; return;
+      }
       if (!r) { out.innerHTML = ''; extra.innerHTML = ''; return; }
 
       out.innerHTML =
