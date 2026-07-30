@@ -100,3 +100,17 @@ ok(/char_length\(message\)\s+between 1 and 500/.test(sql), "server-side message 
 });
 
 console.log(`errors: ${pass} assertions passed`);
+
+/* Function grants — verified against the live project.
+   Postgres grants EXECUTE to PUBLIC by default; "revoke from anon" does NOT
+   remove it. Both functions are SECURITY DEFINER, so the default grant let the
+   anon key read error messages and DELETE the whole log. */
+ok(/revoke all on function public\.tool_health\(int\) from public, anon, authenticated;/.test(sql),
+   "tool_health revoked from PUBLIC, not just anon");
+ok(/revoke all on function public\.prune_error_logs\(int\) from public, anon, authenticated;/.test(sql),
+   "prune_error_logs revoked from PUBLIC, not just anon");
+ok(/grant execute on function public\.tool_health\(int\) to service_role;/.test(sql),
+   "tool_health granted back to service_role only");
+ok(/grant execute on function public\.prune_error_logs\(int\) to service_role;/.test(sql),
+   "prune_error_logs granted back to service_role only");
+console.log(`errors + grants: ${pass} total assertions passed`);

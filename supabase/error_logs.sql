@@ -85,7 +85,14 @@ as $$
   order by count(*) desc;
 $$;
 
-revoke all on function public.tool_health(int) from anon, authenticated;
+-- CRITICAL: Postgres grants EXECUTE on a new function to PUBLIC by default, and
+-- "revoke ... from anon" does NOT remove that grant — anon inherits it through
+-- PUBLIC. Both functions here are SECURITY DEFINER, so getting this wrong means
+-- anyone holding the public anon key can read aggregated error messages, and
+-- (below) delete the entire log. Revoke from PUBLIC, then grant back explicitly.
+-- Verified against the live project: anon now gets 42501 insufficient_privilege.
+revoke all on function public.tool_health(int) from public, anon, authenticated;
+grant execute on function public.tool_health(int) to service_role;
 
 -- ---------------------------------------------------------------------------
 -- Retention. Error logs are an operational signal, not an archive; keeping them
@@ -106,4 +113,7 @@ begin
 end;
 $$;
 
-revoke all on function public.prune_error_logs(int) from anon, authenticated;
+-- Same PUBLIC-grant trap as above, and worse here: this function DELETES. Left
+-- at the default grant, anyone with the anon key could wipe the whole error log.
+revoke all on function public.prune_error_logs(int) from public, anon, authenticated;
+grant execute on function public.prune_error_logs(int) to service_role;
