@@ -108,7 +108,7 @@
         guardSize(meta, f);
         var inName = inputName(f);
         var built = root.VKVideo.buildCompressArgs(inName, 'out.mp4', { targetMB: o.target, durationSec: meta.duration, audioKbps: o.audio });
-        var data = await root.VKVideo.run(f, inName, 'out.mp4', built, api.progress);
+        var data = await root.VKVideo.run(f, inName, 'out.mp4', built, api.progress, api.status);
         var blob = outBlob(data, 'video/mp4');
         var fit = blob.size <= o.target * 1048576;
         return {
@@ -137,7 +137,7 @@
         var meta = await probe(f);
         var end = Math.min(o.end, meta.duration || o.end);
         var built = root.VKVideo.buildTrimArgs('in.mp4', 'out.mp4', { start: o.start, end: end });
-        var data = await root.VKVideo.run(f, 'in.mp4', 'out.mp4', built, api.progress);
+        var data = await root.VKVideo.run(f, 'in.mp4', 'out.mp4', built, api.progress, api.status);
         var blob = outBlob(data, 'video/mp4');
         return {
           stats: [
@@ -165,7 +165,7 @@
         warnCapability();
         var f = files[0];
         var built = root.VKVideo.buildGifArgs('in.mp4', 'out.gif', { fps: o.fps, width: o.width, start: o.start, duration: o.duration });
-        var data = await root.VKVideo.run(f, 'in.mp4', 'out.gif', built, api.progress);
+        var data = await root.VKVideo.run(f, 'in.mp4', 'out.gif', built, api.progress, api.status);
         var blob = outBlob(data, 'image/gif');
         return {
           previewUrl: api.urls.make(blob), previewAlt: 'GIF preview',
@@ -192,7 +192,7 @@
         if (o.ratio === '1:1') { H = 1080; W = 1080; }
         if (o.ratio === '4:5') { H = 1350; W = 1080; }
         var built = root.VKVideo.buildReframeArgs('in.mp4', 'out.mp4', { w: parts[0], h: parts[1] });
-        var data = await root.VKVideo.run(f, 'in.mp4', 'out.mp4', built, api.progress);
+        var data = await root.VKVideo.run(f, 'in.mp4', 'out.mp4', built, api.progress, api.status);
         var blob = outBlob(data, 'video/mp4');
         return {
           stats: [{ label: 'Shape', value: o.ratio }, { label: 'Output', value: W + '×' + H }, { label: 'Size', value: api.bytes(blob.size) }],
@@ -210,7 +210,7 @@
         warnCapability();
         var f = files[0];
         var built = root.VKVideo.buildMuteArgs('in.mp4', 'out.mp4');
-        var data = await root.VKVideo.run(f, 'in.mp4', 'out.mp4', built, api.progress);
+        var data = await root.VKVideo.run(f, 'in.mp4', 'out.mp4', built, api.progress, api.status);
         var blob = outBlob(data, 'video/mp4');
         return {
           stats: [{ label: 'Original', value: api.bytes(f.size) }, { label: 'Muted', value: api.bytes(blob.size) }, { label: 'Audio', value: 'removed' }],
@@ -231,7 +231,7 @@
         var f = files[0];
         var out = 'out.' + o.format;
         var built = root.VKVideo.buildExtractAudioArgs('in.mp4', out, { format: o.format });
-        var data = await root.VKVideo.run(f, 'in.mp4', out, built, api.progress);
+        var data = await root.VKVideo.run(f, 'in.mp4', out, built, api.progress, api.status);
         var blob = outBlob(data, o.format === 'wav' ? 'audio/wav' : 'audio/mpeg');
         return {
           stats: [{ label: 'Format', value: o.format.toUpperCase() }, { label: 'Size', value: api.bytes(blob.size) }],
@@ -254,7 +254,7 @@
         guardSize(meta, f);
         var inName = inputName(f);
         var built = root.VKVideo.buildConvertArgs(inName, 'out.mp4', { fps: o.fps });
-        var data = await root.VKVideo.run(f, inName, 'out.mp4', built, api.progress);
+        var data = await root.VKVideo.run(f, inName, 'out.mp4', built, api.progress, api.status);
         var blob = outBlob(data, 'video/mp4');
         if (!blob.size) throw new Error('The converted file came back empty — this clip may use a codec the in-browser encoder can’t read. MP4 (H.264) and WebM inputs are the most reliable.');
         var stats = [
@@ -282,7 +282,7 @@
         warnCapability();
         var f = files[0];
         var built = root.VKVideo.buildResizeArgs('in.mp4', 'out.mp4', { height: o.height });
-        var data = await root.VKVideo.run(f, 'in.mp4', 'out.mp4', built, api.progress);
+        var data = await root.VKVideo.run(f, 'in.mp4', 'out.mp4', built, api.progress, api.status);
         var blob = outBlob(data, 'video/mp4');
         return {
           stats: [{ label: 'Height', value: o.height + 'p' }, { label: 'Original', value: api.bytes(f.size) }, { label: 'Output', value: api.bytes(blob.size) }],
@@ -303,7 +303,7 @@
         var f = files[0];
         var n = Math.max(2, Math.round(o.count || 2));
         var built = root.VKVideo.buildLoopArgs('in.mp4', 'out.mp4', { count: n });
-        var data = await root.VKVideo.run(f, 'in.mp4', 'out.mp4', built, api.progress);
+        var data = await root.VKVideo.run(f, 'in.mp4', 'out.mp4', built, api.progress, api.status);
         var blob = outBlob(data, 'video/mp4');
         return {
           stats: [{ label: 'Plays', value: n + '×' }, { label: 'Size', value: api.bytes(blob.size) }],
@@ -323,7 +323,7 @@
         warnCapability();
         var f = files[0];
         var built = root.VKVideo.buildVolumeArgs('in.mp4', 'out.mp4', { percent: o.percent });
-        var data = await root.VKVideo.run(f, 'in.mp4', 'out.mp4', built, api.progress);
+        var data = await root.VKVideo.run(f, 'in.mp4', 'out.mp4', built, api.progress, api.status);
         var blob = outBlob(data, 'video/mp4');
         return {
           stats: [{ label: 'Volume', value: o.percent + '%' }, { label: 'Size', value: api.bytes(blob.size) }],

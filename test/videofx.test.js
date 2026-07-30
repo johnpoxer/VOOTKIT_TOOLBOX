@@ -152,3 +152,34 @@ ok(/convert-video[\s\S]{0,1200}guardSize\(meta, f\)/.test(vfxSrc),
    "convert-video still guards, but now on non-blocking metadata");
 
 console.log(`videofx probe: ${pass} total assertions passed`);
+
+/* ---------------------------------------------------------------------------
+ * The ~32 MB engine download must be visible and must not hang — mobile bug.
+ * Reported from iOS Safari on 4G: the tool sat on "Working…" forever. The
+ * engine fetch had no progress reporting and no timeout, so a slow or stalled
+ * mobile connection was indistinguishable from a crash.
+ * ------------------------------------------------------------------------- */
+const engSrc = require("fs").readFileSync(require("path").join(__dirname, "../assets/js/videoengine.js"), "utf8");
+
+ok(/STALL_MS/.test(engSrc), "engine download has a stall timeout");
+ok(/function arm\(\)/.test(engSrc) && /arm\(\);\s*\/\/ progress => not stalled/.test(engSrc),
+   "the stall timer resets on every chunk, so a slow connection is not killed");
+ok(/getReader\(\)/.test(engSrc), "engine download streams so it can report progress");
+ok(/r\.arrayBuffer\(\)/.test(engSrc), "falls back to a plain fetch where streaming is unavailable");
+ok(/Downloading the video engine/.test(engSrc), "the download reports progress to the user");
+ok(/_loading\.catch\(function \(\) \{ _loading = null; \}\)/.test(engSrc),
+   "a failed load clears the cached promise so retry can work without a reload");
+ok(/function run\(file, inName, outName, built, onProgress, onStatus\)/.test(engSrc),
+   "run() accepts a status channel");
+ok(/say\('Converting…'\)/.test(engSrc), "the convert phase is announced separately from the download");
+ok(/await ff\.writeFile\(inName, await util\.fetchFile\(file\)\)/.test(engSrc),
+   "run() still writes the input file before exec");
+
+const ftSrc = require("fs").readFileSync(require("path").join(__dirname, "../assets/js/filetool.js"), "utf8");
+ok(/status: function \(msg\)/.test(ftSrc), "filetool exposes a status channel to tools");
+
+const runCalls = (vfxSrc.match(/VKVideo\.run\(/g) || []).length;
+const withStatus = (vfxSrc.match(/api\.progress, api\.status\)/g) || []).length;
+ok(runCalls === withStatus, `all ${runCalls} VKVideo.run call sites pass the status channel (got ${withStatus})`);
+
+console.log(`videofx engine-load: ${pass} total assertions passed`);

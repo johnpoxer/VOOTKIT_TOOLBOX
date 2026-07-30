@@ -169,42 +169,111 @@
     });
   }
 
-  function load(onLog) {
+  /* Fetch to a same-origin blob URL, with PROGRESS and a STALL TIMEOUT.
+   *
+   * @ffmpeg/util's toBlobURL does a bare fetch(): no progress and no timeout.
+   * The core is ~32 MB. On a phone over 4G that is a long download reported to
+   * the user as nothing at all — the tool just says "Working…" — and if the
+   * connection stalls, fetch never settles, so it says "Working…" forever.
+   * That is the single most likely reason a mobile user sees a permanent spinner.
+   *
+   * The timeout is a STALL timer, reset on every chunk: a slow connection is
+   * fine and must not be killed, but silence for 30s means it is never coming. */
+  var STALL_MS = 30000;
+
+  function fetchBlobURL(url, mime, onBytes) {
+    return new Promise(function (res, rej) {
+      var ctrl = typeof AbortController === 'function' ? new AbortController() : null;
+      var timer = null;
+      function arm() {
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(function () {
+          if (ctrl) ctrl.abort();
+          rej(new Error('The video engine download stalled. Check your connection and try again — on mobile data this needs a steady signal for about 32 MB.'));
+        }, STALL_MS);
+      }
+      arm();
+      fetch(url, ctrl ? { signal: ctrl.signal } : undefined).then(function (r) {
+        if (!r.ok) throw new Error('The video engine could not be downloaded (HTTP ' + r.status + ').');
+        var total = +(r.headers.get('content-length') || 0);
+        if (!r.body || !r.body.getReader) {   // older Safari: no streaming, no progress
+          return r.arrayBuffer().then(function (b) { return new Blob([b], { type: mime }); });
+        }
+        var reader = r.body.getReader(), chunks = [], got = 0;
+        return (function pump() {
+          return reader.read().then(function (step) {
+            if (step.done) return new Blob(chunks, { type: mime });
+            chunks.push(step.value); got += step.value.length;
+            arm();                                  // progress => not stalled
+            if (onBytes) onBytes(got, total);
+            return pump();
+          });
+        })();
+      }).then(function (blob) {
+        clearTimeout(timer);
+        res(URL.createObjectURL(blob));
+      }).catch(function (e) {
+        clearTimeout(timer);
+        rej(e && e.name === 'AbortError'
+          ? new Error('The video engine download stalled. Check your connection and try again.')
+          : e);
+      });
+    });
+  }
+
+  /* opts: { onStatus } — onStatus(message) drives the visible status line so the
+     32 MB download is not a silent void. */
+  function load(opts) {
+    opts = opts || {};
+    var say = opts.onStatus || function () {};
     if (_ff) return Promise.resolve({ ff: _ff, util: _util });
     if (_loading) return _loading;
     _loading = (async function () {
       var cap = capability();
       if (!cap.ok) throw new Error(cap.reason);
+      say('Starting the video engine…');
       if (!root.FFmpegWASM) await loadScript(BASE);
       if (!root.FFmpegUtil) await loadScript(UTILURL);
       var FFmpeg = root.FFmpegWASM.FFmpeg;
       _util = root.FFmpegUtil;
       var ff = new FFmpeg();
-      if (onLog) ff.on('log', function (e) { onLog(e.message); });
+      if (opts.onLog) ff.on('log', function (e) { opts.onLog(e.message); });
       // Everything is fetched to a same-origin blob URL first, so cross-origin
       // isolation / CORP never blocks the worker or the core. The .wasm sits next
       // to the core .js on the CDN.
-      var cfg = {
-        classWorkerURL: await _util.toBlobURL(CLASSWORKER, 'text/javascript'),
-        coreURL: await _util.toBlobURL(COREURL, 'text/javascript'),
-        wasmURL: await _util.toBlobURL(COREURL.replace(/\.js$/, '.wasm'), 'application/wasm')
-      };
-      await ff.load(cfg);
+      function pct(got, total) {
+        return total ? ' ' + Math.round((got / total) * 100) + '%'
+                     : ' ' + Math.round(got / 1048576) + ' MB';
+      }
+      var worker = await fetchBlobURL(CLASSWORKER, 'text/javascript');
+      var core = await fetchBlobURL(COREURL, 'text/javascript');
+      var wasm = await fetchBlobURL(COREURL.replace(/\.js$/, '.wasm'), 'application/wasm',
+        function (got, total) { say('Downloading the video engine — one time, about 32 MB' + pct(got, total)); });
+      say('Starting the video engine…');
+      await ff.load({ classWorkerURL: worker, coreURL: core, wasmURL: wasm });
       _ff = ff;
       return { ff: _ff, util: _util };
     })();
+    /* Clear the cached promise on failure. Without this a single network blip
+       poisons the module for the life of the page: every retry, and the tool's
+       own "Start over", re-await the same rejected promise and fail identically
+       with no way back except a full reload. */
+    _loading.catch(function () { _loading = null; });
     return _loading;
   }
 
   /* Run one ffmpeg job. `built` is a builder result {args} or {error}. */
-  async function run(file, inName, outName, built, onProgress) {
+  async function run(file, inName, outName, built, onProgress, onStatus) {
     if (built.error) throw new Error(built.error);
-    var env = await load();
+    var say = onStatus || function () {};
+    var env = await load({ onStatus: say });
     var ff = env.ff, util = env.util;
     var prog = function (e) { if (onProgress && e && typeof e.progress === 'number') onProgress(Math.max(0, Math.min(1, e.progress))); };
     ff.on('progress', prog);
     try {
+      say('Reading your video…');
       await ff.writeFile(inName, await util.fetchFile(file));
+      say('Converting…');
       await ff.exec(built.args);
       var data = await ff.readFile(outName);
       try { await ff.deleteFile(inName); await ff.deleteFile(outName); } catch (e) {}

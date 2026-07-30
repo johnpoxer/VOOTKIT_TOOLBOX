@@ -182,7 +182,11 @@
       try {
         var out = await spec.process(files, readOptions(), {
           urls: urls, loadImage: function (f) { return loadImage(f, urls); },
-          progress: setProgress, bytes: bytes
+          progress: setProgress, bytes: bytes,
+          /* Lets a long-running tool replace the generic "Working…" with what is
+             actually happening. The video tools spend most of their time
+             downloading a ~32 MB engine, which otherwise looks like a hang. */
+          status: function (msg) { if (msg) status.textContent = msg; }
         });
         setProgress(1);
         renderResult(out);
