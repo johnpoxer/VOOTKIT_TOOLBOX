@@ -77,6 +77,34 @@ const V = "?v=" + (function () {
 })();
 
 const esc = (v) => String(v == null ? "" : v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+/* Tool <title>, longest variant that still fits.
+ *
+ * The old fixed pattern `Name — Free Online <Category> Tool | Vootkit` ran past
+ * 65 characters on 87 pages — worst case 82 ("Amazon FBA Profit Calculator —
+ * Free Online Freelance & Business Tool | Vootkit"). Google truncates around
+ * 60, so the brand and half the descriptor were being cut off in results, on
+ * exactly the pages meant to attract clicks.
+ *
+ * Degrade in order of what is worth losing: the category qualifier first (the
+ * user already searched for the tool), then the descriptor, keeping the tool
+ * name and the brand to the end. Pure and unit-tested. */
+const TITLE_MAX = 60;
+function toolTitle(name, catName, max) {
+  const cap = max || TITLE_MAX;
+  const n = String(name || "").trim();
+  const c = String(catName || "").trim();
+  const variants = [
+    c ? `${n} — Free Online ${c} Tool | Vootkit` : null,
+    `${n} — Free Online Tool | Vootkit`,
+    `${n} — Free Tool | Vootkit`,
+    `${n} | Vootkit`,
+    n
+  ].filter(Boolean);
+  for (const v of variants) if (v.length <= cap) return v;
+  return variants[variants.length - 1];   // a very long tool name still wins over truncation
+}
+if (typeof module === "object" && module.exports) module.exports.toolTitle = toolTitle;
 const write = (rel, html) => {
   const full = path.join(ROOT, rel);
   fs.mkdirSync(path.dirname(full), { recursive: true });
@@ -442,7 +470,7 @@ function toolPage(t) {
        </div>`;
 
   let pageHead = head({ depth: 3, url, ads: false, ld, cat: t.cat, lang: "en", alts: altsForTool(t),   // rule: no ads in an active tool workspace
-    title: `${t.name} — Free Online ${c.name} Tool | Vootkit`,
+    title: toolTitle(t.name, c.name),
     ogTitle: t.name,
     desc: `${t.desc} ${local ? "Runs in your browser" : "No sign-up"}, no watermark, 5 free uses a day.` });
   // under-construction ("soon") tools are thin — keep them out of the index (AdSense quality)

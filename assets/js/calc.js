@@ -82,6 +82,7 @@
   }
 
   function mount(host, spec) {
+    var noted = false, noteTimer = null;   // conversion prompt: once per mount
     if (!host) return;
     host.innerHTML = '';
     host.classList.add('calc');
@@ -164,6 +165,20 @@
         errBox.textContent = 'Could not calculate with those numbers.'; errBox.hidden = false; return;
       }
       if (!r) { out.innerHTML = ''; extra.innerHTML = ''; return; }
+
+      /* Calculators have no download to hang the conversion prompt on, and they
+         recompute on every keystroke — firing per compute would put the card on
+         screen while the user is still typing. Fire once per mount, and only
+         after the user has settled on an answer, so it reads as "here is your
+         result, want to keep it" rather than interrupting mid-edit. */
+      if (!noted) {
+        noted = true;
+        clearTimeout(noteTimer);
+        noteTimer = setTimeout(function () {
+          var G = typeof window !== 'undefined' ? window : globalThis;
+          if (G.VKConvert) G.VKConvert.onToolSuccess(host, host.getAttribute('data-tool'));
+        }, 2500);
+      }
 
       out.innerHTML =
         '<div class="calc-headline"><span class="calc-label">' + r.headline.label + '</span>' +

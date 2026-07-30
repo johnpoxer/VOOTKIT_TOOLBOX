@@ -330,6 +330,7 @@
           status.textContent = isWinAnsiSafe(ta.value) ? 'Building PDF…' : 'Embedding a Unicode font for these characters…';
           var bytes = await builder(PDFLib, ta.value, opts);
           download(new Blob([bytes], { type: 'application/pdf' }), filename);
+          if (root.VKW && root.VKW.noteSuccess) root.VKW.noteSuccess();  // this module has its own download()
           var meta = bytes.vkMeta || {};
           var msg = 'Done — your PDF has downloaded.';
           if (meta.unicode) msg += ' Embedded ' + meta.fontLabel + ' so your characters render correctly.';
@@ -377,6 +378,7 @@
           var PDFLib = await loadPdfLib();
           var bytes = await buildBlankPdf(PDFLib, { page: pageSel.value, count: +count.value, title: title.value.trim() });
           download(new Blob([bytes], { type: 'application/pdf' }), 'blank.pdf');
+          if (root.VKW && root.VKW.noteSuccess) root.VKW.noteSuccess();
           status.textContent = 'Done — your PDF has downloaded.';
         } catch (e) { status.textContent = ''; err.hidden = false; err.textContent = e.message || 'Could not build the PDF.'; }
         btn.disabled = false;

@@ -65,3 +65,60 @@ ok(S.truncatePx(long, 600).length < long.length && /…$/.test(S.truncatePx(long
   .forEach(id => { const t = VK.find(id); ok(t && t.status === "live" && t.cat === "seo", id + " live in seo"); });
 
 console.log(`seo: ${pass} assertions passed`);
+
+/* ---------------------------------------------------------------------------
+ * Tool <title> length — 87 pages previously exceeded Google's ~60 char display
+ * limit because the pattern was fixed at `Name — Free Online <Category> Tool |
+ * Vootkit`. Worst case was 82 chars, so the brand and half the descriptor were
+ * truncated in results on pages whose whole job is attracting the click.
+ * build.js now degrades: category first, then descriptor, keeping name + brand.
+ *
+ * Asserted against the GENERATED pages rather than by importing build.js —
+ * requiring build.js executes the whole build as a side effect.
+ * ------------------------------------------------------------------------- */
+{
+  const fs2 = require("fs"), path2 = require("path");
+  const root2 = path2.join(__dirname, "..");
+  const walk2 = (d, acc = []) => {
+    for (const e of fs2.readdirSync(d, { withFileTypes: true })) {
+      const p = path2.join(d, e.name);
+      if (e.isDirectory()) walk2(p, acc);
+      else if (e.name === "index.html") acc.push(p);
+    }
+    return acc;
+  };
+  const pages2 = walk2(path2.join(root2, "tools"));
+  const titles = pages2
+    .map(f => {
+      const h = fs2.readFileSync(f, "utf8");
+      if (!/id=["']workspace["']/.test(h)) return null;      // category hubs excluded
+      const m = /<title>([^<]*)<\/title>/.exec(h);
+      if (!m) return null;
+      /* Measure the DECODED title. "Audio & Voice" is stored as "Audio &amp;
+         Voice" — 4 extra characters in the source that the user never sees and
+         Google never counts. Measuring raw HTML over-reports length on every
+         category containing an ampersand. */
+      const decoded = m[1]
+        .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
+        .replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+      return { file: path2.relative(root2, f), title: decoded };
+    })
+    .filter(Boolean);
+
+  ok(titles.length > 200, `found ${titles.length} tool titles to check`);
+
+  const over = titles.filter(t => t.title.length > 60);
+  ok(over.length === 0,
+     `every tool title fits 60 chars` +
+     (over.length ? ` — ${over.length} over, worst: "${over[0].title}" (${over[0].title.length})` : ""));
+
+  ok(titles.every(t => t.title.includes("Vootkit")), "brand survives in every title");
+  ok(titles.every(t => !/\|\s*$/.test(t.title)), "no title ends in a dangling separator");
+  ok(titles.every(t => t.title.trim().length > 10), "no title collapsed to nothing");
+
+  // the category qualifier should still be kept where it fits
+  const withCat = titles.filter(t => /Free Online \w[\w &-]* Tool/.test(t.title));
+  ok(withCat.length > 50, `category qualifier retained where it fits (${withCat.length} pages)`);
+}
+
+console.log(`seo + titles: ${pass} total assertions passed`);

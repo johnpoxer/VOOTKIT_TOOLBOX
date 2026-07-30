@@ -21,20 +21,16 @@
       "page": "tools/accessibility/caption-validator/index.html",
       "category": "accessibility",
       "module": "tools-a11y.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "color-blind-simulator",
       "page": "tools/accessibility/color-blind-simulator/index.html",
       "category": "accessibility",
       "module": "tools-a11y.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "contrast-checker",
@@ -49,10 +45,8 @@
       "page": "tools/accessibility/heading-checker/index.html",
       "category": "accessibility",
       "module": "tools-a11y.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "audio-compressor",
@@ -107,230 +101,184 @@
       "page": "tools/business/amazon-fba-calculator/index.html",
       "category": "business",
       "module": "tools-money2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "break-even",
       "page": "tools/business/break-even/index.html",
       "category": "business",
       "module": "tools-money2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "business-card-maker",
       "page": "tools/business/business-card-maker/index.html",
       "category": "business",
       "module": "tools-business2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "business-name-generator",
       "page": "tools/business/business-name-generator/index.html",
       "category": "business",
       "module": "tools-business2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "cac-ltv-calculator",
       "page": "tools/business/cac-ltv-calculator/index.html",
       "category": "business",
       "module": "tools-money2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "contract-generator",
       "page": "tools/business/contract-generator/index.html",
       "category": "business",
       "module": "tools-docs.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "etsy-fee-calculator",
       "page": "tools/business/etsy-fee-calculator/index.html",
       "category": "business",
       "module": "tools-money2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "hourly-rate",
       "page": "tools/business/hourly-rate/index.html",
       "category": "business",
       "module": "tools-money2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "inventory-tracker",
       "page": "tools/business/inventory-tracker/index.html",
       "category": "business",
       "module": "tools-business2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "invoice-generator",
       "page": "tools/business/invoice-generator/index.html",
       "category": "business",
       "module": "tools-business.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "landing-page-generator",
       "page": "tools/business/landing-page-generator/index.html",
       "category": "business",
       "module": "tools-docs.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "late-fee",
       "page": "tools/business/late-fee/index.html",
       "category": "business",
       "module": "tools-money2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "paypal-fee-calculator",
       "page": "tools/business/paypal-fee-calculator/index.html",
       "category": "business",
       "module": "tools-money2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "profit-margin",
       "page": "tools/business/profit-margin/index.html",
       "category": "business",
       "module": "tools-money2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "proposal-generator",
       "page": "tools/business/proposal-generator/index.html",
       "category": "business",
       "module": "tools-docs.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "qr-business-card",
       "page": "tools/business/qr-business-card/index.html",
       "category": "business",
       "module": "tools-business2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "quote-generator",
       "page": "tools/business/quote-generator/index.html",
       "category": "business",
       "module": "tools-business.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "receipt-generator",
       "page": "tools/business/receipt-generator/index.html",
       "category": "business",
       "module": "tools-business.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "resume-builder",
       "page": "tools/business/resume-builder/index.html",
       "category": "business",
       "module": "tools-docs.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "roas-calculator",
       "page": "tools/business/roas-calculator/index.html",
       "category": "business",
       "module": "tools-money2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "stripe-fee-calculator",
       "page": "tools/business/stripe-fee-calculator/index.html",
       "category": "business",
       "module": "tools-money2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "swot-generator",
       "page": "tools/business/swot-generator/index.html",
       "category": "business",
       "module": "tools-docs.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "vat-gst",
       "page": "tools/business/vat-gst/index.html",
       "category": "business",
       "module": "tools-money2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "csv-to-chart",
@@ -513,10 +461,8 @@
       "page": "tools/education/citation-generator/index.html",
       "category": "education",
       "module": "tools-edu.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "diagram-maker",
@@ -531,30 +477,24 @@
       "page": "tools/education/flashcard-maker/index.html",
       "category": "education",
       "module": "tools-edu.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "learning-tracker",
       "page": "tools/education/learning-tracker/index.html",
       "category": "education",
       "module": "tools-edu.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "mind-map-generator",
       "page": "tools/education/mind-map-generator/index.html",
       "category": "education",
       "module": "tools-edu.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "quiz-maker",
@@ -577,10 +517,8 @@
       "page": "tools/education/vocabulary-builder/index.html",
       "category": "education",
       "module": "tools-edu.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "age-calculator",
@@ -795,80 +733,64 @@
       "page": "tools/finance/auto-loan-calculator/index.html",
       "category": "finance",
       "module": "tools-money.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "budget-calculator",
       "page": "tools/finance/budget-calculator/index.html",
       "category": "finance",
       "module": "tools-calc2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "compound-interest",
       "page": "tools/finance/compound-interest/index.html",
       "category": "finance",
       "module": "tools-money2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "credit-card-payoff",
       "page": "tools/finance/credit-card-payoff/index.html",
       "category": "finance",
       "module": "tools-money.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "crypto-profit",
       "page": "tools/finance/crypto-profit/index.html",
       "category": "finance",
       "module": "tools-money2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "currency-converter",
       "page": "tools/finance/currency-converter/index.html",
       "category": "finance",
       "module": "tools-currency.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "discount-calculator",
       "page": "tools/finance/discount-calculator/index.html",
       "category": "finance",
       "module": "tools-money2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "investment-calculator",
       "page": "tools/finance/investment-calculator/index.html",
       "category": "finance",
       "module": "tools-calc2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "loan-calculator",
@@ -883,140 +805,112 @@
       "page": "tools/finance/mortgage-calculator/index.html",
       "category": "finance",
       "module": "tools-money.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "percentage-calculator",
       "page": "tools/finance/percentage-calculator/index.html",
       "category": "finance",
       "module": "tools-money2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "refinance-calculator",
       "page": "tools/finance/refinance-calculator/index.html",
       "category": "finance",
       "module": "tools-money.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "retirement-calculator",
       "page": "tools/finance/retirement-calculator/index.html",
       "category": "finance",
       "module": "tools-money2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "savings-goal",
       "page": "tools/finance/savings-goal/index.html",
       "category": "finance",
       "module": "tools-money2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "simple-interest",
       "page": "tools/finance/simple-interest/index.html",
       "category": "finance",
       "module": "tools-calc2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "tip-split",
       "page": "tools/finance/tip-split/index.html",
       "category": "finance",
       "module": "tools-money2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "bmr-calculator",
       "page": "tools/health/bmr-calculator/index.html",
       "category": "health",
       "module": "tools-calc2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "body-fat-calculator",
       "page": "tools/health/body-fat-calculator/index.html",
       "category": "health",
       "module": "tools-calc2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "heart-rate-calculator",
       "page": "tools/health/heart-rate-calculator/index.html",
       "category": "health",
       "module": "tools-calc2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "ideal-weight-calculator",
       "page": "tools/health/ideal-weight-calculator/index.html",
       "category": "health",
       "module": "tools-calc2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "macro-calculator",
       "page": "tools/health/macro-calculator/index.html",
       "category": "health",
       "module": "tools-calc2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "pace-calculator",
       "page": "tools/health/pace-calculator/index.html",
       "category": "health",
       "module": "tools-calc2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "water-intake-calculator",
       "page": "tools/health/water-intake-calculator/index.html",
       "category": "health",
       "module": "tools-calc2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "batch-compress",
@@ -1303,10 +1197,8 @@
       "page": "tools/insurance/income-protection/index.html",
       "category": "insurance",
       "module": "tools-money2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "life-insurance-needs",
@@ -1721,70 +1613,56 @@
       "page": "tools/seo/meta-tag-generator/index.html",
       "category": "seo",
       "module": "tools-seo.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "og-preview",
       "page": "tools/seo/og-preview/index.html",
       "category": "seo",
       "module": "tools-seo.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "robots-generator",
       "page": "tools/seo/robots-generator/index.html",
       "category": "seo",
       "module": "tools-seo.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "schema-generator",
       "page": "tools/seo/schema-generator/index.html",
       "category": "seo",
       "module": "tools-seo.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "serp-preview",
       "page": "tools/seo/serp-preview/index.html",
       "category": "seo",
       "module": "tools-seo.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "sitemap-generator",
       "page": "tools/seo/sitemap-generator/index.html",
       "category": "seo",
       "module": "tools-seo.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "slug-generator",
       "page": "tools/seo/slug-generator/index.html",
       "category": "seo",
       "module": "tools-seo.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "url-shortener",
@@ -1807,30 +1685,24 @@
       "page": "tools/tax/employee-cost/index.html",
       "category": "tax",
       "module": "tools-money2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "hourly-wage",
       "page": "tools/tax/hourly-wage/index.html",
       "category": "tax",
       "module": "tools-calc2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "income-tax-estimator",
       "page": "tools/tax/income-tax-estimator/index.html",
       "category": "tax",
       "module": "tools-money2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "overtime-calculator",
@@ -1853,10 +1725,8 @@
       "page": "tools/tax/payroll-calculator/index.html",
       "category": "tax",
       "module": "tools-calc2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "pto-accrual",
@@ -1871,20 +1741,16 @@
       "page": "tools/tax/salary-converter/index.html",
       "category": "tax",
       "module": "tools-misc.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "self-employment-tax",
       "page": "tools/tax/self-employment-tax/index.html",
       "category": "tax",
       "module": "tools-money2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "case-converter",
@@ -1907,10 +1773,8 @@
       "page": "tools/text/lorem-ipsum/index.html",
       "category": "text",
       "module": "tools-text.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "markdown-editor",
@@ -1941,10 +1805,8 @@
       "page": "tools/text/word-counter/index.html",
       "category": "text",
       "module": "tools-text.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "distance-calculator",
@@ -2007,70 +1869,56 @@
       "page": "tools/video/adjust-volume/index.html",
       "category": "video",
       "module": "tools-videofx.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "bitrate-calculator",
       "page": "tools/video/bitrate-calculator/index.html",
       "category": "video",
       "module": "tools-video.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "brb-overlay",
       "page": "tools/video/brb-overlay/index.html",
       "category": "video",
       "module": "tools-misc.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "chat-overlay-tool",
       "page": "tools/video/chat-overlay-tool/index.html",
       "category": "video",
       "module": "tools-stream.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "compress-for-discord",
       "page": "tools/video/compress-for-discord/index.html",
       "category": "video",
       "module": "tools-videofx.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "convert-video",
       "page": "tools/video/convert-video/index.html",
       "category": "video",
       "module": "tools-videofx.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "emote-resizer",
       "page": "tools/video/emote-resizer/index.html",
       "category": "video",
       "module": "tools-image.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "extract-audio",
@@ -2093,10 +1941,8 @@
       "page": "tools/video/giveaway-picker/index.html",
       "category": "video",
       "module": "tools-stream.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "loop-video",
@@ -2111,20 +1957,16 @@
       "page": "tools/video/mute-video/index.html",
       "category": "video",
       "module": "tools-videofx.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "obs-settings-assistant",
       "page": "tools/video/obs-settings-assistant/index.html",
       "category": "video",
       "module": "tools-calc2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "resize-video",
@@ -2139,60 +1981,48 @@
       "page": "tools/video/starting-soon-screen/index.html",
       "category": "video",
       "module": "tools-stream.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "stream-alert-creator",
       "page": "tools/video/stream-alert-creator/index.html",
       "category": "video",
       "module": "tools-stream.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "stream-asset-sizer",
       "page": "tools/video/stream-asset-sizer/index.html",
       "category": "video",
       "module": "tools-video.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "stream-overlay-creator",
       "page": "tools/video/stream-overlay-creator/index.html",
       "category": "video",
       "module": "tools-stream.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "stream-revenue-calculator",
       "page": "tools/video/stream-revenue-calculator/index.html",
       "category": "video",
       "module": "tools-calc2.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "stream-schedule-planner",
       "page": "tools/video/stream-schedule-planner/index.html",
       "category": "video",
       "module": "tools-stream.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "trim-video",
@@ -2207,20 +2037,16 @@
       "page": "tools/video/upload-time/index.html",
       "category": "video",
       "module": "tools-video.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "vertical-reframe",
       "page": "tools/video/vertical-reframe/index.html",
       "category": "video",
       "module": "tools-videofx.js",
-      "issues": [
-        "long-title"
-      ],
-      "score": 98
+      "issues": [],
+      "score": 100
     },
     {
       "tool": "video-to-gif",
@@ -2231,441 +2057,5 @@
       "score": 100
     }
   ],
-  "findings": [
-    {
-      "sev": "LOW",
-      "tool": "tools/accessibility/caption-validator/index.html",
-      "issue": "title is 66 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/accessibility/color-blind-simulator/index.html",
-      "issue": "title is 69 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/accessibility/heading-checker/index.html",
-      "issue": "title is 68 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/business/amazon-fba-calculator/index.html",
-      "issue": "title is 82 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/business/break-even/index.html",
-      "issue": "title is 70 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/business/business-card-maker/index.html",
-      "issue": "title is 73 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/business/business-name-generator/index.html",
-      "issue": "title is 77 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/business/cac-ltv-calculator/index.html",
-      "issue": "title is 78 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/business/contract-generator/index.html",
-      "issue": "title is 72 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/business/etsy-fee-calculator/index.html",
-      "issue": "title is 86 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/business/hourly-rate/index.html",
-      "issue": "title is 76 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/business/inventory-tracker/index.html",
-      "issue": "title is 71 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/business/invoice-generator/index.html",
-      "issue": "title is 71 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/business/landing-page-generator/index.html",
-      "issue": "title is 76 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/business/late-fee/index.html",
-      "issue": "title is 73 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/business/paypal-fee-calculator/index.html",
-      "issue": "title is 75 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/business/profit-margin/index.html",
-      "issue": "title is 67 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/business/proposal-generator/index.html",
-      "issue": "title is 72 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/business/qr-business-card/index.html",
-      "issue": "title is 78 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/business/quote-generator/index.html",
-      "issue": "title is 74 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/business/receipt-generator/index.html",
-      "issue": "title is 71 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/business/resume-builder/index.html",
-      "issue": "title is 73 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/business/roas-calculator/index.html",
-      "issue": "title is 69 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/business/stripe-fee-calculator/index.html",
-      "issue": "title is 75 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/business/swot-generator/index.html",
-      "issue": "title is 73 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/business/vat-gst/index.html",
-      "issue": "title is 74 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/education/citation-generator/index.html",
-      "issue": "title is 69 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/education/flashcard-maker/index.html",
-      "issue": "title is 66 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/education/learning-tracker/index.html",
-      "issue": "title is 67 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/education/mind-map-generator/index.html",
-      "issue": "title is 69 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/education/vocabulary-builder/index.html",
-      "issue": "title is 69 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/finance/auto-loan-calculator/index.html",
-      "issue": "title is 69 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/finance/budget-calculator/index.html",
-      "issue": "title is 75 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/finance/compound-interest/index.html",
-      "issue": "title is 66 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/finance/credit-card-payoff/index.html",
-      "issue": "title is 67 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/finance/crypto-profit/index.html",
-      "issue": "title is 72 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/finance/currency-converter/index.html",
-      "issue": "title is 67 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/finance/discount-calculator/index.html",
-      "issue": "title is 68 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/finance/investment-calculator/index.html",
-      "issue": "title is 77 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/finance/mortgage-calculator/index.html",
-      "issue": "title is 68 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/finance/percentage-calculator/index.html",
-      "issue": "title is 70 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/finance/refinance-calculator/index.html",
-      "issue": "title is 69 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/finance/retirement-calculator/index.html",
-      "issue": "title is 70 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/finance/savings-goal/index.html",
-      "issue": "title is 69 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/finance/simple-interest/index.html",
-      "issue": "title is 75 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/finance/tip-split/index.html",
-      "issue": "title is 69 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/health/bmr-calculator/index.html",
-      "issue": "title is 79 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/health/body-fat-calculator/index.html",
-      "issue": "title is 69 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/health/heart-rate-calculator/index.html",
-      "issue": "title is 76 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/health/ideal-weight-calculator/index.html",
-      "issue": "title is 73 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/health/macro-calculator/index.html",
-      "issue": "title is 66 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/health/pace-calculator/index.html",
-      "issue": "title is 73 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/health/water-intake-calculator/index.html",
-      "issue": "title is 73 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/insurance/income-protection/index.html",
-      "issue": "title is 66 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/seo/meta-tag-generator/index.html",
-      "issue": "title is 67 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/seo/og-preview/index.html",
-      "issue": "title is 69 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/seo/robots-generator/index.html",
-      "issue": "title is 69 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/seo/schema-generator/index.html",
-      "issue": "title is 72 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/seo/serp-preview/index.html",
-      "issue": "title is 69 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/seo/sitemap-generator/index.html",
-      "issue": "title is 66 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/seo/slug-generator/index.html",
-      "issue": "title is 67 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/tax/employee-cost/index.html",
-      "issue": "title is 69 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/tax/hourly-wage/index.html",
-      "issue": "title is 73 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/tax/income-tax-estimator/index.html",
-      "issue": "title is 71 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/tax/payroll-calculator/index.html",
-      "issue": "title is 69 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/tax/salary-converter/index.html",
-      "issue": "title is 67 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/tax/self-employment-tax/index.html",
-      "issue": "title is 70 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/text/lorem-ipsum/index.html",
-      "issue": "title is 69 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/text/word-counter/index.html",
-      "issue": "title is 76 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/video/adjust-volume/index.html",
-      "issue": "title is 71 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/video/bitrate-calculator/index.html",
-      "issue": "title is 79 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/video/brb-overlay/index.html",
-      "issue": "title is 78 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/video/chat-overlay-tool/index.html",
-      "issue": "title is 67 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/video/compress-for-discord/index.html",
-      "issue": "title is 71 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/video/convert-video/index.html",
-      "issue": "title is 66 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/video/emote-resizer/index.html",
-      "issue": "title is 78 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/video/giveaway-picker/index.html",
-      "issue": "title is 66 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/video/mute-video/index.html",
-      "issue": "title is 69 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/video/obs-settings-assistant/index.html",
-      "issue": "title is 73 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/video/starting-soon-screen/index.html",
-      "issue": "title is 71 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/video/stream-alert-creator/index.html",
-      "issue": "title is 71 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/video/stream-asset-sizer/index.html",
-      "issue": "title is 69 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/video/stream-overlay-creator/index.html",
-      "issue": "title is 73 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/video/stream-revenue-calculator/index.html",
-      "issue": "title is 76 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/video/stream-schedule-planner/index.html",
-      "issue": "title is 74 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/video/upload-time/index.html",
-      "issue": "title is 72 chars (Google truncates past ~60)"
-    },
-    {
-      "sev": "LOW",
-      "tool": "tools/video/vertical-reframe/index.html",
-      "issue": "title is 72 chars (Google truncates past ~60)"
-    }
-  ]
+  "findings": []
 }

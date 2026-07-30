@@ -58,6 +58,19 @@
     var a = el('a', { href: u, download: name });
     document.body.appendChild(a); a.click();
     setTimeout(function () { URL.revokeObjectURL(u); a.remove(); }, 1500);
+    // A download from a widget tool is the same "user got what they came for"
+    // moment the file tools have. Central hook so every widget tool that uses
+    // this helper is covered without touching each one.
+    noteSuccess();
+  }
+
+  /* Shared success signal for the conversion prompt. Safe to call more than
+     once — convert.js dedupes and never renders a second card. */
+  function noteSuccess() {
+    try {
+      var host = document.getElementById('workspace');
+      if (host && root.VKConvert) root.VKConvert.onToolSuccess(host, host.getAttribute('data-tool'));
+    } catch (e) { /* conversion must never break a working tool */ }
   }
 
   /* a labelled "copy this output" button wired to a getter */
@@ -70,7 +83,7 @@
      then call VKW.boot(). A builder is fn(host, VKW). */
   var VKW = {
     el: el, escapeHtml: escapeHtml, debounce: debounce, copy: copy,
-    download: download, copyBtn: copyBtn, flash: flash, tools: {},
+    download: download, copyBtn: copyBtn, flash: flash, noteSuccess: noteSuccess, tools: {},
     boot: function () {
       var host = document.getElementById('workspace');
       if (!host || host.getAttribute('data-mounted')) return;
