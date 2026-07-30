@@ -217,3 +217,32 @@ video.wcode { padding: 0; }
 .usage-gate h2 { font-size: var(--t-xl); margin: 0 0 var(--s-2); }
 .usage-gate .note { max-width: 46ch; margin: 0 auto var(--s-5); }
 .usage-gate-actions { display: flex; gap: var(--s-3); justify-content: center; flex-wrap: wrap; }
+
+/* ---- account prompt on the tool result screen (assets/js/convert.js) ----
+   Sits below the download button, inside the workspace. Deliberately quieter
+   than the download CTA: the download is what the user came for and must stay
+   the most prominent thing on the screen. */
+.cta-account {
+  grid-column: 1 / -1;
+  margin-top: var(--s-5);
+  padding: var(--s-4);
+  border: 1px solid var(--line);
+  border-radius: var(--r-3, 12px);
+  background: var(--surface-2, var(--surface));
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-4);
+  align-items: center;
+  justify-content: space-between;
+}
+.cta-account-body { flex: 1 1 260px; min-width: 0; }
+.cta-account-title { margin: 0 0 var(--s-1); font-weight: 600; }
+.cta-account .note { margin: 0; }
+.cta-account-privacy { margin-top: var(--s-2) !important; font-size: var(--t-xs); color: var(--ink-mute); }
+.cta-account-actions { display: flex; gap: var(--s-2); flex-wrap: wrap; }
+.btn-quiet { background: transparent; border-color: transparent; color: var(--ink-soft); }
+.btn-quiet:hover { color: var(--ink); border-color: var(--line); }
+@media (max-width: 560px) {
+  .cta-account { flex-direction: column; align-items: stretch; }
+  .cta-account-actions .btn { flex: 1 1 auto; text-align: center; }
+}

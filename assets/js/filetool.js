@@ -191,6 +191,9 @@
         setProgress(1);
         renderResult(out);
         status.textContent = out.status || 'Done';
+        // The moment the user has what they came for — the only point where an
+        // account prompt is earned rather than interruptive.
+        if (root.VKConvert) root.VKConvert.onToolSuccess(host, host.getAttribute('data-tool'));
       } catch (e) {
         // Report before showing the user anything: this is the only place a file
         // tool's failure is observable, and until now it was observable only to
