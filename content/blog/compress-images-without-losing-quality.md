@@ -2,7 +2,7 @@
 title: "How to Compress Images Without Losing Quality"
 date: "2026-07-31"
 description: "Why image files get large, what compression actually removes, and how to hit a size target without visible quality loss. Includes the settings that matter and the ones that don't."
-thumbnail: "/assets/blog/jpeg-quality-comparison.jpg"
+thumbnail: "/assets/blog/compress-images-hero.jpg"
 author: "The Vootkit team"
 ---
 
