@@ -1299,6 +1299,11 @@ const hlines = [
   "  X-Content-Type-Options: nosniff",
   "  Referrer-Policy: strict-origin-when-cross-origin",
   "  X-Frame-Options: SAMEORIGIN",
+  /* HTML caching belongs on /* , NOT on /*.html — Netlify matches the REQUEST
+     PATH, and every page here is a directory URL (/tools/pdf/compress-pdf/)
+     with no ".html" in it. A /*.html rule silently never fires; verified live,
+     pages were falling through to Netlify's default max-age=0. */
+  "  Cache-Control: public, max-age=0, s-maxage=60, stale-while-revalidate=86400",
   "",
   /* Assets are cache-busted by ?v=<content hash> (see V, near the top), so a
      deploy changes the URL and browsers/CDNs fetch the new file automatically.
@@ -1310,13 +1315,6 @@ const hlines = [
   "# Hashed asset URLs (?v=<hash>) change on every deploy, so these are immutable.",
   "/assets/*",
   "  Cache-Control: public, max-age=31536000, immutable",
-  "",
-  /* HTML must NOT be immutable — the hash lives inside it. Short shared-cache
-     TTL with revalidation gives the CDN something to serve while still picking
-     up a deploy within the minute. */
-  "# HTML: always revalidate, but let the CDN serve while it does.",
-  "/*.html",
-  "  Cache-Control: public, max-age=0, s-maxage=60, stale-while-revalidate=86400",
   "",
   "# Deploy artefacts that change every build.",
   "/sitemap.xml",
