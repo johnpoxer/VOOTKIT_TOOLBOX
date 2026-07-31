@@ -349,7 +349,7 @@ function allToolsPage() {
     </section>`;
   }).join("");
 
-  return head({ depth: 1, url, ads: false, ld,   // directory/navigation page — no ads (AdSense policy)
+  return head({ depth: 1, url, ads: true, ld,
     title: `All ${VK.TOOLS.length} Tools — Vootkit`,
     ogTitle: "All Vootkit tools",
     desc: `Browse all ${VK.TOOLS.length} Vootkit tools across ${VK.CATEGORIES.length} categories. Most run entirely in your browser — no upload, no sign-up, 5 free uses a day.` }) +
@@ -469,7 +469,7 @@ function toolPage(t) {
          <a class="btn" href="../">Browse ${esc(c.name)} tools that work today</a>
        </div>`;
 
-  let pageHead = head({ depth: 3, url, ads: false, ld, cat: t.cat, lang: "en", alts: altsForTool(t),   // rule: no ads in an active tool workspace
+  let pageHead = head({ depth: 3, url, ads: true, ld, cat: t.cat, lang: "en", alts: altsForTool(t),
     title: toolTitle(t.name, c.name),
     ogTitle: t.name,
     desc: `${t.desc} ${local ? "Runs in your browser" : "No sign-up"}, no watermark, 5 free uses a day.` });
@@ -569,7 +569,7 @@ function localizedToolPage(t, c, loc) {
     { "@context": "https://schema.org", "@type": "SoftwareApplication", name: name, applicationCategory: "UtilitiesApplication", operatingSystem: "Any (web browser)", offers: { "@type": "Offer", price: "0", priceCurrency: "USD" }, description: desc, url, inLanguage: code },
     { "@context": "https://schema.org", "@type": "FAQPage", inLanguage: code, mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) }
   ];
-  const pageHead = head({ depth: 4, url, ads: false, ld, cat: t.cat, lang: code, dir: loc.dir, alts: altsForTool(t), title: title, ogTitle: name, desc: metaDesc });
+  const pageHead = head({ depth: 4, url, ads: true, ld, cat: t.cat, lang: code, dir: loc.dir, alts: altsForTool(t), title: title, ogTitle: name, desc: metaDesc });
   const relHtml = related.length
     ? `<section class="section"><h2 class="h-sm">${esc(fillStr(C.sec_next, M))}</h2><div class="grid">${related.map((r) => {
         const rc = CATBY[r.cat] || {}, rt = I18N.tools[code][r.id];
@@ -654,7 +654,7 @@ function infoPage(o) {
   const up = "../".repeat(depth) || "./";
   const url = SITE + "/" + o.slug;
   const ld = { "@context": "https://schema.org", "@type": "WebPage", name: o.title, url, description: o.desc };
-  let pageHead = head({ depth, url, ads: false, ld, title: `${o.title} — Vootkit`, ogTitle: o.title, desc: o.desc });
+  let pageHead = head({ depth, url, ads: true, ld, title: `${o.title} — Vootkit`, ogTitle: o.title, desc: o.desc });
   if (o.noindex) pageHead = pageHead.replace("</head>", '<meta name="robots" content="noindex,follow">\n</head>');
   return pageHead +
 `<div class="wrap section">
@@ -744,7 +744,7 @@ function blogIndexPage(posts) {
   const ld = { "@context": "https://schema.org", "@type": "Blog", name: "Vootkit Blog", url,
     description: "Guides, tips and product updates for Vootkit's browser-based tools.",
     blogPost: posts.slice(0, 20).map((p) => ({ "@type": "BlogPosting", headline: p.title, url: SITE + "/blog/" + p.slug + "/", datePublished: p.date })) };
-  let hd = head({ depth: 1, url, ads: false, ld, title: "Vootkit Blog — Guides, tips & updates", ogTitle: "Vootkit Blog",
+  let hd = head({ depth: 1, url, ads: true, ld, title: "Vootkit Blog — Guides, tips & updates", ogTitle: "Vootkit Blog",
     desc: "Practical guides on PDF, image, video and finance tools, plus product updates from Vootkit." });
   if (!hasPosts) hd = hd.replace("</head>", '<meta name="robots" content="noindex,follow">\n</head>');
   const cards = posts.map((p) => `<a class="card blog-card" href="${p.slug}/">
