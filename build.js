@@ -158,10 +158,7 @@ function head(o) {
 <link rel="icon" href="${up}assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="${up}apple-touch-icon.png">
 <link rel="manifest" href="${up}site.webmanifest">
-<link rel="stylesheet" href="${up}assets/css/tokens.css${V}">
-<link rel="stylesheet" href="${up}assets/css/base.css${V}">
-<link rel="stylesheet" href="${up}assets/css/pages.css${V}">
-<link rel="stylesheet" href="${up}assets/css/skin.css${V}">
+<link rel="stylesheet" href="${up}assets/css/app.css${V}">
 ${o.ads ? `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${PUB}" crossorigin="anonymous"></script>` : "<!-- no ads inside an active tool workspace -->"}
 <script async src="https://www.googletagmanager.com/gtag/js?id=${GA4}"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA4}');</script>
@@ -1303,9 +1300,30 @@ const hlines = [
   "  Referrer-Policy: strict-origin-when-cross-origin",
   "  X-Frame-Options: SAMEORIGIN",
   "",
-  "# Always revalidate JS/CSS so a deploy is never masked by a stale cache.",
+  /* Assets are cache-busted by ?v=<content hash> (see V, near the top), so a
+     deploy changes the URL and browsers/CDNs fetch the new file automatically.
+     The old header here was `max-age=0, must-revalidate`, added to stop a stale
+     cache masking a deploy — but the hash already does that, and the header
+     told Cloudflare not to cache CSS/JS at all. Measured result: a 7.05% cache
+     hit rate over 7 days, i.e. essentially every visitor re-downloading every
+     asset from origin. Immutable is correct for hashed URLs. */
+  "# Hashed asset URLs (?v=<hash>) change on every deploy, so these are immutable.",
   "/assets/*",
-  "  Cache-Control: public, max-age=0, must-revalidate",
+  "  Cache-Control: public, max-age=31536000, immutable",
+  "",
+  /* HTML must NOT be immutable — the hash lives inside it. Short shared-cache
+     TTL with revalidation gives the CDN something to serve while still picking
+     up a deploy within the minute. */
+  "# HTML: always revalidate, but let the CDN serve while it does.",
+  "/*.html",
+  "  Cache-Control: public, max-age=0, s-maxage=60, stale-while-revalidate=86400",
+  "",
+  "# Deploy artefacts that change every build.",
+  "/sitemap.xml",
+  "  Cache-Control: public, max-age=3600",
+  "",
+  "/ads.txt",
+  "  Cache-Control: public, max-age=86400",
   "",
   "# Cross-origin isolation for in-browser video processing (scoped — no ad pages).", ""];
 fxIds.forEach((id) => {
@@ -1316,5 +1334,17 @@ fxIds.forEach((id) => {
   hlines.push("  Cross-Origin-Embedder-Policy: credentialless");
   hlines.push("");
 });
+/* One stylesheet instead of four.
+ * tokens/base/pages/skin were four separate render-blocking requests on every
+ * one of 1,478 pages — three extra round trips before the browser can paint,
+ * which matters most on the mobile connections a chunk of our traffic uses.
+ * Concatenated in the SAME order they were linked, so the cascade is identical. */
+const CSS_PARTS = ["tokens.css", "base.css", "pages.css", "skin.css"];
+const cssBundle = CSS_PARTS
+  .map((f) => `/* ---- ${f} ---- */\n` + fs.readFileSync(path.join(ROOT, "assets", "css", f), "utf8"))
+  .join("\n");
+fs.writeFileSync(path.join(ROOT, "assets", "css", "app.css"), cssBundle);
+console.log(`app.css: ${CSS_PARTS.length} files -> ${(cssBundle.length / 1024).toFixed(1)} KB`);
+
 fs.writeFileSync(path.join(ROOT, "_headers"), hlines.join("\n") + "\n");
 console.log(`_headers: ${fxIds.length} isolated tool paths`);
