@@ -2,7 +2,7 @@
 title: "How to Compress a Video for Discord (Without It Looking Terrible)"
 date: "2026-07-31"
 description: "Discord's upload limits, the maths behind hitting them, and which settings to cut first so your clip still looks sharp. Runs in your browser — nothing uploaded."
-thumbnail: "/assets/blog/welcome.svg"
+thumbnail: "/assets/blog/compress-video-discord.jpg"
 author: "The Vootkit team"
 ---
 

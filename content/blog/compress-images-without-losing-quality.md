@@ -2,7 +2,7 @@
 title: "How to Compress Images Without Losing Quality"
 date: "2026-07-31"
 description: "Why image files get large, what compression actually removes, and how to hit a size target without visible quality loss. Includes the settings that matter and the ones that don't."
-thumbnail: "/assets/blog/welcome.svg"
+thumbnail: "/assets/blog/jpeg-quality-comparison.jpg"
 author: "The Vootkit team"
 ---
 
@@ -46,6 +46,8 @@ What it controls is how aggressively the encoder rounds off fine detail. The rel
 | 70 | ~70% smaller | Slight softening in fine texture |
 | 50 | ~80% smaller | Visible blocking in gradients — skies, skin |
 | 30 | ~85% smaller | Obviously degraded |
+
+![The same photograph saved at three JPEG quality levels. The difference between 92 and 45 is hard to see at a glance; at 18 the gradients band and fine detail smears — and the file is barely smaller than 45.](/assets/blog/jpeg-quality-comparison.jpg)
 
 **Going from 100 to 90 costs you almost nothing visually and saves ~40%.** Going from 50 to 40 saves very little more and looks noticeably worse. The sweet spot for most photographs sits between 75 and 85.
 
