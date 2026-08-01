@@ -17,18 +17,38 @@
   'use strict';
 
   var VER = '0.12.10', UTIL = '0.12.1', CORE = '0.12.6';
-  var BASE = 'https://unpkg.com/@ffmpeg/ffmpeg@' + VER + '/dist/umd/ffmpeg.js';
-  var UTILURL = 'https://unpkg.com/@ffmpeg/util@' + UTIL + '/dist/umd/index.js';
-  // @ffmpeg/ffmpeg lazily spawns its engine as a MODULE worker from a webpack chunk
-  // whose URL is relative to ffmpeg.js. Loaded from a CDN that is a cross-origin
-  // Worker (forbidden by the browser), so we pass a same-origin blob of the chunk as
-  // classWorkerURL. NOTE: the chunk name is tied to VER — re-check if VER changes.
-  var CLASSWORKER = 'https://unpkg.com/@ffmpeg/ffmpeg@' + VER + '/dist/umd/814.ffmpeg.js';
-  // The module worker loads the core via dynamic import(), so the core must be the
-  // ESM build (the UMD build never exposes createFFmpegCore to a module worker).
-  // Single-threaded: works on every browser, needs no cross-origin isolation or
-  // SharedArrayBuffer, and sidesteps the core-mt pthread cross-origin worker problem.
-  var COREURL = 'https://unpkg.com/@ffmpeg/core@' + CORE + '/dist/esm/ffmpeg-core.js';
+
+  /* TWO CDNs, TRIED IN ORDER. Every video tool is unusable while the engine is
+     unreachable, and a single CDN is a single point of failure for all eleven
+     of them. Observed live: unpkg accepting connections but never responding,
+     which is worse than an outright failure because a hanging request looks
+     identical to a slow one. jsDelivr mirrors the same npm packages byte for
+     byte, so the fallback needs no version juggling. */
+  var HOSTS = ['https://unpkg.com/', 'https://cdn.jsdelivr.net/npm/'];
+
+  var PKG = {
+    ffmpeg: '@ffmpeg/ffmpeg@' + VER + '/dist/umd/ffmpeg.js',
+    util: '@ffmpeg/util@' + UTIL + '/dist/umd/index.js',
+    // @ffmpeg/ffmpeg lazily spawns its engine as a MODULE worker from a webpack
+    // chunk whose URL is relative to ffmpeg.js. Loaded from a CDN that is a
+    // cross-origin Worker (forbidden by the browser), so we pass a same-origin
+    // blob of the chunk as classWorkerURL.
+    // NOTE: the chunk name is tied to VER — re-check if VER changes.
+    worker: '@ffmpeg/ffmpeg@' + VER + '/dist/umd/814.ffmpeg.js',
+    // The module worker loads the core via dynamic import(), so the core must be
+    // the ESM build (the UMD build never exposes createFFmpegCore to a module
+    // worker). Single-threaded: works on every browser, needs no cross-origin
+    // isolation or SharedArrayBuffer, and sidesteps the core-mt pthread
+    // cross-origin worker problem.
+    core: '@ffmpeg/core@' + CORE + '/dist/esm/ffmpeg-core.js',
+    wasm: '@ffmpeg/core@' + CORE + '/dist/esm/ffmpeg-core.wasm'
+  };
+
+  /* Candidate URLs for one asset, best host first. */
+  function sources(key) {
+    return HOSTS.map(function (h) { return h + PKG[key]; });
+  }
+
   var isolated = typeof root !== 'undefined' && root.crossOriginIsolated === true;
 
   /* ---------- pure helpers (unit-tested) ---------- */
@@ -223,14 +243,43 @@
 
   /* ---------- lazy loader ---------- */
   var _ff = null, _util = null, _loading = null;
-  function loadScript(src) {
+
+  /* A <script> that never loads AND never errors is the worst failure mode we
+     have: the tool sits on "Working…" indefinitely with nothing to report.
+     A CDN that accepts the connection and then goes quiet does exactly that,
+     and it was reproduced live. Every remote load therefore has a deadline. */
+  var SCRIPT_TIMEOUT_MS = 20000;
+
+  function loadScriptFrom(src) {
     return new Promise(function (res, rej) {
       var s = document.createElement('script');
+      var timer = setTimeout(function () {
+        s.onload = s.onerror = null;
+        if (s.parentNode) s.parentNode.removeChild(s);
+        rej(new Error('timeout'));
+      }, SCRIPT_TIMEOUT_MS);
       s.src = src; s.async = true; s.crossOrigin = 'anonymous';
-      s.onload = res; s.onerror = function () { rej(new Error('Could not load the video engine from the CDN — check your connection.')); };
+      s.onload = function () { clearTimeout(timer); res(); };
+      s.onerror = function () { clearTimeout(timer); rej(new Error('failed')); };
       document.head.appendChild(s);
     });
   }
+
+  /* Try each candidate in turn; only the last failure is reported to the user,
+     because "the first CDN was slow" is not information they can act on. */
+  function firstThat(attempt, list, label) {
+    var i = 0;
+    function next() {
+      if (i >= list.length) {
+        return Promise.reject(new Error(
+          'Could not download the video engine (' + label + '). Both content delivery networks are unreachable — check your connection, or any VPN or ad blocker, and try again.'));
+      }
+      return attempt(list[i++]).catch(next);
+    }
+    return next();
+  }
+
+  function loadScript(key) { return firstThat(loadScriptFrom, sources(key), key); }
 
   /* Fetch to a same-origin blob URL, with PROGRESS and a STALL TIMEOUT.
    *
@@ -244,7 +293,13 @@
    * fine and must not be killed, but silence for 30s means it is never coming. */
   var STALL_MS = 30000;
 
-  function fetchBlobURL(url, mime, onBytes) {
+  /* Same two-CDN fallback as loadScript. A stalled or 404'd first host must not
+     end the attempt — the second one usually works. */
+  function fetchBlobURL(key, mime, onBytes) {
+    return firstThat(function (url) { return fetchOne(url, mime, onBytes); }, sources(key), key);
+  }
+
+  function fetchOne(url, mime, onBytes) {
     return new Promise(function (res, rej) {
       var ctrl = typeof AbortController === 'function' ? new AbortController() : null;
       var timer = null;
@@ -295,8 +350,8 @@
       var cap = capability();
       if (!cap.ok) throw new Error(cap.reason);
       say('Starting the video engine…');
-      if (!root.FFmpegWASM) await loadScript(BASE);
-      if (!root.FFmpegUtil) await loadScript(UTILURL);
+      if (!root.FFmpegWASM) await loadScript('ffmpeg');
+      if (!root.FFmpegUtil) await loadScript('util');
       var FFmpeg = root.FFmpegWASM.FFmpeg;
       _util = root.FFmpegUtil;
       var ff = new FFmpeg();
@@ -308,9 +363,9 @@
         return total ? ' ' + Math.round((got / total) * 100) + '%'
                      : ' ' + Math.round(got / 1048576) + ' MB';
       }
-      var worker = await fetchBlobURL(CLASSWORKER, 'text/javascript');
-      var core = await fetchBlobURL(COREURL, 'text/javascript');
-      var wasm = await fetchBlobURL(COREURL.replace(/\.js$/, '.wasm'), 'application/wasm',
+      var worker = await fetchBlobURL('worker', 'text/javascript');
+      var core = await fetchBlobURL('core', 'text/javascript');
+      var wasm = await fetchBlobURL('wasm', 'application/wasm',
         function (got, total) { say('Downloading the video engine — one time, about 32 MB' + pct(got, total)); });
       say('Starting the video engine…');
       await ff.load({ classWorkerURL: worker, coreURL: core, wasmURL: wasm });

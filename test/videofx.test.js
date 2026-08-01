@@ -230,3 +230,46 @@ const withStatus = (vfxSrc.match(/api\.progress, api\.status\)/g) || []).length;
 ok(runCalls.length === withStatus, `all ${runCalls.length} VKVideo.run call sites pass the status channel (got ${withStatus})`);
 
 console.log(`videofx engine-load: ${pass} total assertions passed`);
+
+/* ---------------------------------------------------------------------------
+ * NO REMOTE LOAD MAY HANG, AND ONE CDN MAY NOT TAKE THE TOOLS DOWN
+ *
+ * fetchBlobURL got a stall timeout after the iOS report. loadScript did not,
+ * and that gap was the remaining way to get a permanent spinner: a <script>
+ * whose host accepts the connection and then never responds fires neither load
+ * nor error, so the promise never settles and the tool shows "Working…"
+ * forever with nothing to report. Reproduced live against unpkg.
+ *
+ * All eleven video tools share this one loader, so a single CDN being
+ * unreachable takes the whole category down. jsDelivr serves the same npm
+ * packages and is tried second.
+ * ------------------------------------------------------------------------- */
+ok(/SCRIPT_TIMEOUT_MS/.test(engSrc), "script loading has a deadline, not just fetching");
+ok(/s\.onload = s\.onerror = null;/.test(engSrc),
+   "a timed-out script cannot resolve later and race the fallback");
+ok(/if \(s\.parentNode\) s\.parentNode\.removeChild\(s\)/.test(engSrc),
+   "a timed-out script tag is removed rather than left to execute late");
+ok(/clearTimeout\(timer\); res\(\);/.test(engSrc), "a successful load cancels its own timer");
+
+ok(/var HOSTS = \['https:\/\/unpkg\.com\/', 'https:\/\/cdn\.jsdelivr\.net\/npm\/'\]/.test(engSrc),
+   "two independent CDNs, unpkg first");
+ok(/function firstThat\(attempt, list, label\)/.test(engSrc), "candidates are tried in order");
+ok(/return attempt\(list\[i\+\+\]\)\.catch\(next\)/.test(engSrc),
+   "a failing host falls through to the next instead of failing the load");
+ok(/function loadScript\(key\) \{ return firstThat\(loadScriptFrom, sources\(key\), key\); \}/.test(engSrc),
+   "script loading uses the fallback chain");
+ok(/function fetchBlobURL\(key, mime, onBytes\) \{\s*return firstThat\(/.test(engSrc),
+   "blob fetching uses the fallback chain too");
+
+/* Every remote asset must be declared once, so the two hosts cannot drift and
+   a version bump cannot leave one URL pointing at the old release. */
+['ffmpeg', 'util', 'worker', 'core', 'wasm'].forEach(k => {
+  ok(new RegExp("\\b" + k + ": '@ffmpeg/").test(engSrc), "PKG declares the " + k + " asset");
+});
+ok(!/https:\/\/unpkg\.com\/@ffmpeg/.test(engSrc),
+   "no hardcoded unpkg URL survives outside the HOSTS list");
+ok(/wasm: '@ffmpeg\/core@' \+ CORE \+ '\/dist\/esm\/ffmpeg-core\.wasm'/.test(engSrc),
+   "the .wasm URL is declared, not derived by string-replacing the .js one");
+
+console.log(`videofx cdn: ${pass} total assertions passed`);
+
