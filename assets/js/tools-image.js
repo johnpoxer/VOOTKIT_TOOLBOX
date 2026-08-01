@@ -450,14 +450,11 @@
         var img = await api.loadImage(f);
         var k = canvasFrom(img, img.naturalWidth, img.naturalHeight);
         k.ctx.drawImage(img, 0, 0);
-        var d = k.ctx.getImageData(0, 0, k.c.width, k.c.height), a = d.data;
-        for (var i = 0; i < a.length; i += 4) {
-          var y = 0.299 * a[i] + 0.587 * a[i + 1] + 0.114 * a[i + 2];
-          if (o.mode === 'sepia') { a[i] = Math.min(255, y + 40); a[i + 1] = Math.min(255, y + 20); a[i + 2] = Math.max(0, y - 20); }
-          else { a[i] = a[i + 1] = a[i + 2] = y; }
-        }
+        var src = k.ctx.getImageData(0, 0, k.c.width, k.c.height);
+        var d = await root.VKPixels.run('tone', src, { mode: o.mode },
+          function (frac) { api.progress(0.2 + 0.6 * frac); });
         k.ctx.putImageData(d, 0, 0);
-        api.progress(0.7);
+        api.progress(0.85);
         var blob = await toBlob(k.c, 'image/png');
         return {
           previewUrl: api.urls.make(blob),

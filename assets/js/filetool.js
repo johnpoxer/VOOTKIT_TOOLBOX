@@ -55,7 +55,38 @@
     return null;
   }
 
+  /* Decode an image file.
+   *
+   * createImageBitmap decodes OFF THE MAIN THREAD and skips the DOM element and
+   * object URL entirely, so it is both faster and non-blocking — which matters
+   * most on the batch tools, where twenty photos are decoded back to back and
+   * every one of them used to stall the tab mid-decode.
+   *
+   * `imageOrientation: 'from-image'` IS NOT OPTIONAL. An <img> applies the EXIF
+   * orientation flag automatically; createImageBitmap does not unless asked,
+   * so omitting it would silently start rotating every photo taken on a phone
+   * held sideways.
+   *
+   * The <img> path stays as a fallback: createImageBitmap rejects on SVG in
+   * some browsers, which the svg-to-png tool depends on working. Callers only
+   * ever use drawImage and naturalWidth/naturalHeight, so the two are
+   * interchangeable once those two properties are present. */
   function loadImage(file, urls) {
+    if (typeof createImageBitmap === 'function' && typeof Blob === 'function' && file instanceof Blob) {
+      return createImageBitmap(file, { imageOrientation: 'from-image' })
+        .then(function (bmp) {
+          try {
+            Object.defineProperty(bmp, 'naturalWidth', { value: bmp.width, configurable: true });
+            Object.defineProperty(bmp, 'naturalHeight', { value: bmp.height, configurable: true });
+          } catch (e) { /* frozen exotic object — fall through to the element path */ }
+          return (bmp.naturalWidth === bmp.width) ? bmp : loadImageElement(file, urls);
+        })
+        .catch(function () { return loadImageElement(file, urls); });
+    }
+    return loadImageElement(file, urls);
+  }
+
+  function loadImageElement(file, urls) {
     return new Promise(function (res, rej) {
       var img = new Image();
       var u = urls.make(file);

@@ -15,6 +15,10 @@ const ROOT = __dirname;
 const VK = require("./data/catalog.js");
 const MONEY = Object.assign({}, require("./assets/js/tools-money.js"), require("./assets/js/tools-money2.js"));
 const CALC2 = require("./assets/js/tools-calc2.js");
+/* Tools whose process() calls VKPixels. Kept as an explicit list so a page
+   cannot silently ship without the worker its tool depends on — the test suite
+   checks this against the source. */
+const PIXEL_TOOLS = { "image-sharpen": 1, "grayscale-image": 1 };
 const IMAGE = require("./assets/js/tools-image.js");
 const IMAGE2 = require("./assets/js/tools-image2.js");
 const PDF = require("./assets/js/tools-pdf.js");
@@ -285,8 +289,14 @@ function toolScripts(t) {
   if (VIDEO[t.id]) return ['assets/js/calc.js', 'assets/js/tools-video.js'];
   if (MONEY[t.id]) return ['assets/js/calc.js', 'assets/js/tools-money.js', 'assets/js/tools-money2.js'];
   if (CALC2[t.id]) return ['assets/js/calc.js', 'assets/js/tools-calc2.js'];
-  if (IMAGE[t.id]) return ['assets/js/filetool.js', 'assets/js/tools-image.js'];
-  if (IMAGE2[t.id]) return ['assets/js/filetool.js', 'assets/js/tools-image2.js'];
+  /* pixelworker.js is only needed by the tools that do per-pixel work; loading
+     it everywhere would put a worker payload on pages that never use one. */
+  if (IMAGE[t.id]) return ['assets/js/filetool.js']
+    .concat(PIXEL_TOOLS[t.id] ? ['assets/js/pixelworker.js'] : [])
+    .concat(['assets/js/tools-image.js']);
+  if (IMAGE2[t.id]) return ['assets/js/filetool.js']
+    .concat(PIXEL_TOOLS[t.id] ? ['assets/js/pixelworker.js'] : [])
+    .concat(['assets/js/tools-image2.js']);
   if (PDF[t.id]) return ['assets/js/filetool.js', 'assets/js/tools-pdf.js'];
   if (VIDEOFX[t.id]) return ['assets/js/filetool.js', 'assets/js/videoengine.js', 'assets/js/tools-videofx.js'];
   if (LINKTOOLS.indexOf(t.id) !== -1) return ['assets/js/tools-linktools.js'];

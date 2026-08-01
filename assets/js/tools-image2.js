@@ -254,24 +254,13 @@
         var f = files[0], img = await api.loadImage(f);
         var w = img.naturalWidth, h = img.naturalHeight, k = canvasFrom(w, h);
         k.ctx.drawImage(img, 0, 0);
-        var src = k.ctx.getImageData(0, 0, w, h), dst = k.ctx.createImageData(w, h);
-        var s = src.data, d = dst.data, a = o.amount / 5;         // strength
-        var center = 1 + 4 * a, side = -a;
-        for (var y = 0; y < h; y++) {
-          for (var x = 0; x < w; x++) {
-            var i = (y * w + x) * 4;
-            for (var c = 0; c < 3; c++) {
-              var v = center * s[i + c];
-              if (x > 0) v += side * s[i - 4 + c];
-              if (x < w - 1) v += side * s[i + 4 + c];
-              if (y > 0) v += side * s[i - w * 4 + c];
-              if (y < h - 1) v += side * s[i + w * 4 + c];
-              d[i + c] = v < 0 ? 0 : v > 255 ? 255 : v;
-            }
-            d[i + 3] = s[i + 3];
-          }
-          if (y % 64 === 0) api.progress(0.2 + 0.6 * y / h);
-        }
+        var src = k.ctx.getImageData(0, 0, w, h);
+        /* Off the main thread. This convolution is ~15 operations per pixel —
+           on a 12 MP photo that is 180 million of them, which froze the tab for
+           seconds and meant the progress calls in the old inline loop never
+           reached the screen at all. See pixelworker.js. */
+        var dst = await root.VKPixels.run('sharpen', src, { amount: o.amount },
+          function (frac) { api.progress(0.2 + 0.7 * frac); });
         k.ctx.putImageData(dst, 0, 0);
         var blob = await toBlob(k.c, 'image/png');
         return {
