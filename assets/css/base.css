@@ -126,8 +126,20 @@ label { display: block; font-size: var(--t-sm); font-weight: 600; color: var(--i
 .drop small { font-size: var(--t-sm); }
 
 /* ---------- progress ---------- */
-.bar { height: 8px; border-radius: var(--r-pill); background: var(--surface-sunk); overflow: hidden; }
-.bar > i { display: block; height: 100%; width: 0; border-radius: var(--r-pill); background: var(--accent); transition: width var(--dur) var(--ease); }
+.bar { height: 10px; border-radius: var(--r-pill); background: var(--surface-sunk); overflow: hidden; }
+.bar > i { display: block; height: 100%; width: 0; border-radius: var(--r-pill); background: var(--accent); transition: width 200ms linear; }
+
+/* The readout under the bar: percentage on the left, time remaining on the
+   right. Tabular figures so the number does not jitter as it counts up. */
+.bar-line {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: var(--s-3); margin-top: var(--s-2);
+  font-size: var(--t-sm); color: var(--ink-soft);
+}
+.bar-pct { font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+.bar-eta { font-variant-numeric: tabular-nums; }
+
+@media (prefers-reduced-motion: reduce) { .bar > i { transition: none; } }
 
 /* ---------- notice ---------- */
 .note { font-size: var(--t-base); color: var(--ink-soft); min-height: 22px; }

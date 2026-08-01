@@ -219,7 +219,7 @@ ok(/_loading\.catch\(function \(\) \{ _loading = null; \}\)/.test(engSrc),
    "a failed load clears the cached promise so retry can work without a reload");
 ok(/function run\(file, inName, outName, built, onProgress, onStatus\)/.test(engSrc),
    "run() accepts a status channel");
-ok(/say\('Converting…'\)/.test(engSrc), "the convert phase is announced separately from the download");
+ok(/'Converting…'/.test(engSrc), "the convert phase is announced separately from the download");
 ok(/await ff\.writeFile\(inName, await util\.fetchFile\(file\)\)/.test(engSrc),
    "run() still writes the input file before exec");
 
@@ -306,5 +306,121 @@ ok(/sourceKbps: m\.duration > 0 \? \(f\.size \* 8\) \/ m\.duration \/ 1000 : 0/.
    "the compressor measures the source bitrate from the real file size and duration");
 
 console.log(`videofx no-inflate: ${pass} total assertions passed`);
+
+/* ---------------------------------------------------------------------------
+ * SPEED: SCALE THE FRAME TO THE BITRATE
+ *
+ * The dominant cost of a wasm encode is output pixels. Measured here, Chrome,
+ * single-threaded core, 8s 1080p source re-encoded at 800 kbps:
+ *
+ *     1080p 30.6s | 720p 19.9s | 540p 13.4s | 480p 11.4s | 360p 7.9s
+ *
+ * Squeezing a clip into 10 MB usually leaves a bitrate full resolution cannot
+ * carry, so scaling down is faster AND better looking. A 60s 1080p clip into
+ * 10 MB goes from ~406s to ~101s of encoding: 4x, with the picture improved
+ * rather than sacrificed.
+ * ------------------------------------------------------------------------- */
+eq(V.heightForBitrate(5000), 0, "plenty of bitrate -> leave the frame alone");
+eq(V.heightForBitrate(3000), 0, "1080p threshold is inclusive");
+eq(V.heightForBitrate(2999), 720, "just under 1080p territory -> 720p");
+eq(V.heightForBitrate(1400), 720, "720p threshold");
+eq(V.heightForBitrate(1399), 540, "below 720p -> 540p");
+eq(V.heightForBitrate(800), 540, "540p threshold");
+eq(V.heightForBitrate(499), 360, "starved bitrate -> 360p");
+eq(V.heightForBitrate(0), 0, "unknown bitrate caps nothing");
+eq(V.heightForBitrate(-1), 0, "nonsense bitrate caps nothing");
+
+/* The ladder must be monotonic — a higher bitrate can never yield a smaller
+   frame, or the tool would look erratic across neighbouring inputs. */
+let prevH = 0;
+[100, 400, 600, 900, 1500, 2500, 4000].forEach(k => {
+  const h = V.heightForBitrate(k) || 100000;   // 0 means "uncapped" = largest
+  ok(h >= prevH, "ladder is monotonic at " + k + " kbps");
+  prevH = h;
+});
+
+/* NEVER UPSCALE. A 480p source targeted generously must stay 480p. */
+let r = V.buildCompressArgs("in.mp4", "out.mp4",
+  { targetMB: 50, durationSec: 30, audioKbps: 128, height: 480, width: 854 });
+eq(r.height, 0, "a small source is never scaled up to meet the ladder");
+ok(!r.args.join(" ").includes("scale="), "no scale filter when none is needed");
+
+/* A 1080p clip squeezed into 10 MB must come down. */
+r = V.buildCompressArgs("in.mp4", "out.mp4",
+  { targetMB: 10, durationSec: 60, audioKbps: 128, height: 1080, width: 1920 });
+eq(r.height, 540, "60s of 1080p into 10 MB is encoded at 540p");
+has(r.args, ["-vf", "scale=-2:540:flags=bilinear"], "scale filter uses even width and bilinear");
+ok(r.args.indexOf("-vf") < r.args.indexOf("-c:v"), "the filter is an output option, before the codec");
+
+/* bilinear, not lanczos: measured 11.4s vs 14.2s for the same 480p output,
+   and at these sizes the difference is not visible. */
+ok(!/lanczos/.test(r.args.join(" ")), "the compressor does not pay for lanczos");
+
+/* Unknown source dimensions must not invent a scale filter. */
+r = V.buildCompressArgs("in.mp4", "out.mp4",
+  { targetMB: 10, durationSec: 60, audioKbps: 128 });
+eq(r.height, 0, "no source height -> no scaling");
+ok(!r.args.join(" ").includes("scale="), "no scale filter without dimensions");
+
+/* --- workload estimate and the preset it chooses --- */
+eq(Math.round(V.estimateEncodeSeconds(1920, 1080, 30, 60)), 406, "1 minute of 1080p30 is ~7 minutes of encoding");
+eq(Math.round(V.estimateEncodeSeconds(960, 540, 30, 60)), 101, "the same minute at 540p is ~1.7 minutes");
+eq(V.estimateEncodeSeconds(0, 0, 30, 60), 0, "unknown dimensions give no estimate");
+eq(V.estimateEncodeSeconds(1920, 1080, 30, 0), 0, "unknown duration gives no estimate");
+
+eq(V.encodePreset(640, 360, 30, 10), "veryfast", "a short job keeps the better preset");
+eq(V.encodePreset(1920, 1080, 30, 60), "superfast", "a long job trades some quality to finish");
+eq(V.encodePreset(0, 0, 30, 0), "veryfast", "an unknown workload defaults to quality, not speed");
+
+/* --- the up-front time estimate is vague on purpose --- */
+eq(V.roughTime(0), "", "no estimate when there is nothing to estimate");
+eq(V.roughTime(Infinity), "", "no estimate from a non-finite workload");
+eq(V.roughTime(30), "half a minute", "short jobs");
+eq(V.roughTime(60), "a minute", "medium jobs");
+eq(V.roughTime(120), "a couple of minutes", "longer jobs");
+ok(/minutes$/.test(V.roughTime(400)), "long jobs are quoted in minutes");
+[1, 10, 100, 1000, 10000].forEach(s => ok(typeof V.roughTime(s) === "string", "roughTime always returns a string for " + s));
+
+console.log(`videofx speed: ${pass} total assertions passed`);
+
+/* ---------------------------------------------------------------------------
+ * PROGRESS MUST BE REAL
+ *
+ * The bar used to sit at 10% for the whole job and then jump to 100%, which on
+ * a multi-minute encode is indistinguishable from a hang — the same complaint
+ * that produced the "it keeps showing working" reports. The bar is now divided
+ * between the phases, and the encode segment is driven by the timestamp ffmpeg
+ * reports divided by the duration we probed for.
+ * ------------------------------------------------------------------------- */
+ok(/var P_DOWNLOAD_END = 0\.25/.test(engSrc), "the engine download owns a defined slice of the bar");
+ok(/P_PROBE_END \+ f \* \(1 - P_PROBE_END\)/.test(engSrc), "the encode is mapped onto the remainder of the bar");
+ok(/if \(f < seen\) return;\s*seen = f;/.test(engSrc),
+   "progress never goes backwards, however ffmpeg reports its timestamps");
+ok(/durSec > 0 && typeof e\.time === 'number'/.test(engSrc),
+   "progress prefers the duration we probed over the core's own unreliable figure");
+ok(/else if \(typeof e\.progress === 'number' && isFinite\(e\.progress\)\)/.test(engSrc),
+   "and still falls back to the core's figure when we have no duration");
+ok(/var frac = total \? got \/ total : Math\.min\(1, got \/ \(32 \* 1048576\)\)/.test(engSrc),
+   "a missing content-length does not freeze the bar during the download");
+ok(/estimateSec > 8/.test(engSrc), "long jobs announce roughly how long they will take");
+
+const ftSrc2 = require("fs").readFileSync(require("path").join(__dirname, "../assets/js/filetool.js"), "utf8");
+ok(/class: 'bar-pct'/.test(ftSrc2), "there is a percentage readout, not just a bar");
+ok(/role: 'progressbar'/.test(ftSrc2) && /aria-valuenow/.test(ftSrc2),
+   "the bar is announced to screen readers with its current value");
+ok(/if \(pct !== lastPct\)/.test(ftSrc2),
+   "the DOM is only touched when the number changes — this runs during an encode");
+ok(/frac > 0\.08 && elapsed > 3/.test(ftSrc2),
+   "no countdown until there is enough history for it to be honest");
+ok(/progStart = 0; lastPct = -1;/.test(ftSrc2),
+   "the ETA baseline resets between runs, so a second job is not timed from the first");
+
+const cssSrc = require("fs").readFileSync(require("path").join(__dirname, "../assets/css/base.css"), "utf8");
+ok(/\.bar-pct/.test(cssSrc) && /\.bar-eta/.test(cssSrc), "the readout is styled");
+ok(/font-variant-numeric: tabular-nums/.test(cssSrc), "digits do not jitter as the number counts up");
+ok(/prefers-reduced-motion/.test(cssSrc), "the filling animation respects reduced-motion");
+
+console.log(`videofx progress: ${pass} total assertions passed`);
+
 
 

@@ -102,23 +102,30 @@
           built = root.VKVideo.buildCompressArgs(inName, 'out.mp4', {
             targetMB: o.target, durationSec: m.duration, audioKbps: o.audio,
             // The source's own average bitrate, so we never encode upwards.
-            sourceKbps: m.duration > 0 ? (f.size * 8) / m.duration / 1000 : 0
+            sourceKbps: m.duration > 0 ? (f.size * 8) / m.duration / 1000 : 0,
+            // Let the builder scale down when the bitrate can't carry the frame.
+            height: m.h || 0, width: m.w || 0
           });
           return built;
         }, api.progress, api.status);
         var blob = outBlob(data, 'video/mp4');
         if (!blob.size) throw new Error('The compressed file came back empty — this clip may use a codec the in-browser encoder can’t read. Try converting it to MP4 first.');
         var fit = blob.size <= o.target * 1048576;
+        var scaled = built.height > 0;
         return {
           stats: [
             { label: 'Original', value: api.bytes(f.size) },
             { label: 'Compressed', value: api.bytes(blob.size) },
-            { label: 'Length', value: clock(meta && meta.duration) },
+            { label: 'Resolution', value: scaled ? built.height + 'p' : (meta && meta.h ? meta.h + 'p' : 'unchanged') },
             { label: 'Video bitrate', value: built.videoKbps + ' kbps' }
           ],
           downloads: [{ label: 'Download MP4', blob: blob, name: baseName(f.name) + '-' + o.target + 'mb.mp4' }],
           status: fit ? 'Compressed to fit ' + o.target + ' MB' : 'Compressed (close to target)',
-          note: fit ? 'Ready to drop into Discord.' : 'Landed just over target — try the next size down for audio, or trim a few seconds.'
+          note: !fit
+            ? 'Landed just over target — try the next size down for audio, or trim a few seconds.'
+            : scaled
+              ? 'Ready for Discord. Scaled to ' + built.height + 'p — at ' + built.videoKbps + ' kbps that looks better than keeping the original frame size, and it encoded faster.'
+              : 'Ready to drop into Discord.'
         };
       }
     },

@@ -98,7 +98,18 @@
 
     var err = el('p', { class: 'note err', hidden: 'hidden', role: 'alert' });
     var status = el('p', { class: 'note', role: 'status', 'aria-live': 'polite' });
-    var bar = el('div', { class: 'bar', hidden: 'hidden' }, [el('i')]);
+    /* Progress readout. A bare bar is not enough on the video tools, where a
+       job can run for minutes: without a number people cannot tell a slow
+       encode from a hung one, and they close the tab. The bar carries an
+       explicit percentage and, once there is enough history to be honest about
+       it, a time remaining. */
+    var pctText = el('span', { class: 'bar-pct', text: '0%' });
+    var etaText = el('span', { class: 'bar-eta' });
+    var barLine = el('div', { class: 'bar-line', hidden: 'hidden' }, [pctText, etaText]);
+    var bar = el('div', {
+      class: 'bar', hidden: 'hidden', role: 'progressbar',
+      'aria-valuemin': '0', 'aria-valuemax': '100'
+    }, [el('i')]);
     var controls = el('div', { class: 'ft-controls', hidden: 'hidden' });
     var result = el('div', { class: 'ft-result' });
 
@@ -107,14 +118,48 @@
     host.appendChild(err);
     host.appendChild(controls);
     host.appendChild(bar);
+    host.appendChild(barLine);
     host.appendChild(status);
     host.appendChild(result);
 
     function fail(msg) { err.textContent = msg; err.hidden = false; status.textContent = ''; }
     function clearErr() { err.hidden = true; }
+    /* ETA is computed from elapsed time against progress made, but only once
+       the job is far enough in for the estimate not to be nonsense. Early
+       readings on a video encode are wildly optimistic — the first frames are
+       cheap — and a countdown that jumps from "4s left" to "3m left" is worse
+       than no countdown. `progStart` is reset by setProgress(null). */
+    var progStart = 0, lastPct = -1;
+
+    function fmtEta(sec) {
+      if (!isFinite(sec) || sec < 0) return '';
+      if (sec < 60) return Math.max(1, Math.round(sec)) + 's left';
+      var m = Math.floor(sec / 60);
+      return m + 'm ' + Math.round(sec % 60) + 's left';
+    }
+
     function setProgress(p) {
-      bar.hidden = p == null;
-      if (p != null) bar.firstChild.style.width = Math.round(Math.max(0, Math.min(1, p)) * 100) + '%';
+      if (p == null) {
+        bar.hidden = true; barLine.hidden = true;
+        progStart = 0; lastPct = -1; etaText.textContent = '';
+        return;
+      }
+      var frac = Math.max(0, Math.min(1, p));
+      var pct = Math.round(frac * 100);
+      if (!progStart) progStart = Date.now();
+      bar.hidden = false; barLine.hidden = false;
+      /* Only touch the DOM when the number actually changes: ffmpeg reports
+         progress many times a second and this runs alongside the encode. */
+      if (pct !== lastPct) {
+        lastPct = pct;
+        bar.firstChild.style.width = pct + '%';
+        bar.setAttribute('aria-valuenow', String(pct));
+        pctText.textContent = pct + '%';
+      }
+      var elapsed = (Date.now() - progStart) / 1000;
+      etaText.textContent = (frac > 0.08 && elapsed > 3 && frac < 0.99)
+        ? fmtEta(elapsed / frac - elapsed)
+        : '';
     }
 
     /* build the option controls once */
