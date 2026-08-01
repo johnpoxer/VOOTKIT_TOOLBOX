@@ -121,4 +121,51 @@ console.log(`seo: ${pass} assertions passed`);
   ok(withCat.length > 50, `category qualifier retained where it fits (${withCat.length} pages)`);
 }
 
+
+/* ---------------------------------------------------------------------------
+ * SITEMAP SCOPE — ENGLISH ONLY
+ *
+ * Search Console, 1 Aug 2026, with all 1,484 URLs listed: 10 indexed, 54
+ * "Crawled — currently not indexed", average position 84.8, two clicks in three
+ * months. A sitemap is a request for crawl attention; on a domain with no
+ * authority, asking for nine near-duplicate translations of every page before
+ * one English page ranks spends that attention on pages that cannot convert it.
+ *
+ * The localised pages must STAY LIVE with hreflang intact — this is a
+ * prioritisation change, not a removal. Both halves are asserted here because
+ * getting only half of it right is worse than doing neither.
+ * ------------------------------------------------------------------------- */
+{
+  const fs = require("fs"), path = require("path");
+  const root = path.join(__dirname, "..");
+  const sm = fs.readFileSync(path.join(root, "sitemap.xml"), "utf8");
+  const locs = [...sm.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
+
+  ok(locs.length > 200, "the sitemap still lists the English pages, got " + locs.length);
+  const localised = locs.filter(u => /vootkit\.com\/(ar|de|es|fr|hi|id|it|pt|zh)\//.test(u));
+  eq(localised.length, 0, "no localised URL is listed, got " + localised.length);
+
+  ok(/<lastmod>\d{4}-\d\d-\d\d<\/lastmod>/.test(sm), "entries carry a lastmod so Google can prioritise recrawls");
+  ok(locs.every(u => u.startsWith("https://www.vootkit.com/")), "every entry is absolute and on the canonical host");
+  eq(locs.length, new Set(locs).size, "no duplicate entries");
+
+  /* The pages themselves must still exist and still declare their alternates,
+     or this stops being a prioritisation change and becomes a deletion. */
+  const sample = path.join(root, "es/tools/developer/json-formatter/index.html");
+  if (fs.existsSync(sample)) {
+    const html = fs.readFileSync(sample, "utf8");
+    ok(/hreflang="es"/.test(html) && /hreflang="en"/.test(html),
+       "localised pages keep their hreflang alternates");
+    ok(/rel="canonical" href="https:\/\/www\.vootkit\.com\/es\//.test(html),
+       "a localised page still self-canonicalises rather than pointing at English");
+    ok(!/noindex/i.test(html), "localised pages are not noindexed — they stay indexable, just not prioritised");
+  }
+
+  /* robots.txt must keep pointing at the sitemap, and must not have started
+     blocking the localised directories. */
+  const robots = fs.readFileSync(path.join(root, "robots.txt"), "utf8");
+  ok(/Sitemap: https:\/\/www\.vootkit\.com\/sitemap\.xml/.test(robots), "robots.txt still declares the sitemap");
+  ok(!/Disallow: \/(ar|de|es|fr|hi|id|it|pt|zh)/.test(robots), "localised paths are not disallowed");
+}
+
 console.log(`seo + titles: ${pass} total assertions passed`);

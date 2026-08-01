@@ -1241,22 +1241,46 @@ I18N.LOCALES.forEach((loc) => {
 });
 console.log(`generated ${pages} pages (${localizedPages} localised)`);
 
-/* sitemap */
-const urls = ["/", "/tools/", "/pricing.html", "/about.html", "/contact.html", "/privacy.html", "/terms.html"]
+/* sitemap
+ *
+ * ENGLISH ONLY, DELIBERATELY.
+ *
+ * The sitemap used to carry all 1,484 URLs, of which 1,192 were the nine
+ * localised copies of each tool. Search Console on 1 Aug 2026, before this
+ * changed: 10 pages indexed, 65 not indexed, 54 of those "Crawled — currently
+ * not indexed", average position 84.8, two clicks in three months.
+ *
+ * A sitemap is a request for crawl attention, and on a domain with no authority
+ * that attention is scarce. Spending it on nine near-duplicate translations of
+ * every page — before a single English page ranks — competes with the pages
+ * that actually have a chance, and "crawled, currently not indexed" is exactly
+ * the signal that Google has looked at thin pages and declined.
+ *
+ * The localised pages REMAIN LIVE and keep their hreflang and canonical tags,
+ * so Google can still reach and cluster them through the alternates on every
+ * English page. This only changes what we actively ask it to prioritise.
+ * Revisit once English pages hold real positions. */
+const enUrls = ["/", "/tools/", "/pricing.html", "/about.html", "/contact.html", "/privacy.html", "/terms.html"]
   .concat(POSTS.length ? ["/blog/"] : [])                       // only list blog when it has posts
   .concat(POSTS.map((p) => `/blog/${p.slug}/`))
   .concat(VK.CATEGORIES.map((c) => `/tools/${c.slug}/`))
-  .concat(VK.TOOLS.filter((t) => t.status === "live").map((t) => `/tools/${t.cat}/${t.id}/`))   // exclude noindexed under-construction tools
-  .concat([].concat.apply([], I18N.LOCALES.map((loc) => (I18N.chrome[loc.code] && I18N.tools[loc.code])
-    ? VK.TOOLS.filter((t) => t.status === "live" && I18N.tools[loc.code][t.id]).map((t) => `/${loc.code}/tools/${t.cat}/${t.id}/`)
-    : [])));
+  .concat(VK.TOOLS.filter((t) => t.status === "live").map((t) => `/tools/${t.cat}/${t.id}/`));  // exclude noindexed under-construction tools
+
+const localisedCount = [].concat.apply([], I18N.LOCALES.map((loc) => (I18N.chrome[loc.code] && I18N.tools[loc.code])
+  ? VK.TOOLS.filter((t) => t.status === "live" && I18N.tools[loc.code][t.id])
+  : [])).length;
+
+/* lastmod helps Google decide what to recrawl. Build date is honest at this
+   granularity — every page is regenerated on every deploy. */
+const BUILD_DAY = new Date().toISOString().slice(0, 10);
+
 fs.writeFileSync(path.join(ROOT, "sitemap.xml"),
 `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map((u) => `  <url><loc>${SITE}${u}</loc><changefreq>${u === "/" ? "weekly" : "monthly"}</changefreq></url>`).join("\n")}
+${enUrls.map((u) => `  <url><loc>${SITE}${u}</loc><lastmod>${BUILD_DAY}</lastmod><changefreq>${u === "/" ? "weekly" : "monthly"}</changefreq></url>`).join("\n")}
 </urlset>
 `);
-console.log(`sitemap: ${urls.length} urls`);
+console.log(`sitemap: ${enUrls.length} urls (${localisedCount} localised pages live but not listed — see the note above)`);
 
 /* robots */
 fs.writeFileSync(path.join(ROOT, "robots.txt"),
