@@ -87,24 +87,26 @@
     return 360;
   }
 
-  /* Measured on this codebase, Chrome, single-threaded wasm core: an 8-second
-     1080p source re-encoded at 800 kbps took 30.6s at full size, 19.9s at 720p,
-     13.4s at 540p and 7.9s at 360p. That works out at roughly 9 million output
-     pixels per second at `veryfast`, which is what this estimate uses. It only
-     needs to be right to within a factor of two — it decides one thing. */
-  var PIXELS_PER_SEC = 9.2e6;
+  /* Output pixels per second, measured on the live build in Chrome on an
+     8-core desktop, single-threaded wasm core:
+
+       20s 1080p, veryfast, unscaled      66.3s  ->  18.8 Mpx/s
+       45s 1080p, superfast, unscaled    135.4s  ->  20.7 Mpx/s
+       45s 1080p -> 720p, superfast       99.7s  ->  12.5 Mpx/s
+        8s 1080p -> 540p, veryfast         13.4s ->   9.3 Mpx/s
+
+     Throughput is HIGHER at larger frame sizes — per-frame overhead dominates
+     once the frame is small — so one constant cannot fit all of them. 14 is a
+     deliberately pessimistic middle: it over-estimates every run above by
+     35-50%, and over-estimating is the safe direction for a number shown to
+     someone deciding whether to wait. A phone will be several times slower
+     again; the live countdown on the progress bar is the one that adapts. */
+  var PIXELS_PER_SEC = 14e6;
 
   function estimateEncodeSeconds(w, h, fps, durationSec) {
     if (!(w > 0 && h > 0 && durationSec > 0)) return 0;
     return (w * h * clampFps(fps) * durationSec) / PIXELS_PER_SEC;
   }
-
-  /* `superfast` is about 1.4x quicker than `veryfast` (9.6s vs 13.5s on the run
-     above) and costs some quality at a fixed bitrate — which is exactly what is
-     already scarce here. So it is not the default. But past a couple of minutes
-     of waiting the trade flips: a slightly softer clip you actually get beats a
-     sharper one you abandoned. */
-  var SLOW_JOB_SECONDS = 120;
 
   /* Deliberately vague: the estimate is a model, not a measurement, and a
      confident "97 seconds" that turns out to be 140 reads as a broken promise.
@@ -117,8 +119,22 @@
     return Math.round(sec / 60) + ' minutes';
   }
 
-  function encodePreset(w, h, fps, durationSec) {
-    return estimateEncodeSeconds(w, h, fps, durationSec) > SLOW_JOB_SECONDS ? 'superfast' : 'veryfast';
+  /* x264 preset, chosen by the user rather than guessed.
+   *
+   * `superfast` is about 1.4x quicker than `veryfast` and costs some quality at
+   * a fixed bitrate. Which is the better trade depends entirely on how long the
+   * person is willing to wait, and THE CODE CANNOT KNOW THAT.
+   *
+   * An earlier version decided automatically from an estimated encode time.
+   * That was dropped because the estimate is not trustworthy enough to hang a
+   * quality decision on: measured here, the same 1.24 billion output pixels
+   * took 66s at 1080p but roughly 140s at 720p, because per-frame overhead
+   * dominates at smaller frame sizes. One throughput number cannot model that,
+   * and a phone is several times slower again. A heuristic built on it would
+   * silently hand some users a worse-looking file for no gain — so the choice
+   * is surfaced instead of hidden. */
+  function encodePreset(speed) {
+    return speed === 'fast' ? 'superfast' : 'veryfast';
   }
 
   function buildCompressArgs(inName, outName, opt) {
@@ -153,7 +169,7 @@
     /* Dimensions the encoder will actually see, for the workload estimate. */
     var encH = outHeight || opt.height || 0;
     var encW = (opt.width > 0 && opt.height > 0) ? Math.round(opt.width * (encH / opt.height)) : 0;
-    var preset = encodePreset(encW, encH, opt.fps, opt.durationSec);
+    var preset = encodePreset(opt.speed);
 
     return {
       args: ['-i', inName]

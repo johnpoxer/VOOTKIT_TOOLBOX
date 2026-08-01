@@ -85,7 +85,12 @@
         { k: 'target', label: 'Fit into', type: 'select', def: 10,
           options: [{ v: 10, label: '10 MB (Discord free)' }, { v: 50, label: '50 MB (Nitro Basic)' }, { v: 500, label: '500 MB (Nitro)' }] },
         { k: 'audio', label: 'Audio quality', type: 'select', def: 128,
-          options: [{ v: 96, label: '96 kbps' }, { v: 128, label: '128 kbps' }, { v: 192, label: '192 kbps' }] }
+          options: [{ v: 96, label: '96 kbps' }, { v: 128, label: '128 kbps' }, { v: 192, label: '192 kbps' }] },
+        /* The file size is fixed by the target either way — this trades encode
+           time against how good the picture is within that budget, which is a
+           judgement call only the person waiting can make. */
+        { k: 'speed', label: 'Encoding', type: 'select', def: 'balanced',
+          options: [{ v: 'balanced', label: 'Balanced quality' }, { v: 'fast', label: 'Faster (about 1.4×, slightly softer)' }] }
       ],
       process: async function (files, o, api) {
         warnCapability();
@@ -104,7 +109,8 @@
             // The source's own average bitrate, so we never encode upwards.
             sourceKbps: m.duration > 0 ? (f.size * 8) / m.duration / 1000 : 0,
             // Let the builder scale down when the bitrate can't carry the frame.
-            height: m.h || 0, width: m.w || 0
+            height: m.h || 0, width: m.w || 0,
+            speed: o.speed
           });
           return built;
         }, api.progress, api.status);

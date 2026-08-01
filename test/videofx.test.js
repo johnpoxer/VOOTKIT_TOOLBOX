@@ -363,14 +363,38 @@ eq(r.height, 0, "no source height -> no scaling");
 ok(!r.args.join(" ").includes("scale="), "no scale filter without dimensions");
 
 /* --- workload estimate and the preset it chooses --- */
-eq(Math.round(V.estimateEncodeSeconds(1920, 1080, 30, 60)), 406, "1 minute of 1080p30 is ~7 minutes of encoding");
-eq(Math.round(V.estimateEncodeSeconds(960, 540, 30, 60)), 101, "the same minute at 540p is ~1.7 minutes");
+ok(V.estimateEncodeSeconds(1920, 1080, 30, 60) > V.estimateEncodeSeconds(960, 540, 30, 60),
+   "a bigger frame is estimated to take longer");
 eq(V.estimateEncodeSeconds(0, 0, 30, 60), 0, "unknown dimensions give no estimate");
 eq(V.estimateEncodeSeconds(1920, 1080, 30, 0), 0, "unknown duration gives no estimate");
+/* Calibrated against measured runs (66s for 20s of 1080p, 135s for 45s of
+   1080p). The constant is deliberately pessimistic, so the estimate must sit
+   above the measurement but not absurdly so. */
+let e20 = V.estimateEncodeSeconds(1920, 1080, 30, 20);
+ok(e20 > 66 && e20 < 66 * 2.5, "the 20s 1080p estimate brackets the 66s measured, on the safe side");
+let e45 = V.estimateEncodeSeconds(1920, 1080, 30, 45);
+ok(e45 > 135 && e45 < 135 * 2.5, "the 45s 1080p estimate brackets the 135s measured");
 
-eq(V.encodePreset(640, 360, 30, 10), "veryfast", "a short job keeps the better preset");
-eq(V.encodePreset(1920, 1080, 30, 60), "superfast", "a long job trades some quality to finish");
-eq(V.encodePreset(0, 0, 30, 0), "veryfast", "an unknown workload defaults to quality, not speed");
+/* --- the speed/quality trade is the user's, not a heuristic's --- */
+eq(V.encodePreset("balanced"), "veryfast", "balanced keeps the better preset");
+eq(V.encodePreset("fast"), "superfast", "fast trades quality for ~1.4x");
+eq(V.encodePreset(undefined), "veryfast", "no choice defaults to quality, never to the faster preset");
+eq(V.encodePreset("nonsense"), "veryfast", "an unrecognised value defaults to quality");
+eq(V.encodePreset(null), "veryfast", "null defaults to quality");
+
+has(V.buildCompressArgs("in.mp4", "out.mp4",
+  { targetMB: 10, durationSec: 60, audioKbps: 128, height: 1080, width: 1920, speed: "fast" }).args,
+  ["-preset", "superfast"], "the fast choice reaches ffmpeg");
+has(V.buildCompressArgs("in.mp4", "out.mp4",
+  { targetMB: 10, durationSec: 60, audioKbps: 128, height: 1080, width: 1920 }).args,
+  ["-preset", "veryfast"], "the default reaches ffmpeg");
+
+/* The option must exist in the UI, or the engine parameter is unreachable. */
+const speedOpt = (FX["compress-for-discord"].options || []).find(o => o.k === "speed");
+ok(speedOpt, "the compressor exposes an encoding-speed option");
+eq(speedOpt.def, "balanced", "quality is the default, not speed");
+eq(speedOpt.options.map(o => o.v).sort().join(","), "balanced,fast", "exactly the two documented choices");
+ok(/speed: o\.speed/.test(vfxSrc), "the chosen speed is passed through to the builder");
 
 /* --- the up-front time estimate is vague on purpose --- */
 eq(V.roughTime(0), "", "no estimate when there is nothing to estimate");
