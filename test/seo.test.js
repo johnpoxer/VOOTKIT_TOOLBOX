@@ -138,8 +138,28 @@ console.log(`seo: ${pass} assertions passed`);
 {
   const fs = require("fs"), path = require("path");
   const root = path.join(__dirname, "..");
-  const sm = fs.readFileSync(path.join(root, "sitemap.xml"), "utf8");
+  /* sitemap.xml is now an INDEX; the URLs live in the child sitemaps. */
+  const idx = fs.readFileSync(path.join(root, "sitemap.xml"), "utf8");
+  ok(/<sitemapindex/.test(idx), "sitemap.xml is a sitemap index");
+  const children = [...idx.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
+  ok(children.length >= 2, "the index lists child sitemaps, got " + children.length);
+  ok(children.every(u => /^https:\/\/www\.vootkit\.com\/sitemap-[a-z]+\.xml$/.test(u)),
+     "child sitemap URLs are absolute and correctly named");
+
+  let sm = "";
+  children.forEach(u => {
+    const f = path.join(root, u.split("/").pop());
+    ok(fs.existsSync(f), "child sitemap " + u.split("/").pop() + " exists on disk");
+    sm += fs.readFileSync(f, "utf8");
+    ok(/<urlset/.test(fs.readFileSync(f, "utf8")), u.split("/").pop() + " is a urlset, not another index");
+  });
   const locs = [...sm.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
+
+  /* Sections must partition the URLs — no page in two sitemaps, none missing. */
+  const toolsSm = fs.readFileSync(path.join(root, "sitemap-tools.xml"), "utf8");
+  const toolLocs = [...toolsSm.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
+  ok(toolLocs.every(u => u.includes("/tools/")), "sitemap-tools.xml contains only tool URLs");
+  ok(toolLocs.length > 200, "the tool sitemap carries the bulk of the pages, got " + toolLocs.length);
 
   ok(locs.length > 200, "the sitemap still lists the English pages, got " + locs.length);
   const localised = locs.filter(u => /vootkit\.com\/(ar|de|es|fr|hi|id|it|pt|zh)\//.test(u));

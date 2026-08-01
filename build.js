@@ -1274,13 +1274,44 @@ const localisedCount = [].concat.apply([], I18N.LOCALES.map((loc) => (I18N.chrom
    granularity — every page is regenerated on every deploy. */
 const BUILD_DAY = new Date().toISOString().slice(0, 10);
 
+/* SPLIT INTO A SITEMAP INDEX — for diagnosis, not for ranking.
+ *
+ * Splitting a sitemap does not make Google index more; the 50,000-URL limit is
+ * nowhere near. What it buys is VISIBILITY: Search Console reports indexed
+ * counts per child sitemap, so "are the tool pages getting indexed, or only the
+ * blog?" becomes a number you can read instead of a guess. With 10 pages
+ * indexed out of 292 that question is the whole game. */
+const SECTIONS = {
+  "sitemap-core.xml": enUrls.filter((u) => !u.startsWith("/tools/") && !u.startsWith("/blog/")),
+  "sitemap-tools.xml": enUrls.filter((u) => u.startsWith("/tools/")),
+  "sitemap-blog.xml": enUrls.filter((u) => u.startsWith("/blog/"))
+};
+
+function urlset(list) {
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${list.map((u) => `  <url><loc>${SITE}${u}</loc><lastmod>${BUILD_DAY}</lastmod><changefreq>${u === "/" ? "weekly" : "monthly"}</changefreq></url>`).join("\n")}
+</urlset>
+`;
+}
+
+const written = [];
+Object.keys(SECTIONS).forEach((name) => {
+  if (!SECTIONS[name].length) return;          // never emit an empty sitemap
+  fs.writeFileSync(path.join(ROOT, name), urlset(SECTIONS[name]));
+  written.push({ name, n: SECTIONS[name].length });
+});
+
+/* The index keeps the filename Google already has on file, so the submission
+   made on 1 Aug 2026 continues to resolve. */
 fs.writeFileSync(path.join(ROOT, "sitemap.xml"),
 `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${enUrls.map((u) => `  <url><loc>${SITE}${u}</loc><lastmod>${BUILD_DAY}</lastmod><changefreq>${u === "/" ? "weekly" : "monthly"}</changefreq></url>`).join("\n")}
-</urlset>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${written.map((s) => `  <sitemap><loc>${SITE}/${s.name}</loc><lastmod>${BUILD_DAY}</lastmod></sitemap>`).join("\n")}
+</sitemapindex>
 `);
-console.log(`sitemap: ${enUrls.length} urls (${localisedCount} localised pages live but not listed — see the note above)`);
+console.log(`sitemap index: ${written.map((s) => s.name + " (" + s.n + ")").join(", ")}` +
+  ` — ${enUrls.length} English urls; ${localisedCount} localised pages live but not listed`);
 
 /* robots */
 fs.writeFileSync(path.join(ROOT, "robots.txt"),
@@ -1308,7 +1339,13 @@ const OLD_TO_NEW = {
 const OLD_CAT = { "ai-on-device":"ai","utilities":"everyday","time":"everyday","fun":"everyday",
   "science":"everyday","health":"everyday","weather-and-travel":"everyday","downloads":"privacy","media":"everyday" };
 
-const lines = ["# 301s from the previous URL scheme — keep indexed pages alive", ""];
+/* Directory URLs are canonical. /x/index.html serves 200 un-redirected, which
+   duplicates every one of the 261 tool pages at a second URL. The canonical tag
+   already points at the directory form — this stops the duplicate existing at
+   all. `301!` forces the rule even though the file is present. */
+const lines = ["# 301s from the previous URL scheme — keep indexed pages alive", "",
+  "# Directory URLs are canonical: /x/index.html duplicates /x/ on every page.",
+  "/*/index.html   /:splat/   301!", ""];
 Object.keys(OLD_TO_NEW).forEach((oldId) => {
   const t = VK.find(OLD_TO_NEW[oldId]);
   if (t) lines.push(`/t/${oldId}.html   /tools/${t.cat}/${t.id}/   301`);
@@ -1351,7 +1388,7 @@ const hlines = [
   "  Cache-Control: public, max-age=31536000, immutable",
   "",
   "# Deploy artefacts that change every build.",
-  "/sitemap.xml",
+  "/sitemap.xml", "/sitemap-core.xml", "/sitemap-tools.xml", "/sitemap-blog.xml",
   "  Cache-Control: public, max-age=3600",
   "",
   "/ads.txt",
