@@ -99,8 +99,11 @@
         var data = await root.VKVideo.run(f, inName, 'out.mp4', function (m) {
           meta = m;
           guardMeta(m);
-          built = root.VKVideo.buildCompressArgs(inName, 'out.mp4',
-            { targetMB: o.target, durationSec: m.duration, audioKbps: o.audio });
+          built = root.VKVideo.buildCompressArgs(inName, 'out.mp4', {
+            targetMB: o.target, durationSec: m.duration, audioKbps: o.audio,
+            // The source's own average bitrate, so we never encode upwards.
+            sourceKbps: m.duration > 0 ? (f.size * 8) / m.duration / 1000 : 0
+          });
           return built;
         }, api.progress, api.status);
         var blob = outBlob(data, 'video/mp4');

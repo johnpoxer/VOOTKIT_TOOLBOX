@@ -273,3 +273,38 @@ ok(/wasm: '@ffmpeg\/core@' \+ CORE \+ '\/dist\/esm\/ffmpeg-core\.wasm'/.test(eng
 
 console.log(`videofx cdn: ${pass} total assertions passed`);
 
+/* ---------------------------------------------------------------------------
+ * A COMPRESSOR MUST NOT MAKE FILES BIGGER
+ *
+ * Working backwards from the target alone treats it as a quota rather than a
+ * ceiling, so a clip that already fits gets re-encoded UP to fill it. Observed
+ * live: a 0.46 MB input came back at 1.31 MB, "Compressed to fit 10 MB".
+ * The source's own average bitrate is the cap.
+ * ------------------------------------------------------------------------- */
+const small = V.buildCompressArgs("in.mp4", "out.mp4",
+  { targetMB: 10, durationSec: 10, audioKbps: 128, sourceKbps: 400 });
+ok(small.videoKbps <= 400 - 128, "never exceeds the source bitrate, so a small file stays small");
+ok(small.videoKbps >= 50, "still encodes rather than refusing");
+
+const big = V.buildCompressArgs("in.mp4", "out.mp4",
+  { targetMB: 10, durationSec: 600, audioKbps: 128, sourceKbps: 8000 });
+eq(big.videoKbps, V.buildCompressArgs("in.mp4", "out.mp4",
+  { targetMB: 10, durationSec: 600, audioKbps: 128 }).videoKbps,
+  "a genuinely oversized clip is unaffected by the cap");
+
+/* The cap must never push the bitrate to something unusable or negative. */
+const tiny = V.buildCompressArgs("in.mp4", "out.mp4",
+  { targetMB: 10, durationSec: 10, audioKbps: 128, sourceKbps: 130 });
+ok(tiny.videoKbps >= 50, "a source barely above the audio bitrate still yields a sane video bitrate");
+[0, -5, NaN, Infinity, undefined, null].forEach(v => {
+  const r = V.buildCompressArgs("in.mp4", "out.mp4",
+    { targetMB: 10, durationSec: 60, audioKbps: 128, sourceKbps: v });
+  ok(r.videoKbps > 0 && isFinite(r.videoKbps), "a nonsense sourceKbps (" + v + ") is ignored, not applied");
+});
+
+ok(/sourceKbps: m\.duration > 0 \? \(f\.size \* 8\) \/ m\.duration \/ 1000 : 0/.test(vfxSrc),
+   "the compressor measures the source bitrate from the real file size and duration");
+
+console.log(`videofx no-inflate: ${pass} total assertions passed`);
+
+

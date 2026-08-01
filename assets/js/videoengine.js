@@ -71,6 +71,16 @@
     }
     var vk = clampInt(targetVideoKbps(opt.targetMB, opt.durationSec, opt.audioKbps), 0);
     if (vk < 50) return { error: 'That size is too small for this clip — even at minimum quality it won’t fit. Pick a larger size or a shorter clip.' };
+
+    /* NEVER SPEND MORE BITS THAN THE SOURCE HAS. Working purely backwards from
+       the target means a clip that already fits gets re-encoded UP to fill the
+       budget: a 0.46 MB file came back at 1.31 MB, which is the opposite of
+       what a tool called "compress" should do. Capping at the source's own
+       average bitrate makes the target a ceiling rather than a quota. */
+    if (opt.sourceKbps > 0 && isFinite(opt.sourceKbps)) {
+      var cap = clampInt(opt.sourceKbps - opt.audioKbps, 50);
+      if (cap < vk) vk = cap;
+    }
     var buf = vk * 2;
     return {
       args: ['-i', inName]
