@@ -13,6 +13,7 @@ const path = require("path");
 const { marked } = require("marked");
 const ROOT = __dirname;
 const VK = require("./data/catalog.js");
+const TOOLCONTENT = require("./data/tool-content.js");
 const MONEY = Object.assign({}, require("./assets/js/tools-money.js"), require("./assets/js/tools-money2.js"));
 const CALC2 = require("./assets/js/tools-calc2.js");
 /* Tools whose process() calls VKPixels. Kept as an explicit list so a page
@@ -434,16 +435,30 @@ function toolPage(t) {
   const url = `${SITE}/tools/${t.cat}/${t.id}/`;
   const live = t.status === "live";
   const local = t.processing !== "network";
-  const related = VK.byCategory(t.cat).filter((x) => x.id !== t.id).slice(0, 6);
+  /* Related tools: a deep entry names its own, which lets the links cross
+     categories where that is genuinely more useful (PDF compressor -> image
+     compressor). Unknown or dead ids are dropped rather than rendered. */
+  const deepRelated = (TOOLCONTENT[t.id] && TOOLCONTENT[t.id].related || [])
+    .map((id) => VK.TOOLS.find((x) => x.id === id && x.status === "live"))
+    .filter(Boolean);
+  const related = deepRelated.length
+    ? deepRelated.slice(0, 6)
+    : VK.byCategory(t.cat).filter((x) => x.id !== t.id).slice(0, 6);
 
-  const faqs = [
+  /* Deep, tool-specific copy if we have written it. See data/tool-content.js
+     for why this exists — in short, the generic template below produced 261
+     pages with a median of 95 words that differed from each other, and Google
+     declined to index them. */
+  const deep = TOOLCONTENT[t.id] || null;
+
+  const faqs = (deep ? deep.faqs : []).concat([
     { q: `Is ${t.name} free?`, a: `Yes. The Vootkit free plan includes 5 tool runs a day, with no account and no watermark. Upgrade to Vootkit Pro for unlimited daily use, faster processing and premium tools.` },
     { q: "Are my files uploaded?", a: local
         ? `No. ${t.name} runs entirely in your browser — your file is processed on your own device and never sent to a server. There is nothing for us to store or delete.`
         : `${t.name} needs the internet to work, so it calls an external service to fetch data. It does not require an account and does not track you.` },
     { q: "Do I need to install anything?", a: `No. ${t.name} works in any modern browser on desktop, tablet or phone. Open the page and start.` },
     { q: "How often can I use it? Is there a daily limit?", a: "On the free plan you get 5 tool runs a day. When you reach the limit you'll see a prompt to upgrade, and it resets the next day. Vootkit Pro removes the cap entirely for unlimited daily use." }
-  ];
+  ]);
   const ld = [
     { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
       { "@type": "ListItem", position: 1, name: "Vootkit", item: SITE + "/" },
@@ -495,7 +510,27 @@ function toolPage(t) {
   ${workspace}
 
   <!-- 2-4. explanation, benefits, how it works -->
-  <section class="prose">
+  ${deep ? `<section class="prose">
+    <p class="tool-intro">${esc(deep.intro)}</p>
+
+    <h2>What ${esc(t.name)} does</h2>
+    ${deep.what.map((p) => `<p>${p}</p>`).join("\n    ")}
+
+    <h2>${esc(deep.specs.caption)}</h2>
+    <div class="table-wrap"><table class="spec-table">
+      <tbody>
+      ${deep.specs.rows.map((r) => `<tr><th scope="row">${esc(r[0])}</th><td>${esc(r[1])}</td></tr>`).join("\n      ")}
+      </tbody>
+    </table></div>
+
+    <h2>How to use it</h2>
+    <ol>
+      ${deep.steps.map((s) => `<li>${s}</li>`).join("\n      ")}
+    </ol>
+
+    <h2>Worth knowing</h2>
+    <p>${esc(deep.tip)}</p>
+  </section>` : `<section class="prose">
     <h2>What ${esc(t.name)} does</h2>
     <p>${esc(t.desc)} It's one of ${VK.TOOLS.length} tools in the Vootkit ecosystem, built to do a single job properly — open it, get your result, move on.</p>
 
@@ -517,7 +552,7 @@ function toolPage(t) {
 
     <h2>Example</h2>
     <p>${esc(exampleFor(t, c))}</p>
-  </section>
+  </section>`}
 
   <!-- 5. FAQ -->
   <section class="prose faq">

@@ -246,3 +246,12 @@ label { display: block; font-size: var(--t-sm); font-weight: 600; color: var(--i
 @keyframes vk-ring { to { transform: rotate(360deg); } }
 @keyframes vk-dot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .45; transform: scale(1.3); } }
 @keyframes vk-check { from { stroke-dashoffset: 34; } to { stroke-dashoffset: 0; } }
+
+/* ---------- deep tool pages ---------- */
+.tool-intro { font-size: var(--t-md); color: var(--ink); }
+.table-wrap { overflow-x: auto; margin-block: var(--s-4); }
+.spec-table { width: 100%; border-collapse: collapse; font-size: var(--t-base); }
+.spec-table th, .spec-table td { text-align: left; padding: var(--s-3) var(--s-4); border-bottom: 1px solid var(--line); vertical-align: top; }
+.spec-table th { font-weight: 600; color: var(--ink); width: 40%; }
+.spec-table td { color: var(--ink-soft); }
+.spec-table tr:last-child th, .spec-table tr:last-child td { border-bottom: 0; }

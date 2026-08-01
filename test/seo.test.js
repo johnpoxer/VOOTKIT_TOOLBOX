@@ -188,4 +188,99 @@ console.log(`seo: ${pass} assertions passed`);
   ok(!/Disallow: \/(ar|de|es|fr|hi|id|it|pt|zh)/.test(robots), "localised paths are not disallowed");
 }
 
+
+/* ---------------------------------------------------------------------------
+ * DEEP TOOL CONTENT
+ *
+ * Measured 1 Aug 2026: 261 tool pages with a median of 95 words that did not
+ * appear on the other 260, and 65% vocabulary overlap between two unrelated
+ * tools. Google marked 54 crawled pages "currently not indexed". These
+ * assertions protect the fix and, more importantly, the ACCURACY of it —
+ * a spec table that drifts from the tool it describes is worse than none,
+ * because those are the numbers people quote.
+ * ------------------------------------------------------------------------- */
+{
+  const fs = require("fs"), path = require("path");
+  const root = path.join(__dirname, "..");
+  const TC = require("../data/tool-content.js");
+  const CAT = require("../data/catalog.js");
+
+  const ids = Object.keys(TC).filter(k => k !== "LIMITS");
+  ok(ids.length >= 10, "at least 10 tools have deep content, got " + ids.length);
+
+  ids.forEach(id => {
+    const t = CAT.TOOLS.find(x => x.id === id);
+    ok(t, "deep content '" + id + "' matches a real tool");
+    ok(t && t.status === "live", id + " is live — never write deep copy for a tool that does not work");
+
+    const d = TC[id];
+    ok(d.intro && d.intro.length > 120, id + ": intro is substantial");
+    ok(Array.isArray(d.what) && d.what.length >= 1, id + ": has a 'what it does' section");
+    ok(d.specs && d.specs.caption && d.specs.rows.length >= 5,
+       id + ": spec table has at least 5 rows — this is the section that earns links");
+    d.specs.rows.forEach(r => ok(Array.isArray(r) && r.length === 2 && r[0] && r[1],
+       id + ": every spec row is a filled [label, value] pair"));
+    ok(Array.isArray(d.steps) && d.steps.length >= 3, id + ": has usable steps");
+    ok(d.tip && d.tip.length > 80, id + ": has a substantive 'worth knowing' note");
+    ok(Array.isArray(d.faqs) && d.faqs.length >= 4, id + ": has at least 4 specific FAQs");
+    d.faqs.forEach(f => {
+      ok(f.q && f.a, id + ": every FAQ has a question and an answer");
+      ok(f.a.length > 80, id + ": FAQ answers are real answers, not one-liners");
+    });
+
+    /* Related tools must exist and be live, or the page renders dead links. */
+    (d.related || []).forEach(rid => {
+      const r = CAT.TOOLS.find(x => x.id === rid);
+      ok(r, id + ": related tool '" + rid + "' exists");
+      ok(r && r.status === "live", id + ": related tool '" + rid + "' is live");
+    });
+    ok(!(d.related || []).includes(id), id + ": does not link to itself");
+
+    /* The whole point is differentiation — deep copy must not just restate the
+       boilerplate that is already on all 261 pages. */
+    const blob = (d.intro + " " + d.what.join(" ") + " " + d.tip).toLowerCase();
+    ok(!/5 free (uses|runs) a day/.test(blob), id + ": does not repeat the free-tier boilerplate");
+    ok(!/no watermark/.test(blob), id + ": does not repeat the watermark boilerplate");
+  });
+
+  /* Uniqueness, measured on the built output — the actual thing Google sees. */
+  const glob = (dir) => fs.existsSync(dir) ? fs.readdirSync(dir) : [];
+  const strip = (f) => {
+    let h = fs.readFileSync(f, "utf8");
+    h = h.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>|<!--[\s\S]*?-->/g, "");
+    const m = h.match(/<main[\s\S]*?<\/main>/i);
+    return (m ? m[0] : h).replace(/<[^>]+>/g, " ").replace(/&[a-z]+;/g, " ")
+      .split(/\s+/).filter(w => w.length > 1);
+  };
+  const built = [];
+  ["images", "pdf", "video", "text"].forEach(cat => {
+    glob(path.join(root, "tools", cat)).forEach(slug => {
+      const f = path.join(root, "tools", cat, slug, "index.html");
+      if (fs.existsSync(f)) built.push({ id: slug, f });
+    });
+  });
+
+  if (built.length > 50) {
+    const freq = new Map();
+    built.forEach(b => new Set(strip(b.f)).forEach(w => freq.set(w, (freq.get(w) || 0) + 1)));
+    const boiler = new Set([...freq].filter(([, c]) => c > built.length * 0.9).map(([w]) => w));
+
+    ids.forEach(id => {
+      const b = built.find(x => x.id === id);
+      if (!b) return;
+      const unique = strip(b.f).filter(w => !boiler.has(w)).length;
+      ok(unique > 200, id + ": has " + unique + " non-boilerplate words (was 95 sitewide; must stay >200)");
+    });
+
+    /* Two rewritten tools from different categories must not read alike. */
+    const ci = built.find(x => x.id === "compress-image"), mp = built.find(x => x.id === "merge-pdf");
+    if (ci && mp) {
+      const a = new Set(strip(ci.f)), c = new Set(strip(mp.f));
+      const overlap = [...a].filter(w => c.has(w)).length / new Set([...a, ...c]).size;
+      ok(overlap < 0.45, "compress-image vs merge-pdf overlap is " +
+         Math.round(overlap * 100) + "% (was 65%; must stay under 45%)");
+    }
+  }
+}
+
 console.log(`seo + titles: ${pass} total assertions passed`);
