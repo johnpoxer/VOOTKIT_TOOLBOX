@@ -9,6 +9,7 @@ const FX = require("../assets/js/tools-videofx.js");
 const VK = require("../data/catalog.js");
 let pass = 0;
 const ok = (c, m) => { assert.ok(c, m); pass++; };
+const eq = (a, b, m) => { assert.deepStrictEqual(a, b, m); pass++; };
 const has = (arr, seq, m) => { // arr contains seq as consecutive items
   const s = arr.join(" "), n = seq.join(" ");
   ok(s.indexOf(n) !== -1, m + "  [" + arr.join(" ") + "]");
@@ -120,36 +121,85 @@ ids.forEach(id => {
 console.log(`videofx: ${pass} assertions passed`);
 
 /* ---------------------------------------------------------------------------
- * probe() must never hang — REGRESSION GUARD
+ * METADATA MUST COME FROM FFMPEG, NOT FROM A <video> ELEMENT — REGRESSION GUARD
  *
- * A <video> element fed a container the browser cannot demux (AVI, MKV, many
- * MOV variants, a truncated file) fires NEITHER loadedmetadata NOR error. It
- * hangs silently. Verified in Chrome: AVI, MKV, an empty file and a garbage
- * MP4 all left the promise unresolved indefinitely.
+ * History, so this is never reintroduced:
  *
- * Those are exactly the inputs a converter receives, so an un-timed probe
- * deadlocks the tool before ffmpeg is reached — no progress, no error. This is
- * how convert-video broke after probing was added to it.
+ *  1. No probe at all. Fine, but the size-targeted compressor had no duration.
+ *  2. A <video>-element probe. It HUNG: containers the browser cannot demux
+ *     (AVI, MKV, many MOVs, a truncated file) fire NEITHER loadedmetadata NOR
+ *     error. Verified in Chrome. That deadlocked convert-video.
+ *  3. The same probe with a 5s timeout. No longer hung, but a timeout cannot
+ *     invent a duration — and a *valid* 6s 640x360 H.264/AAC MP4 also stalls at
+ *     readyState 0 / networkState 2 whenever the tab is not in the foreground,
+ *     because Chrome defers media loading there. Verified. So the compressor
+ *     rejected perfectly good files with "Could not read this video's length".
+ *  4. Current: ffmpeg reports it. `ffmpeg -i file` with no output exits 1
+ *     without throwing, prints Duration and Stream lines, and leaves the wasm
+ *     instance healthy for the real job. Verified end to end in Chrome.
+ *
+ * The invariant: NO TOOL MAY CREATE A <video> ELEMENT TO READ METADATA.
+ * (grabFrame in videoengine.js legitimately uses one — it needs to *decode* a
+ * frame, and it fails loudly rather than gating anything else on the result.)
  * ------------------------------------------------------------------------- */
 const vfxSrc = require("fs").readFileSync(require("path").join(__dirname, "../assets/js/tools-videofx.js"), "utf8");
+const engSrc = require("fs").readFileSync(require("path").join(__dirname, "../assets/js/videoengine.js"), "utf8");
 
-ok(/PROBE_TIMEOUT_MS/.test(vfxSrc), "probe defines a timeout constant");
-ok(/setTimeout\(function \(\) \{\s*finish\(\{ duration: 0, w: 0, h: 0, unknown: true \}\)/.test(vfxSrc),
-   "probe resolves with unknown metadata when the timeout fires");
-ok(/function finish\(out\) \{[\s\S]*?if \(done\) return;/.test(vfxSrc),
-   "probe guards against double-resolution");
-ok(/clearTimeout\(timer\)/.test(vfxSrc), "probe clears its timer on the success path");
-ok(/v\.onerror = function \(\) \{ finish\(/.test(vfxSrc), "probe still handles the error event");
+ok(!/createElement\(['"]video['"]\)/.test(vfxSrc),
+   "no tool builds a <video> element to read metadata");
+ok(!/onloadedmetadata/.test(vfxSrc), "no tool waits on loadedmetadata");
+ok(!/PROBE_TIMEOUT_MS/.test(vfxSrc), "the timed browser probe is gone, not merely unused");
 
-/* Unknown metadata must never block a conversion — ffmpeg demuxes far more
-   than the browser does, so "the browser couldn't read it" is not a failure. */
-ok(/if \(!meta \|\| meta\.unknown\) return;/.test(vfxSrc),
-   "guardSize lets unknown metadata through to ffmpeg");
-const guardBody = /function guardSize\(meta, file\) \{([\s\S]*?)\n  \}/.exec(vfxSrc)[1];
-ok(guardBody.indexOf("file.size > LIMIT") < guardBody.indexOf("meta.unknown"),
-   "the file-size check runs BEFORE the unknown-metadata bail-out, so it always applies");
-ok(/convert-video[\s\S]{0,1200}guardSize\(meta, f\)/.test(vfxSrc),
-   "convert-video still guards, but now on non-blocking metadata");
+/* --- parseProbe: the one piece of the new path that is pure and testable --- */
+const REAL = [
+  "  Duration: 00:00:06.00, start: 0.000000, bitrate: 248 kb/s",
+  "  Stream #0:0[0x1](und): Video: h264 (Constrained Baseline) (avc1 / 0x31637661), yuv420p(progressive), 640x360 [SAR 1:1 DAR 16:9], 170 kb/s, 30 fps, 30 tbr, 15360 tbn (default)",
+  "  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, mono, fltp, 69 kb/s (default)"
+];
+let m = V.parseProbe(REAL);
+eq(m.duration, 6, "duration parsed from ffmpeg's banner");
+eq(m.w, 640, "width parsed");
+eq(m.h, 360, "height parsed");
+
+/* The fourcc in that same line is `0x31637661` — a naive NxN regex matches
+   inside it and reports a 31637-pixel-wide video, which trips the 4K guard and
+   refuses a perfectly ordinary file. */
+ok(m.w < 4000 && m.h < 4000, "the fourcc hex is not mistaken for a frame size");
+
+eq(V.parseProbe(["  Duration: 01:02:03.50, start: 0, bitrate: 1 kb/s"]).duration,
+   3723.5, "hours, minutes and fractional seconds all count");
+eq(V.parseProbe(["  Duration: N/A, bitrate: N/A"]).duration, 0, "N/A duration reads as unknown, not as zero-length");
+eq(V.parseProbe([]).duration, 0, "empty log is unknown");
+eq(V.parseProbe(null).w, 0, "null log does not throw");
+eq(V.parseProbe(["  Stream #0:1: Audio: aac (LC), 44100 Hz, stereo"]).w, 0,
+   "an audio-only stream line contributes no frame size");
+
+/* --- the compressor must fail loudly rather than silently mis-size --- */
+ok(V.buildCompressArgs("in.mp4", "out.mp4", { targetMB: 10, durationSec: 0, audioKbps: 128 }).error,
+   "unknown duration is an explicit error, not a bitrate of zero");
+ok(V.buildCompressArgs("in.mp4", "out.mp4", { targetMB: 10, durationSec: Infinity, audioKbps: 128 }).error,
+   "an Infinite duration (MediaRecorder WebM) is rejected, not encoded");
+eq(V.targetVideoKbps(10, Infinity, 128), 0, "targetVideoKbps treats Infinity as unknown");
+
+/* --- guards: size from the File up front, the rest from real metadata --- */
+ok(/function guardFile\(file\)[\s\S]{0,300}file\.size > LIMIT/.test(vfxSrc),
+   "the file-size guard needs only the File, so it runs before the 32 MB download");
+ok(/function guardMeta\(meta\)[\s\S]{0,200}if \(!meta\) return;/.test(vfxSrc),
+   "missing metadata never blocks a job");
+ok(/isFinite\(d\) && d > 1800/.test(vfxSrc),
+   "a non-finite duration does not trigger the 30-minute refusal");
+
+/* --- every tool hands ffmpeg the real extension, not a hardcoded in.mp4 --- */
+ok(!/'in\.mp4'/.test(vfxSrc), "no tool hardcodes in.mp4 for a file that may be MKV/AVI/WebM");
+const runCalls = vfxSrc.match(/root\.VKVideo\.run\(/g) || [];
+eq(runCalls.length, 10, "all ten ffmpeg-backed tools go through VKVideo.run");
+eq((vfxSrc.match(/guardFile\(f\)/g) || []).length, 10, "all ten guard the file size first");
+
+/* --- engine: the late-build path, and the probe that must not be fatal --- */
+ok(/typeof built === 'function'/.test(engSrc), "run() accepts a builder function for late argument building");
+ok(/'-hide_banner', '-i', inName/.test(engSrc), "probe asks ffmpeg for metadata with no output file");
+ok(/catch \(e\) \{[\s\S]{0,220}\} finally \{\s*ff\.off\('log', cap\);/.test(engSrc),
+   "a failed probe is swallowed and the log listener always detached");
 
 console.log(`videofx probe: ${pass} total assertions passed`);
 
@@ -159,8 +209,6 @@ console.log(`videofx probe: ${pass} total assertions passed`);
  * engine fetch had no progress reporting and no timeout, so a slow or stalled
  * mobile connection was indistinguishable from a crash.
  * ------------------------------------------------------------------------- */
-const engSrc = require("fs").readFileSync(require("path").join(__dirname, "../assets/js/videoengine.js"), "utf8");
-
 ok(/STALL_MS/.test(engSrc), "engine download has a stall timeout");
 ok(/function arm\(\)/.test(engSrc) && /arm\(\);\s*\/\/ progress => not stalled/.test(engSrc),
    "the stall timer resets on every chunk, so a slow connection is not killed");
@@ -178,8 +226,7 @@ ok(/await ff\.writeFile\(inName, await util\.fetchFile\(file\)\)/.test(engSrc),
 const ftSrc = require("fs").readFileSync(require("path").join(__dirname, "../assets/js/filetool.js"), "utf8");
 ok(/status: function \(msg\)/.test(ftSrc), "filetool exposes a status channel to tools");
 
-const runCalls = (vfxSrc.match(/VKVideo\.run\(/g) || []).length;
 const withStatus = (vfxSrc.match(/api\.progress, api\.status\)/g) || []).length;
-ok(runCalls === withStatus, `all ${runCalls} VKVideo.run call sites pass the status channel (got ${withStatus})`);
+ok(runCalls.length === withStatus, `all ${runCalls.length} VKVideo.run call sites pass the status channel (got ${withStatus})`);
 
 console.log(`videofx engine-load: ${pass} total assertions passed`);

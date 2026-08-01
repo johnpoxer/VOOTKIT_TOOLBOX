@@ -39,13 +39,16 @@
   /* Video bitrate (kbps, integer) to land a clip of `durationSec` in `targetMB`,
      leaving room for `audioKbps` audio and 4% container/rate-control overhead. */
   function targetVideoKbps(targetMB, durationSec, audioKbps) {
-    if (!(durationSec > 0)) return 0;
+    if (!(durationSec > 0) || !isFinite(durationSec)) return 0;
     var totalKbps = (targetMB * 1048576 * 8) / durationSec / 1000;
     return Math.floor((totalKbps - audioKbps) * 0.96);
   }
 
   function buildCompressArgs(inName, outName, opt) {
     // opt: { targetMB, durationSec, audioKbps }
+    if (!(opt.durationSec > 0) || !isFinite(opt.durationSec)) {
+      return { error: 'Could not read this video’s length, so there’s no way to work out the bitrate that fits. Converting it to MP4 first usually fixes it.' };
+    }
     var vk = clampInt(targetVideoKbps(opt.targetMB, opt.durationSec, opt.audioKbps), 0);
     if (vk < 50) return { error: 'That size is too small for this clip — even at minimum quality it won’t fit. Pick a larger size or a shorter clip.' };
     var buf = vk * 2;
@@ -147,6 +150,66 @@
     // opt: { percent } 100 = unchanged, 200 = 2x, 50 = half. Video copied untouched.
     var p = opt.percent > 0 ? opt.percent : 100;
     return { args: ['-i', inName, '-af', 'volume=' + (p / 100).toFixed(3), '-c:v', 'copy', '-y', outName] };
+  }
+
+  /* ---------- metadata, read from ffmpeg's own banner ----------
+   *
+   * WHY NOT A <video> ELEMENT: feeding a file to a <video> and waiting for
+   * loadedmetadata is unreliable in both directions. Containers the browser
+   * cannot demux (AVI, MKV, many MOVs) fire neither loadedmetadata nor error —
+   * they just sit at readyState 0 forever. And a *valid* H.264 MP4 does the same
+   * thing in a background tab, where Chrome defers media loading entirely.
+   * Verified: a known-good 6-second 640x360 H.264/AAC MP4 stayed at
+   * readyState 0 / networkState 2 (LOADING) indefinitely.
+   *
+   * That mattered because the Discord compressor cannot pick a bitrate without
+   * knowing the duration, so a probe that returns nothing took the whole tool
+   * down with "Could not read this video's length" on files that were fine.
+   *
+   * ffmpeg already demuxes everything we support, and it is already loaded by
+   * the time we need this. `ffmpeg -i file` with no output file exits 1 without
+   * throwing, prints the Duration and Stream lines, and — verified — leaves the
+   * wasm instance healthy enough to run the real job immediately afterwards. */
+
+  var RE_DURATION = /Duration:\s*(\d+):(\d\d):(\d\d(?:\.\d+)?)/;
+  var RE_SIZE = /[,\s](\d{2,5})x(\d{2,5})(?=[\s,\[])/;
+
+  /* Pure: ffmpeg log lines -> { duration, w, h }. Zero means "not reported",
+     never "empty" — callers must treat it as unknown. */
+  function parseProbe(lines) {
+    var out = { duration: 0, w: 0, h: 0 };
+    lines = lines || [];
+    for (var i = 0; i < lines.length; i++) {
+      var line = String(lines[i]);
+      if (!out.duration) {
+        var d = RE_DURATION.exec(line);
+        if (d) {
+          var secs = (+d[1]) * 3600 + (+d[2]) * 60 + parseFloat(d[3]);
+          if (isFinite(secs) && secs > 0) out.duration = secs;
+        }
+      }
+      // Only the video stream line carries the frame size.
+      if (!out.w && /Stream #.*Video:/.test(line)) {
+        var s = RE_SIZE.exec(line);
+        if (s) { out.w = +s[1]; out.h = +s[2]; }
+      }
+    }
+    return out;
+  }
+
+  async function probeInVfs(ff, inName) {
+    var lines = [];
+    var cap = function (e) { lines.push(e.message); };
+    ff.on('log', cap);
+    try {
+      await ff.exec(['-hide_banner', '-i', inName]);   // exits 1; does not throw
+    } catch (e) {
+      /* A probe failure must never be fatal — the encode itself is the real
+         test of whether ffmpeg can read the file. */
+    } finally {
+      ff.off('log', cap);
+    }
+    return parseProbe(lines);
   }
 
   /* ---------- capability report ---------- */
@@ -262,9 +325,21 @@
     return _loading;
   }
 
-  /* Run one ffmpeg job. `built` is a builder result {args} or {error}. */
+  /* Run one ffmpeg job.
+   *
+   * `built` is either:
+   *   - a builder result {args} or {error}, or
+   *   - a FUNCTION (meta) => {args}|{error}, where meta is {duration, w, h} read
+   *     from ffmpeg itself after the file is in the virtual filesystem.
+   *
+   * The function form exists for tools that cannot choose their arguments until
+   * they know the duration — the size-targeted compressor above all. Probing
+   * here rather than in the tool means the file is written to the VFS exactly
+   * once, and the numbers come from the same demuxer that will do the work.
+   * The builder may throw; that surfaces to the user as a normal tool error. */
   async function run(file, inName, outName, built, onProgress, onStatus) {
-    if (built.error) throw new Error(built.error);
+    var isLate = typeof built === 'function';
+    if (!isLate && built.error) throw new Error(built.error);
     var say = onStatus || function () {};
     var env = await load({ onStatus: say });
     var ff = env.ff, util = env.util;
@@ -273,6 +348,14 @@
     try {
       say('Reading your video…');
       await ff.writeFile(inName, await util.fetchFile(file));
+      if (isLate) {
+        say('Checking the video…');
+        built = built(await probeInVfs(ff, inName));
+        if (!built || built.error) {
+          try { await ff.deleteFile(inName); } catch (e) {}
+          throw new Error((built && built.error) || 'Could not work out how to process that video.');
+        }
+      }
       say('Converting…');
       await ff.exec(built.args);
       var data = await ff.readFile(outName);
@@ -320,7 +403,8 @@
     buildConvertArgs: buildConvertArgs, buildResizeArgs: buildResizeArgs,
     buildLoopArgs: buildLoopArgs, buildVolumeArgs: buildVolumeArgs,
     clampFps: clampFps,
-    targetVideoKbps: targetVideoKbps
+    targetVideoKbps: targetVideoKbps,
+    parseProbe: parseProbe
   };
   if (typeof module === 'object' && module.exports) module.exports = root.VKVideo;
 })(typeof window !== 'undefined' ? window : globalThis);

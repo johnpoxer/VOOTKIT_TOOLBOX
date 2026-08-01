@@ -7,44 +7,25 @@
 (function (root) {
   'use strict';
 
-  /* Read duration + dimensions without decoding the whole file.
+  /* METADATA COMES FROM FFMPEG, NOT FROM A <video> ELEMENT.
    *
-   * MUST NOT HANG. A <video> element fed a container the browser cannot demux —
-   * AVI, MKV, and many MOV variants — fires NEITHER loadedmetadata NOR error.
-   * It just sits there. Verified in Chrome: AVI, MKV, an empty file and a
-   * garbage MP4 all left the promise unresolved indefinitely.
+   * A <video> fed a container the browser cannot demux — AVI, MKV, many MOVs —
+   * fires NEITHER loadedmetadata NOR error; it sits at readyState 0 forever.
+   * Worse, a perfectly valid H.264 MP4 does exactly the same thing whenever the
+   * tab is not in the foreground, because Chrome defers media loading there.
+   * Verified: a known-good 6s 640x360 H.264/AAC file stalled at readyState 0 /
+   * networkState 2 indefinitely.
    *
-   * Those are precisely the formats a *converter* is handed, so an un-timed
-   * probe deadlocks the tool before ffmpeg is ever reached — no progress bar,
-   * no error, nothing. ffmpeg demuxes far more than the browser does, so
-   * unknown metadata is not a failure: we resolve with zeros and let ffmpeg
-   * decide. Callers must treat 0 as "unknown", never as "empty". */
-  var PROBE_TIMEOUT_MS = 5000;
+   * A timeout stops that hanging, but it cannot invent the duration, and the
+   * size-targeted compressor CANNOT WORK without one — which is why it failed
+   * on files that were completely fine. So the probe now happens inside the
+   * engine, from ffmpeg's own output, via the builder-function form of
+   * VKVideo.run(): the file is written to the VFS once, ffmpeg reports the
+   * duration and frame size, and the arguments are built from that.
+   *
+   * Metadata may still be unknown (0) for a genuinely broken file. Treat 0 as
+   * "not reported", never as "empty". */
 
-  function probe(file) {
-    return new Promise(function (res) {
-      var url = URL.createObjectURL(file);
-      var v = document.createElement('video');
-      var done = false;
-      function finish(out) {
-        if (done) return;
-        done = true;
-        clearTimeout(timer);
-        URL.revokeObjectURL(url);
-        v.removeAttribute('src');
-        try { v.load(); } catch (e) {}   // release the decoder
-        res(out);
-      }
-      var timer = setTimeout(function () {
-        finish({ duration: 0, w: 0, h: 0, unknown: true });
-      }, PROBE_TIMEOUT_MS);
-      v.preload = 'metadata'; v.muted = true; v.src = url;
-      v.onloadedmetadata = function () {
-        finish({ duration: v.duration || 0, w: v.videoWidth || 0, h: v.videoHeight || 0, unknown: false });
-      };
-      v.onerror = function () { finish({ duration: 0, w: 0, h: 0, unknown: true }); };
-    });
-  }
   function baseName(n) { return String(n || 'video').replace(/\.[^.]+$/, ''); }
   function clock(s) { s = Math.round(s || 0); var m = Math.floor(s / 60); return m + 'm ' + (s % 60) + 's'; }
   function warnCapability() {
@@ -70,21 +51,27 @@
     return 'in.' + ext;
   }
 
-  /* Guard the cases that cannot finish in a browser tab before burning minutes
-     of the user's CPU on them.
-     Metadata may be unknown (see probe) — an AVI or MKV tells us nothing until
-     ffmpeg opens it. Unknown must never block the conversion: the file-size
-     limit is the only check that always applies, because it is the only input
-     we can always measure. */
-  function guardSize(meta, file) {
+  /* The only check we can always make, from the File alone, before any engine
+     is downloaded. Runs first so an oversized file fails in a second rather
+     than after a 32 MB download. */
+  function guardFile(file) {
     if (file && file.size > LIMIT) {
       throw new Error('That file is bigger than the 200 MB limit for in-browser processing. Trim or compress it first.');
     }
-    if (!meta || meta.unknown) return;   // let ffmpeg decide
-    var pixels = (meta.w || 0) * (meta.h || 0);
-    if (meta.duration > 1800) {
-      throw new Error('That clip is ' + clock(meta.duration) + ' long. In-browser conversion tops out around 30 minutes — trim it first, or use a desktop encoder.');
+  }
+
+  /* Checks that need real metadata, so they run inside the builder callback
+     once ffmpeg has reported it. Unknown (0, or a non-finite duration from a
+     stream with no header) must never block the job — ffmpeg is a better judge
+     of a strange file than we are, and a false refusal is worse than a slow
+     encode. */
+  function guardMeta(meta) {
+    if (!meta) return;
+    var d = meta.duration || 0;
+    if (isFinite(d) && d > 1800) {
+      throw new Error('That clip is ' + clock(d) + ' long. In-browser conversion tops out around 30 minutes — trim it first, or use a desktop encoder.');
     }
+    var pixels = (meta.w || 0) * (meta.h || 0);
     if (pixels > 3840 * 2160) {
       throw new Error('That video is larger than 4K (' + meta.w + '×' + meta.h + '). Resize it below 4K first — the in-browser encoder runs out of memory above that.');
     }
@@ -103,19 +90,27 @@
       process: async function (files, o, api) {
         warnCapability();
         var f = files[0];
-        var meta = await probe(f);
-        if (!(meta.duration > 0)) throw new Error('Could not read this video’s length — it may be a format the browser can’t open. MP4 (H.264) is safest.');
-        guardSize(meta, f);
+        guardFile(f);
         var inName = inputName(f);
-        var built = root.VKVideo.buildCompressArgs(inName, 'out.mp4', { targetMB: o.target, durationSec: meta.duration, audioKbps: o.audio });
-        var data = await root.VKVideo.run(f, inName, 'out.mp4', built, api.progress, api.status);
+        /* Bitrate depends on duration, and duration is only knowable once
+           ffmpeg has the file open — so the arguments are built late, inside
+           the engine. See the note at the top of this file. */
+        var meta = null, built = null;
+        var data = await root.VKVideo.run(f, inName, 'out.mp4', function (m) {
+          meta = m;
+          guardMeta(m);
+          built = root.VKVideo.buildCompressArgs(inName, 'out.mp4',
+            { targetMB: o.target, durationSec: m.duration, audioKbps: o.audio });
+          return built;
+        }, api.progress, api.status);
         var blob = outBlob(data, 'video/mp4');
+        if (!blob.size) throw new Error('The compressed file came back empty — this clip may use a codec the in-browser encoder can’t read. Try converting it to MP4 first.');
         var fit = blob.size <= o.target * 1048576;
         return {
           stats: [
             { label: 'Original', value: api.bytes(f.size) },
             { label: 'Compressed', value: api.bytes(blob.size) },
-            { label: 'Target', value: o.target + ' MB' },
+            { label: 'Length', value: clock(meta && meta.duration) },
             { label: 'Video bitrate', value: built.videoKbps + ' kbps' }
           ],
           downloads: [{ label: 'Download MP4', blob: blob, name: baseName(f.name) + '-' + o.target + 'mb.mp4' }],
@@ -134,10 +129,14 @@
       process: async function (files, o, api) {
         warnCapability();
         var f = files[0];
-        var meta = await probe(f);
-        var end = Math.min(o.end, meta.duration || o.end);
-        var built = root.VKVideo.buildTrimArgs('in.mp4', 'out.mp4', { start: o.start, end: end });
-        var data = await root.VKVideo.run(f, 'in.mp4', 'out.mp4', built, api.progress, api.status);
+        guardFile(f);
+        var inName = inputName(f);
+        // Clamp the end point to the real duration, which only ffmpeg knows.
+        var end = o.end;
+        var data = await root.VKVideo.run(f, inName, 'out.mp4', function (m) {
+          if (m.duration > 0) end = Math.min(o.end, m.duration);
+          return root.VKVideo.buildTrimArgs(inName, 'out.mp4', { start: o.start, end: end });
+        }, api.progress, api.status);
         var blob = outBlob(data, 'video/mp4');
         return {
           stats: [
@@ -164,8 +163,10 @@
       process: async function (files, o, api) {
         warnCapability();
         var f = files[0];
-        var built = root.VKVideo.buildGifArgs('in.mp4', 'out.gif', { fps: o.fps, width: o.width, start: o.start, duration: o.duration });
-        var data = await root.VKVideo.run(f, 'in.mp4', 'out.gif', built, api.progress, api.status);
+        guardFile(f);
+        var inName = inputName(f);
+        var built = root.VKVideo.buildGifArgs(inName, 'out.gif', { fps: o.fps, width: o.width, start: o.start, duration: o.duration });
+        var data = await root.VKVideo.run(f, inName, 'out.gif', built, api.progress, api.status);
         var blob = outBlob(data, 'image/gif');
         return {
           previewUrl: api.urls.make(blob), previewAlt: 'GIF preview',
@@ -191,8 +192,10 @@
         var H = 1920, W = Math.round(H * (+parts[0]) / (+parts[1]));
         if (o.ratio === '1:1') { H = 1080; W = 1080; }
         if (o.ratio === '4:5') { H = 1350; W = 1080; }
-        var built = root.VKVideo.buildReframeArgs('in.mp4', 'out.mp4', { w: parts[0], h: parts[1] });
-        var data = await root.VKVideo.run(f, 'in.mp4', 'out.mp4', built, api.progress, api.status);
+        guardFile(f);
+        var inName = inputName(f);
+        var built = root.VKVideo.buildReframeArgs(inName, 'out.mp4', { w: parts[0], h: parts[1] });
+        var data = await root.VKVideo.run(f, inName, 'out.mp4', built, api.progress, api.status);
         var blob = outBlob(data, 'video/mp4');
         return {
           stats: [{ label: 'Shape', value: o.ratio }, { label: 'Output', value: W + '×' + H }, { label: 'Size', value: api.bytes(blob.size) }],
@@ -209,8 +212,10 @@
       process: async function (files, o, api) {
         warnCapability();
         var f = files[0];
-        var built = root.VKVideo.buildMuteArgs('in.mp4', 'out.mp4');
-        var data = await root.VKVideo.run(f, 'in.mp4', 'out.mp4', built, api.progress, api.status);
+        guardFile(f);
+        var inName = inputName(f);
+        var built = root.VKVideo.buildMuteArgs(inName, 'out.mp4');
+        var data = await root.VKVideo.run(f, inName, 'out.mp4', built, api.progress, api.status);
         var blob = outBlob(data, 'video/mp4');
         return {
           stats: [{ label: 'Original', value: api.bytes(f.size) }, { label: 'Muted', value: api.bytes(blob.size) }, { label: 'Audio', value: 'removed' }],
@@ -229,9 +234,11 @@
       process: async function (files, o, api) {
         warnCapability();
         var f = files[0];
+        guardFile(f);
+        var inName = inputName(f);
         var out = 'out.' + o.format;
-        var built = root.VKVideo.buildExtractAudioArgs('in.mp4', out, { format: o.format });
-        var data = await root.VKVideo.run(f, 'in.mp4', out, built, api.progress, api.status);
+        var built = root.VKVideo.buildExtractAudioArgs(inName, out, { format: o.format });
+        var data = await root.VKVideo.run(f, inName, out, built, api.progress, api.status);
         var blob = outBlob(data, o.format === 'wav' ? 'audio/wav' : 'audio/mpeg');
         return {
           stats: [{ label: 'Format', value: o.format.toUpperCase() }, { label: 'Size', value: api.bytes(blob.size) }],
@@ -250,11 +257,14 @@
       process: async function (files, o, api) {
         warnCapability();
         var f = files[0];
-        var meta = await probe(f);
-        guardSize(meta, f);
+        guardFile(f);
         var inName = inputName(f);
-        var built = root.VKVideo.buildConvertArgs(inName, 'out.mp4', { fps: o.fps });
-        var data = await root.VKVideo.run(f, inName, 'out.mp4', built, api.progress, api.status);
+        var meta = null;
+        var data = await root.VKVideo.run(f, inName, 'out.mp4', function (m) {
+          meta = m;
+          guardMeta(m);
+          return root.VKVideo.buildConvertArgs(inName, 'out.mp4', { fps: o.fps });
+        }, api.progress, api.status);
         var blob = outBlob(data, 'video/mp4');
         if (!blob.size) throw new Error('The converted file came back empty — this clip may use a codec the in-browser encoder can’t read. MP4 (H.264) and WebM inputs are the most reliable.');
         var stats = [
@@ -281,8 +291,10 @@
       process: async function (files, o, api) {
         warnCapability();
         var f = files[0];
-        var built = root.VKVideo.buildResizeArgs('in.mp4', 'out.mp4', { height: o.height });
-        var data = await root.VKVideo.run(f, 'in.mp4', 'out.mp4', built, api.progress, api.status);
+        guardFile(f);
+        var inName = inputName(f);
+        var built = root.VKVideo.buildResizeArgs(inName, 'out.mp4', { height: o.height });
+        var data = await root.VKVideo.run(f, inName, 'out.mp4', built, api.progress, api.status);
         var blob = outBlob(data, 'video/mp4');
         return {
           stats: [{ label: 'Height', value: o.height + 'p' }, { label: 'Original', value: api.bytes(f.size) }, { label: 'Output', value: api.bytes(blob.size) }],
@@ -301,9 +313,11 @@
       process: async function (files, o, api) {
         warnCapability();
         var f = files[0];
+        guardFile(f);
+        var inName = inputName(f);
         var n = Math.max(2, Math.round(o.count || 2));
-        var built = root.VKVideo.buildLoopArgs('in.mp4', 'out.mp4', { count: n });
-        var data = await root.VKVideo.run(f, 'in.mp4', 'out.mp4', built, api.progress, api.status);
+        var built = root.VKVideo.buildLoopArgs(inName, 'out.mp4', { count: n });
+        var data = await root.VKVideo.run(f, inName, 'out.mp4', built, api.progress, api.status);
         var blob = outBlob(data, 'video/mp4');
         return {
           stats: [{ label: 'Plays', value: n + '×' }, { label: 'Size', value: api.bytes(blob.size) }],
@@ -322,8 +336,10 @@
       process: async function (files, o, api) {
         warnCapability();
         var f = files[0];
-        var built = root.VKVideo.buildVolumeArgs('in.mp4', 'out.mp4', { percent: o.percent });
-        var data = await root.VKVideo.run(f, 'in.mp4', 'out.mp4', built, api.progress, api.status);
+        guardFile(f);
+        var inName = inputName(f);
+        var built = root.VKVideo.buildVolumeArgs(inName, 'out.mp4', { percent: o.percent });
+        var data = await root.VKVideo.run(f, inName, 'out.mp4', built, api.progress, api.status);
         var blob = outBlob(data, 'video/mp4');
         return {
           stats: [{ label: 'Volume', value: o.percent + '%' }, { label: 'Size', value: api.bytes(blob.size) }],
