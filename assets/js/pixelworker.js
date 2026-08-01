@@ -26,11 +26,25 @@
      possible without re-entering the function. */
 
   function opSharpen(s, d, w, h, p, rowFrom, rowTo) {
-    /* 3x3 unsharp kernel: centre 1+4a, four neighbours -a. `a` is strength.
-       Edge pixels simply omit the missing taps, which is why the centre weight
-       is not renormalised — at these strengths the edge darkening is invisible
-       and the branchless alternative costs more than it saves. */
+    /* 3x3 unsharp kernel: centre 1+4a, four neighbours -a, where `a` is
+       strength. Edge pixels simply OMIT the missing taps rather than clamping
+       to the edge value, and the centre weight is deliberately not
+       renormalised there — at these strengths the resulting edge darkening is
+       invisible.
+
+       DO NOT HAND-OPTIMISE THIS. It was tried: interior pixels split from the
+       border so the twelve per-pixel bounds checks could be dropped, and the
+       four neighbour taps summed before a single multiply. In Node that was
+       1.66x faster (106ms -> 64ms on 1.9 MP). In Chrome — where it actually
+       runs — it was consistently SLOWER, median 361ms against 294ms across
+       alternating runs, with every optimised run losing to every plain one.
+       V8 handles the straightforward loop better than the clever version, and
+       the clever version added a border special-case that could only ever be a
+       correctness risk. Measure in a browser before touching this.
+
+       The fix for responsiveness was moving off the main thread, not this. */
     var a = p.amount / 5, center = 1 + 4 * a, side = -a;
+    var rowBytes = w * 4;
     for (var y = rowFrom; y < rowTo; y++) {
       for (var x = 0; x < w; x++) {
         var i = (y * w + x) * 4;
@@ -38,8 +52,8 @@
           var v = center * s[i + c];
           if (x > 0) v += side * s[i - 4 + c];
           if (x < w - 1) v += side * s[i + 4 + c];
-          if (y > 0) v += side * s[i - w * 4 + c];
-          if (y < h - 1) v += side * s[i + w * 4 + c];
+          if (y > 0) v += side * s[i - rowBytes + c];
+          if (y < h - 1) v += side * s[i + rowBytes + c];
           d[i + c] = v < 0 ? 0 : v > 255 ? 255 : v;
         }
         d[i + 3] = s[i + 3];        // alpha is never sharpened
@@ -82,35 +96,55 @@
   }
 
   /* ---------- worker source ----------
-     Built from the same function objects, so there is no second copy to drift. */
+   *
+   * Built from the same function objects that the tests exercise, so there is
+   * no second copy to drift out of sync.
+   *
+   * EVERY OP MUST BE SELF-CONTAINED, or listed in `HELPERS`. toString() captures
+   * a function's own text and nothing it closes over, so an op that calls a
+   * helper which was not shipped throws ReferenceError inside the worker —
+   * where the failure is invisible until a user clicks the button. The test
+   * suite executes the generated source to catch exactly that.
+   * HELPERS is empty today because both ops stand alone; it exists so the next
+   * one that needs a helper has somewhere obvious to declare it. */
+  var HELPERS = {};
+
   function workerSource() {
-    return '(' + function (OPS_SRC, RUN_SRC, BAND) {
-      var OPS = OPS_SRC, runBands = RUN_SRC;
-      self.onmessage = function (e) {
-        var m = e.data;
-        var src = new Uint8ClampedArray(m.buf);
-        var dst = new Uint8ClampedArray(src.length);
-        var op = OPS[m.op];
-        if (!op) { self.postMessage({ error: 'Unknown operation: ' + m.op }); return; }
-        var last = -1;
-        runBands(op, src, dst, m.w, m.h, m.params, function (f) {
-          /* Only post when the rounded percentage actually changes — a tall
-             image has hundreds of bands and each message costs a structured
-             clone on the receiving side. */
-          var pct = Math.round(f * 100);
-          if (pct !== last) { last = pct; self.postMessage({ progress: f }); }
-        });
-        self.postMessage({ done: true, buf: dst.buffer }, [dst.buffer]);
-      };
-    }.toString() + ')(' + serialiseOps() + ',' + runBands.toString() + ',' + BAND + ')';
+    var decls = [];
+    for (var hk in HELPERS) if (Object.prototype.hasOwnProperty.call(HELPERS, hk)) {
+      decls.push('var ' + hk + ' = ' + HELPERS[hk].toString() + ';');
+    }
+    var ops = [];
+    for (var k in OPS) if (Object.prototype.hasOwnProperty.call(OPS, k)) {
+      ops.push(JSON.stringify(k) + ':' + OPS[k].toString());
+    }
+    return '(function () {\n' +
+      '"use strict";\n' +
+      'var BAND = ' + BAND + ';\n' +
+      decls.join('\n') + '\n' +
+      'var OPS = {' + ops.join(',') + '};\n' +
+      'var runBands = ' + runBands.toString() + ';\n' +
+      'self.onmessage = ' + workerOnMessage.toString() + ';\n' +
+      '})()';
   }
 
-  function serialiseOps() {
-    var parts = [];
-    for (var k in OPS) if (Object.prototype.hasOwnProperty.call(OPS, k)) {
-      parts.push(JSON.stringify(k) + ':' + OPS[k].toString());
-    }
-    return '{' + parts.join(',') + '}';
+  /* Defined at module scope so it is a real, lintable function rather than a
+     string literal — it runs only inside the worker. */
+  function workerOnMessage(e) {
+    var m = e.data;
+    var src = new Uint8ClampedArray(m.buf);
+    var dst = new Uint8ClampedArray(src.length);
+    var op = OPS[m.op];
+    if (!op) { self.postMessage({ error: 'Unknown operation: ' + m.op }); return; }
+    var last = -1;
+    runBands(op, src, dst, m.w, m.h, m.params, function (f) {
+      /* Only post when the rounded percentage actually changes — a tall image
+         has hundreds of bands and each message costs a structured clone on the
+         receiving side. */
+      var pct = Math.round(f * 100);
+      if (pct !== last) { last = pct; self.postMessage({ progress: f }); }
+    });
+    self.postMessage({ done: true, buf: dst.buffer }, [dst.buffer]);
   }
 
   var _url = null;
@@ -206,7 +240,8 @@
     canUseWorker: canUseWorker,
     BAND: BAND,
     WORKER_MIN_PIXELS: WORKER_MIN_PIXELS,
-    workerSource: workerSource
+    workerSource: workerSource,
+    helpers: HELPERS
   };
   if (typeof module === 'object' && module.exports) module.exports = root.VKPixels;
 })(typeof window !== 'undefined' ? window : globalThis);

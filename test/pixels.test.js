@@ -212,4 +212,107 @@ const at = (a, w, x, y) => [a[(y * w + x) * 4], a[(y * w + x) * 4 + 1], a[(y * w
   ok(/file instanceof Blob/.test(ft), "only real Blobs take the fast path");
 }
 
-console.log(`pixels: ${pass} assertions passed`);
+
+/* ---------------------------------------------------------------------------
+ * THE FAST PATH MUST BE BYTE-IDENTICAL TO THE REFERENCE
+ *
+ * The kernel is currently written the plain way, after a hand-optimised version
+ * measured SLOWER in Chrome (median 361ms vs 294ms on 1.9 MP) despite being
+ * 1.66x faster in Node. These assertions stay so that the next person to try
+ * optimising it has a ready-made correctness harness: an off-by-one at a border
+ * shows as a bright or dark one-pixel frame around every sharpened image, which
+ * is easy to miss by eye and impossible to miss here.
+ * ------------------------------------------------------------------------- */
+function referenceSharpen(s, w, h, amount) {
+  const d = new Uint8ClampedArray(s.length);
+  const a = amount / 5, center = 1 + 4 * a, side = -a;
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const i = (y * w + x) * 4;
+    for (let c = 0; c < 3; c++) {
+      let v = center * s[i + c];
+      if (x > 0) v += side * s[i - 4 + c];
+      if (x < w - 1) v += side * s[i + 4 + c];
+      if (y > 0) v += side * s[i - w * 4 + c];
+      if (y < h - 1) v += side * s[i + w * 4 + c];
+      d[i + c] = v < 0 ? 0 : v > 255 ? 255 : v;
+    }
+    d[i + 3] = s[i + 3];
+  }
+  return d;
+}
+
+/* Sizes chosen to hit every branch: 1-wide and 2-wide images have no interior
+   column at all, 1-tall has no interior row, and the non-square cases catch
+   row-stride mistakes that square images hide. */
+[[1, 1], [1, 5], [2, 2], [3, 3], [2, 7], [7, 2], [5, 4], [4, 5], [9, 6], [16, 3], [3, 16], [33, 17]]
+  .forEach(([w, h]) => {
+    [0, 1, 4, 5, 10].forEach(amount => {
+      const s = make(w, h, (x, y) => [(x * 37 + y * 11) % 256, (x * 5 + y * 91) % 256, (x * 143 + y * 61) % 256, (x + y) % 2 ? 255 : 128]);
+      const fast = new Uint8ClampedArray(s.length);
+      P.ops.sharpen(s, fast, w, h, { amount }, 0, h);
+      const ref = referenceSharpen(s, w, h, amount);
+      let diff = -1;
+      for (let i = 0; i < ref.length; i++) if (ref[i] !== fast[i]) { diff = i; break; }
+      ok(diff === -1, `fast path matches the reference at ${w}x${h} amount ${amount}` +
+        (diff >= 0 ? ` (first difference at byte ${diff}: ${fast[diff]} vs ${ref[diff]})` : ""));
+    });
+  });
+
+/* Banded and whole-image must still agree now that the border is special-cased
+   — a band boundary is an interior row, so it must NOT take the edge path. */
+{
+  const w = 12, h = 40;
+  const s = make(w, h, (x, y) => [(x * 21) % 256, (y * 33) % 256, ((x * y) % 256)]);
+  const whole = new Uint8ClampedArray(s.length);
+  P.ops.sharpen(s, whole, w, h, { amount: 7 }, 0, h);
+  [1, 5, 7, 64].forEach(band => {
+    const banded = new Uint8ClampedArray(s.length);
+    for (let y = 0; y < h; y += band) P.ops.sharpen(s, banded, w, h, { amount: 7 }, y, Math.min(y + band, h));
+    let same = true;
+    for (let i = 0; i < whole.length; i++) if (whole[i] !== banded[i]) same = false;
+    ok(same, `band size ${band} gives identical output to processing the whole image`);
+  });
+}
+
+/* --- the worker must not reference anything it was not given ---
+   toString() captures a function's own text and nothing it closes over, so an
+   op calling a helper that was left out of HELPERS throws ReferenceError inside
+   the worker, where nobody sees it until a user clicks the button. */
+{
+  const src = P.workerSource();
+  Object.keys(P.helpers).forEach(name =>
+    ok(new RegExp("var " + name + " = ").test(src), "helper '" + name + "' is declared in the worker"));
+  ok(/var BAND = \d+;/.test(src), "BAND is a literal in the worker, not a closure reference");
+  ok(/var runBands = /.test(src), "runBands is declared in the worker");
+  ok(/var OPS = \{/.test(src), "OPS is declared in the worker");
+
+  /* Actually execute the generated source against a fake `self` and run a real
+     job through it. This is the only check that proves the bundle works. */
+  const posted = [];
+  const fakeSelf = { postMessage: (m) => posted.push(m) };
+  new Function("self", src)(fakeSelf);
+  ok(typeof fakeSelf.onmessage === "function", "the generated worker installs its handler");
+
+  const w = 20, h = 20;
+  const s = make(w, h, (x, y) => [(x * 13) % 256, (y * 29) % 256, 90]);
+  const copy = new Uint8ClampedArray(s);
+  fakeSelf.onmessage({ data: { op: "sharpen", buf: copy.buffer, w, h, params: { amount: 6 } } });
+  const done = posted.find(m => m.done);
+  ok(done, "the generated worker completes the job");
+  ok(posted.some(m => m.progress != null), "the generated worker reports progress");
+
+  const got = new Uint8ClampedArray(done.buf);
+  const expect = referenceSharpen(s, w, h, 6);
+  let identical = true;
+  for (let i = 0; i < expect.length; i++) if (expect[i] !== got[i]) identical = false;
+  ok(identical, "the code that runs in the worker produces the reference result");
+
+  /* And an unknown op reports an error rather than silently doing nothing. */
+  const before = posted.length;
+  fakeSelf.onmessage({ data: { op: "bogus", buf: new Uint8ClampedArray(16).buffer, w: 2, h: 2, params: {} } });
+  ok(posted.slice(before).some(m => m.error), "an unknown op posts an error back");
+}
+
+console.log(`pixels + kernel: ${pass} total assertions passed`);
+
+
