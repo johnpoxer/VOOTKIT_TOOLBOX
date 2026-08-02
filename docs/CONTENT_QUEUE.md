@@ -19,11 +19,11 @@ short FAQ answers, stub spec tables and dead related links all fail the build.
 
 | | Pages | Unique words |
 |---|---|---|
-| Hand-written | **46** | 269–419 |
-| Derived spec table (auto, from source) | ~55 | 102–169 |
-| Generic template | ~160 | ~96 |
+| Hand-written | **58** | 269–419 |
+| Derived spec table (auto, from source) | ~45 | 102–169 |
+| Generic template | ~158 | ~96 |
 
-Pages over 250 unique words: **46 of 261**.
+Pages over 250 unique words: **58 of 261**.
 
 Sitewide median has moved 95 → 141, but read that with care: part of the rise is
 real and part is a shifting baseline. "Boilerplate" is defined as vocabulary
@@ -59,19 +59,25 @@ out of the implementation: the 200/130 wpm reading and speaking rates, the 6–4
 password length, the 1–500 UUID count, the QR sizes 256/512/1024 and error
 correction L/M/Q/H, the SHA-256/1/512 set and the deliberate omission of MD5.*
 
+**Batch 4 — finance and calculators** *(363–413 words)* — **committed, NOT pushed**
+loan-calculator · mortgage-calculator · compound-interest · currency-converter ·
+budget-calculator · paycheck-calculator · credit-card-payoff · savings-goal ·
+investment-calculator · auto-loan-calculator · refinance-calculator ·
+home-affordability
+
+*YMYL. These explain a calculation and never recommend a course of action.
+Thresholds are labelled as lenders' tolerances or common conventions rather than
+as what the reader should do, and anything a user might act on is framed as an
+estimate. The 36% debt-to-income default is described as a lender's comfort
+limit, not a target. paycheck-calculator states plainly that it does not know
+any country's tax rules and applies the rate you supply. Keep this framing on
+every finance page added later.*
+
 ---
 
 ## Next up, in order
 
 Ordered by search demand, not by category. Do them in blocks of ~12.
-
-**Batch 4 — finance and calculators** *(these already carry a derived spec table
-from their `fields`, so the hand-written layer is adding the reasoning around
-the numbers, not the numbers themselves)*
-loan-calculator · mortgage-calculator · compound-interest · currency-converter ·
-budget-calculator · paycheck-calculator · credit-card-payoff · savings-goal ·
-investment-calculator · auto-loan-calculator · refinance-calculator ·
-home-affordability
 
 **Batch 5 onwards** — everything else, still demand-ordered. Roughly 145 pages.
 
@@ -105,7 +111,7 @@ Nothing is lost by waiting. The work is committed and safe in git; only the
 public site lags. Google cannot see a batch until it is deployed, so there is no
 point requesting indexing before the push either — do that after.
 
-Current state: **batch 3 committed, not pushed.** Batches 0–2 are already live.
+Current state: **batches 3 and 4 committed, not pushed.** Batches 0–2 are live.
 
 ### The daily quota is about 10 URLs
 

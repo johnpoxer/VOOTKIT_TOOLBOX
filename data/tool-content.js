@@ -1580,6 +1580,418 @@ module.exports = {
       { q: 'Why does more text make a denser code?', a: 'Because every character has to be encoded in the pattern. Long URLs produce fine-grained codes that need to be printed larger to scan reliably — shortening the link first is often the real fix.' }
     ],
     related: ['barcode-generator', 'qr-scanner', 'favicon-generator', 'url-encoder', 'utm-builder', 'png-to-jpg']
+  },
+
+  /* ================= session 4 — finance and calculators =================
+   *
+   * YMYL. These explain a calculation; they never recommend a course of action.
+   * Rules of thumb are labelled as lenders' tolerances or common conventions,
+   * not as what the reader should do, and every figure a user might act on is
+   * framed as an estimate. Keep it that way. */
+
+  'loan-calculator': {
+    intro: 'The monthly payment is the number lenders lead with, and it is the least useful one for comparing offers. Two loans with almost identical payments can differ by thousands once the term differs — total repaid is where that shows up.',
+    what: [
+      'Works out the monthly payment, total repaid and total interest for an amortising loan, including any arrangement fee.',
+      'The arrangement fee field matters more than it looks. A 6.9% loan with a fee can cost more than a 7.4% loan without one, which is exactly the comparison headline rates are bad at.'
+    ],
+    specs: {
+      caption: 'Figures worth knowing',
+      rows: [
+        ['Formula', 'M = P × r ÷ (1 − (1 + r)⁻ⁿ), the standard amortisation formula'],
+        ['Total interest', 'Monthly payment × months − amount borrowed'],
+        ['Rate range accepted', '0–100% a year'],
+        ['Term range', '0.5–40 years'],
+        ['APR vs nominal', 'APR includes compulsory fees; a nominal rate does not — compare like with like'],
+        ['Common lender comfort limit', 'Total debt payments around 36% of take-home pay'],
+        ['Currencies', 'USD, EUR, GBP, CAD, AUD, INR']
+      ]
+    },
+    steps: [
+      'Enter the amount, rate and term.',
+      'Add any <strong>arrangement fee</strong> — it is often quoted separately from the rate and changes which offer is cheaper.',
+      'Compare offers on <strong>total repaid</strong>, not the monthly payment.',
+      'Run every offer you are considering before speaking to anyone.'
+    ],
+    tip: 'Time sits in the exponent and the amount is a plain multiplier, which is why stretching a term costs so much more than it appears to. Doubling what you borrow roughly doubles the interest; doubling the term more than doubles it.',
+    faqs: [
+      { q: 'Why is my lender’s figure slightly different?', a: 'Lenders vary in how they handle the first period, rounding and day-count conventions, and some fold fees into the balance so you pay interest on them. Expect small differences on the same inputs; a large one usually means a fee or insurance is included somewhere you have not spotted.' },
+      { q: 'Should I use APR or the nominal rate?', a: 'APR, because it is meant to include compulsory fees and is therefore comparable between offers. If a lender quotes only a nominal rate, ask for the APR — the gap between them is the cost they would rather not lead with.' },
+      { q: 'Is a longer term ever the right choice?', a: 'It can be, if the shorter term would genuinely strain your budget — paying more interest for a payment you can reliably meet beats defaulting on a cheaper loan. The point is to make that trade knowingly rather than because it was the number on the form.' },
+      { q: 'Does this account for overpayments?', a: 'No, it assumes the scheduled payment throughout. Overpaying reduces the balance early and removes all the future interest that balance would have generated, so the real saving is larger than a simple comparison suggests.' }
+    ],
+    related: ['auto-loan-calculator', 'mortgage-calculator', 'refinance-calculator', 'credit-card-payoff', 'budget-calculator', 'simple-interest']
+  },
+
+  'mortgage-calculator': {
+    intro: 'A mortgage payment is rarely just the mortgage. Property tax and insurance often add a fifth on top, and a budget built on the loan payment alone is a budget that breaks in the first year.',
+    what: [
+      'Calculates the monthly payment on a mortgage, and adds property tax and home insurance so the figure resembles what actually leaves your account.',
+      'Deposit is deducted from the price to give the amount borrowed, so you can see immediately how much a larger deposit changes both the payment and the total interest.'
+    ],
+    specs: {
+      caption: 'What goes into the monthly figure',
+      rows: [
+        ['Principal and interest', 'From the amount borrowed, rate and term'],
+        ['Property tax', 'Entered annually, divided across the year'],
+        ['Home insurance', 'Entered annually, divided across the year'],
+        ['Not included', 'Service charges, ground rent, mortgage insurance, maintenance'],
+        ['Term range', '1–50 years'],
+        ['Rate range', '0–30% a year'],
+        ['Common lender comfort limit', 'Total debt payments around 36% of income']
+      ]
+    },
+    steps: [
+      'Enter the price and your deposit.',
+      'Enter the rate and term.',
+      'Put in <strong>real</strong> property tax and insurance figures for the specific area — national averages are close to useless here, since tax varies enormously between districts.',
+      'Compare the total against what you actually have spare each month.'
+    ],
+    tip: 'Whatever this produces, add a maintenance allowance before deciding what you can afford. A common planning figure is around 1% of the property value a year, and it is the cost that catches first-time buyers — a boiler does not care what your amortisation schedule says.',
+    faqs: [
+      { q: 'What is not included in this figure?', a: 'Service charges, ground rent, mortgage insurance where a small deposit requires it, utilities and maintenance. On some properties those add more than the tax and insurance combined, so treat the result as the floor rather than the total.' },
+      { q: 'How much difference does the deposit make?', a: 'Two ways. It reduces the amount borrowed, which lowers the payment proportionally, and above certain thresholds it can unlock a better rate or remove mortgage insurance. Try a few deposit figures and watch both the payment and the total interest.' },
+      { q: 'Should I take the longest term I can?', a: 'It lowers the monthly payment and raises the total substantially, because interest compounds on the balance you still owe. Whether that trade is right depends on your income stability, not on the arithmetic — the calculator shows the cost, it cannot weigh the risk.' },
+      { q: 'Is this accurate enough to budget on?', a: 'It is an estimate for comparing scenarios, not an offer. Your lender’s figure will differ slightly, and local tax and insurance vary. Use it to narrow the range, then work from the actual illustration a lender gives you.' }
+    ],
+    related: ['home-affordability', 'mortgage-payoff', 'closing-costs', 'rent-vs-buy', 'refinance-calculator', 'loan-calculator']
+  },
+
+  'compound-interest': {
+    intro: 'Compounding is famously powerful and famously hard to feel. The gap between what people expect and what the arithmetic produces is largest at exactly the horizons that matter — twenty years and beyond.',
+    what: [
+      'Projects what a starting balance plus regular monthly contributions becomes over time at a given annual return.',
+      'It separates what you put in from what the growth added, which is the comparison worth seeing. Over long periods the growth typically overtakes the contributions, and the year it does is the point of the whole exercise.'
+    ],
+    specs: {
+      caption: 'Inputs and useful reference points',
+      rows: [
+        ['Compounding', 'Monthly, matching the monthly contribution'],
+        ['Return range accepted', '−50% to 100% a year — negative returns are allowed deliberately'],
+        ['Time horizon', '1–70 years'],
+        ['Rule of 72', 'Years to double ≈ 72 ÷ return, so 7% doubles in about 10 years'],
+        ['Long-run stock market average', 'Often cited around 7% after inflation — an average, not a promise'],
+        ['What is not modelled', 'Fees, tax, and inflation'],
+        ['Currencies', 'USD, EUR, GBP, CAD, AUD, INR']
+      ]
+    },
+    steps: [
+      'Enter your starting amount and monthly contribution.',
+      'Choose a return. Try a pessimistic figure as well as an optimistic one — the spread between them is the honest answer.',
+      'Set the number of years.',
+      'Compare <strong>total contributed</strong> against <strong>growth</strong> to see when compounding starts doing the work.'
+    ],
+    tip: 'Run it once with your expected return and once with two percentage points less. Fees, tax and a bad decade all come out of the same figure, and a plan that only survives the optimistic number is not a plan. The gap between the two runs is the risk you are carrying.',
+    faqs: [
+      { q: 'What return should I use?', a: 'That is the one input nobody can give you honestly. Long-run stock market averages are often quoted around 7% after inflation, but any individual decade can be far above or far below that. Model a range rather than a single figure.' },
+      { q: 'Does this account for inflation?', a: 'No. The result is in today’s currency units, not today’s purchasing power. To think in real terms, subtract expected inflation from your return — a 7% return with 3% inflation is roughly 4% real.' },
+      { q: 'Are fees and tax included?', a: 'Neither. A 1% annual fee is a straight deduction from your return and compounds against you exactly as growth compounds for you, which is why it costs far more over thirty years than it looks like it should.' },
+      { q: 'Why does the growth accelerate so sharply?', a: 'Because returns are earned on previous returns, not just on what you put in. Early years look disappointing and late years look implausible — that shape is the whole point, and it is why time in the market is the variable people underestimate.' }
+    ],
+    related: ['investment-calculator', 'savings-goal', 'retirement-calculator', 'budget-calculator', 'simple-interest', 'credit-card-payoff']
+  },
+
+  'currency-converter': {
+    intro: 'The rate you see quoted and the rate you get are different numbers, and the gap is where the money goes. Knowing the mid-market rate is how you find out what your bank actually charged you.',
+    what: [
+      'Converts between currencies using live mid-market rates fetched from a free public rate service.',
+      'This is the one Vootkit tool that needs the network. Every other tool runs entirely in your browser; this one cannot, because exchange rates live somewhere else and change constantly.'
+    ],
+    specs: {
+      caption: 'What the rate is, and is not',
+      rows: [
+        ['Rate type', 'Mid-market — the midpoint between buy and sell'],
+        ['What you will actually get', 'Less, once a bank or card margin is applied'],
+        ['Typical bank margin', 'Commonly 2–4% on top of the mid-market rate'],
+        ['Typical card margin', 'Usually smaller, but varies by card and network'],
+        ['Freshness', 'The rate’s update time is shown beneath the result'],
+        ['Network', 'Required — the only Vootkit tool that needs it'],
+        ['Account or key', 'Neither']
+      ]
+    },
+    steps: [
+      'Enter an amount and pick the two currencies.',
+      'Use <strong>⇅ Swap</strong> to reverse the direction.',
+      'Compare the result against what your bank or card actually quoted — the difference is their margin.'
+    ],
+    tip: 'The mid-market rate is a benchmark, not a price you can transact at. Its real use is as a yardstick: convert the amount here, compare it with the figure your provider offered, and the gap tells you what the transfer cost you. That number is often larger than any advertised fee.',
+    faqs: [
+      { q: 'Why is my bank’s rate worse than this?', a: 'Because the mid-market rate is the midpoint between what buyers and sellers want, and nobody transacts there. Banks and cards apply a margin on top, commonly 2–4%, which is frequently larger than any fee they name separately.' },
+      { q: 'How current are the rates?', a: 'They come from a free public service and the update time is shown under the result. For a coffee it is fine; for a large transfer, check the rate at the moment you send, since markets move.' },
+      { q: 'Why does this tool need the internet when the others do not?', a: 'Because an exchange rate is external data that changes by the second — it cannot be computed on your device the way a compression or a loan payment can. It is the single exception on the site.' },
+      { q: 'Can I use this for accounting or tax?', a: 'No. Tax authorities usually require a specific published rate for a specific date, often their own. Use this for estimates and comparisons, and the official source for anything that has to be filed.' }
+    ],
+    related: ['salary-converter', 'loan-calculator', 'budget-calculator', 'compound-interest', 'savings-goal', 'investment-calculator']
+  },
+
+  'budget-calculator': {
+    intro: 'The 50/30/20 rule is popular because it is simple enough to actually use. Half your take-home to needs, a third to wants, a fifth to savings and debt — and the value is usually in seeing which one is out of shape.',
+    what: [
+      'Splits your monthly take-home pay into the three 50/30/20 buckets and shows what a full year of the savings portion comes to.',
+      'It works from take-home pay, not gross. Budgeting from a gross salary is the most common way people end up planning around money that was never going to arrive.'
+    ],
+    specs: {
+      caption: 'The three buckets',
+      rows: [
+        ['Needs — 50%', 'Rent or mortgage, bills, food, transport, minimum debt payments'],
+        ['Wants — 30%', 'Eating out, subscriptions, hobbies, travel'],
+        ['Savings and debt — 20%', 'Emergency fund, investing, overpaying debt'],
+        ['Based on', 'Take-home pay, after tax and deductions'],
+        ['Status', 'A guideline, not a rule — high-rent cities routinely break the 50%'],
+        ['Common first target', 'An emergency fund of three to six months of essential spending']
+      ]
+    },
+    steps: [
+      'Enter your <strong>monthly take-home pay</strong> — the amount that actually lands, not your salary.',
+      'Compare the three figures against what you currently spend.',
+      'Look at which bucket is furthest out rather than trying to fix all three.'
+    ],
+    tip: 'If needs exceed 50%, that is information rather than failure — in an expensive city it is close to unavoidable, and the realistic response is to protect the savings share and squeeze wants, not to pretend the rent is negotiable. The rule is a diagnostic, not a verdict.',
+    faqs: [
+      { q: 'My needs are way over 50%. Is that bad?', a: 'It is common, particularly where housing is expensive, and it does not mean you are doing something wrong. What it does mean is that the wants bucket is carrying the flexibility for the whole budget, so protecting the savings share matters more than usual.' },
+      { q: 'Gross or take-home?', a: 'Take-home, always. Budgeting from gross salary counts money that goes to tax and pension before you ever see it, and produces a plan that is short every single month.' },
+      { q: 'Where do debt payments go?', a: 'Minimums belong in needs, because missing them has consequences. Anything you pay above the minimum belongs in the 20%, since overpaying debt and saving are the same activity — buying your future self more room.' },
+      { q: 'What should the 20% go to first?', a: 'Most guidance puts a small emergency buffer first, then high-interest debt, then longer-term saving. Paying 22% credit card interest while earning 4% in a savings account is a guaranteed loss, which is why the order matters more than the split.' }
+    ],
+    related: ['paycheck-calculator', 'savings-goal', 'credit-card-payoff', 'compound-interest', 'salary-converter', 'investment-calculator']
+  },
+
+  'paycheck-calculator': {
+    intro: 'The gap between a salary and what arrives in your account is the number that actually governs your life, and it is rarely the one quoted in an offer.',
+    what: [
+      'Estimates take-home pay from a gross salary after tax, social contributions, pension and any other deductions, broken down per pay period.',
+      'One thing to be clear about: <strong>you supply the tax rate</strong>. This does not know your country, region or personal allowances — it applies the percentages you enter. That makes it useful everywhere and authoritative nowhere.'
+    ],
+    specs: {
+      caption: 'Inputs and what they mean',
+      rows: [
+        ['Effective tax rate', 'Your overall rate across all bands — not your top marginal rate'],
+        ['Social security / NI', 'Entered separately because it is usually a flat-ish percentage'],
+        ['Pension', 'Deducted from gross, so it also reduces taxable pay in many systems'],
+        ['Pay periods', 'Monthly (12), Semi-monthly (24), Fortnightly (26), Weekly (52)'],
+        ['Fortnightly quirk', '26 payments means two months a year contain three'],
+        ['Not included', 'Tax bands, allowances, credits, local taxes, benefits in kind'],
+        ['Status', 'An estimate for planning, not a payroll calculation']
+      ]
+    },
+    steps: [
+      'Enter your gross annual salary.',
+      'Enter your <strong>effective</strong> tax rate — total tax divided by total income, not the top band you fall into.',
+      'Add social contributions and pension as percentages.',
+      'Pick your pay frequency to see the per-payslip figure.'
+    ],
+    tip: 'The most common mistake here is entering a marginal rate instead of an effective one. If your top band is 40%, your effective rate is usually far lower, because the lower bands are taxed less. Take last year’s total tax divided by last year’s total income and use that — it is the only figure that reflects your actual situation.',
+    faqs: [
+      { q: 'Why does this not know my country’s tax rules?', a: 'Deliberately. Tax bands, allowances and credits differ by country, region and personal circumstance, and change every year — a tool claiming to model all of that would be wrong somewhere and confidently so. Supplying the rate keeps the arithmetic honest and the responsibility clear.' },
+      { q: 'What is an effective tax rate?', a: 'Your total tax divided by your total income. Progressive systems tax bands at rising rates, so someone in a 40% band pays 40% only on the portion above that threshold. The effective rate is usually much lower, and it is the figure this needs.' },
+      { q: 'Why does fortnightly pay look different?', a: 'Twenty-six payments across twelve months means two months contain three paydays. Budgeting monthly on a fortnightly salary quietly overstates most months and understates two.' },
+      { q: 'Should I use this to check my payslip?', a: 'As a rough sanity check only. A real payslip reflects tax codes, allowances, student loan thresholds and benefits in kind that this cannot see. If the gap is large, that is a question for your payroll department rather than evidence of an error.' }
+    ],
+    related: ['salary-converter', 'budget-calculator', 'self-employment-tax', 'home-affordability', 'savings-goal', 'loan-calculator']
+  },
+
+  'credit-card-payoff': {
+    intro: 'Minimum payments are designed to be affordable and to keep the balance alive. Seeing how many years they actually take is the number that changes behaviour more reliably than any advice about spending less.',
+    what: [
+      'Works out how long a card balance takes to clear at a given monthly payment, and what adding an extra amount each month saves.',
+      'The extra-payment field is the point of the tool. On a balance at typical card rates, a modest addition often removes years and a substantial share of the interest, because every extra pound goes straight at the principal.'
+    ],
+    specs: {
+      caption: 'Why card debt behaves differently',
+      rows: [
+        ['Typical card APR', 'Often 20–25%, far above most other borrowing'],
+        ['Minimum payment', 'Usually a small percentage of the balance, so it falls as you pay'],
+        ['Effect of that', 'The term stretches enormously — decades is not unusual'],
+        ['Extra payments', 'Go entirely against principal, removing all its future interest'],
+        ['APR range accepted', '0–100%'],
+        ['Compounding', 'Monthly'],
+        ['Best return available', 'Clearing 22% debt beats any safe 4% savings rate']
+      ]
+    },
+    steps: [
+      'Enter the balance and the card’s APR — it is on your statement.',
+      'Enter what you currently pay each month.',
+      'Add an <strong>extra</strong> amount and compare. Try a figure you could genuinely sustain.',
+      'Note the difference in both months and total interest.'
+    ],
+    tip: 'Paying off a card at 22% is mathematically identical to earning a guaranteed 22% return, tax-free, with no risk. There is no investment that offers that. Which is why, apart from keeping a small emergency buffer, high-interest debt generally comes before saving.',
+    faqs: [
+      { q: 'Why do minimum payments take so long?', a: 'Because the minimum is typically a percentage of the balance, so it shrinks as the balance does. Most of each payment covers interest, very little reaches the principal, and the term stretches into decades. The structure is doing exactly what it was designed to do.' },
+      { q: 'Should I clear debt or build savings first?', a: 'Most guidance is: a small emergency buffer first so a surprise does not put you back on the card, then the high-interest debt, then longer-term saving. Carrying 22% debt while earning 4% on savings is a guaranteed net loss.' },
+      { q: 'What about a 0% balance transfer?', a: 'It can help substantially, but check the transfer fee and what the rate becomes when the promotional period ends. It only works if you clear the balance within the window — otherwise you have moved the problem and paid a fee for the privilege.' },
+      { q: 'Does this assume I stop spending on the card?', a: 'Yes. It models a fixed balance being paid down. Continuing to spend on the card while paying it off changes the picture completely, and is the usual reason real payoff takes longer than any calculator predicts.' }
+    ],
+    related: ['loan-calculator', 'budget-calculator', 'savings-goal', 'compound-interest', 'refinance-calculator', 'deductible-calculator']
+  },
+
+  'savings-goal': {
+    intro: 'Working backwards from a target is more useful than watching a balance grow. A deposit, a wedding, a replacement car — the question is always the same: what does this cost me per month?',
+    what: [
+      'Calculates the monthly contribution needed to reach a target by a date, allowing for what you have already saved and the interest earned along the way.',
+      'The interest field is worth entering honestly. Over a few years at ordinary savings rates it reduces the monthly figure noticeably, but it will not rescue a target that is simply too large for the time available.'
+    ],
+    specs: {
+      caption: 'Inputs and reference points',
+      rows: [
+        ['Target', 'What you need, in total'],
+        ['Saved so far', 'Counted, and it earns interest for the whole period'],
+        ['Time', '0.5–50 years'],
+        ['Interest rate', '0–30% a year'],
+        ['Compounding', 'Monthly, matching the contributions'],
+        ['Emergency fund guideline', 'Three to six months of essential spending'],
+        ['Not modelled', 'Inflation and tax on interest']
+      ]
+    },
+    steps: [
+      'Enter the target and what you have already put aside.',
+      'Set how long you have.',
+      'Enter a realistic interest rate — the one your account actually pays, not a headline offer.',
+      'If the monthly figure is unaffordable, extend the timeline and run it again.'
+    ],
+    tip: 'When the required monthly amount is out of reach, the honest levers are time and target, not return. Chasing a higher rate to close the gap means taking risk with money you need on a fixed date — which is precisely the situation where a bad year is unrecoverable.',
+    faqs: [
+      { q: 'The monthly figure is more than I can afford.', a: 'Extend the deadline or reduce the target. Those are the two variables genuinely under your control. Raising the assumed return to make the number work is how short-horizon savings end up in investments that can fall exactly when you need the money.' },
+      { q: 'What rate should I enter?', a: 'What your account actually pays, not a promotional headline that reverts after twelve months. For horizons under five years, a savings account or fixed-term deposit is the usual home for money you cannot afford to see fall.' },
+      { q: 'Does this account for inflation?', a: 'No. If you are saving for something whose price rises — a house deposit, a car — the real target moves. For longer goals, consider raising the target rather than relying on the interest to cover it.' },
+      { q: 'How big should an emergency fund be?', a: 'Common guidance is three to six months of essential spending, with the higher end for variable or self-employed income. Essential spending, not total spending — the figure is meant to cover a gap, not maintain your usual lifestyle.' }
+    ],
+    related: ['compound-interest', 'budget-calculator', 'investment-calculator', 'credit-card-payoff', 'retirement-calculator', 'home-affordability']
+  },
+
+  'investment-calculator': {
+    intro: 'The useful output is not the final number, which depends entirely on an assumption you cannot verify. It is the split between what you contributed and what growth added — and how that split changes with time.',
+    what: [
+      'Projects the future value of an initial investment plus monthly contributions, and separates total contributed from investment growth.',
+      'It also shows the return as a percentage of what you put in, which is a more grounded way to read the result than a single large future figure.'
+    ],
+    specs: {
+      caption: 'Inputs and honest reference points',
+      rows: [
+        ['Time horizon', '1–80 years'],
+        ['Expected return', '0–100% a year — you supply it'],
+        ['Compounding', 'Monthly'],
+        ['Often-quoted long-run average', 'Around 7% after inflation for broad stock markets'],
+        ['Reality of that average', 'Individual decades have been far above and far below it'],
+        ['Not modelled', 'Fees, tax, inflation, and sequence of returns'],
+        ['Rule of 72', 'Years to double ≈ 72 ÷ return']
+      ]
+    },
+    steps: [
+      'Enter your initial amount and monthly contribution.',
+      'Choose an expected return — and then run it again two points lower.',
+      'Set the horizon.',
+      'Read <strong>total contributed</strong> against <strong>growth</strong> rather than fixating on the final figure.'
+    ],
+    tip: 'A 1% annual fee does not cost you 1%. It compounds against you for the whole period, and over thirty years commonly consumes a fifth or more of the final balance. Modelling your return net of fees is the single change that makes a projection resemble reality.',
+    faqs: [
+      { q: 'What return should I assume?', a: 'Nobody can answer that honestly for you. Broad stock market averages are often quoted around 7% after inflation over long periods, but that is an average across decades that individually ranged from excellent to negative. Model a range and plan against the pessimistic end.' },
+      { q: 'Why does the order of returns matter?', a: 'For a lump sum it does not, but for regular contributions it does — a poor first decade means later contributions buy in cheaper, and a poor final decade hits the largest balance. This projects a smooth average, which no real market delivers.' },
+      { q: 'Are fees and tax included?', a: 'Neither. Subtract your platform and fund fees from the expected return before entering it. Tax depends on your jurisdiction and account type, and the difference between a tax-sheltered account and a taxable one is often larger than the difference between two funds.' },
+      { q: 'Is this financial advice?', a: 'No. It performs an arithmetic projection from figures you supply. What to invest in, and whether investing suits your circumstances at all, are questions for a licensed adviser who knows your situation.' }
+    ],
+    related: ['compound-interest', 'retirement-calculator', 'savings-goal', 'budget-calculator', 'paycheck-calculator', 'credit-card-payoff']
+  },
+
+  'auto-loan-calculator': {
+    intro: 'Car finance is sold on the monthly payment, and it is the one figure that hides everything. Two deals with the same monthly cost can differ by thousands once the term, deposit and trade-in are accounted for.',
+    what: [
+      'Calculates the monthly payment and total cost of a vehicle loan, including deposit, trade-in value and sales tax.',
+      'Term is entered in months rather than years because that is how car finance is quoted — and because the difference between 60 and 84 months is where most of the cost hides.'
+    ],
+    specs: {
+      caption: 'Terms and what they cost',
+      rows: [
+        ['Term range', '6–120 months'],
+        ['Common terms', '48, 60, 72 and increasingly 84 months'],
+        ['Effect of stretching', 'A lower payment and materially more total interest'],
+        ['Deposit and trade-in', 'Both reduce the amount financed'],
+        ['Sales tax', '0–30%, applied to the purchase'],
+        ['Depreciation risk', 'Long terms can leave you owing more than the car is worth'],
+        ['Rate range', '0–40% a year']
+      ]
+    },
+    steps: [
+      'Enter the price, deposit and any trade-in value.',
+      'Enter the rate and term in months.',
+      'Add sales tax if it applies where you are.',
+      'Run the same car at 60 and 84 months and compare <strong>total</strong> cost, not the payment.'
+    ],
+    tip: 'A long term on a fast-depreciating asset means years of owing more than the car is worth. If it is written off or you need to sell, you cover the gap yourself — which is a specific risk of car finance that does not apply to a mortgage in the same way.',
+    faqs: [
+      { q: 'Is a 72 or 84-month term a bad idea?', a: 'It lowers the payment and raises the total, and on a depreciating asset it extends the period where you owe more than the car is worth. Whether that is acceptable depends on how long you keep cars and how stable your income is — the calculator shows the cost, not the risk.' },
+      { q: 'Is 0% finance really free?', a: 'Sometimes. Check whether the cash price would have been lower without the finance, and whether there is an arrangement fee. "0% finance" and "discount for paying outright" are frequently the same money presented differently.' },
+      { q: 'Should I put the trade-in toward the deposit?', a: 'It reduces the amount financed either way. The question worth asking is whether the dealer’s trade-in offer is competitive — bundling it into a finance deal makes it harder to see what you were actually given for the old car.' },
+      { q: 'What is not included?', a: 'Insurance, tax, servicing, tyres and fuel. On a cheaper car those running costs can exceed the finance payment, so the monthly figure here is not the monthly cost of owning the vehicle.' }
+    ],
+    related: ['loan-calculator', 'auto-insurance-estimator', 'budget-calculator', 'credit-card-payoff', 'refinance-calculator', 'deductible-calculator']
+  },
+
+  'refinance-calculator': {
+    intro: 'Refinancing is worth it when the interest saved exceeds the cost of switching. That is a break-even date, not a feeling — and the honest question is whether you will still be there when it arrives.',
+    what: [
+      'Compares your current loan against a new one and works out how many months it takes for the savings to cover the refinancing costs.',
+      'The trap it is designed to expose: a lower rate on a longer term can reduce the monthly payment while increasing the total you pay. The break-even tells you about the costs; the total tells you about the term.'
+    ],
+    specs: {
+      caption: 'What decides whether it is worth it',
+      rows: [
+        ['Break-even', 'Refinancing costs ÷ monthly saving = months to recover'],
+        ['The key question', 'Will you still hold the loan past that date?'],
+        ['Resetting the term', 'A new 30-year term restarts the interest-heavy early years'],
+        ['Lower payment, higher total', 'Common when the term is extended — check both'],
+        ['Rate range', '0–30% a year'],
+        ['Term range', '1–50 years'],
+        ['Not modelled', 'Early repayment charges on the existing loan']
+      ]
+    },
+    steps: [
+      'Enter your current balance, rate and years remaining.',
+      'Enter the new rate, new term and all refinancing costs.',
+      'Read the <strong>break-even</strong> — if you would move or repay before then, it does not pay.',
+      'Compare total repaid on both, not just the monthly payment.'
+    ],
+    tip: 'Check for an early repayment charge on your existing loan before doing anything else. It is a cost of switching like any other and belongs in the refinancing costs field — leaving it out is the most common way a break-even calculation comes out wrong.',
+    faqs: [
+      { q: 'How do I know if refinancing is worth it?', a: 'Compare the break-even month against how long you realistically expect to keep the loan. If the costs take four years to recover and you might move in two, it does not pay however attractive the new rate looks.' },
+      { q: 'My payment drops but the total goes up. Why?', a: 'Because the new term is longer. Refinancing a loan with 26 years left into a fresh 30-year term lowers the payment and adds four years of interest. Matching the remaining term rather than restarting avoids that.' },
+      { q: 'What counts as refinancing costs?', a: 'Arrangement and valuation fees, legal costs, and any early repayment charge on the loan you are leaving. That last one is the one people forget, and it is often the largest.' },
+      { q: 'Does a lower rate always save money?', a: 'Only if the term and costs cooperate. Rate, term and fees together decide the total — which is why comparing offers on total repaid rather than headline rate is the only reliable method.' }
+    ],
+    related: ['mortgage-calculator', 'mortgage-payoff', 'loan-calculator', 'home-affordability', 'closing-costs', 'credit-card-payoff']
+  },
+
+  'home-affordability': {
+    intro: 'Working forward from a house you like tells you what you want. Working backwards from your income tells you what a lender will agree to — and those are usually different numbers.',
+    what: [
+      'Estimates the property price your income supports, from your deposit, existing debt payments and a debt-to-income limit.',
+      'Debt-to-income is the lever lenders actually use. The default of 36% is a common comfort threshold; raising it shows what a more permissive lender might allow, which is not the same as what you can comfortably carry.'
+    ],
+    specs: {
+      caption: 'How lenders think about this',
+      rows: [
+        ['Debt-to-income', 'Total monthly debt payments ÷ gross monthly income'],
+        ['Common comfort limit', 'Around 36%, which is the default here'],
+        ['Range accepted', '10–60% — the top end is well past comfortable'],
+        ['Existing debt', 'Car finance, cards, student loans all count against you'],
+        ['Deposit', 'Raises the price you can reach, and may improve the rate'],
+        ['Not included', 'Property tax, insurance, service charges, maintenance'],
+        ['Term range', '5–40 years']
+      ]
+    },
+    steps: [
+      'Enter household income and your existing monthly debt payments.',
+      'Enter the deposit you actually have available — after moving and closing costs, not before.',
+      'Set the rate and term.',
+      'Leave <strong>max debt-to-income</strong> at 36% unless you are testing what a lender might stretch to.'
+    ],
+    tip: 'Clearing a car loan before applying can raise your affordable price more than saving the same amount toward the deposit, because the monthly payment is removed from the debt-to-income calculation entirely. Worth testing both ways before deciding where spare money goes.',
+    faqs: [
+      { q: 'A lender offered me more than this suggests.', a: 'Lenders differ, and some will stretch well past 36%. What a lender will approve and what leaves you comfortable are different questions — the maximum is their risk tolerance, not a recommendation, and their downside is not the same as yours.' },
+      { q: 'Does the result include tax and insurance?', a: 'No. Property tax, insurance, service charges and maintenance sit on top and can add a fifth or more to the monthly cost. Take the price this gives you into the Mortgage Calculator with real local figures for the fuller picture.' },
+      { q: 'How much deposit do I actually need?', a: 'It varies by market and product, but a larger deposit lowers the amount borrowed and can unlock better rates or remove mortgage insurance. Remember closing costs come out of your savings too — the deposit is not the only cash you need on the day.' },
+      { q: 'Should I use gross or take-home income?', a: 'Debt-to-income is conventionally calculated on gross income, which is what this expects. That is also why the result can look generous against what your bank account experiences — check the resulting payment against your take-home pay before believing it.' }
+    ],
+    related: ['mortgage-calculator', 'closing-costs', 'rent-vs-buy', 'mortgage-payoff', 'paycheck-calculator', 'budget-calculator']
   }
 };
 

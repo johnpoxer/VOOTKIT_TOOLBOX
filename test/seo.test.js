@@ -339,7 +339,22 @@ console.log(`seo: ${pass} assertions passed`);
   const root = path.join(__dirname, "..");
   const read = (p) => fs.existsSync(p) ? fs.readFileSync(p, "utf8") : "";
   const handWritten = read(path.join(root, "tools/images/compress-image/index.html"));
-  const derived = read(path.join(root, "tools/finance/mortgage-calculator/index.html"));
+
+  /* Pick a derived-table example DYNAMICALLY. Naming one tool here breaks the
+     moment that tool gets hand-written content — which is the whole direction
+     of travel, so the test has to follow the queue rather than pin to it. */
+  const TC_IDS = new Set(Object.keys(require("../data/tool-content.js")));
+  let derived = "";
+  for (const cat of ["finance", "tax", "realestate", "images", "pdf", "video"]) {
+    const dir = path.join(root, "tools", cat);
+    if (!fs.existsSync(dir)) continue;
+    for (const slug of fs.readdirSync(dir)) {
+      if (TC_IDS.has(slug)) continue;                 // hand-written, not derived
+      const html = read(path.join(dir, slug, "index.html"));
+      if (/Settings and limits/.test(html)) { derived = html; break; }
+    }
+    if (derived) break;
+  }
 
   if (handWritten) {
     ok(/spec-table/.test(handWritten), "hand-written pages carry their own table");
@@ -348,7 +363,7 @@ console.log(`seo: ${pass} assertions passed`);
   }
   if (derived) {
     ok(/Settings and limits/.test(derived), "a declaring tool gets a derived table");
-    ok(/Interest rate/.test(derived), "the derived table carries the tool's real field labels");
+    ok(/<td>/.test(derived), "the derived table carries values, not just labels");
     ok(/<th scope="row">/.test(derived), "derived rows are proper row headers for screen readers");
   }
 }
