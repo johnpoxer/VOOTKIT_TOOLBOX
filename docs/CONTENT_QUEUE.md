@@ -121,5 +121,30 @@ Search Console → Sitemaps → `sitemap-tools.xml` indexed count.
 Baseline on 1 Aug 2026: **10 indexed of 292**.
 
 If the rewritten pages get indexed and the untouched ones do not, the thesis
-holds and the queue above is the whole plan. If they do not, stop writing and
-check Cloudflare's bot rules for Googlebot before spending further sessions.
+holds and the queue above is the whole plan.
+
+### Cloudflare has been ruled out — checked 2 Aug 2026
+
+The fallback hypothesis was that Cloudflare was blocking Googlebot. It is not.
+Checked directly, so nobody needs to look again:
+
+| Check | Result |
+|---|---|
+| Search Console **Live Test** | "URL is available to Google", "Page can be indexed" |
+| HTML Google actually received | The real page — our doctype, title, description, canonical, hreflang. No challenge markers (`cf-browser-verification`, `Just a moment`, `__cf_chl`) |
+| Cloudflare AI bot policy → **Search** | "Bots that scan your site to help it appear in search engine results" → **Allow (do not block)** |
+| Live `robots.txt` | 68 bytes, byte-identical to the repo — Cloudflare's "Content Signals Policy" is **not** overriding it |
+| Security events, last 24h | 5 total. Two Managed-rules blocks (US), three Bot Fight Mode challenges to OVH Canada IPs. **None from Google's ranges** (66.249.x.x, 2001:4860::) |
+| Sitemap fetch | Success, 1,484 URLs read |
+| Corroboration | 10 pages already indexed; merge-pdf's Discovery section names `sitemap.xml` as its source |
+
+**Bot Fight Mode is ON** and is doing useful work — it challenged real scrapers
+on 1 Aug. Cloudflare exempts verified bots and Googlebot is one, and there is no
+evidence here of it touching Google. Leave it on.
+
+One honest limit: free-plan security analytics only allows one-day query
+windows, so this cannot prove Googlebot was never challenged historically. If
+indexing stalls despite good content, Bot Fight Mode is the first thing to
+toggle off — but there is no reason to touch it now.
+
+**So the content thesis stands. Keep writing.**
