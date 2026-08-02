@@ -14,6 +14,7 @@ const { marked } = require("marked");
 const ROOT = __dirname;
 const VK = require("./data/catalog.js");
 const TOOLCONTENT = require("./data/tool-content.js");
+const TOOLFACTS = require("./data/tool-facts.js");
 const MONEY = Object.assign({}, require("./assets/js/tools-money.js"), require("./assets/js/tools-money2.js"));
 const CALC2 = require("./assets/js/tools-calc2.js");
 /* Tools whose process() calls VKPixels. Kept as an explicit list so a page
@@ -451,6 +452,14 @@ function toolPage(t) {
      declined to index them. */
   const deep = TOOLCONTENT[t.id] || null;
 
+  /* Second tier: no hand-written copy, but the tool declares its own settings,
+     so a real spec table can be derived from the live module at build time.
+     Accurate by construction and it cannot drift — change a tool's options and
+     its page updates on the next build. Tools that declare nothing readable get
+     neither, and keep the generic template rather than a padded one. */
+  const facts = deep ? null : TOOLFACTS.factsFor(
+    VIDEOFX[t.id] || IMAGE[t.id] || IMAGE2[t.id] || PDF[t.id] || MONEY[t.id] || null);
+
   const faqs = (deep ? deep.faqs : []).concat([
     { q: `Is ${t.name} free?`, a: `Yes. The Vootkit free plan includes 5 tool runs a day, with no account and no watermark. Upgrade to Vootkit Pro for unlimited daily use, faster processing and premium tools.` },
     { q: "Are my files uploaded?", a: local
@@ -533,7 +542,12 @@ function toolPage(t) {
   </section>` : `<section class="prose">
     <h2>What ${esc(t.name)} does</h2>
     <p>${esc(t.desc)} It's one of ${VK.TOOLS.length} tools in the Vootkit ecosystem, built to do a single job properly — open it, get your result, move on.</p>
-
+${facts ? `
+    <h2>Settings and limits</h2>
+    <div class="table-wrap"><table class="spec-table"><tbody>
+      ${facts.rows.map((r) => `<tr><th scope="row">${esc(r.label)}</th><td>${esc(r.value)}</td></tr>`).join("\n      ")}
+    </tbody></table></div>
+` : ""}
     <h2>Why use this one</h2>
     <ul>
       <li><strong>${local ? "Nothing is uploaded." : "No account needed."}</strong> ${local ? "Your file is processed on your own device, so it never travels to a server." : "Use it immediately — no sign-up, no email."}</li>

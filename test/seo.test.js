@@ -283,4 +283,74 @@ console.log(`seo: ${pass} assertions passed`);
   }
 }
 
+
+/* ---------------------------------------------------------------------------
+ * DERIVED SPEC TABLES
+ *
+ * Tools with hand-written copy get that. Tools that merely declare their own
+ * options get a spec table derived from the LIVE MODULE at build time, so the
+ * numbers cannot drift from the tool. Tools that declare nothing readable get
+ * neither — deliberately. A padded page is the original problem in a new
+ * costume, and it is also what earns an AdSense "low value content" flag.
+ * ------------------------------------------------------------------------- */
+{
+  const TF = require("../data/tool-facts.js");
+
+  /* Real specs produce real tables. */
+  const imgSpec = require("../assets/js/tools-image.js")["compress-image"];
+  const f = TF.factsFor(imgSpec);
+  ok(f && f.rows.length >= 3, "a tool with options yields a table");
+  ok(f.rows.every(r => r.label && r.value), "every derived row is a filled pair");
+  ok(f.rows.some(r => /30.*95/.test(r.value)), "the quality range comes from the source, not a guess");
+
+  /* Nothing readable must yield nothing, not a stub. */
+  eq(TF.factsFor(null), null, "no spec, no table");
+  eq(TF.factsFor({}), null, "empty spec, no table");
+  eq(TF.factsFor({ options: [] }), null, "no options, no table");
+  eq(TF.factsFor({ accept: "image/*" }), null, "one row is not a table");
+  eq(TF.factsFor({ options: [{ label: "A", def: 1 }, { label: "B", def: 2 }] }), null,
+     "two rows is still not a table");
+
+  /* Value formatting. */
+  eq(TF.describeOption({ label: "Quality", type: "range", min: 30, max: 95, def: 75, suffix: "%" }).value,
+     "30–95%, default 75%", "range renders bounds, suffix and default");
+  eq(TF.describeOption({ label: "Format", type: "select", def: "a",
+       options: [{ v: "a", label: "PNG" }, { v: "b", label: "JPEG" }] }).value,
+     "PNG · JPEG, default PNG",
+     "a select renders its labels and resolves the default to a label, not a key");
+  eq(TF.describeOption({}), null, "an unlabelled option is skipped");
+  eq(TF.describeOption(null), null, "a null option does not throw");
+
+  eq(TF.describeAccept("application/pdf"), "PDF", "known mime becomes a word");
+  eq(TF.describeAccept(".svg,image/svg+xml"), "SVG, SVG+XML", "extensions are humanised");
+  eq(TF.describeAccept(null), null, "no accept, no row");
+  eq(TF.bytesLabel(200 * 1024 * 1024), "200 MB", "byte caps render as MB");
+  eq(TF.bytesLabel(0), null, "no cap, no row");
+
+  /* The scraper that was tried and removed must stay removed. */
+  ok(!TF.scanSource, "the source scraper is gone, not merely unused");
+  const factsSrc = require("fs").readFileSync(
+    require("path").join(__dirname, "../data/tool-facts.js"), "utf8");
+  ok(/what was tried and rejected/i.test(factsSrc),
+     "the rejected approach is documented so it is not re-attempted");
+
+  /* Built output: the tiers must be distinguishable and none may regress. */
+  const fs = require("fs"), path = require("path");
+  const root = path.join(__dirname, "..");
+  const read = (p) => fs.existsSync(p) ? fs.readFileSync(p, "utf8") : "";
+  const handWritten = read(path.join(root, "tools/images/compress-image/index.html"));
+  const derived = read(path.join(root, "tools/finance/mortgage-calculator/index.html"));
+
+  if (handWritten) {
+    ok(/spec-table/.test(handWritten), "hand-written pages carry their own table");
+    ok(!/Settings and limits/.test(handWritten),
+       "hand-written copy is not doubled up with the derived table");
+  }
+  if (derived) {
+    ok(/Settings and limits/.test(derived), "a declaring tool gets a derived table");
+    ok(/Interest rate/.test(derived), "the derived table carries the tool's real field labels");
+    ok(/<th scope="row">/.test(derived), "derived rows are proper row headers for screen readers");
+  }
+}
+
 console.log(`seo + titles: ${pass} total assertions passed`);
