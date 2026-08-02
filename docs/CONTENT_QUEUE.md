@@ -82,6 +82,21 @@ home-affordability
 5. Commit, push, wait for Netlify.
 6. Search Console → URL Inspection → Request Indexing, one per page.
 
+### The daily quota is about 10 URLs
+
+Hit on 2 Aug 2026 after ten submissions: *"Sorry, we couldn't process this
+request because you've exceeded your daily quota. Please try submitting this
+again tomorrow."* It resets daily and is per property.
+
+**This is not worth working around.** Manual submission only jumps the crawl
+queue; it is not how pages get found. Every page here is already in
+`sitemap-tools.xml` with a `lastmod` of the build date, Google reads that
+sitemap (confirmed — merge-pdf's Discovery section names it as the source), and
+a changed `lastmod` is the signal that a page is worth recrawling.
+
+So: submit what the quota allows, newest batch first, and let the sitemap carry
+the rest. Do not delay a batch waiting for quota.
+
 ---
 
 ## What not to do
