@@ -19,11 +19,11 @@ short FAQ answers, stub spec tables and dead related links all fail the build.
 
 | | Pages | Unique words |
 |---|---|---|
-| Hand-written | **70** | 269–419 |
-| Derived spec table (auto, from source) | ~40 | 102–169 |
-| Generic template | ~151 | ~96 |
+| Hand-written | **82** | 269–419 |
+| Derived spec table (auto, from source) | ~35 | 102–169 |
+| Generic template | ~144 | ~96 |
 
-Pages over 250 unique words: **70 of 261** — 27% of the catalogue.
+Pages over 250 unique words: **82 of 261** — 31% of the catalogue.
 
 Sitewide median has moved 95 → 141, but read that with care: part of the rise is
 real and part is a shifting baseline. "Boilerplate" is defined as vocabulary
@@ -59,6 +59,17 @@ out of the implementation: the 200/130 wpm reading and speaking rates, the 6–4
 password length, the 1–500 UUID count, the QR sizes 256/512/1024 and error
 correction L/M/Q/H, the SHA-256/1/512 set and the deliberate omission of MD5.*
 
+**Batch 6 — images, SEO, accessibility, business** *(317–386 words)*
+thumbnail-maker · social-media-image · passport-photo-maker · flip-image ·
+rotate-image · meme-generator · meta-tag-generator · serp-preview ·
+contrast-checker · readability · profit-margin · stripe-fee-calculator
+
+*passport-photo-maker is scoped honestly: it handles the dimensions and states
+that it cannot check head position, background, expression, glasses or shadows —
+which is what photos actually get rejected for. contrast-checker notes that
+passing a contrast ratio does not cover colour blindness, since luminance and
+hue are different problems.*
+
 **Batch 5 — everyday, video and utilities** *(315–402 words)* — **committed, NOT pushed**
 unit-converter · age-calculator · bmi-calculator · percentage-calculator ·
 discount-calculator · timezone-converter · timestamp-converter · text-diff ·
@@ -89,17 +100,18 @@ every finance page added later.*
 
 Ordered by search demand, not by category. Do them in blocks of ~12.
 
-**Batch 6 — the last obvious high-demand block.** After this the demand curve
-flattens and the ordering is a judgement call rather than a ranking.
-Suggested: meme-generator · thumbnail-maker · social-media-image ·
-passport-photo-maker · flip-image · rotate-image · meta-tag-generator ·
-serp-preview · contrast-checker · readability · profit-margin ·
-stripe-fee-calculator
+**Batch 7 onwards — stop guessing, use the data.**
 
-**Batch 7 onwards** — roughly 179 pages left, spread across everyday (25),
-business (23), video (23), pdf (18) and the rest. Pick by whatever the Search
-Console query report shows people actually searching for by then — that data
-will be better than any guess made now.
+179 pages remain, spread across everyday (25), business (23), video (23),
+pdf (18) and the rest. The obvious demand ordering is now exhausted; picking the
+next twelve from intuition would be worse than picking them from evidence.
+
+Before batch 7, read **Search Console → Performance → Queries**. On 1 Aug it
+showed 3,290 impressions against only 2 clicks, and the top queries were things
+like *autokredit rechner*, *contador de palabras* and *keyword dichte tool* —
+already-existing demand the site was surfacing for and failing to convert.
+Whatever that report says once batches 0–6 have been indexed is a better
+ordering than any list written in advance.
 
 ---
 
@@ -131,8 +143,11 @@ Nothing is lost by waiting. The work is committed and safe in git; only the
 public site lags. Google cannot see a batch until it is deployed, so there is no
 point requesting indexing before the push either — do that after.
 
-Current state: **batches 3, 4 and 5 committed, not pushed.** Batches 0–2 are live.
-One more batch, then push.
+Current state: **batches 3–6 pushed together on 2 Aug 2026** — one build covering
+48 rewritten pages instead of four builds of twelve. Batches 0–2 were already
+live from earlier deploys.
+
+Next accumulation starts from batch 7.
 
 ### The daily quota is about 10 URLs
 

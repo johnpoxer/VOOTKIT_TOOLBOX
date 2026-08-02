@@ -2391,6 +2391,412 @@ module.exports = {
       { q: 'My file is over 200 MB.', a: 'Trim it first — that is lossless and usually what you wanted anyway. The limit exists because the whole file is held in memory in your browser, and above it the conversion fails partway through rather than completing badly.' }
     ],
     related: ['compress-for-discord', 'trim-video', 'resize-video', 'video-to-gif', 'extract-audio', 'mute-video']
+  },
+
+  /* ================= session 6 — images, SEO, accessibility, business ================= */
+
+  'thumbnail-maker': {
+    intro: 'A thumbnail is judged at about 200 pixels wide in a crowded feed, which is roughly a sixth of the size you are designing it at. Most thumbnails fail because they were only ever checked full size.',
+    what: [
+      'Resizes an image to one of six standard thumbnail sizes, either filling the frame and cropping, or fitting the whole image inside it on a background colour.',
+      'The fit mode decides what you lose. Fill and crop keeps the frame full and trims the edges; Fit keeps everything and pads the sides. Neither is right in general — it depends on whether the edges of your image matter.'
+    ],
+    specs: {
+      caption: 'Sizes and what they are for',
+      rows: [
+        ['YouTube 1280×720', 'Video thumbnails, 16:9'],
+        ['Blog / OG 1200×630', 'Link previews on social and messaging apps'],
+        ['Square 1080×1080', 'Instagram feed, profile grids'],
+        ['Wide 1600×900', 'Hero images, presentation slides'],
+        ['Small 640×360', 'Lightweight embeds and list views'],
+        ['Fill & crop', 'Frame stays full, edges are trimmed'],
+        ['Fit (no crop)', 'Whole image kept, sides padded with your background colour']
+      ]
+    },
+    steps: [
+      'Drop the image in.',
+      'Pick a <strong>size</strong> that matches where it will appear.',
+      'Choose <strong>Fill & crop</strong> unless the edges of the image carry meaning.',
+      'Before publishing, view the result at about 200 px wide.'
+    ],
+    tip: 'Check it small before you commit. Fine detail, thin text and low-contrast subjects all disappear at feed size, and the thumbnail that looked considered at full resolution reads as a grey smudge in a list. If the subject is not identifiable at 200 px, the design is wrong regardless of how it looks large.',
+    faqs: [
+      { q: 'Fill and crop, or fit?', a: 'Fill and crop for photographs, where trimming the edges costs nothing and a full frame looks stronger. Fit when the edges matter — a product shot, a screenshot, anything where cropping removes information. Fit adds bars, which is the trade.' },
+      { q: 'Why is my image cropped oddly?', a: 'Fill and crop takes the centre of the frame. If your subject sits off to one side, crop it deliberately first with Crop Image and then run it through here.' },
+      { q: 'Which size for a link preview?', a: '1200×630. That is the Open Graph standard and it is what Facebook, LinkedIn, Slack and most messaging apps expect. Anything else gets cropped unpredictably by each platform.' },
+      { q: 'Will this make a small image bigger?', a: 'It scales to the target size, so a small source will be enlarged and will look soft. Start from the largest version you have — enlarging cannot recover detail that was never captured.' }
+    ],
+    related: ['social-media-image', 'crop-image', 'resize-image', 'compress-image', 'meme-generator', 'passport-photo-maker']
+  },
+
+  'social-media-image': {
+    intro: 'Every platform has its own dimensions, they change without notice, and getting one wrong means your image is cropped somewhere you did not choose — usually across a face or a logo.',
+    what: [
+      'Resizes an image to the current standard size for nine specific placements, filling and cropping or fitting on a background.',
+      'These are placement-specific rather than platform-specific, because a single platform uses several. An Instagram feed post, a portrait post and a story are three different shapes, and using the wrong one is the most common reason a post looks wrong.'
+    ],
+    specs: {
+      caption: 'Placements covered',
+      rows: [
+        ['Instagram post', '1080×1080 — square feed'],
+        ['Instagram portrait', '1080×1350 — the tallest the feed allows'],
+        ['Instagram / TikTok story', '1080×1920 — full-screen vertical'],
+        ['Facebook post', '1200×630'],
+        ['X / Twitter post', '1600×900 · header 1500×500'],
+        ['LinkedIn post', '1200×627'],
+        ['YouTube thumbnail', '1280×720'],
+        ['Pinterest pin', '1000×1500 — tall performs better here']
+      ]
+    },
+    steps: [
+      'Drop the image in.',
+      'Choose the <strong>exact placement</strong>, not just the platform.',
+      'Use <strong>Fill & crop</strong> for photos, <strong>Fit</strong> where the whole image must survive.',
+      'Keep important content away from the edges — interfaces overlay them.'
+    ],
+    tip: 'Stories and vertical video are the ones to be careful with. The top and bottom roughly 250 pixels sit under the platform’s own interface — profile name at the top, reply box and buttons at the bottom. Design as though the middle two-thirds is the only safe area.',
+    faqs: [
+      { q: 'Why did my image get cropped after uploading?', a: 'The platform cropped it to its own aspect ratio, which is what happens whenever the uploaded shape does not match the placement. Sizing correctly first means you choose the crop rather than an algorithm choosing it for you.' },
+      { q: 'Which Instagram size should I use?', a: 'Portrait 1080×1350 takes the most vertical space in the feed, which is why it tends to perform better than square. Square is safer if the composition needs it. Stories are a different shape entirely at 1080×1920.' },
+      { q: 'Do these sizes go out of date?', a: 'They shift occasionally. These are the current widely-used dimensions, and the safest habit is to keep important content away from the edges so a change in crop costs you nothing.' },
+      { q: 'Is one image enough for every platform?', a: 'No, and trying is why images get badly cropped. A square post and a full-screen story cannot be the same file. Export the sizes you actually need — it takes seconds each.' }
+    ],
+    related: ['thumbnail-maker', 'crop-image', 'resize-image', 'circle-crop', 'compress-image', 'meme-generator']
+  },
+
+  'passport-photo-maker': {
+    intro: 'Passport photo requirements are unforgiving and vary by country. The dimensions are the easy part — the reason photos get rejected is usually everything around them.',
+    what: [
+      'Crops and resizes a photo to the official print dimensions for five countries, at print resolution.',
+      'To be clear about scope: this handles the size. It cannot check head position, background colour, expression, glasses, shadows or lighting, and those are what officials actually reject photos for.'
+    ],
+    specs: {
+      caption: 'Sizes by country',
+      rows: [
+        ['US / India', '2×2 inches — 600×600 px'],
+        ['UK / EU / Schengen', '35×45 mm — 413×531 px'],
+        ['Canada', '50×70 mm — 590×826 px'],
+        ['Australia', '35×45 mm — 413×531 px'],
+        ['Fit', 'Fill & crop, or Fit with a background colour'],
+        ['Not checked', 'Head size and position, background, expression, glasses, shadows'],
+        ['Authoritative source', 'Your country’s official guidance — always check it']
+      ]
+    },
+    steps: [
+      'Read your country’s official photo rules first — they specify head height and position, not just the print size.',
+      'Take or choose a photo against a plain, evenly lit background.',
+      'Drop it in and select your country’s size.',
+      'Compare the result against the official template before submitting.'
+    ],
+    tip: 'Head size is what catches people out, and it is a proportion rather than a dimension. Most countries specify that the head must occupy a set fraction of the frame — commonly around 70–80% of the height from chin to crown. A correctly sized photo with the head too small or too low is still rejected, and this tool cannot see that.',
+    faqs: [
+      { q: 'Will a photo from this be accepted?', a: 'Only if it was already compliant in every other respect. This gets the dimensions right; officials also check head size and position, background, lighting, shadows, expression, eye visibility and whether glasses cause glare. Check your country’s published template.' },
+      { q: 'Can I take the photo on a phone?', a: 'Many countries accept it if the result meets the rules. Use a plain light background, even lighting with no shadow behind you, hold the camera at eye level, and avoid a wide-angle selfie — phone front cameras distort facial proportions noticeably up close.' },
+      { q: 'Why are US and Indian sizes the same?', a: 'Both use a 2×2 inch square, which is unusual — most countries use the rectangular 35×45 mm format. The shared size does not mean shared rules on head position, so check each separately.' },
+      { q: 'What resolution is needed for printing?', a: 'The pixel dimensions here correspond to roughly 300 DPI at the stated print size, which is the normal requirement. Printing at a smaller size than intended is fine; enlarging is not.' }
+    ],
+    related: ['crop-image', 'circle-crop', 'resize-image', 'social-media-image', 'compress-image', 'convert-image']
+  },
+
+  'flip-image': {
+    intro: 'Mirroring is the one image operation that changes meaning as often as it changes appearance — invaluable for a selfie, catastrophic for anything containing text.',
+    what: [
+      'Flips an image horizontally, which mirrors it, or vertically, which turns it upside down.',
+      'Horizontal is the common one. Phone front cameras usually save what you saw in the preview rather than what the lens captured, or the reverse depending on the phone, which is why selfies sometimes look subtly wrong to the person in them.'
+    ],
+    specs: {
+      caption: 'The two directions',
+      rows: [
+        ['Horizontal', 'Mirrors left to right — the selfie fix'],
+        ['Vertical', 'Turns the image upside down — rarely what you want'],
+        ['Quality', 'Lossless — pixels are rearranged, not resampled'],
+        ['File size', 'Essentially unchanged'],
+        ['Text', 'Becomes mirrored and unreadable'],
+        ['Rotation', 'Different operation — use Rotate Image'],
+        ['Reversible', 'Flipping twice returns the original exactly']
+      ]
+    },
+    steps: [
+      'Drop the image in.',
+      'Choose <strong>Horizontal</strong> to mirror, <strong>Vertical</strong> to invert.',
+      'Check any text in the image before saving.'
+    ],
+    tip: 'If the image contains text, a logo, a sign or a number plate, horizontal flip will render it backwards and the mistake is easy to miss on a quick look. Faces are far more forgiving — most people cannot tell a mirrored portrait from an unmirrored one, which is exactly why the operation is so useful on selfies.',
+    faqs: [
+      { q: 'Flip or rotate — which do I need?', a: 'Flipping mirrors the image, producing a reflection. Rotating turns it while keeping the same handedness, so text stays readable. If your photo is sideways, you want Rotate Image; if it is a mirrored selfie, you want a horizontal flip.' },
+      { q: 'Does flipping lose quality?', a: 'No. Pixels are rearranged, not resampled or re-encoded, so the result is identical in quality to the source and flipping twice returns you exactly where you started.' },
+      { q: 'Why do my selfies look wrong to other people?', a: 'You are used to your mirrored reflection, and faces are not symmetrical. A photo saved unmirrored looks subtly unfamiliar to you and completely normal to everyone else. A horizontal flip gives you the version you recognise.' },
+      { q: 'When would I flip vertically?', a: 'Rarely — mainly for reflection effects, or correcting a scan fed in upside down. For a sideways photo, rotation is the right operation.' }
+    ],
+    related: ['rotate-image', 'crop-image', 'resize-image', 'circle-crop', 'compress-image', 'image-watermark']
+  },
+
+  'rotate-image': {
+    intro: 'A photo that displays upright on your phone and sideways on a laptop has not changed — only the software reading its orientation flag has. Rotating fixes it in the pixels, where nothing can ignore it.',
+    what: [
+      'Rotates an image by 90° right, 180°, or 90° left, writing the new orientation into the pixels themselves.',
+      'That distinction matters. Many photos carry an EXIF orientation flag telling software how to display them, and plenty of applications ignore it. Rotating here makes the change unconditional.'
+    ],
+    specs: {
+      caption: 'Options and behaviour',
+      rows: [
+        ['90° right', 'Clockwise, a quarter turn'],
+        ['180°', 'Upside down'],
+        ['90° left', 'Anti-clockwise, a quarter turn'],
+        ['Dimensions', 'Width and height swap on a quarter turn'],
+        ['Quality', 'Lossless — pixels are rearranged, not resampled'],
+        ['EXIF orientation', 'Not relied on; the rotation is applied to the image itself'],
+        ['Arbitrary angles', 'Not supported — 90° steps only']
+      ]
+    },
+    steps: [
+      'Drop the image in.',
+      'Choose the direction. If you have to tilt your head left to read it, use 90° right.',
+      'Rotate and download.'
+    ],
+    tip: 'Rotating in 90° steps is lossless because it is a pure rearrangement of pixels. Rotating by an arbitrary angle is not — it requires resampling every pixel and softens the image, which is why straightening a crooked scan costs quality in a way that turning it sideways does not.',
+    faqs: [
+      { q: 'Which direction do I need?', a: 'If you tilt your head to the left to read the image, rotate 90° right. If you tilt right, rotate 90° left. Guessing has a 50% success rate and it takes one attempt to find out.' },
+      { q: 'Why did my photo look fine on my phone but not my laptop?', a: 'The phone honoured the EXIF orientation flag and the laptop software did not. Rotating here changes the actual pixels, so the result is correct everywhere regardless of what reads it.' },
+      { q: 'Does rotating reduce quality?', a: 'Not at 90° steps — it is a lossless rearrangement. Only arbitrary angles require resampling, and this tool deliberately offers quarter turns only.' },
+      { q: 'Can I straighten a slightly crooked photo?', a: 'Not here. That needs an arbitrary angle plus a crop to remove the corners it introduces, which is an editor’s job. This handles the quarter turns that fix orientation.' }
+    ],
+    related: ['flip-image', 'crop-image', 'rotate-pdf', 'resize-image', 'exif-viewer', 'compress-image']
+  },
+
+  'meme-generator': {
+    intro: 'The classic format is one image, white Impact-style text top and bottom, heavy black outline. The outline is not decoration — it is what keeps the text readable over any background.',
+    what: [
+      'Adds top and bottom caption text to an image and exports a PNG.',
+      'Everything happens on a canvas in this page, so the image is never uploaded — which matters more for memes than people assume, given how often the source is a personal photo or a screenshot of a private conversation.'
+    ],
+    specs: {
+      caption: 'The format and why it works',
+      rows: [
+        ['Text placement', 'Top and bottom, either can be left empty'],
+        ['Styling', 'Bold white with a heavy dark outline'],
+        ['Why the outline', 'Keeps text legible over both light and dark areas'],
+        ['Traditional convention', 'UPPERCASE — it reads faster at small sizes'],
+        ['Output', 'PNG'],
+        ['Best source', 'A wide image; tall ones leave little room for captions'],
+        ['Processing', 'On a canvas in this page — nothing uploaded']
+      ]
+    },
+    steps: [
+      'Drop in your image.',
+      'Type the top and bottom text — either can be left blank.',
+      'Keep each line short; long captions wrap and shrink.',
+      'Download the PNG.'
+    ],
+    tip: 'Short beats clever. A meme is read in about a second while someone is scrolling, and every extra word shrinks the text and costs you attention. If a caption needs a comma, it is probably two memes.',
+    faqs: [
+      { q: 'Why is the text white with a black outline?', a: 'Because it has to be readable over whatever is behind it. Plain white vanishes on a bright sky and plain black vanishes in shadow; the outline guarantees contrast on both without knowing anything about the image.' },
+      { q: 'Can I move the text or change the font?', a: 'Not here — this produces the standard top-and-bottom format deliberately, because that is the convention people recognise. For custom placement you would need an image editor.' },
+      { q: 'Is my image uploaded?', a: 'No. Everything is drawn on a canvas in this page. Given that meme sources are frequently personal photos or screenshots of private chats, that is worth knowing.' },
+      { q: 'Why should the text be uppercase?', a: 'Convention, and legibility. Uppercase reads faster at thumbnail size and matches the format people expect. Lowercase works, it just reads as a different kind of joke.' }
+    ],
+    related: ['thumbnail-maker', 'crop-image', 'social-media-image', 'image-watermark', 'resize-image', 'compress-image']
+  },
+
+  'meta-tag-generator': {
+    intro: 'The title and description are not for search engines. They are advertising copy shown to a human deciding whether to click, and they are the highest-leverage 200 characters on any page.',
+    what: [
+      'Generates the meta tags a page needs — title, description, canonical and Open Graph — and counts the characters against the limits that matter.',
+      'The counters are the useful part. Titles are truncated around 60 characters and descriptions around 155, and a sentence cut off mid-word costs clicks from a page that already ranked.'
+    ],
+    specs: {
+      caption: 'The limits that matter',
+      rows: [
+        ['Title', 'Around 60 characters before truncation'],
+        ['Description', 'Around 155 characters'],
+        ['Truncation basis', 'Pixel width, so wide letters truncate sooner'],
+        ['Canonical', 'The single preferred URL for the page'],
+        ['Open Graph image', '1200×630 is the standard'],
+        ['Description and ranking', 'Not a ranking factor — it affects click-through'],
+        ['Rewriting', 'Google may substitute its own if yours does not fit the query']
+      ]
+    },
+    steps: [
+      'Enter the title, keeping the distinctive words first — the end is what gets cut.',
+      'Write a description that gives someone a reason to click, not a keyword list.',
+      'Add the canonical URL and an Open Graph image.',
+      'Copy the generated tags into your page’s <code>&lt;head&gt;</code>.'
+    ],
+    tip: 'Front-load both fields. Truncation is measured in pixels rather than characters, so a title full of wide letters gets cut earlier than the count suggests. Putting the specific, distinctive words first means the part that survives is the part that earns the click.',
+    faqs: [
+      { q: 'Does the meta description affect ranking?', a: 'No, and it has not for many years. It affects click-through rate, which is a different and still valuable thing — a page that ranks fifth with a compelling description can beat one ranking third without.' },
+      { q: 'Why does Google show different text from mine?', a: 'It rewrites descriptions when it thinks a passage from the page answers the query better. A well-written description is used most of the time; it is a strong suggestion rather than a guarantee.' },
+      { q: 'What happens if my title is too long?', a: 'It is truncated with an ellipsis, usually mid-phrase. The limit is pixel width rather than a character count, so the practical cutoff varies with the letters used — treat 60 as guidance and check with a preview.' },
+      { q: 'Do I need Open Graph tags separately?', a: 'Yes, if you want control over how links look when shared. Without them platforms guess at the title, description and image, and the guess is often the first image on the page.' }
+    ],
+    related: ['serp-preview', 'og-preview', 'slug-generator', 'schema-generator', 'keyword-density', 'robots-generator']
+  },
+
+  'serp-preview': {
+    intro: 'Writing a title in a text field tells you nothing about how it will look in a results page. Seeing it truncated, next to competitors, is what changes what you write.',
+    what: [
+      'Renders your title, URL and description the way a search result displays them, so you can see the truncation before publishing.',
+      'The value is entirely in the preview. A description reads fine in a form field and lands badly when cut off mid-sentence between the ninth and tenth word.'
+    ],
+    specs: {
+      caption: 'What to check in the preview',
+      rows: [
+        ['Title truncation', 'Around 60 characters, by pixel width'],
+        ['Description truncation', 'Around 155 characters'],
+        ['Mobile', 'Shows less than desktop — check the tighter case'],
+        ['URL display', 'Shown as a breadcrumb path rather than the raw URL'],
+        ['Front-loading', 'The distinctive words should survive the cut'],
+        ['Brand name', 'Usually last in the title, first to be truncated'],
+        ['Actual result', 'Google may rewrite either field']
+      ]
+    },
+    steps: [
+      'Paste your title, URL and description.',
+      'Look at where each one is cut.',
+      'Rewrite so the important words appear before the cut.',
+      'Read the description as a sentence — does it give a reason to click?'
+    ],
+    tip: 'Write the description as a promise rather than a summary. "Merge PDFs in your browser — nothing uploaded, no sign-up" gives someone a reason to click; "This page contains a tool for merging PDF files" describes the page to someone who is not reading it yet. The distinction is worth more than any keyword.',
+    faqs: [
+      { q: 'Will my result look exactly like this?', a: 'Close, but not guaranteed. Google adjusts titles and rewrites descriptions depending on the query, and result layouts change over time. Use the preview to catch truncation and awkward phrasing, not as a pixel-perfect promise.' },
+      { q: 'Should the brand name go in the title?', a: 'Usually at the end, separated by a pipe or dash, so it is the first thing truncated. The exception is a well-known brand, where leading with it can improve trust enough to be worth the space.' },
+      { q: 'How long should the description be?', a: 'Long enough to give a reason to click, short enough to survive. Around 150 characters is safe. Very short descriptions leave the page looking thin; very long ones lose their ending.' },
+      { q: 'Does every page need a unique description?', a: 'Every page you care about ranking, yes. Duplicated descriptions across a site are a signal of templated content, and they waste the one piece of copy you fully control in the results page.' }
+    ],
+    related: ['meta-tag-generator', 'og-preview', 'slug-generator', 'keyword-density', 'schema-generator', 'readability']
+  },
+
+  'contrast-checker': {
+    intro: 'Low-contrast text is the single most common accessibility failure on the web, and it is also the easiest to fix — it is a number you can check in seconds before the design ships.',
+    what: [
+      'Calculates the contrast ratio between a foreground and background colour and reports whether it meets each WCAG threshold.',
+      'It shows all four results rather than a single pass or fail, because the requirement depends on text size. A colour pair that fails for body text can be perfectly acceptable for a heading.'
+    ],
+    specs: {
+      caption: 'WCAG thresholds',
+      rows: [
+        ['Normal text, AA', '4.5:1 — the usual legal and practical minimum'],
+        ['Normal text, AAA', '7:1 — enhanced'],
+        ['Large text, AA', '3:1'],
+        ['Large text, AAA', '4.5:1'],
+        ['"Large" means', 'About 18pt, or 14pt bold'],
+        ['Maximum possible', '21:1 — pure black on pure white'],
+        ['Not covered', 'Colour blindness — high contrast can still be indistinguishable']
+      ]
+    },
+    steps: [
+      'Enter your foreground and background hex colours.',
+      'Read the ratio and check it against the size of text you are using.',
+      'Aim for <strong>4.5:1</strong> for body text as the working minimum.'
+    ],
+    tip: 'Grey placeholder text is where this fails most often. Light grey on white looks refined in a mockup and becomes unreadable in sunlight, on a cheap screen, or to anyone over about fifty. If placeholder text carries meaning, it needs to clear 4.5:1 like any other text.',
+    faqs: [
+      { q: 'What counts as large text?', a: 'Roughly 18pt regular or 14pt bold — about 24px and 18.66px. Below that the stricter 4.5:1 threshold applies. The exemption exists because larger letterforms are inherently easier to read at lower contrast.' },
+      { q: 'Is passing AA enough?', a: 'It is the level most accessibility regulations reference, so it is the practical minimum. AAA is better for body text where you can achieve it, and is genuinely difficult with brand colours that were never chosen with contrast in mind.' },
+      { q: 'Does this cover colour blindness?', a: 'No, and that is an important gap. Contrast ratio is about luminance, so red and green of similar brightness can pass comfortably and still be indistinguishable to someone with red-green colour blindness. Use the Colour Blind Simulator as well.' },
+      { q: 'Do icons and buttons need to pass?', a: 'Meaningful non-text elements — icons that carry information, input borders, focus indicators — need 3:1 under WCAG 2.1. Purely decorative graphics do not.' }
+    ],
+    related: ['accessible-palette', 'color-blind-simulator', 'color-converter', 'palette-generator', 'heading-checker', 'alt-text-auditor']
+  },
+
+  'readability': {
+    intro: 'Readability scores measure sentence length and syllable count, not clarity. A short sentence full of jargon scores well and communicates nothing — which is worth knowing before optimising for the number.',
+    what: [
+      'Calculates Flesch Reading Ease and Flesch-Kincaid Grade Level, along with the word, sentence and syllable counts they are derived from.',
+      'Both formulas use only two inputs: words per sentence and syllables per word. That simplicity is why they are quick and useful, and also why they can be gamed by chopping sentences in half.'
+    ],
+    specs: {
+      caption: 'Reading ease scores',
+      rows: [
+        ['90–100', 'Very easy — around age 11'],
+        ['60–70', 'Plain English — the usual target for general audiences'],
+        ['30–50', 'Difficult — academic or technical writing'],
+        ['0–30', 'Very difficult — legal and specialist text'],
+        ['Grade level', 'US school grade needed to read it comfortably'],
+        ['Common guidance', 'Aim for grade 8–10 for a general audience'],
+        ['What it measures', 'Sentence and word length only — not clarity or accuracy']
+      ]
+    },
+    steps: [
+      'Paste your text.',
+      'Read the ease score and grade level together.',
+      'If the score is low, look for long sentences first — they move the number most.',
+      'Then read it aloud, which catches what the formula cannot.'
+    ],
+    tip: 'Improve the score by splitting long sentences, not by replacing precise words with vague ones. The formula rewards short words, so "use" scores better than "utilise" — which is a genuine improvement — but it also rewards "thing" over "deductible", which is not. The score is a prompt to re-read, not a target to hit.',
+    faqs: [
+      { q: 'What score should I aim for?', a: 'Around 60–70 reading ease, or grade 8–10, for a general audience. Technical documentation for specialists can reasonably sit lower. Government and health guidance often targets grade 8 or below, because the cost of being misunderstood is high.' },
+      { q: 'Does a high score mean the writing is good?', a: 'No. The formula counts syllables and sentence length; it cannot detect whether the text is accurate, well organised or interesting. Text can score beautifully and still be meaningless.' },
+      { q: 'Why did my score change after I added a heading?', a: 'Headings without full stops can be read as part of the following sentence, inflating the words-per-sentence figure. Paste the body text alone for a cleaner reading.' },
+      { q: 'Does readability affect SEO?', a: 'Not directly — there is no readability ranking factor. It affects whether people stay and finish, which does matter. Write for the reader and the score generally follows.' }
+    ],
+    related: ['word-counter', 'text-diff', 'case-converter', 'serp-preview', 'keyword-density', 'meta-tag-generator']
+  },
+
+  'profit-margin': {
+    intro: 'Margin and markup are different numbers that people use interchangeably, and the confusion reliably costs money. A 50% markup is a 33% margin — not the same thing at all.',
+    what: [
+      'Calculates gross profit, margin and markup from a cost and a selling price, across any number of units.',
+      'Showing both margin and markup side by side is deliberate. Suppliers usually quote markup and accountants think in margin, so the same deal gets described two ways and the gap is where pricing mistakes happen.'
+    ],
+    specs: {
+      caption: 'Margin versus markup',
+      rows: [
+        ['Margin', 'Profit ÷ selling price — the share of revenue you keep'],
+        ['Markup', 'Profit ÷ cost — how much you added to what you paid'],
+        ['50% markup', 'equals a 33% margin'],
+        ['100% markup', 'equals a 50% margin'],
+        ['Margin ceiling', 'Can never reach 100%'],
+        ['Markup ceiling', 'None — it can exceed 100% freely'],
+        ['This is gross', 'Before overheads, payment fees, returns and tax']
+      ]
+    },
+    steps: [
+      'Enter your unit cost and selling price.',
+      'Set the number of units for totals.',
+      'Read margin and markup separately, and note which one a supplier or platform means.'
+    ],
+    tip: 'This is gross margin — it counts the cost of the item and nothing else. Payment processing, platform fees, shipping, returns, storage and your own time all come out of what is left. A healthy-looking 40% gross margin can be a loss once a 3% payment fee, a 15% platform fee and a 10% return rate are taken off.',
+    faqs: [
+      { q: 'What is the difference between margin and markup?', a: 'The denominator. Margin divides profit by the selling price; markup divides it by the cost. Buy at 100 and sell at 150 and you have a 50% markup and a 33% margin. Both describe the same deal.' },
+      { q: 'Why can margin never reach 100%?', a: 'Because it is a share of the selling price, and the cost is always part of that price. Only a zero-cost product would give a 100% margin. Markup has no such ceiling — a 10 to 100 sale is a 900% markup.' },
+      { q: 'Which should I use for pricing?', a: 'Margin, generally, because it tells you what share of each sale you keep and it compares cleanly across products. Use markup when translating a supplier’s quote, since that is usually the language they are speaking.' },
+      { q: 'Does this include fees and overheads?', a: 'No — it is gross margin on the item only. Payment fees, platform commission, shipping, returns and overheads all reduce what you actually keep. Use the platform fee calculators to work those out separately.' }
+    ],
+    related: ['break-even', 'stripe-fee-calculator', 'paypal-fee-calculator', 'etsy-fee-calculator', 'discount-calculator', 'percentage-calculator']
+  },
+
+  'stripe-fee-calculator': {
+    intro: 'Payment fees have a percentage and a fixed component, and the fixed part is what makes small transactions disproportionately expensive. On a £3 sale, 30p is a tenth of the money.',
+    what: [
+      'Works out the fee and what you receive on a payment — or reverses it, telling you what to charge in order to receive a specific amount.',
+      'The reverse mode is not a simple addition. Adding the fee to the price increases the fee, so the correct figure requires solving for it — which is why manually adding 2.9% always leaves you slightly short.'
+    ],
+    specs: {
+      caption: 'How the fee behaves',
+      rows: [
+        ['Structure', 'A percentage plus a fixed amount per transaction'],
+        ['Common default', '2.9% + 0.30 — adjust to your actual rate'],
+        ['Effect on small payments', 'A 5.00 charge loses roughly 9% to fees'],
+        ['Effect on large payments', 'The fixed part becomes negligible'],
+        ['Reverse calculation', 'Charge = (target + fixed) ÷ (1 − rate)'],
+        ['Why adding the % fails', 'Raising the price raises the fee too'],
+        ['Not included', 'Currency conversion, chargebacks, payout fees']
+      ]
+    },
+    steps: [
+      'Enter the amount.',
+      'Check the <strong>fee percentage and fixed fee</strong> against your actual account — rates differ by country, card type and plan.',
+      'Choose whether you want the fee on a given charge, or the charge needed to net a given amount.'
+    ],
+    tip: 'The fixed fee is what makes micro-transactions uneconomic. At 2.9% + 0.30, a £2 sale loses 18% and a £200 sale loses 3.1%. If you sell low-value items, bundling them or setting a minimum order is usually more effective than negotiating the percentage.',
+    faqs: [
+      { q: 'Why can I not just add 2.9% to cover the fee?', a: 'Because the fee is charged on the higher amount you now have. Adding 2.9% to 100 gives 102.90, and the fee on that is more than the 2.90 you added — so you still come up short. The reverse mode solves it properly.' },
+      { q: 'Are the default rates correct for me?', a: 'They are a common published starting point, not your rate. Actual pricing varies by country, card type, international cards and negotiated volume terms. Take the numbers from your own dashboard.' },
+      { q: 'Should I pass fees on to customers?', a: 'It is legal in many places and restricted in some, particularly for card surcharges. Beyond legality it is a pricing decision — most businesses build fees into the headline price rather than adding them visibly at checkout.' },
+      { q: 'What is not included here?', a: 'Currency conversion margins, chargeback fees, payout or instant-transfer fees, and any subscription cost of the plan. On international sales the conversion margin often exceeds the transaction fee itself.' }
+    ],
+    related: ['paypal-fee-calculator', 'profit-margin', 'break-even', 'etsy-fee-calculator', 'discount-calculator', 'currency-converter']
   }
 };
 
