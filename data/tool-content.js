@@ -1181,6 +1181,405 @@ module.exports = {
       { q: 'Is my photo uploaded to read the metadata?', a: 'No. The file is parsed in your browser — which matters more here than on most tools, since the whole point is inspecting data you may not want anyone else to have.' }
     ],
     related: ['compress-image', 'convert-image', 'image-watermark', 'batch-compress', 'resize-image', 'png-to-jpg']
+  },
+
+  /* ================= session 3 — text and developer tools ================= */
+
+  'word-counter': {
+    intro: 'Almost every word count that matters is somebody else’s limit — a 500-word essay, a 160-character meta description, a personal statement capped at 4,000. The number updates as you type so you can see how far over you are while you cut.',
+    what: [
+      'Counts words, characters, sentences, paragraphs and lines as you type, and estimates how long the text takes to read aloud or silently.',
+      'Characters are counted twice: with spaces and without. That distinction matters more than it sounds, because form limits and social platforms disagree about which one they mean, and being 40 characters over is usually the difference.'
+    ],
+    specs: {
+      caption: 'What is counted, and how',
+      rows: [
+        ['Words', 'Runs of non-space characters — hyphenated words count as one'],
+        ['Characters', 'Counted both with and without spaces'],
+        ['Sentences', 'Detected by full stop, question mark or exclamation mark'],
+        ['Paragraphs', 'Separated by a blank line'],
+        ['Reading time', 'Based on 200 words a minute — silent reading'],
+        ['Speaking time', 'Based on 130 words a minute — reading aloud'],
+        ['Updates', 'Live, on every keystroke']
+      ]
+    },
+    steps: [
+      'Type or paste your text into the box.',
+      'Read the counts, which update as you type.',
+      'Watch the character count with and without spaces if you are working to a form limit — they can differ substantially.'
+    ],
+    tip: 'The two timing figures exist because they answer different questions. 200 words a minute is silent reading; 130 is speaking pace, which is what you want for a presentation, a video script or a wedding speech. Using the reading figure to plan a talk is how five minutes becomes eight.',
+    faqs: [
+      { q: 'Why does my count differ from Word or Google Docs?', a: 'Different tools disagree at the edges — hyphenated compounds, numbers, text in headings and footnotes. Here a word is any run of non-space characters, which is the most common definition. Expect small differences on the same text, and check against whatever tool the person setting the limit is using.' },
+      { q: 'Which character count do social platforms use?', a: 'Almost always characters including spaces, and many count emoji as more than one. If you are close to a limit, use the with-spaces figure and leave a little headroom.' },
+      { q: 'How accurate is the reading time?', a: 'It is an average, not a measurement. 200 words a minute is typical for adults reading straightforward prose; dense technical writing is slower and light fiction faster. Treat it as a planning figure.' },
+      { q: 'Is my text sent anywhere?', a: 'No. The counting happens as you type, in this page, which is why it responds instantly — there is no round trip to a server, and nothing to store.' }
+    ],
+    related: ['case-converter', 'lorem-ipsum', 'text-to-pdf', 'meta-tag-generator', 'slug-generator', 'keyword-density']
+  },
+
+  'case-converter': {
+    intro: 'Someone sends a heading in ALL CAPS. A CSV arrives with column names that need to become variable names. Retyping is the slow way to do something a computer should do in one click.',
+    what: [
+      'Converts text between seven cases, including the four programmers actually need for identifiers.',
+      'The two most useful in practice are Title Case for headings and Sentence case for rescuing text that arrived shouting. The camel, kebab and snake options exist because turning a human label into an identifier is a job people do constantly and by hand.'
+    ],
+    specs: {
+      caption: 'The seven cases',
+      rows: [
+        ['UPPER CASE', 'Everything capitalised'],
+        ['lower case', 'Everything lowercase'],
+        ['Title Case', 'First Letter Of Each Word — headings'],
+        ['Sentence case', 'First letter only — fixing text that arrived in caps'],
+        ['camelCase', 'JavaScript and Java identifiers'],
+        ['kebab-case', 'URLs, CSS class names, file names'],
+        ['snake_case', 'Python identifiers, database columns']
+      ]
+    },
+    steps: [
+      'Paste your text.',
+      'Pick the case you want.',
+      'Copy the result.'
+    ],
+    tip: 'Title Case capitalises every word, which is not what most style guides actually want — they leave short words like "and", "of" and "the" lowercase unless they start the phrase. For a headline going somewhere that matters, expect to fix a few small words by hand afterwards.',
+    faqs: [
+      { q: 'Title Case capitalised words that should stay lowercase.', a: 'It capitalises every word by design, which is simple and predictable. Most style guides keep articles, short conjunctions and short prepositions lowercase in the middle of a title. Convert first, then lowercase the handful of small words — quicker than doing the whole line by hand.' },
+      { q: 'Which case do I need for a URL?', a: 'kebab-case: lowercase words joined by hyphens. It is what search engines and humans both read most easily, and it avoids the encoding problems spaces and underscores cause. The Slug Generator does this specifically for URLs.' },
+      { q: 'What is the difference between camelCase and snake_case?', a: 'Convention rather than capability. JavaScript, Java and C# use camelCase for variables; Python and SQL generally use snake_case. Pick whichever your codebase already uses — consistency beats preference.' },
+      { q: 'Does it handle accented characters?', a: 'Yes. Accents are preserved and case-converted correctly, so é becomes É and back again rather than being stripped or mangled.' }
+    ],
+    related: ['word-counter', 'slug-generator', 'lorem-ipsum', 'text-to-pdf', 'json-formatter', 'url-encoder']
+  },
+
+  'lorem-ipsum': {
+    intro: 'Placeholder text exists so you judge the layout instead of reading the copy. Real sentences pull the eye; nonsense Latin lets you see whether the line length, spacing and hierarchy actually work.',
+    what: [
+      'Generates lorem ipsum by paragraph, sentence or word count, up to 100 units.',
+      'Choosing the right unit matters more than the amount. Paragraphs for body layout, sentences for cards and captions, words when you are filling a heading or a button and need to know how the design copes with a long label.'
+    ],
+    specs: {
+      caption: 'Options',
+      rows: [
+        ['Generate by', 'Paragraphs, Sentences, or Words'],
+        ['Amount', '1–100'],
+        ['Typical blog paragraph', '3–5 sentences'],
+        ['Typical card', '1–2 sentences'],
+        ['Long heading test', '8–12 words'],
+        ['Output', 'Plain text, ready to copy']
+      ]
+    },
+    steps: [
+      'Choose <strong>Paragraphs</strong>, <strong>Sentences</strong> or <strong>Words</strong>.',
+      'Set the amount.',
+      'Generate and copy.'
+    ],
+    tip: 'Test with more text than you expect, not less. Layouts break at the extremes — a heading that wraps to three lines, a card whose text overflows, a button whose label pushes the icon off. Filling everything with one tidy sentence tells you nothing about what real content will do.',
+    faqs: [
+      { q: 'Why use Latin rather than real text?', a: 'Because you stop reading it. Placeholder text made of real sentences draws attention to the words when you are meant to be judging spacing, line length and hierarchy — and worse, real-looking copy has a habit of shipping to production.' },
+      { q: 'Will lorem ipsum hurt my SEO?', a: 'Only if you publish it. Google will happily index a live page full of placeholder text, and it is a recognisable signal of an unfinished site. Search your own site for "lorem" before launch — this catches more people than it should.' },
+      { q: 'How much should I generate?', a: 'More than you think. Design against the longest realistic content, not the neatest, because that is where layouts break.' },
+      { q: 'Is it always the same text?', a: 'It draws from the standard lorem ipsum vocabulary, so it looks like Latin without being meaningful. That consistency is the point — you are testing shapes, not reading.' }
+    ],
+    related: ['word-counter', 'case-converter', 'text-to-pdf', 'meme-generator', 'thumbnail-maker', 'slug-generator']
+  },
+
+  'json-formatter': {
+    intro: 'Minified JSON from an API response is one long line that no human can read, and the error message when it is malformed is rarely where the problem is. Pretty-printing solves the first; validating tells you exactly where the second went wrong.',
+    what: [
+      'Three operations on the same text: pretty-print with two-space indentation, minify to a single line, and validate.',
+      'Validate is the one worth knowing about. It reports the parser’s own error message and position, which is far more useful than a generic "invalid" — it usually points within a character or two of the real mistake.'
+    ],
+    specs: {
+      caption: 'The three operations',
+      rows: [
+        ['Pretty-print', 'Two-space indentation, one key per line'],
+        ['Minify', 'All whitespace removed — smallest payload'],
+        ['Validate', 'Reports the exact parser error and position'],
+        ['Common failure', 'A trailing comma after the last item — valid in JavaScript, not in JSON'],
+        ['Also common', 'Single quotes; JSON requires double'],
+        ['Also common', 'Unquoted keys — every key must be in double quotes'],
+        ['Processing', 'In this page — nothing is sent anywhere']
+      ]
+    },
+    steps: [
+      'Paste your JSON.',
+      '<strong>Pretty-print</strong> to read it, <strong>Minify</strong> to ship it, <strong>Validate</strong> to find out why it will not parse.',
+      'If validation fails, read the position in the error — the real mistake is usually just before it.'
+    ],
+    tip: 'When the error points at a character that looks perfectly fine, look at the line above. A missing comma, or a trailing one, is reported where the parser gives up rather than where the problem is — which is why "unexpected token }" almost always means something is wrong on the previous line.',
+    faqs: [
+      { q: 'It says my JSON is invalid but it looks correct.', a: 'The usual culprits are a trailing comma after the final item, single quotes instead of double, or unquoted keys. All three are legal JavaScript and none are legal JSON, which is exactly why they slip through when you write JSON by hand.' },
+      { q: 'Is it safe to paste API responses here?', a: 'The parsing happens in this page and nothing is transmitted. That said, treat any credentials or personal data in a response the way you would anywhere else, and prefer redacting them.' },
+      { q: 'Why would I minify JSON?', a: 'Whitespace is bytes. For a config file it is irrelevant; for an API payload sent thousands of times a minute, or data embedded in a page, removing it measurably reduces transfer size.' },
+      { q: 'Does formatting change my data?', a: 'No. Only whitespace changes. Key order is preserved, and values are untouched — pretty-printing and minifying are exactly reversible.' }
+    ],
+    related: ['base64', 'jwt-decoder', 'url-encoder', 'regex-tester', 'json-csv', 'uuid-generator']
+  },
+
+  'base64': {
+    intro: 'Base64 turns binary into text so it can travel through channels that only handle text — email attachments, data URIs, JSON payloads, HTTP headers. It is an encoding, not encryption, and confusing the two is a genuinely dangerous mistake.',
+    what: [
+      'Encodes text to Base64 and decodes it back, in this page.',
+      'Stated plainly because people get this wrong: Base64 provides no security whatsoever. It is trivially reversible by anyone — that is its entire purpose. Anything sensitive needs actual encryption.'
+    ],
+    specs: {
+      caption: 'What Base64 is for',
+      rows: [
+        ['Purpose', 'Making binary data safe to carry through text-only channels'],
+        ['Security', 'None — it is reversible by design'],
+        ['Size cost', 'About 33% larger than the original'],
+        ['Alphabet', 'A–Z, a–z, 0–9, plus + and /'],
+        ['Padding', 'Trailing = signs make the length a multiple of four'],
+        ['Common uses', 'Data URIs, email attachments, JSON payloads, JWT segments'],
+        ['Decode failure', 'Usually a truncated string or one that was URL-encoded first']
+      ]
+    },
+    steps: [
+      'Paste your text or Base64.',
+      'Press <strong>Encode →</strong> or <strong>← Decode</strong>.',
+      'Copy the result.'
+    ],
+    tip: 'Base64 grows the data by roughly a third, which is why embedding a large image as a data URI is usually a false economy — you save one request and pay for it on every page load, uncached. It makes sense for tiny icons and little else.',
+    faqs: [
+      { q: 'Is Base64 encryption?', a: 'No, and treating it as such is a real security mistake. Anyone can decode it in seconds — this page does it with one click. It exists to make binary survivable in text channels, not to hide anything. Use real encryption for secrets.' },
+      { q: 'Decoding failed. Why?', a: 'Usually the string is truncated, or it was URL-encoded somewhere along the way so + became a space and / became %2F. Decode the URL encoding first, then the Base64.' },
+      { q: 'What are the = signs at the end?', a: 'Padding. Base64 works in blocks of four characters, so one or two = signs are appended when the input does not divide evenly. They carry no data and are normal.' },
+      { q: 'Why is my encoded string bigger?', a: 'Base64 represents three bytes using four characters, so the output is about 33% larger. That overhead is the price of making binary text-safe.' }
+    ],
+    related: ['url-encoder', 'jwt-decoder', 'json-formatter', 'hash-generator', 'uuid-generator', 'text-encrypt']
+  },
+
+  'uuid-generator': {
+    intro: 'When two systems need to create identifiers without asking each other first, random UUIDs are the standard answer — the odds of a collision are small enough to design around.',
+    what: [
+      'Generates version 4 UUIDs — 128-bit identifiers built from random data — up to 500 at a time.',
+      'Version 4 is the random one, which is what nearly everybody means by UUID. It contains no timestamp and no machine identifier, so it leaks nothing about where or when it was created.'
+    ],
+    specs: {
+      caption: 'Format and properties',
+      rows: [
+        ['Version', '4 — random'],
+        ['How many at once', '1–500, default 5'],
+        ['Format', '8-4-4-4-12 hexadecimal characters, hyphen-separated'],
+        ['Example shape', 'f47ac10b-58cc-4372-a567-0e02b2c3d479'],
+        ['Random bits', '122 of the 128 — the rest encode version and variant'],
+        ['Contains', 'Nothing about time, machine or sequence'],
+        ['Randomness source', 'The browser’s cryptographic random generator']
+      ]
+    },
+    steps: [
+      'Set how many you need.',
+      'Generate.',
+      'Copy them all at once.'
+    ],
+    tip: 'UUIDs make poor primary keys in a large database, and this catches teams out. Being random, consecutive inserts land all over the index rather than at the end, which fragments it and slows writes. Plenty of systems use a UUID as the public identifier and a plain sequential integer as the internal key.',
+    faqs: [
+      { q: 'Can two UUIDs ever be the same?', a: 'In theory yes, in practice no. With 122 random bits you would need to generate billions per second for a century before a collision became likely. Every serious system treats v4 UUIDs as unique.' },
+      { q: 'Which version is this, and does it matter?', a: 'Version 4, the random one — the 4 in the third group tells you. Version 1 embeds a timestamp and MAC address, which leaks information; v4 leaks nothing, which is why it is the usual choice.' },
+      { q: 'Are these safe to use as security tokens?', a: 'They are generated from the browser’s cryptographic random source, so they are unpredictable. Even so, a session token should be purpose-built rather than a repurposed identifier — a UUID is designed to be unique, not secret.' },
+      { q: 'Why the hyphens?', a: 'Convention, from the 8-4-4-4-12 grouping in the specification. They carry no information and many systems store the 32 hex characters without them.' }
+    ],
+    related: ['hash-generator', 'password-generator', 'json-formatter', 'base64', 'timestamp-converter', 'jwt-decoder']
+  },
+
+  'hash-generator': {
+    intro: 'A hash is a fixed-length fingerprint of any input. The same text always produces the same hash, and changing a single character produces an entirely different one — which is what makes it useful for checking that a file or message arrived unaltered.',
+    what: [
+      'Produces SHA-256, SHA-1 and SHA-512 hashes of your text at once, using the browser’s built-in Web Crypto.',
+      'MD5 is deliberately not offered. It is broken — collisions can be produced on demand — and providing it invites people to use it for exactly the security purposes it can no longer serve.'
+    ],
+    specs: {
+      caption: 'The algorithms offered',
+      rows: [
+        ['SHA-256', '64 hex characters — the current default choice'],
+        ['SHA-1', '40 hex characters — legacy compatibility only, broken since 2017'],
+        ['SHA-512', '128 hex characters — larger digest, same family'],
+        ['MD5', 'Deliberately omitted — broken and unsafe'],
+        ['Determinism', 'The same input always gives the same hash'],
+        ['Reversibility', 'None — a hash cannot be turned back into the input'],
+        ['Implementation', 'Web Crypto, built into the browser']
+      ]
+    },
+    steps: [
+      'Type or paste your text.',
+      'All three hashes appear as you type.',
+      'Copy whichever you need — SHA-256 unless something specifically requires otherwise.'
+    ],
+    tip: 'Hashing a password directly is not how password storage works. Passwords need a slow algorithm with a per-user salt — bcrypt, scrypt or Argon2 — precisely because SHA-256 is fast, and fast is exactly wrong when someone is guessing billions of candidates a second.',
+    faqs: [
+      { q: 'Why is MD5 missing?', a: 'Because it is broken. Two different inputs can be made to produce the same MD5 hash cheaply, which destroys the property everything relies on. It survives in old file checksums, but offering it here would mostly help people use it where it is unsafe.' },
+      { q: 'Should I use SHA-1?', a: 'Only if something you cannot change requires it. Practical collisions were demonstrated in 2017 and browsers dropped it from certificates. SHA-256 is the default for anything new.' },
+      { q: 'Can I reverse a hash to get the text back?', a: 'No. Hashing is one-way by construction. Short or common inputs can be found by guessing against precomputed tables, which is a different thing — and the reason salting exists.' },
+      { q: 'Is my text sent to a server?', a: 'No. Hashing uses the browser’s Web Crypto implementation, so the text never leaves the page — which matters, since people paste things here precisely because they are sensitive.' }
+    ],
+    related: ['password-generator', 'uuid-generator', 'file-checksum', 'base64', 'text-encrypt', 'jwt-decoder']
+  },
+
+  'url-encoder': {
+    intro: 'A URL can only contain a limited set of characters. Spaces, ampersands, question marks and anything non-English have to be escaped, and getting it wrong silently truncates the link at the first offending character.',
+    what: [
+      'Percent-encodes text for safe use in a URL, and decodes it back.',
+      'There is a checkbox that matters more than it looks: whether to encode each component. On, ampersands and equals signs are escaped, which is right for a value inside a query string. Off, they are preserved, which is right when you are encoding a whole URL.'
+    ],
+    specs: {
+      caption: 'Encoding rules',
+      rows: [
+        ['Space', 'Becomes %20 (or + in older form encoding)'],
+        ['Ampersand', '%26 — otherwise it starts a new parameter'],
+        ['Question mark', '%3F — otherwise it starts the query string'],
+        ['Hash', '%23 — otherwise the rest is treated as a fragment'],
+        ['Encode each component ON', 'For a value inside a query string — escapes & = ? /'],
+        ['Encode each component OFF', 'For a whole URL — leaves the structure intact'],
+        ['Non-English characters', 'Encoded as UTF-8 byte sequences']
+      ]
+    },
+    steps: [
+      'Paste the text or URL.',
+      'Set <strong>Encode each component</strong> — on for a query value, off for a full URL.',
+      'Press <strong>Encode</strong> or <strong>Decode</strong>.'
+    ],
+    tip: 'The classic bug is a URL that works until someone puts an ampersand in a search box, at which point everything after it vanishes. That is the component checkbox being off when it should be on — the ampersand is read as the start of a new parameter rather than part of the value.',
+    faqs: [
+      { q: 'Should the component checkbox be on or off?', a: 'On when you are encoding a value that goes inside a URL — a search term, a name, a redirect target. Off when you are encoding an entire URL and need its slashes, question mark and ampersands to keep working. On is the safer default.' },
+      { q: 'My decoded text has stray % signs.', a: 'The string is not valid percent-encoding — usually because it was encoded twice, or a literal % was never escaped as %25. Try decoding a second time; if that fails, the source is malformed.' },
+      { q: 'Why did a space become + instead of %20?', a: 'Older HTML form encoding uses + for a space, while URL percent-encoding uses %20. Both appear in the wild. Decoders generally accept either, but if a value looks wrong this is often why.' },
+      { q: 'Do I need to encode non-English characters?', a: 'Browsers display them, but the underlying request encodes them as UTF-8 byte sequences. Encoding explicitly avoids surprises when the URL is passed between systems that handle it differently.' }
+    ],
+    related: ['base64', 'json-formatter', 'slug-generator', 'utm-builder', 'jwt-decoder', 'regex-tester']
+  },
+
+  'jwt-decoder': {
+    intro: 'A JSON Web Token looks like random text but is mostly not encrypted — the header and payload are Base64, readable by anyone holding the token. Which is exactly why you should know what your tokens are carrying.',
+    what: [
+      'Decodes a JWT’s header and payload into readable JSON.',
+      'Stated clearly: this decodes, it does not verify. Checking a signature needs the secret or public key, and without that you can read a token but cannot know whether it is genuine. Anyone can craft a token that decodes perfectly and is entirely fabricated.'
+    ],
+    specs: {
+      caption: 'Structure and limits',
+      rows: [
+        ['Three parts', 'header.payload.signature, separated by dots'],
+        ['Header', 'The algorithm and token type'],
+        ['Payload', 'The claims — who, what, and until when'],
+        ['Signature', 'Not verified here — that needs the key'],
+        ['Encoding', 'Base64url, not encryption — readable by anyone'],
+        ['exp claim', 'Expiry, as a Unix timestamp'],
+        ['Common claims', 'sub (subject), iat (issued at), exp (expires), iss (issuer)']
+      ]
+    },
+    steps: [
+      'Paste the token.',
+      'Read the decoded header and payload.',
+      'Check <code>exp</code> against the current time if you are debugging an authentication failure — an expired token is the most common cause.'
+    ],
+    tip: 'Never put anything secret in a JWT payload. It is Base64, not encrypted, and every client holding the token can read it — this page proves that in one paste. Email addresses and internal identifiers routinely end up in tokens that are then stored in browser local storage.',
+    faqs: [
+      { q: 'Does this check whether the token is valid?', a: 'No. It decodes only. Verifying a signature requires the secret or public key the token was signed with, and without it a forged token decodes exactly as cleanly as a real one. Verification belongs on your server.' },
+      { q: 'Is it safe to paste a token here?', a: 'The decoding happens in this page and nothing is transmitted. Even so, treat a live token like a password — it grants whatever access it was issued for. Use expired or test tokens where you can.' },
+      { q: 'My token is rejected but decodes fine.', a: 'Decoding proves the structure is intact, not that the token is accepted. Check exp for expiry, iss and aud against what your service expects, and whether the signing key has rotated.' },
+      { q: 'Why can anyone read the payload?', a: 'Because JWTs are signed, not encrypted. The signature proves the contents were not altered; it does not hide them. That trade-off is deliberate, and it is why payloads should carry claims rather than secrets.' }
+    ],
+    related: ['base64', 'json-formatter', 'timestamp-converter', 'hash-generator', 'url-encoder', 'uuid-generator']
+  },
+
+  'regex-tester': {
+    intro: 'Regular expressions are quicker to write than to verify. Testing a pattern against real text — including the awkward cases you would rather not think about — takes seconds and saves the bug that only appears on one row in ten thousand.',
+    what: [
+      'Runs a regular expression against your text and shows what it matched.',
+      'Flags go in their own box. The default is <code>g</code>, which finds every match rather than stopping at the first — without it you will see one result and wrongly conclude the pattern is too narrow.'
+    ],
+    specs: {
+      caption: 'Flags and behaviour',
+      rows: [
+        ['g', 'Global — find every match, not just the first (default)'],
+        ['i', 'Case-insensitive'],
+        ['m', 'Multiline — ^ and $ match at each line'],
+        ['s', 'Dot matches newlines too'],
+        ['u', 'Unicode mode'],
+        ['Matches shown', 'Up to the first 100'],
+        ['Flavour', 'JavaScript regular expressions']
+      ]
+    },
+    steps: [
+      'Enter your pattern — without the surrounding slashes.',
+      'Set the flags. Leave <code>g</code> unless you specifically want only the first match.',
+      'Paste text to test against, including the edge cases you expect to fail.'
+    ],
+    tip: 'Test the strings you expect NOT to match, not just the ones you do. Most regex bugs are over-matching rather than under-matching — a pattern that correctly finds every email address and also cheerfully accepts three lines of unrelated text.',
+    faqs: [
+      { q: 'Only one match is showing.', a: 'The g flag is missing. Without it a regular expression stops at the first match. Put g in the flags box — it is there by default for exactly this reason.' },
+      { q: 'My pattern works elsewhere but not here.', a: 'Regex flavours differ. This uses JavaScript’s engine, which lacks some constructs that PCRE, Python and .NET support — lookbehind support varies, and named group syntax is not identical. A pattern from a Perl or PHP example may need adjusting.' },
+      { q: 'Do I include the slashes?', a: 'No. Enter the pattern alone and put the flags in their own box. Pasting /pattern/g whole makes the slashes part of the pattern, which then matches nothing.' },
+      { q: 'Why are only 100 matches listed?', a: 'A display limit, so a pattern matching every character in a long document does not lock up the page. The pattern itself is unaffected — you are seeing a sample.' }
+    ],
+    related: ['json-formatter', 'url-encoder', 'case-converter', 'word-counter', 'base64', 'slug-generator']
+  },
+
+  'password-generator': {
+    intro: 'The strength of a password is not about exotic characters — it is about how many guesses an attacker needs. Length buys that far more cheaply than substituting a 3 for an E, and this shows you the arithmetic as you change the settings.',
+    what: [
+      'Generates a random password from the character sets you enable, using the browser’s cryptographic random source rather than ordinary randomness.',
+      'It also reports entropy in bits and an estimated offline cracking time, which is the number that actually matters. Watching that figure move as you add characters is more persuasive than any rule about symbols.'
+    ],
+    specs: {
+      caption: 'Settings and what they buy',
+      rows: [
+        ['Length', '6–48 characters, default 18'],
+        ['Character sets', 'a–z, A–Z, 0–9, Symbols — each toggled independently'],
+        ['Strength shown as', 'Entropy in bits, plus estimated offline crack time'],
+        ['Randomness', 'The browser’s cryptographic generator, not Math.random'],
+        ['Rough guide', 'Under 50 bits is weak; 80+ is strong; 100+ is future-proof'],
+        ['Biggest lever', 'Length — each extra character multiplies the search space'],
+        ['Generated', 'In this page — never transmitted']
+      ]
+    },
+    steps: [
+      'Set the <strong>Length</strong>. 18 is the default and a good floor for anything that matters.',
+      'Leave all four character sets on unless a site refuses symbols.',
+      'Check the entropy figure, then copy the password straight into your password manager.'
+    ],
+    tip: 'Length beats complexity, and it is not close. Adding one character multiplies the number of possible passwords by the size of the character set; swapping a letter for a symbol adds almost nothing by comparison. If a site caps length at 12, that is the site’s weakness rather than yours — use all 12.',
+    faqs: [
+      { q: 'How long should a password be?', a: 'At least 16 characters for anything that matters, and the 18-character default is a sensible floor. Since you should be storing it in a password manager rather than remembering it, there is no reason to be economical.' },
+      { q: 'A site rejected my password.', a: 'Some still cap length or ban symbols — both are signs of an ageing system. Turn off Symbols or reduce the length to fit, and use the maximum the site allows.' },
+      { q: 'Is this random enough to trust?', a: 'It uses the browser’s cryptographic random source, which is designed for exactly this and is not the ordinary Math.random. The password is generated in the page and never transmitted.' },
+      { q: 'What does the bits figure mean?', a: 'Entropy — how many guesses an attacker needs on average. Each extra bit doubles that. Under 50 bits is weak against a determined attacker with modern hardware; above 80 is strong; above 100 is comfortable for the foreseeable future.' }
+    ],
+    related: ['hash-generator', 'uuid-generator', 'text-encrypt', 'protect-pdf', 'file-checksum', 'base64']
+  },
+
+  'qr-generator': {
+    intro: 'A QR code is a picture of a short piece of text. The two things that decide whether it actually scans are how big it is printed and how much damage it can survive — and both are settings people leave at the default without knowing what they do.',
+    what: [
+      'Turns any text or URL into a QR code PNG at one of three sizes and four error-correction levels.',
+      'Error correction is the interesting setting. Higher levels add redundant data so the code still reads when part of it is obscured, scratched or covered by a logo — at the cost of a denser pattern that needs to be printed larger.'
+    ],
+    specs: {
+      caption: 'Sizes and error correction',
+      rows: [
+        ['Small', '256 px — screens and small embeds'],
+        ['Medium', '512 px (default) — general use'],
+        ['Large (print)', '1024 px — posters, packaging, signage'],
+        ['L', '7% recoverable — clean digital use only'],
+        ['M', '15% recoverable (default) — the usual choice'],
+        ['Q', '25% recoverable — print that may get scuffed'],
+        ['H', '30% recoverable — required if you overlay a logo'],
+        ['Generated', 'In this page, not by a QR service']
+      ]
+    },
+    steps: [
+      'Paste the URL or text. Shorter content makes a simpler, more reliable code.',
+      'Pick a <strong>Size</strong> — Large for anything printed.',
+      'Pick <strong>error correction</strong>. Use H if a logo will sit on top, Q for print that will be handled.',
+      'Download the PNG and <strong>scan it with an actual phone</strong> before committing it to anything.'
+    ],
+    tip: 'Print size is what fails in the wild, not resolution. A rough rule is that a code should be at least a tenth of the distance it will be scanned from — a poster read from two metres needs roughly 20 cm. A beautifully generated code the size of a stamp on a shop window scans for nobody.',
+    faqs: [
+      { q: 'My code will not scan.', a: 'Usually printed too small, too low contrast, or with no quiet zone — the blank margin around the code is part of the code and cropping it tight breaks scanning. Dark code on a light background, and leave the border.' },
+      { q: 'Can I put a logo in the middle?', a: 'Yes, if you use error correction H, which tolerates about 30% obstruction. Keep the logo small and central, and test with several phones — this is the change most likely to quietly break scanning.' },
+      { q: 'Does the code expire or track scans?', a: 'No. It is a static picture of your text, generated here and yours to keep. It works forever and reports nothing. Services offering editable or tracked codes point at their own server, which then becomes a dependency and a redirect you do not control.' },
+      { q: 'Why does more text make a denser code?', a: 'Because every character has to be encoded in the pattern. Long URLs produce fine-grained codes that need to be printed larger to scan reliably — shortening the link first is often the real fix.' }
+    ],
+    related: ['barcode-generator', 'qr-scanner', 'favicon-generator', 'url-encoder', 'utm-builder', 'png-to-jpg']
   }
 };
 

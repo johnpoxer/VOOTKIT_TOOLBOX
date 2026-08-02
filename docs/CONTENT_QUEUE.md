@@ -19,11 +19,11 @@ short FAQ answers, stub spec tables and dead related links all fail the build.
 
 | | Pages | Unique words |
 |---|---|---|
-| Hand-written | **34** | 269–419 |
-| Derived spec table (auto, from source) | ~60 | 102–169 |
-| Generic template | ~167 | ~96 |
+| Hand-written | **46** | 269–419 |
+| Derived spec table (auto, from source) | ~55 | 102–169 |
+| Generic template | ~160 | ~96 |
 
-Pages over 250 unique words: **34 of 261**.
+Pages over 250 unique words: **46 of 261**.
 
 Sitewide median has moved 95 → 141, but read that with care: part of the rise is
 real and part is a shifting baseline. "Boilerplate" is defined as vocabulary
@@ -49,18 +49,21 @@ webp-to-png · svg-to-png · pdf-to-text · pdf-to-png · png-to-pdf ·
 delete-pdf-pages · reorder-pdf · protect-pdf · text-to-pdf · image-watermark ·
 favicon-generator · exif-viewer
 
+**Batch 3 — text and developer tools** *(307–390 words)* — **committed, NOT pushed**
+word-counter · json-formatter · password-generator · qr-generator · base64 ·
+case-converter · lorem-ipsum · uuid-generator · hash-generator · url-encoder ·
+jwt-decoder · regex-tester
+
+*These are widget tools with no declared options array, so every figure was read
+out of the implementation: the 200/130 wpm reading and speaking rates, the 6–48
+password length, the 1–500 UUID count, the QR sizes 256/512/1024 and error
+correction L/M/Q/H, the SHA-256/1/512 set and the deliberate omission of MD5.*
+
 ---
 
 ## Next up, in order
 
 Ordered by search demand, not by category. Do them in blocks of ~12.
-
-**Batch 3 — text and developer tools** *(widget tools — options are not
-declared in a readable structure, so specs must be gathered by reading the
-implementation rather than the options array)*
-word-counter · json-formatter · password-generator · qr-generator ·
-base64 · case-converter · lorem-ipsum · uuid-generator · hash-generator ·
-url-encoder · jwt-decoder · regex-tester
 
 **Batch 4 — finance and calculators** *(these already carry a derived spec table
 from their `fields`, so the hand-written layer is adding the reasoning around
@@ -84,8 +87,25 @@ home-affordability
    that every related tool exists and is live.
 4. `node build.js`, then re-measure unique words (the script is in the session
    history; it strips boilerplate appearing on >90% of pages).
-5. Commit, push, wait for Netlify.
-6. Search Console → URL Inspection → Request Indexing, one per page.
+5. **Commit locally. Do NOT push.** See the deploy policy below.
+6. Request indexing only after a deploy actually happens.
+
+---
+
+## Deploy policy — batch the pushes
+
+Netlify build minutes are at 75 and every push triggers a full rebuild of ~1,478
+pages. Pushing after each batch spends a build on twelve pages.
+
+**So: commit each batch locally and let them accumulate. Push once, after about
+six batches.** One build then covers ~70 rewritten pages instead of six builds
+covering twelve each.
+
+Nothing is lost by waiting. The work is committed and safe in git; only the
+public site lags. Google cannot see a batch until it is deployed, so there is no
+point requesting indexing before the push either — do that after.
+
+Current state: **batch 3 committed, not pushed.** Batches 0–2 are already live.
 
 ### The daily quota is about 10 URLs
 
