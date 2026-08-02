@@ -378,6 +378,407 @@ module.exports = {
     ],
     related: ['trim-video', 'resize-video', 'convert-video', 'mute-video', 'video-to-gif', 'extract-audio']
   }
+,
+
+  /* ================= session 1 ================= */
+
+  'jpg-to-pdf': {
+    intro: 'Photographing a document and emailing the JPGs is the version everybody hates receiving — the pages arrive in whatever order the mail client feels like, and nobody can print them as a set. One PDF solves both.',
+    what: [
+      'Combines up to 30 images into a single PDF, one image per page, in the order you add them.',
+      'Page size is your choice. "Fit to each image" makes every page exactly the shape of the photo on it, which is right for screenshots and receipts. A4 or US Letter centres each image on a standard page instead, which is what you want if anyone will print it.'
+    ],
+    specs: {
+      caption: 'Limits and page options',
+      rows: [
+        ['Images per PDF', 'Up to 30'],
+        ['Total size', 'Up to 40 MB'],
+        ['Page size', 'Fit to each image (default), A4 portrait, or US Letter'],
+        ['Margin', '0–100 pt, default 0'],
+        ['Page order', 'The order you add the images'],
+        ['Accepts', 'JPG, PNG, WebP and other images the browser can open'],
+        ['Output', 'One PDF, one image per page']
+      ]
+    },
+    steps: [
+      'Add your images <strong>in the order you want the pages</strong>.',
+      'Choose <strong>Page size</strong> — “Fit to each image” for screenshots, A4 or US Letter if it will be printed.',
+      'Set a <strong>Margin</strong> if you picked A4 or Letter. Around 20–40 pt keeps content clear of the edge for printing.',
+      'Convert and download.'
+    ],
+    tip: 'Resize photos before adding them. Thirty phone photos at full resolution will blow past the 40 MB cap and produce a PDF nobody can email, and the extra pixels are invisible once the page is printed. Around 1500 px on the long edge is plenty.',
+    faqs: [
+      { q: 'The pages came out in the wrong order.', a: 'Pages follow the order you added the images, not their filenames. If your files are numbered, add them one at a time in sequence rather than selecting them all at once, since the browser does not guarantee it hands them over in filename order.' },
+      { q: 'Why is my PDF so large?', a: 'Because it contains full-resolution photographs. The PDF wrapper adds very little — the images are the weight. Resize or compress them first, or run the finished PDF through the PDF compressor.' },
+      { q: 'Can I mix portrait and landscape photos?', a: 'Yes. With “Fit to each image” every page takes the shape of its own image, so a mix is fine. With A4 or Letter every page is the same size and images are centred within it.' },
+      { q: 'Can I add a page of text as well?', a: 'Not in this tool — it takes images only. Make the text page separately with Text to PDF, then join the two with Merge PDF.' }
+    ],
+    related: ['merge-pdf', 'compress-pdf', 'png-to-pdf', 'pdf-to-jpg', 'text-to-pdf', 'resize-image']
+  },
+
+  'rotate-pdf': {
+    intro: 'Scanners and phone cameras record an orientation flag that plenty of PDF readers ignore, which is how you end up with a document that is upright on your screen and sideways on someone else’s. Rotating the pages fixes it permanently rather than per-viewer.',
+    what: [
+      'Turns pages by 90°, 180° or 270° and writes the new orientation into the file, so it opens correctly everywhere.',
+      'You can rotate the whole document or just some of it. That matters for scans, where a single landscape page — a table or a signature sheet — often sits in an otherwise portrait file.'
+    ],
+    specs: {
+      caption: 'Rotation options',
+      rows: [
+        ['Rotate by', '90° clockwise (default), 180°, or 270° (90° anti-clockwise)'],
+        ['Which pages', 'all (default), or a range like 2-5 or 1,3,7'],
+        ['Page numbering', 'Starts at 1, matching your PDF reader'],
+        ['Content', 'Text stays selectable — pages are rotated, not re-rendered'],
+        ['File size', 'Essentially unchanged'],
+        ['Accepts', 'PDF']
+      ]
+    },
+    steps: [
+      'Drop the PDF in.',
+      'Pick <strong>Rotate by</strong>. If the page is lying on its right side, 90° clockwise is usually wrong and 270° is right — check one page before doing all of them.',
+      'Leave <strong>Which pages</strong> as <code>all</code>, or list the ones that need it.',
+      'Rotate and download.'
+    ],
+    tip: 'Rotation is stored as metadata rather than by redrawing the page, so it is lossless and instant, and doing it twice gets you back where you started. That also means a page that looks rotated because the scan itself is crooked cannot be fixed here — that needs a re-scan.',
+    faqs: [
+      { q: 'Only some pages are sideways. Do I have to do them separately?', a: 'No. Put those page numbers in the “Which pages” box — for example 4,7,12 or 5-9 — and the rest are left alone.' },
+      { q: 'How do I know whether to use 90° or 270°?', a: 'If you have to tilt your head to the left to read it, use 90° clockwise. If you tilt right, use 270°. Rotating one page first and checking is faster than guessing on a hundred.' },
+      { q: 'Will this reduce quality?', a: 'No. The orientation is a property of the page, so nothing is re-encoded and the file size barely changes.' },
+      { q: 'My PDF still opens sideways after rotating.', a: 'Some older readers ignore page rotation entirely. If a specific application is the problem rather than the file, converting the pages to images and rebuilding is the reliable fallback.' }
+    ],
+    related: ['merge-pdf', 'split-pdf', 'crop-pdf', 'delete-pdf-pages', 'reorder-pdf', 'pdf-to-jpg']
+  },
+
+  'extract-pdf-pages': {
+    intro: 'Pulling a few pages out of a long PDF is one of those jobs that sounds trivial and turns into a fight with software that wants to re-print, re-render or watermark the result. This copies the pages you name into a new file and leaves everything else alone.',
+    what: [
+      'Takes a page range and produces a new PDF containing exactly those pages, in the order you list them.',
+      'Because pages are copied rather than re-rendered, text stays selectable, links keep working and vector graphics stay sharp. The original file is never modified.'
+    ],
+    specs: {
+      caption: 'Range syntax',
+      rows: [
+        ['Default', 'all'],
+        ['A range', '2-5'],
+        ['Individual pages', '1,4,9'],
+        ['Mixed', '1-3,7,10-12'],
+        ['Numbering', 'Starts at 1, matching your PDF reader'],
+        ['Order', 'Pages appear in the order you list them'],
+        ['Original file', 'Never modified']
+      ]
+    },
+    steps: [
+      'Drop the PDF in.',
+      'Type the pages you want in <strong>Pages to extract</strong>.',
+      'Extract and download the new PDF.'
+    ],
+    tip: 'The order you type is the order you get, so this doubles as a quick reordering tool — entering 3,1,2 gives you those three pages in that sequence. Handy for putting a signature page first without opening an editor.',
+    faqs: [
+      { q: 'What is the difference between this and Split PDF?', a: 'Very little — both keep the pages you name. Extract is worded around pulling pages out of a long document, Split around cutting one down. Use whichever matches how you are thinking about it.' },
+      { q: 'Can I extract pages into separate files?', a: 'One run produces one PDF containing everything you listed. If you need each page as its own file, run the tool once per page — entering 3, then 4, then 5 — which is quicker than it sounds because the original stays loaded between runs.' },
+      { q: 'Do bookmarks and links survive?', a: 'Links within the pages you kept survive. Bookmarks pointing at pages you did not keep have nothing to point to and are dropped.' },
+      { q: 'Which page numbers do I use?', a: 'The ones your PDF reader shows, starting at 1 — not the numbers printed on the page. A report whose first page is numbered “i” is still page 1 here.' }
+    ],
+    related: ['split-pdf', 'merge-pdf', 'delete-pdf-pages', 'reorder-pdf', 'rotate-pdf', 'compress-pdf']
+  },
+
+  'remove-pdf-password': {
+    intro: 'There are two kinds of PDF password. One stops the file opening at all; the other lets anyone read it but blocks printing, copying and editing. This removes the second kind — the permissions lock — from a document you can already open.',
+    what: [
+      'Rewrites a PDF you can open into an unrestricted copy, so printing, copying text and further editing work normally.',
+      'To be explicit about what this is not: it does not break encryption and it cannot open a document you do not have the password for. If the file demands a password before it will display, this tool cannot help, and neither should anything else you find online.'
+    ],
+    specs: {
+      caption: 'What it can and cannot do',
+      rows: [
+        ['Removes', 'Permissions restrictions — printing, copying, editing'],
+        ['Cannot remove', 'An open password you do not know'],
+        ['Requires', 'A PDF that already opens without prompting'],
+        ['Text', 'Stays selectable — pages are copied, not re-rendered'],
+        ['Original file', 'Never modified'],
+        ['Accepts', 'PDF']
+      ]
+    },
+    steps: [
+      'Check the PDF opens without asking for a password.',
+      'Drop it in.',
+      'Run it, then download the unrestricted copy.'
+    ],
+    tip: 'Permissions locks are an honour system — the restrictions are flags in the file that readers choose to respect, which is why they come off so easily. Do not rely on one to protect anything that actually matters. Only encryption with an open password does that, and it is not removable without the password.',
+    faqs: [
+      { q: 'It will not open my file at all.', a: 'Then it has an open password, not a permissions lock, and the contents are genuinely encrypted. You need the password from whoever sent it — there is no way around that, here or anywhere.' },
+      { q: 'Is this legal?', a: 'Removing restrictions from a document you are entitled to use is normally fine — a bank statement you cannot print is the usual case. Redistributing material you have no rights to is not, and that does not change because the file was easy to unlock.' },
+      { q: 'Why could I read it but not print it?', a: 'That is exactly the permissions lock. The document was never encrypted against reading, only flagged to discourage printing and copying.' },
+      { q: 'Can I add a password instead?', a: 'Yes, that is what Protect PDF does. Worth knowing which kind you are setting: an open password genuinely encrypts the file and cannot be removed without it, while a permissions lock only discourages printing and copying and comes off as easily as this tool removes it.' }
+    ],
+    related: ['protect-pdf', 'merge-pdf', 'split-pdf', 'compress-pdf', 'pdf-to-text', 'pdf-repair']
+  },
+
+  'crop-image': {
+    intro: 'Most cropping is not artistic — it is a platform demanding a shape. A square for a profile, 9:16 for a story, 16:9 for a thumbnail. This crops to those ratios directly instead of making you drag handles and hope.',
+    what: [
+      'Crops to a fixed aspect ratio, taking the largest area of that shape that fits inside your image.',
+      'You choose where it takes that area from. Centre suits most photographs; Top is the one to use for portraits, because a centre crop to a square on a standing figure reliably cuts the head off.'
+    ],
+    specs: {
+      caption: 'Ratios and what they are for',
+      rows: [
+        ['Square 1:1', 'Profile pictures, Instagram feed posts'],
+        ['Portrait 4:5', 'The tallest shape Instagram allows in the feed'],
+        ['Story 9:16', 'Stories, Reels, TikTok, Shorts'],
+        ['Wide 16:9', 'YouTube thumbnails, slides, video covers'],
+        ['Photo 3:2', 'Standard camera ratio, most print sizes'],
+        ['Crop from', 'Centre (default), Top, or Bottom'],
+        ['Resolution', 'Unchanged — this removes area, it does not resample']
+      ]
+    },
+    steps: [
+      'Drop the image in.',
+      'Pick an <strong>Aspect ratio</strong>.',
+      'Set <strong>Crop from</strong>. Use <strong>Top</strong> for anything with a person in it, unless they are centred in the frame.',
+      'Crop and download.'
+    ],
+    tip: 'Crop before you resize. Cropping removes area and resizing removes detail, so doing it the other way round means you spent quality on pixels you then threw away.',
+    faqs: [
+      { q: 'It cut off the top of someone’s head.', a: 'Centre cropping a tall photo to a square removes equal amounts from the top and bottom, and heads live at the top. Switch Crop from to Top.' },
+      { q: 'Can I choose the exact area myself?', a: 'Not here — this is deliberately three clicks rather than a drag interface. For a specific region, crop in an editor and use this for the ratios.' },
+      { q: 'Does cropping reduce quality?', a: 'No. It discards area, and what remains is untouched. Only resizing or re-compressing loses detail.' },
+      { q: 'Which ratio does a profile picture need?', a: 'Square, on essentially every platform. Most then mask it to a circle when displaying, so keep the subject away from the corners — or use the Round Profile Picture tool, which crops to a circle directly.' }
+    ],
+    related: ['circle-crop', 'resize-image', 'social-media-image', 'thumbnail-maker', 'compress-image', 'passport-photo-maker']
+  },
+
+  'convert-image': {
+    intro: 'One tool for the format conversions that otherwise need three. Pick the output, pick the quality, done — without having to find the specific PNG-to-something page first.',
+    what: [
+      'Converts between PNG, JPEG and WebP. Pixel dimensions are unchanged; only the encoding changes.',
+      'The quality setting applies to JPEG and WebP, which are lossy. PNG ignores it, because PNG is lossless — a PNG at "quality 40" and "quality 100" are the same file.'
+    ],
+    specs: {
+      caption: 'Formats and settings',
+      rows: [
+        ['Convert to', 'PNG (default), JPEG, or WebP'],
+        ['Quality', '40–100%, default 92% — applies to JPEG and WebP only'],
+        ['Transparency', 'Kept by PNG and WebP; lost by JPEG'],
+        ['Smallest output', 'WebP, typically 25–35% under JPEG at equal quality'],
+        ['Widest compatibility', 'JPEG'],
+        ['Accepts', 'Any image the browser can open'],
+        ['Resolution', 'Unchanged']
+      ]
+    },
+    steps: [
+      'Drop the image in.',
+      'Choose <strong>Convert to</strong>.',
+      'Set <strong>Quality</strong> if the output is JPEG or WebP. 92% is the default and is visually lossless on most images.',
+      'Convert and download.'
+    ],
+    tip: 'Converting to PNG never shrinks a photograph — it usually grows it several times over. PNG only wins on flat colour: logos, screenshots, diagrams. If the goal is a smaller file from a photo, the answer is JPEG or WebP.',
+    faqs: [
+      { q: 'Which format should I pick?', a: 'WebP for anything going on a website. JPEG for photos you will email or upload somewhere that might be fussy. PNG for logos, screenshots and anything needing transparency.' },
+      { q: 'My transparent background went white.', a: 'The output is JPEG, which has no alpha channel. Choose PNG or WebP to keep transparency.' },
+      { q: 'Why is the quality slider greyed out or ignored?', a: 'You have selected PNG, which is lossless — there is no quality to trade, so the setting has nothing to act on. It applies only to JPEG and WebP. If you want a smaller file and the slider is doing nothing, that is the format telling you to pick a different one.' },
+      { q: 'Does converting back and forth lose quality?', a: 'Between lossy formats, yes, every time. JPEG to WebP to JPEG is two lossy encodes and the damage accumulates. Convert from the original.' }
+    ],
+    related: ['png-to-jpg', 'jpg-to-webp', 'webp-to-jpg', 'compress-image', 'heic-converter', 'resize-image']
+  },
+
+  'jpg-to-png': {
+    intro: 'This is the conversion that is usually a mistake, and occasionally exactly right. Worth knowing which one you are doing before you click.',
+    what: [
+      'Converts a JPG to PNG. PNG is lossless, so nothing further is discarded — but nothing already lost comes back either.',
+      'The honest warning: on a photograph the PNG will be several times larger than the JPG for no visible gain, because lossless compression has nothing to exploit in continuous gradients. The valid reasons are needing a lossless working copy before editing, or software that will not accept JPEG.'
+    ],
+    specs: {
+      caption: 'What actually changes',
+      rows: [
+        ['Compression', 'Lossless from this point on'],
+        ['File size on a photo', 'Typically 3–10× larger than the JPG'],
+        ['File size on a screenshot', 'Often smaller, and sharper'],
+        ['Existing JPEG artefacts', 'Preserved exactly — they are part of the image now'],
+        ['Transparency', 'Supported by the format, but a JPG has none to carry'],
+        ['Resolution', 'Unchanged']
+      ]
+    },
+    steps: [
+      'Check you actually want this — on a photograph the PNG will be several times larger for no visible gain.',
+      'Drop the JPG in.',
+      'Convert and download the PNG.'
+    ],
+    tip: 'Converting to PNG does not undo JPEG compression. The blocking and ringing around edges are baked into the pixels; PNG simply stores them faithfully and at greater size. If a JPG looks bad, the fix is a better source, not a better container.',
+    faqs: [
+      { q: 'Will this make my JPG look better?', a: 'No. It preserves exactly what is there, including the compression artefacts. Nothing is recovered.' },
+      { q: 'Why did the file get so much bigger?', a: 'That is PNG working as designed. It never discards data, so a photograph — millions of subtly different pixels — has almost nothing repetitive to compress.' },
+      { q: 'When is this genuinely the right move?', a: 'Before editing, so repeated saves do not compound JPEG loss; and when software or a print workflow demands PNG.' },
+      { q: 'I wanted transparency.', a: 'Converting cannot create it. A JPG has no transparent pixels, so the PNG will be fully opaque. Transparency has to be cut in an editor.' }
+    ],
+    related: ['png-to-jpg', 'convert-image', 'jpg-to-webp', 'png-to-webp', 'compress-image', 'svg-to-png']
+  },
+
+  'png-to-webp': {
+    intro: 'PNG is the right format for logos and screenshots and the wrong format for shipping them to a browser. WebP keeps everything PNG is good at — including transparency — at a fraction of the weight.',
+    what: [
+      'Converts a PNG to WebP at a quality you choose, keeping any transparency.',
+      'This is the conversion that makes WebP worth bothering with. Going JPG to WebP saves perhaps a quarter; going PNG to WebP on a graphic frequently saves two thirds, because you are moving from lossless to lossy on an image where the loss is invisible.'
+    ],
+    specs: {
+      caption: 'Conversion details',
+      rows: [
+        ['Quality', '40–100%, default 90%'],
+        ['Transparency', 'Kept'],
+        ['Typical saving on a graphic', 'Around 50–70%'],
+        ['Typical saving on a screenshot', 'Substantial, but check text edges at low quality'],
+        ['Browser support', 'Universal in current browsers'],
+        ['Weak spots', 'Older desktop software, some upload portals'],
+        ['Resolution', 'Unchanged']
+      ]
+    },
+    steps: [
+      'Drop the PNG in.',
+      'Set <strong>Quality</strong>. 90% is the default; for logos and flat colour you can usually go to 80% with no visible change.',
+      'Convert and download.'
+    ],
+    tip: 'Check text and hard edges before shipping. WebP is lossy at these settings, and while photographs hide that easily, a screenshot of small type is the one case where you may need to stay above 90% — or keep the PNG.',
+    faqs: [
+      { q: 'Did my transparency survive?', a: 'Yes. WebP has a full alpha channel, which is the main reason it can replace PNG rather than sitting alongside it.' },
+      { q: 'Can I get a lossless WebP?', a: 'This tool encodes lossily at the quality you pick. At 100% the difference from the PNG is not visible in practice, though it is not bit-for-bit identical.' },
+      { q: 'Should I delete the original PNGs?', a: 'No. Keep them as masters. If you ever need another format, converting from the PNG beats converting from an already-lossy WebP.' },
+      { q: 'A tool rejected my WebP.', a: 'Older desktop software and some upload portals still do not accept it. Convert back with WebP to PNG.' }
+    ],
+    related: ['jpg-to-webp', 'webp-to-png', 'webp-to-jpg', 'png-to-jpg', 'compress-image', 'convert-image']
+  },
+
+  'webp-to-jpg': {
+    intro: 'WebP is excellent on the web and inconvenient everywhere else. Sooner or later something — a print shop, an older application, a government upload form — refuses it, and you need the universal format back.',
+    what: [
+      'Converts a WebP to JPEG at a quality you choose, flattening any transparency onto a background colour you pick.',
+      'This is a second lossy encode, so it is not free. At 90% the additional loss is not visible in normal viewing, but it is real, which is why you should convert from an original rather than from a WebP that was itself made from a JPG.'
+    ],
+    specs: {
+      caption: 'Conversion details',
+      rows: [
+        ['Quality', '40–100%, default 90%'],
+        ['Background fill', 'White (default), Black, or Dark'],
+        ['Transparency', 'Replaced by the background colour — JPEG has no alpha'],
+        ['Compatibility', 'Universal; JPEG opens everywhere'],
+        ['File size', 'Usually larger than the WebP'],
+        ['Resolution', 'Unchanged']
+      ]
+    },
+    steps: [
+      'Drop the WebP in.',
+      'If the image has transparent areas, choose the <strong>Background</strong> they should become.',
+      'Set <strong>Quality</strong> — 90% is a safe default.',
+      'Convert and download.'
+    ],
+    tip: 'Pick the background to match where the image is going. White is right for documents and most web pages; Dark suits a dark-themed slide. Getting it wrong leaves a bright rectangle around your logo that is far more obvious than any compression artefact.',
+    faqs: [
+      { q: 'My logo now has a white box around it.', a: 'JPEG cannot store transparency, so the transparent area had to become something. Either pick a background matching where it will sit, or convert to PNG instead and keep the transparency.' },
+      { q: 'Why is the JPG bigger than the WebP?', a: 'Expected. WebP is the more efficient format, so going back to JPEG costs size. You are trading bytes for compatibility.' },
+      { q: 'Have I lost quality?', a: 'A little. This is a second lossy encode. At 90% it is not visible in normal viewing, but work from an original where you have one.' },
+      { q: 'Is there a lossless way back?', a: 'WebP to PNG avoids adding further loss, at the cost of a much larger file. Use it when the image is a graphic rather than a photograph.' }
+    ],
+    related: ['webp-to-png', 'jpg-to-webp', 'png-to-webp', 'convert-image', 'compress-image', 'png-to-jpg']
+  },
+
+  'bulk-resize': {
+    intro: 'Resizing twenty photos one at a time is the kind of task that makes people give up and upload the originals instead — which is how a page ends up carrying 40 MB of images nobody can see the detail in anyway.',
+    what: [
+      'Resizes up to 20 images at once to a maximum width, keeping each image’s aspect ratio, and converts them all to one format.',
+      'The width is a ceiling rather than a target: anything already narrower is left alone rather than enlarged, since upscaling only adds softness and file size.'
+    ],
+    specs: {
+      caption: 'Settings and limits',
+      rows: [
+        ['Images at once', 'Up to 20'],
+        ['Max width', '1–12,000 px, default 1600'],
+        ['Format', 'JPEG (default), PNG, or WebP'],
+        ['Quality', '40–100%, default 85%'],
+        ['Aspect ratio', 'Preserved for every image'],
+        ['Smaller images', 'Left at their original size, never enlarged'],
+        ['Progress', 'Reported per file as it works']
+      ]
+    },
+    steps: [
+      'Add up to 20 images.',
+      'Set <strong>Max width</strong>. 1600 px suits most websites; 1200 is plenty for email.',
+      'Pick a <strong>Format</strong> — WebP for a website, JPEG for anything else.',
+      'Set <strong>Quality</strong> and run it.'
+    ],
+    tip: 'Choose the width from where the images will be displayed, then double it. Something shown in an 800 px column wants 1600 px so it stays sharp on high-density screens — and no more, because every pixel beyond that is download weight nobody sees.',
+    faqs: [
+      { q: 'Are my images stretched to the same shape?', a: 'No. Only the width is capped and each image keeps its own proportions, so a mix of portrait and landscape comes out correctly.' },
+      { q: 'What happens to images already under the max width?', a: 'They are converted and compressed but not resized. Enlarging would add size without adding detail.' },
+      { q: 'Why only 20 at a time?', a: 'Every image is decoded and re-encoded in your browser using your machine’s memory. Twenty is what completes reliably on ordinary hardware, including phones.' },
+      { q: 'Can I keep the original filenames?', a: 'Yes — each output keeps its source name with the new extension, so the set stays recognisable.' }
+    ],
+    related: ['batch-compress', 'resize-image', 'compress-image', 'convert-image', 'thumbnail-maker', 'social-media-image']
+  },
+
+  'batch-compress': {
+    intro: 'The usual situation: a folder of photos, a size budget, and no interest in opening each one. This applies the same quality setting across the set and reports what each file saved.',
+    what: [
+      'Compresses up to 20 images at once to JPEG or WebP at a quality you choose. Dimensions are untouched.',
+      'Each result is reported separately, so you can see which files actually shrank. That matters more than the average — already-compressed images will barely move, and a set that saves nothing is telling you the originals were not the problem.'
+    ],
+    specs: {
+      caption: 'Settings and limits',
+      rows: [
+        ['Images at once', 'Up to 20'],
+        ['Quality', '40–100%, default 90%'],
+        ['Output', 'JPEG (default) or WebP'],
+        ['Resolution', 'Unchanged — use Bulk Resize first if needed'],
+        ['Transparency', 'Lost with JPEG output; kept with WebP'],
+        ['EXIF metadata', 'Not carried over, so GPS data is dropped'],
+        ['Progress', 'Reported per file']
+      ]
+    },
+    steps: [
+      'Add up to 20 images.',
+      'Set <strong>Quality</strong>. 90% is the default; 80% is still invisible on most photographs and saves considerably more.',
+      'Choose <strong>Output</strong> — WebP if these are going on a website.',
+      'Compress and download.'
+    ],
+    tip: 'If the savings come back small, resize first. Compression re-encodes the pixels you have; resizing removes pixels you never needed. On a folder of full-resolution phone photos, Bulk Resize followed by this will beat either one alone by a wide margin.',
+    faqs: [
+      { q: 'Some files barely shrank.', a: 'Those were already compressed. Re-encoding an existing JPEG at a similar quality removes very little, because the data an encoder would drop has already gone.' },
+      { q: 'Can I use different settings per image?', a: 'No — one quality across the batch is the point. For individual control, use the single Image Compressor.' },
+      { q: 'Does this strip location data?', a: 'Yes, as a side effect. Outputs are re-encoded from the decoded image, so EXIF including GPS does not carry over. For photos you are publishing, that is a benefit.' },
+      { q: 'Why only 20?', a: 'Each image is decoded and re-encoded in your browser. Twenty completes reliably on ordinary hardware, including phones with much less memory to work with.' }
+    ],
+    related: ['bulk-resize', 'compress-image', 'convert-image', 'jpg-to-webp', 'resize-image', 'exif-viewer']
+  },
+
+  'circle-crop': {
+    intro: 'Nearly every platform displays profile pictures as circles, but almost none let you see the circle while you are choosing the photo. The result is a perfectly good picture with an ear clipped off.',
+    what: [
+      'Crops a square from the centre of your image and masks it to a circle, so you can see exactly what survives before uploading.',
+      'The background behind the circle is your choice. Transparent needs PNG and looks right anywhere; a solid colour is safer where transparency might render as black.'
+    ],
+    specs: {
+      caption: 'Options',
+      rows: [
+        ['Background', 'Transparent (default), White, or Dark'],
+        ['Crop area', 'The largest centred square that fits'],
+        ['Output', 'PNG, so the transparent option works'],
+        ['Where circles are used', 'Profile pictures on most social and messaging platforms'],
+        ['Resolution', 'The square is kept at full resolution — no resampling'],
+        ['Accepts', 'Any image the browser can open']
+      ]
+    },
+    steps: [
+      'Drop the photo in.',
+      'Choose a <strong>Background</strong>. Transparent unless you know the destination fills it with something odd.',
+      'Crop and download the PNG.'
+    ],
+    tip: 'A circle cuts the corners off a square, so anything near an edge disappears — roughly 21% of the square’s area goes. Give the subject room before uploading, and expect a tightly framed photo to lose more than you think.',
+    faqs: [
+      { q: 'The circle cropped my face oddly.', a: 'The square is taken from the centre of the image. If your subject is off-centre, crop to a square in the right place first with Crop Image, then run it through here.' },
+      { q: 'My transparent background shows as black.', a: 'Something in the chain does not support transparency. Re-run with White or Dark to match where it is going.' },
+      { q: 'Do I need a circular image at all?', a: 'Usually not — platforms mask a square automatically. This is for seeing the result in advance, and for places that display the file as-is.' },
+      { q: 'What size should a profile picture be?', a: 'Square and at least 400×400. Larger is fine; platforms downscale. Resize first if the file is very large.' }
+    ],
+    related: ['crop-image', 'resize-image', 'passport-photo-maker', 'social-media-image', 'compress-image', 'round-corners']
+  }
 };
 
 module.exports.LIMITS = LIMITS;
