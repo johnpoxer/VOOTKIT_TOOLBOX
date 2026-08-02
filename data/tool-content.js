@@ -1992,6 +1992,405 @@ module.exports = {
       { q: 'Should I use gross or take-home income?', a: 'Debt-to-income is conventionally calculated on gross income, which is what this expects. That is also why the result can look generous against what your bank account experiences — check the resulting payment against your take-home pay before believing it.' }
     ],
     related: ['mortgage-calculator', 'closing-costs', 'rent-vs-buy', 'mortgage-payoff', 'paycheck-calculator', 'budget-calculator']
+  },
+
+  /* ================= session 5 — everyday, video and utilities ================= */
+
+  'unit-converter': {
+    intro: 'Seven categories in one place, because the alternative is a different tab for every conversion and a nagging doubt about whether the site used US or imperial gallons.',
+    what: [
+      'Converts within Length, Mass, Area, Volume, Speed, Data and Time, plus Temperature, which is handled separately because it does not scale from zero.',
+      'Everything except temperature is a simple ratio against a base unit, which is why the conversions are exact rather than rounded lookups.'
+    ],
+    specs: {
+      caption: 'What is covered',
+      rows: [
+        ['Length', 'mm, cm, m, km, in, ft, yd, mi, nautical miles'],
+        ['Mass', 'mg, g, kg, tonne, oz, lb, stone'],
+        ['Volume', 'mL, L, m³, tsp, tbsp, cup, pint, quart, gallon'],
+        ['Speed', 'm/s, km/h, mph, knots, ft/s'],
+        ['Data', 'B, KB, MB, GB, TB — binary, so 1 KB = 1024 B'],
+        ['Time', 'ms, s, min, h, day, week'],
+        ['Temperature', 'C, F, K — converted by formula, not ratio']
+      ]
+    },
+    steps: [
+      'Pick a category.',
+      'Choose the units to convert from and to.',
+      'Type the value — the result updates as you type.'
+    ],
+    tip: 'The volume units are US customary. A US gallon is about 3.785 litres and an imperial gallon is about 4.546, a difference of 20% — which is enough to ruin a recipe or badly mislead a fuel-economy comparison. Check which one your source meant before trusting the number.',
+    faqs: [
+      { q: 'Is 1 KB 1000 or 1024 bytes?', a: 'Here it is 1024, the binary convention operating systems use. Storage manufacturers use 1000, which is why a "500 GB" drive shows as roughly 465 GB in your file manager. Neither is wrong; they are different definitions, and the gap grows with size.' },
+      { q: 'Why is temperature separate?', a: 'Because it has no true zero to scale from. Every other conversion is multiplication by a ratio, but Celsius to Fahrenheit needs an offset as well as a factor — 0°C is 32°F, not 0°F, so a simple ratio gives nonsense.' },
+      { q: 'Are these US or imperial gallons?', a: 'US. The two differ by about 20%, along with pints and quarts. If your source is British, the numbers will not match, and on fuel economy the error is large enough to matter.' },
+      { q: 'How precise are the results?', a: 'The factors are the standard exact definitions — an inch is exactly 0.0254 m, a mile exactly 1609.344 m. Precision is limited by ordinary floating-point arithmetic, which is far beyond anything you would notice.' }
+    ],
+    related: ['length-converter', 'weight-converter', 'temperature-converter', 'data-converter', 'speed-converter', 'volume-converter']
+  },
+
+  'age-calculator': {
+    intro: 'Working out an exact age is fiddly precisely because months are not the same length. "Two years, three months and eleven days" cannot be derived from a day count, and a day count cannot be derived from it either.',
+    what: [
+      'Gives the gap between two dates as years, months and days, and also as a total in days, weeks and hours.',
+      'Both readings are useful for different things. Years-months-days is how people describe an age; totals are what you need for deadlines, notice periods and anything counted rather than named.'
+    ],
+    specs: {
+      caption: 'What it reports',
+      rows: [
+        ['Calendar gap', 'Years, months and days'],
+        ['Total days', 'The exact count between the dates'],
+        ['Total weeks', 'Days ÷ 7'],
+        ['Total hours', 'Days × 24'],
+        ['Leap years', 'Handled — they are real days in the total'],
+        ['Direction', 'Works forwards or backwards, so it covers future dates too'],
+        ['Inputs', 'Two dates']
+      ]
+    },
+    steps: [
+      'Enter the start date.',
+      'Enter the end date — today for an age, a future date for a countdown.',
+      'Read whichever figure suits: the calendar gap for describing it, the totals for counting it.'
+    ],
+    tip: 'The two answers genuinely disagree and both are right. Someone born on 29 February has a birthday every four years but ages one year every year, and "18 months" is a different number of days depending on which months they were. If a contract or a deadline is involved, use the total-days figure — it is the one that is unambiguous.',
+    faqs: [
+      { q: 'Why does the month count seem off by a day?', a: 'Because months vary between 28 and 31 days, so "one month later" from the 31st is ambiguous. The calendar gap counts whole months first and the remainder in days, which is how people describe an age but is not a fixed number of days.' },
+      { q: 'Are leap years included?', a: 'Yes. They are real days and appear in the total-days figure. That is why a span covering a leap year has one more day than an otherwise identical one that does not.' },
+      { q: 'Can I calculate a future date gap?', a: 'Yes — put today first and the future date second. It works in both directions, so it covers deadlines and countdowns as well as ages.' },
+      { q: 'Which figure should I use for a legal deadline?', a: 'Total days, unless the rule specifically says months. Day counts are unambiguous; month counts depend on which months and on how the drafter intended partial months to be treated.' }
+    ],
+    related: ['date-calculator', 'time-calculator', 'countdown', 'timezone-converter', 'timestamp-converter', 'pto-accrual']
+  },
+
+  'bmi-calculator': {
+    intro: 'BMI is a population statistic being used as a personal one, which is where nearly all the confusion comes from. It is a quick screening number, and it is genuinely poor at distinguishing muscle from fat.',
+    what: [
+      'Calculates body mass index from weight and height, in metric or imperial units.',
+      'What it does not do is measure body composition. BMI is weight divided by height squared — it has no way of knowing whether the weight is muscle, fat, bone or fluid, which is why it misclassifies athletic and older bodies routinely.'
+    ],
+    specs: {
+      caption: 'The standard categories',
+      rows: [
+        ['Under 18.5', 'Underweight'],
+        ['18.5 – 24.9', 'Healthy range'],
+        ['25 – 29.9', 'Overweight'],
+        ['30 and above', 'Obese'],
+        ['Formula', 'Weight in kg ÷ (height in metres)²'],
+        ['Units accepted', 'Metric (kg, cm) or Imperial (lb, in)'],
+        ['Known to misclassify', 'Muscular builds, older adults, and it varies by ancestry']
+      ]
+    },
+    steps: [
+      'Choose metric or imperial.',
+      'Enter weight and height.',
+      'Read the result as a rough screening figure, not a diagnosis.'
+    ],
+    tip: 'A muscular person can register as overweight on BMI while carrying very little fat, and an older person who has lost muscle can sit in the healthy range while carrying too much. Waist measurement tracks health risk better than BMI for most individuals, which is why clinicians increasingly ask for both.',
+    faqs: [
+      { q: 'Is BMI accurate for athletes?', a: 'Often not. Muscle is denser than fat, so a well-trained person can land in the overweight or obese band with low body fat. BMI was designed to describe populations, and it does that reasonably well; it was never designed to assess an individual.' },
+      { q: 'Do the thresholds apply to everyone?', a: 'No. Some health bodies use lower thresholds for people of South Asian ancestry, because health risks appear at a lower BMI. The categories here are the standard international ones, which is not the same as the right ones for every individual.' },
+      { q: 'Does BMI work for children?', a: 'Not with these categories. Children are assessed against age and sex percentile charts, because their bodies change proportion as they grow. A child’s BMI number means nothing without the chart.' },
+      { q: 'What is a better measure?', a: 'For individuals, waist circumference or waist-to-height ratio tracks risk more closely, because it reflects where fat is carried rather than only how much you weigh. Discuss anything that concerns you with a clinician rather than a calculator.' }
+    ],
+    related: ['body-fat-calculator', 'ideal-weight-calculator', 'bmr-calculator', 'macro-calculator', 'water-intake-calculator', 'heart-rate-calculator']
+  },
+
+  'percentage-calculator': {
+    intro: 'Three different questions get called "percentage", and mixing them up is how a 20% discount followed by a 20% rise fails to return you to where you started.',
+    what: [
+      'Handles the three percentage questions people actually ask: what is A% of B, A is what percent of B, and what is the percentage change from A to B.',
+      'The third is the one that catches people. Percentage change is always measured against the starting value, so the same absolute movement gives different percentages depending on which direction you travel.'
+    ],
+    specs: {
+      caption: 'The three modes',
+      rows: [
+        ['A% of B', 'A tip, a tax, a discount amount'],
+        ['A is what % of B', 'A share of a total — 30 out of 200 is 15%'],
+        ['% change from A to B', 'Growth or decline, measured against the start'],
+        ['Change formula', '(B − A) ÷ A × 100'],
+        ['Asymmetry', 'A 50% fall needs a 100% rise to undo it'],
+        ['Percentage vs percentage point', '5% to 6% is a 1 point rise, and a 20% increase']
+      ]
+    },
+    steps: [
+      'Pick which of the three questions you are asking — this is the step that matters.',
+      'Enter the two values.',
+      'Read the result.'
+    ],
+    tip: 'Percentage changes do not cancel out. A price cut by 20% then raised by 20% ends up 4% below where it started, because the rise is calculated on the smaller number. The same arithmetic explains why an investment that falls 50% needs to double to break even.',
+    faqs: [
+      { q: 'Why does a 20% cut then a 20% rise not return to the original?', a: 'Because each percentage is applied to a different base. Twenty percent off 100 is 80; twenty percent of 80 is only 16, so you come back to 96. The second percentage is measured against the reduced figure.' },
+      { q: 'What is the difference between percent and percentage point?', a: 'A rate moving from 5% to 6% has risen by one percentage point, and by 20 percent. Both are correct and they describe the same move — which is exactly why the distinction gets exploited in headlines.' },
+      { q: 'How do I calculate a discount plus tax?', a: 'Apply them in the order they actually happen: discount first, then tax on the reduced price. The Discount Calculator does both in one step, including a second coupon.' },
+      { q: 'Can percentage change be over 100%?', a: 'Yes, whenever something more than doubles — a rise from 10 to 25 is a 150% increase. A decrease cannot exceed 100%, because that would mean ending below zero.' }
+    ],
+    related: ['discount-calculator', 'tip-split', 'profit-margin', 'vat-gst', 'simple-interest', 'compound-interest']
+  },
+
+  'discount-calculator': {
+    intro: 'A stacked discount is rarely the sum of its parts. "30% off plus an extra 20% with this code" is not 50% off, and the gap is usually where the offer earns its margin.',
+    what: [
+      'Works out what you actually pay after a discount, an optional stacked coupon and sales tax.',
+      'The order matters and is fixed for a reason: the coupon applies to the already-reduced price, and tax applies last, to what you actually pay. That is how nearly every till in the world does it.'
+    ],
+    specs: {
+      caption: 'How stacking really works',
+      rows: [
+        ['Order applied', 'Discount → coupon on the reduced price → tax on the total'],
+        ['30% then 20%', '44% off, not 50%'],
+        ['50% then 50%', '75% off, not free'],
+        ['Discount range', '0–100%'],
+        ['Coupon range', '0–100%, optional'],
+        ['Sales tax', 'Optional, applied at the end'],
+        ['Currencies', 'USD, EUR, GBP, CAD, AUD, INR']
+      ]
+    },
+    steps: [
+      'Enter the original price and the main discount.',
+      'Add a coupon percentage if one stacks on top.',
+      'Add sales tax if your region adds it at the till.',
+      'Compare the final figure against the headline claim.'
+    ],
+    tip: 'Two stacked percentages multiply rather than add. Thirty percent then twenty percent leaves you paying 0.7 × 0.8 = 56% of the original, so 44% off rather than the 50% it sounds like. The difference is small on a jumper and substantial on a sofa.',
+    faqs: [
+      { q: 'Why is 30% plus 20% not 50%?', a: 'Because the second discount applies to the already-reduced price, not the original. You pay 70% of the price, then 80% of that — 56% overall, so 44% off. Stacked percentages multiply; they never add.' },
+      { q: 'Should tax go before or after the discount?', a: 'After, in almost every system. You are taxed on what you actually pay, so the discount comes off first. This tool follows that order.' },
+      { q: 'Does the order of two discounts matter?', a: 'Not to the final price — multiplication is commutative, so 30% then 20% costs the same as 20% then 30%. It can matter to whether a retailer allows the combination at all.' },
+      { q: 'How do I work out the original price from a sale price?', a: 'Divide rather than adding the percentage back. Something 25% off at 60 was 60 ÷ 0.75 = 80. Adding 25% to 60 gives 75, which is the classic error.' }
+    ],
+    related: ['percentage-calculator', 'vat-gst', 'tip-split', 'profit-margin', 'break-even', 'currency-converter']
+  },
+
+  'timezone-converter': {
+    intro: 'Scheduling across timezones goes wrong twice a year, when one country changes clocks and the other has not yet — or never does. A fixed offset you memorised in January is wrong in April.',
+    what: [
+      'Converts a specific date and time between timezones using the IANA timezone database built into your browser.',
+      'Because it uses real timezone rules rather than fixed offsets, daylight saving is handled for the actual date you enter — including the weeks when two regions have switched and the other has not.'
+    ],
+    specs: {
+      caption: 'Why offsets are not enough',
+      rows: [
+        ['Source of rules', 'The IANA timezone database, built into your browser'],
+        ['Daylight saving', 'Applied automatically for the date you enter'],
+        ['Why the date matters', 'The offset between two zones changes across the year'],
+        ['Northern switch', 'Usually March and October/November'],
+        ['Southern switch', 'The opposite months — offsets can move by two hours'],
+        ['No daylight saving', 'Much of Asia and Africa, and Arizona in the US'],
+        ['Clock source', 'Your device']
+      ]
+    },
+    steps: [
+      'Enter the <strong>date and time</strong>, not just the time — the date decides the offset.',
+      'Pick the source and target timezones.',
+      'Read the converted time.'
+    ],
+    tip: 'The dangerous window is the few weeks each spring and autumn when one region has changed clocks and the other has not. The usual gap between London and New York is five hours, but for about two weeks a year it is four. Meetings booked on a remembered offset land an hour out, and only in that window.',
+    faqs: [
+      { q: 'Why does the offset change depending on the date?', a: 'Daylight saving. Regions switch on different dates, and some never switch at all, so the gap between any two zones is not constant. That is exactly why entering the date matters as much as the time.' },
+      { q: 'Which timezone should I use for a country with several?', a: 'Pick the city rather than the country. The US spans six zones and Australia three, so "US time" is meaningless — IANA names are city-based for this reason.' },
+      { q: 'Is my device’s clock used?', a: 'For the current time, yes. The conversion rules come from the timezone database rather than your clock, so an incorrect device time shifts the starting point but not the arithmetic.' },
+      { q: 'How should I write a time for an international invite?', a: 'Include the timezone abbreviation and the UTC offset, and let calendar software do the conversion. Sending a bare "3pm" to a global team is how meetings get missed.' }
+    ],
+    related: ['timestamp-converter', 'time-calculator', 'date-calculator', 'age-calculator', 'countdown', 'unit-converter']
+  },
+
+  'timestamp-converter': {
+    intro: 'Unix time is a single number counting seconds since the start of 1970, which is exactly why it appears in logs, APIs and databases — and why it is unreadable to humans without converting it.',
+    what: [
+      'Converts a Unix timestamp into ISO 8601, UTC and your local time, and converts a date back into a timestamp.',
+      'Seeing all three at once is the point. Most timestamp bugs are timezone bugs, and they become obvious the moment you can compare the UTC and local readings side by side.'
+    ],
+    specs: {
+      caption: 'Formats and gotchas',
+      rows: [
+        ['Epoch', 'Seconds since 1 January 1970, 00:00:00 UTC'],
+        ['ISO 8601', 'The interchange format — 2026-07-23T14:30:00Z'],
+        ['Seconds vs milliseconds', 'JavaScript uses milliseconds; most APIs use seconds'],
+        ['Spotting the difference', 'A 13-digit number is milliseconds, 10 digits is seconds'],
+        ['Timezone', 'A Unix timestamp is always UTC — it carries no zone'],
+        ['Year 2038', '32-bit signed timestamps overflow in January 2038'],
+        ['Negative values', 'Valid — they represent dates before 1970']
+      ]
+    },
+    steps: [
+      'Paste a Unix timestamp to see it as ISO, UTC and local time.',
+      'Or enter a date to get the timestamp back.',
+      'If a converted date lands in 1970 or the far future, check whether you have seconds and milliseconds mixed up.'
+    ],
+    tip: 'A date around 1970 almost always means milliseconds were read as seconds, and a date tens of thousands of years away means the reverse. Count the digits: ten is seconds, thirteen is milliseconds. That single check resolves most timestamp bugs before you start reading code.',
+    faqs: [
+      { q: 'My timestamp converts to 1970. What went wrong?', a: 'You almost certainly have a millisecond value being read as seconds, or a value that was truncated. Ten digits is seconds and thirteen is milliseconds — dividing a millisecond value by 1000 usually fixes it immediately.' },
+      { q: 'Does a Unix timestamp have a timezone?', a: 'No, and that is its main advantage. It is always seconds since the epoch in UTC. Timezone only enters when you format it for display, which is where the vast majority of date bugs live.' },
+      { q: 'What is the 2038 problem?', a: 'A signed 32-bit integer runs out in January 2038 and wraps to a negative number, putting the date in 1901. Modern systems use 64-bit values and are fine, but embedded devices and old databases are still a live concern.' },
+      { q: 'Why use ISO 8601 rather than a normal date?', a: 'Because it is unambiguous. 03/04/2026 is March in the US and April nearly everywhere else; 2026-04-03 can only mean one thing, and it sorts correctly as plain text.' }
+    ],
+    related: ['timezone-converter', 'date-calculator', 'age-calculator', 'json-formatter', 'jwt-decoder', 'uuid-generator']
+  },
+
+  'text-diff': {
+    intro: 'Two versions of a document and a vague memory of what changed is a bad combination, especially when the change that matters is a single word in a contract.',
+    what: [
+      'Compares two blocks of text line by line and marks what was added, removed or left alone.',
+      'It compares by line rather than by word, which suits documents, configuration files and code. A single-word change shows the whole line as changed on both sides, which is usually what you want to look at anyway.'
+    ],
+    specs: {
+      caption: 'How the comparison works',
+      rows: [
+        ['Granularity', 'Line by line'],
+        ['Marked', 'Added, removed, unchanged'],
+        ['Best for', 'Contracts, configuration files, code, drafts'],
+        ['Less useful for', 'Prose reflowed to different line lengths'],
+        ['Whitespace', 'Counts — a changed indent is a changed line'],
+        ['Order', 'Left is the original, right is the new version'],
+        ['Processing', 'In this page — nothing is uploaded']
+      ]
+    },
+    steps: [
+      'Paste the original on the left and the new version on the right.',
+      'Read the marked lines.',
+      'If everything appears changed, check for different line endings or reflowed paragraphs rather than assuming the worst.'
+    ],
+    tip: 'If a comparison shows every line as different, the text is almost certainly wrapped differently rather than actually rewritten — one version came from a PDF or an editor with a different line width. Normalising the wrapping first turns an unreadable diff into a useful one.',
+    faqs: [
+      { q: 'Every line shows as changed. Why?', a: 'Usually different line wrapping or line endings — text copied from a PDF wraps at the page width, and Windows and Unix use different newline characters. The content may be identical while every line differs.' },
+      { q: 'Can it show which word changed?', a: 'Not within a line; comparison is by line, so a one-word edit marks the whole line. For documents and code that is normally the useful granularity, since you want to read the line in context anyway.' },
+      { q: 'Is it safe to paste a contract here?', a: 'The comparison runs in this page and nothing is transmitted, which is the reason to prefer it over a server-side diff for anything confidential.' },
+      { q: 'Does whitespace count?', a: 'Yes. A changed indent or a trailing space makes the line different. That is deliberate — in code and configuration, whitespace changes are real changes.' }
+    ],
+    related: ['compare-pdf', 'word-counter', 'readability', 'line-tools', 'json-formatter', 'markdown-editor']
+  },
+
+  'slug-generator': {
+    intro: 'A URL slug is the part of the address a human might read, and the constraints are unforgiving: no spaces, no accents, no ambiguity about case. Getting it right at publication time avoids a redirect later.',
+    what: [
+      'Turns a title into a clean URL slug — lowercase, hyphen-separated, stripped of accents and punctuation.',
+      'The output is deliberately conservative. It uses only characters that survive every browser, mail client and analytics tool without encoding, because a slug that needs escaping shows up as gibberish when someone pastes the link.'
+    ],
+    specs: {
+      caption: 'Slug conventions',
+      rows: [
+        ['Case', 'Lowercase — some servers treat case as significant'],
+        ['Word separator', 'Hyphens, which search engines read as spaces'],
+        ['Underscores', 'Avoid — historically not treated as word breaks'],
+        ['Accents', 'Reduced to their base letters'],
+        ['Punctuation', 'Removed'],
+        ['Sensible length', 'Three to five meaningful words'],
+        ['Stop words', 'Usually dropped — "the", "a", "of" add nothing']
+      ]
+    },
+    steps: [
+      'Paste your title.',
+      'Copy the slug.',
+      'Trim it to the three to five words that carry the meaning.'
+    ],
+    tip: 'Decide the slug before you publish, not after. Changing it later breaks every existing link and needs a redirect to preserve the ranking the old URL earned — which is recoverable but never free. Leaving dates or category names out also keeps the URL valid when either changes.',
+    faqs: [
+      { q: 'Hyphens or underscores?', a: 'Hyphens. Search engines have long treated hyphens as word separators and underscores as joiners, so my_blog_post can be read as one token while my-blog-post is three words. The convention is settled.' },
+      { q: 'How long should a slug be?', a: 'Long enough to be meaningful, short enough to read — three to five substantial words is typical. Dropping stop words keeps it tight without losing sense.' },
+      { q: 'Can I change a slug after publishing?', a: 'You can, but every existing link breaks and any ranking the old URL held needs a 301 redirect to carry across. Cheaper to get it right first, and to leave dates and categories out so it stays valid.' },
+      { q: 'What happens to non-English characters?', a: 'Accents are reduced to base letters, so "café" becomes "cafe". Scripts without a Latin equivalent cannot be transliterated reliably and are dropped rather than guessed at — check the output when working in a non-Latin language.' }
+    ],
+    related: ['meta-tag-generator', 'serp-preview', 'case-converter', 'url-encoder', 'utm-builder', 'keyword-density']
+  },
+
+  'trim-video': {
+    intro: 'Trimming is the one video edit that costs nothing. Because the streams are copied rather than re-encoded, it is fast, lossless, and it is almost always the first thing worth doing to a clip.',
+    what: [
+      'Cuts a clip to a start and end time by copying the streams, without re-encoding.',
+      'That copy is why it finishes almost instantly on a file that would take minutes to compress — and why the picture is bit-for-bit identical to the original within the section you kept.'
+    ],
+    specs: {
+      caption: 'Behaviour and limits',
+      rows: [
+        ['Method', 'Stream copy — no re-encoding'],
+        ['Quality', 'Identical to the source'],
+        ['Speed', 'Near-instant, even on large files'],
+        ['Cut accuracy', 'Snaps to the nearest keyframe'],
+        ['Typical keyframe spacing', 'Every one to ten seconds'],
+        ['Maximum input', '200 MB'],
+        ['Output', 'MP4']
+      ]
+    },
+    steps: [
+      'Drop the video in.',
+      'Set the <strong>start</strong> and <strong>end</strong> in seconds.',
+      'Trim and download.'
+    ],
+    tip: 'Trim before compressing, always. File size is bitrate multiplied by duration, so removing four seconds of dead air at each end takes that share off the file at full quality — no encoder can match a saving that costs nothing. On a Discord clip it is often the whole gap between 12 MB and 9 MB.',
+    faqs: [
+      { q: 'My cut is a second off from where I set it.', a: 'Cuts snap to the nearest keyframe, because cutting between them would require re-encoding and lose the speed and quality advantage. Keyframes are typically one to ten seconds apart, so set your start slightly early if the exact frame matters.' },
+      { q: 'Does trimming reduce quality?', a: 'No. The streams are copied rather than re-encoded, so what you keep is bit-for-bit identical to the original. It is the only video operation here that is genuinely lossless.' },
+      { q: 'Why is it so much faster than compressing?', a: 'Because nothing is decoded or re-encoded — it copies the bytes you asked for and writes a new container. Compression has to process every frame; trimming does not.' },
+      { q: 'Can I cut a section out of the middle?', a: 'Not in one pass. Trim the part before and the part after separately, then join them with a video joiner. This tool keeps one continuous section.' }
+    ],
+    related: ['compress-for-discord', 'convert-video', 'video-to-gif', 'resize-video', 'mute-video', 'extract-audio']
+  },
+
+  'video-to-gif': {
+    intro: 'GIF is a thirty-year-old format with a 256-colour palette and no real compression, which is why a five-second clip can outweigh the video it came from. Knowing that shapes every setting here.',
+    what: [
+      'Converts a section of video to an animated GIF at a frame rate and width you choose, generating a colour palette from the clip itself for better results.',
+      'Length is capped at 15 seconds deliberately. Beyond that, GIF file sizes stop being reasonable and an MP4 is both smaller and better looking — which is what most platforms silently convert your GIF into anyway.'
+    ],
+    specs: {
+      caption: 'Settings and what they cost',
+      rows: [
+        ['Length', '0.5–15 seconds'],
+        ['Frame rate', '10 (smaller), 12 (default), or 15 (smoother)'],
+        ['Width', '320, 480 (default) or 640 px'],
+        ['Colours', '256 maximum — a hard limit of the format'],
+        ['Compression', 'Lossless per frame, which is why files are large'],
+        ['Biggest size lever', 'Length, then width, then frame rate'],
+        ['Maximum input', '200 MB']
+      ]
+    },
+    steps: [
+      'Drop the video in and set the <strong>start</strong>.',
+      'Keep <strong>length</strong> short — two to four seconds is the sweet spot.',
+      'Choose <strong>width</strong> 480 unless it needs to be sharper.',
+      'Set <strong>frames per second</strong>. 12 looks fine for most motion; 10 is noticeably smaller.'
+    ],
+    tip: 'If the result is too large, cut the length before touching anything else. Size scales directly with duration, and one second removed saves more than dropping from 15 fps to 10. Reducing width helps second, because pixel count scales with the square.',
+    faqs: [
+      { q: 'Why is my GIF bigger than the video?', a: 'Because GIF stores each frame with lossless compression and no motion prediction, while MP4 stores only what changed between frames. For anything longer than a few seconds a video will be dramatically smaller — the format is simply not built for this.' },
+      { q: 'The colours look banded or dirty.', a: 'GIF allows only 256 colours per image. Gradients, skies and skin tones suffer most. A palette is generated from your clip to make the best of it, but the limit is in the format and cannot be worked around.' },
+      { q: 'Why is the length capped at 15 seconds?', a: 'Past that the files become unreasonable for what they are. Most platforms convert uploaded GIFs to video anyway, so a long GIF costs you size and quality for no benefit.' },
+      { q: 'Should I use a GIF at all?', a: 'For a two-second reaction, yes — it autoplays and loops everywhere. For anything longer, an MP4 is smaller and looks better, and every major platform will accept one.' }
+    ],
+    related: ['trim-video', 'compress-for-discord', 'convert-video', 'resize-video', 'frame-grabber', 'mute-video']
+  },
+
+  'convert-video': {
+    intro: 'MOV from a phone, MKV from a download, AVI from something older than the phone — and a target that only accepts MP4. Conversion is usually about compatibility rather than quality.',
+    what: [
+      'Converts almost any video container to MP4 with H.264 video and AAC audio, at a frame rate you choose.',
+      'The output is constant frame rate, which matters more than it sounds. Screen recordings and phone captures are often variable frame rate, and that is the single most common reason audio drifts out of sync after importing into an editor.'
+    ],
+    specs: {
+      caption: 'Input, output and settings',
+      rows: [
+        ['Accepts', 'MP4, MOV, MKV, AVI, WebM and other common containers'],
+        ['Output', 'MP4 — H.264 video, AAC audio'],
+        ['Frame rate', '24 fps (film), 30 fps (default), 60 fps (smooth)'],
+        ['Frame timing', 'Constant, so it stays in sync in every editor'],
+        ['Compatibility', 'H.264 MP4 plays on virtually every device and platform'],
+        ['Maximum input', '200 MB'],
+        ['Maximum length', '30 minutes']
+      ]
+    },
+    steps: [
+      'Drop the video in — the format does not need to be MP4.',
+      'Pick a <strong>frame rate</strong>. Match the source where you can: 30 for most phone footage, 60 for gameplay, 24 if it came from film.',
+      'Convert and download.'
+    ],
+    tip: 'If footage has ever drifted out of sync in an editor, variable frame rate was almost certainly the cause. Screen recorders and phones produce it routinely, editors assume constant, and the gap accumulates over minutes. Converting first fixes it before it becomes a problem you have to diagnose.',
+    faqs: [
+      { q: 'Why convert to MP4 specifically?', a: 'Because H.264 in an MP4 container is the closest thing to universal — phones, browsers, editors, TVs and social platforms all accept it. MKV and AVI are perfectly good containers that a great deal of software still refuses.' },
+      { q: 'Will converting reduce quality?', a: 'Slightly — it is a re-encode, so it is not lossless. At the default settings the loss is not visible in normal viewing, but convert from your original rather than from an already-converted copy.' },
+      { q: 'Which frame rate should I choose?', a: 'Match the source. Converting 30 fps footage to 60 does not add smoothness, it duplicates frames and grows the file. Going from 60 to 30 halves the frames and is a reasonable size saving if you do not need the motion.' },
+      { q: 'My file is over 200 MB.', a: 'Trim it first — that is lossless and usually what you wanted anyway. The limit exists because the whole file is held in memory in your browser, and above it the conversion fails partway through rather than completing badly.' }
+    ],
+    related: ['compress-for-discord', 'trim-video', 'resize-video', 'video-to-gif', 'extract-audio', 'mute-video']
   }
 };
 

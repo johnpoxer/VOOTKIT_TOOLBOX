@@ -19,11 +19,11 @@ short FAQ answers, stub spec tables and dead related links all fail the build.
 
 | | Pages | Unique words |
 |---|---|---|
-| Hand-written | **58** | 269–419 |
-| Derived spec table (auto, from source) | ~45 | 102–169 |
-| Generic template | ~158 | ~96 |
+| Hand-written | **70** | 269–419 |
+| Derived spec table (auto, from source) | ~40 | 102–169 |
+| Generic template | ~151 | ~96 |
 
-Pages over 250 unique words: **58 of 261**.
+Pages over 250 unique words: **70 of 261** — 27% of the catalogue.
 
 Sitewide median has moved 95 → 141, but read that with care: part of the rise is
 real and part is a shifting baseline. "Boilerplate" is defined as vocabulary
@@ -59,6 +59,16 @@ out of the implementation: the 200/130 wpm reading and speaking rates, the 6–4
 password length, the 1–500 UUID count, the QR sizes 256/512/1024 and error
 correction L/M/Q/H, the SHA-256/1/512 set and the deliberate omission of MD5.*
 
+**Batch 5 — everyday, video and utilities** *(315–402 words)* — **committed, NOT pushed**
+unit-converter · age-calculator · bmi-calculator · percentage-calculator ·
+discount-calculator · timezone-converter · timestamp-converter · text-diff ·
+slug-generator · trim-video · video-to-gif · convert-video
+
+*bmi-calculator is health-adjacent and is written accordingly: it states that
+BMI is a population statistic misapplied to individuals, that it misclassifies
+muscular and older bodies, that thresholds differ by ancestry, that children
+need percentile charts, and it points at waist measurement and a clinician.*
+
 **Batch 4 — finance and calculators** *(363–413 words)* — **committed, NOT pushed**
 loan-calculator · mortgage-calculator · compound-interest · currency-converter ·
 budget-calculator · paycheck-calculator · credit-card-payoff · savings-goal ·
@@ -79,7 +89,17 @@ every finance page added later.*
 
 Ordered by search demand, not by category. Do them in blocks of ~12.
 
-**Batch 5 onwards** — everything else, still demand-ordered. Roughly 145 pages.
+**Batch 6 — the last obvious high-demand block.** After this the demand curve
+flattens and the ordering is a judgement call rather than a ranking.
+Suggested: meme-generator · thumbnail-maker · social-media-image ·
+passport-photo-maker · flip-image · rotate-image · meta-tag-generator ·
+serp-preview · contrast-checker · readability · profit-margin ·
+stripe-fee-calculator
+
+**Batch 7 onwards** — roughly 179 pages left, spread across everyday (25),
+business (23), video (23), pdf (18) and the rest. Pick by whatever the Search
+Console query report shows people actually searching for by then — that data
+will be better than any guess made now.
 
 ---
 
@@ -111,7 +131,8 @@ Nothing is lost by waiting. The work is committed and safe in git; only the
 public site lags. Google cannot see a batch until it is deployed, so there is no
 point requesting indexing before the push either — do that after.
 
-Current state: **batches 3 and 4 committed, not pushed.** Batches 0–2 are live.
+Current state: **batches 3, 4 and 5 committed, not pushed.** Batches 0–2 are live.
+One more batch, then push.
 
 ### The daily quota is about 10 URLs
 
