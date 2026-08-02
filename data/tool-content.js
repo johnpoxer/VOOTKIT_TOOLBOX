@@ -778,6 +778,409 @@ module.exports = {
       { q: 'What size should a profile picture be?', a: 'Square and at least 400×400. Larger is fine; platforms downscale. Resize first if the file is very large.' }
     ],
     related: ['crop-image', 'resize-image', 'passport-photo-maker', 'social-media-image', 'compress-image', 'round-corners']
+  },
+
+  /* ================= session 2 ================= */
+
+  'webp-to-png': {
+    intro: 'The conversion to reach for when something rejects WebP and the image is a logo, an icon or anything with a transparent background. PNG is the format that opens everywhere and keeps the alpha channel intact.',
+    what: [
+      'Converts a WebP to PNG, preserving transparency exactly.',
+      'PNG is lossless, so this adds no further loss on top of whatever the WebP already discarded. That makes it the safe direction when the image is a graphic — unlike WebP to JPG, which is a second lossy encode and flattens transparency onto a solid colour.'
+    ],
+    specs: {
+      caption: 'What you gain and give up',
+      rows: [
+        ['Transparency', 'Preserved'],
+        ['Further quality loss', 'None — PNG is lossless'],
+        ['File size', 'Usually much larger, especially on photographs'],
+        ['Best for', 'Logos, icons, screenshots, anything with an alpha channel'],
+        ['Worse for', 'Photographs — use WebP to JPG instead'],
+        ['Compatibility', 'Universal'],
+        ['Resolution', 'Unchanged']
+      ]
+    },
+    steps: [
+      'Check what the image is — a logo or screenshot suits PNG, a photograph is better served by WebP to JPG.',
+      'Drop the WebP in.',
+      'Convert and download the PNG.'
+    ],
+    tip: 'Check what the image actually is before choosing this route. On a photograph PNG can be five to ten times the size for no visible benefit, and WebP to JPG is the better answer. PNG earns its size on flat colour and transparency, not on gradients.',
+    faqs: [
+      { q: 'Will this restore quality the WebP lost?', a: 'No. WebP at anything under 100% has already discarded information, and PNG stores what remains faithfully rather than recovering anything. What you get is a lossless copy of a lossy image — useful for editing, not for repair.' },
+      { q: 'Why is the PNG so much bigger?', a: 'PNG never discards data. On a photograph there is almost nothing repetitive for it to compress, so the file balloons. That is the format working correctly, not a fault.' },
+      { q: 'Should I use this or WebP to JPG?', a: 'PNG if the image has transparency or hard edges — logos, icons, screenshots. JPG if it is a photograph and you care about size. The two tools exist because the right answer depends entirely on the picture.' },
+      { q: 'Does my transparency survive?', a: 'Yes, exactly. Both formats carry a full alpha channel, so semi-transparent edges and soft shadows come through unchanged.' }
+    ],
+    related: ['webp-to-jpg', 'png-to-webp', 'jpg-to-webp', 'convert-image', 'png-to-jpg', 'compress-image']
+  },
+
+  'svg-to-png': {
+    intro: 'SVG is infinitely scalable right up until something refuses to accept it — which is most social platforms, most document editors and nearly every print service. Exporting to PNG is how a vector logo becomes usable outside a browser.',
+    what: [
+      'Renders an SVG to a PNG at the size the file declares, with transparency preserved.',
+      'The important shift is conceptual: SVG has no resolution, it has instructions. The moment you export, those instructions are frozen into a fixed grid of pixels. That is why the size you export at matters more here than in any other conversion — it is the one decision you cannot undo later.'
+    ],
+    specs: {
+      caption: 'What to know before exporting',
+      rows: [
+        ['Source', 'SVG — vector, resolution-independent'],
+        ['Output', 'PNG — fixed pixel grid, transparency preserved'],
+        ['Export size', 'Taken from the SVG’s own declared dimensions'],
+        ['Reversible', 'No — a PNG cannot become vector again'],
+        ['Social avatar', 'At least 400×400'],
+        ['Favicon source', '512×512 — feed it to the Favicon Generator'],
+        ['Print', 'Keep the SVG and give that to the printer if they will take it']
+      ]
+    },
+    steps: [
+      'Check the SVG declares a sensible width and height — that is what the export uses.',
+      'Drop it in.',
+      'Convert and download the PNG.'
+    ],
+    tip: 'Keep the SVG. It is the master and the PNG is a snapshot: you can always export another size from the vector, but you can never recover the vector from the pixels. Anyone who has tried to enlarge a logo from a 200px PNG for a banner knows how that goes.',
+    faqs: [
+      { q: 'My export came out tiny or blurry.', a: 'The PNG uses the SVG’s declared width and height. If those are small — many icon SVGs say 24×24 — the export is small too. Edit the SVG’s width, height or viewBox to the size you need, then convert.' },
+      { q: 'Nothing happened, or the image is blank.', a: 'SVGs that reference external fonts or images do not always render in a browser sandbox, and some SVGs have no intrinsic size at all. Opening it in a browser first tells you quickly whether the file itself is the problem.' },
+      { q: 'Can I convert a PNG back to SVG?', a: 'Not meaningfully. Vector is a set of shapes and a PNG is a grid of pixels — going back requires tracing, which guesses at shapes and rarely matches the original.' },
+      { q: 'Does transparency survive?', a: 'Yes. Anything transparent in the SVG stays transparent in the PNG, which is what makes this workable for logos over coloured backgrounds.' }
+    ],
+    related: ['png-to-jpg', 'favicon-generator', 'resize-image', 'convert-image', 'png-to-webp', 'circle-crop']
+  },
+
+  'pdf-to-text': {
+    intro: 'Copying text out of a PDF by hand is miserable, and copying it out of a scanned PDF is impossible — because there is no text in it, only a picture of text. Knowing which kind you have saves a lot of wasted effort.',
+    what: [
+      'Extracts the text layer from a PDF, giving you plain text you can paste anywhere.',
+      'It reads text that is genuinely stored in the file. A scan has none: it is images of pages, and no extractor can find words that were never encoded. If nothing comes out, that is what has happened — and the answer is OCR, not a different extractor.'
+    ],
+    specs: {
+      caption: 'What comes out, and what does not',
+      rows: [
+        ['Works on', 'PDFs created from a document — exported, printed to PDF, generated'],
+        ['Returns nothing on', 'Scans and photographed pages, which contain images only'],
+        ['Preserved', 'The words, in reading order'],
+        ['Not preserved', 'Fonts, layout, columns, tables and images'],
+        ['Quick test', 'Try selecting text in your PDF reader — if you cannot, there is none to extract'],
+        ['Scanned documents', 'Need OCR — see the PDF OCR tool']
+      ]
+    },
+    steps: [
+      'Open the PDF in any reader and try to select a sentence. If the cursor selects text, this will work; if it draws a box, it will not.',
+      'Drop the PDF in.',
+      'Copy the extracted text, or download it.'
+    ],
+    tip: 'Multi-column layouts are where extraction gets untidy. The text is stored in the order it was drawn, which for two columns is often left-then-right per band rather than the full left column then the full right one. Expect to fix the flow on academic papers and newsletters.',
+    faqs: [
+      { q: 'I got nothing back.', a: 'The PDF almost certainly contains images rather than text — a scan, or pages photographed on a phone. There is no text layer to extract. Run it through PDF OCR, which recognises the characters in the image and creates one.' },
+      { q: 'The text came out jumbled.', a: 'Usually a multi-column layout. Extraction follows the order content was written into the file, which does not always match the order you read it. Reflowing by hand afterwards is normally quicker than fighting it.' },
+      { q: 'Why are the line breaks in odd places?', a: 'A PDF stores where each line was placed, not where a paragraph ends — the concept barely exists in the format. Breaks land where lines wrapped visually, so joining paragraphs afterwards is expected.' },
+      { q: 'Can I keep the formatting?', a: 'Not with this tool — it produces plain text deliberately. If layout matters more than the words, PDF to JPG or PDF to PNG keeps the pages looking exactly as they are.' }
+    ],
+    related: ['pdf-ocr', 'pdf-to-jpg', 'pdf-to-png', 'text-to-pdf', 'merge-pdf', 'compress-pdf']
+  },
+
+  'pdf-to-png': {
+    intro: 'The lossless counterpart to PDF to JPG. When the pages are text, diagrams or line art, PNG keeps every edge crisp where JPEG would soften them and leave a faint halo around each letter.',
+    what: [
+      'Renders each page of a PDF as a PNG image at a resolution you choose.',
+      'PNG is lossless, so what you get is exactly what the renderer drew. On pages of text and vector graphics that is a visible improvement over JPEG; on photographic pages it mostly means a much larger file for no benefit.'
+    ],
+    specs: {
+      caption: 'Resolution and when to choose PNG',
+      rows: [
+        ['Standard', '1.5× — screen viewing, smallest files'],
+        ['High', '2× (default) — good for most uses'],
+        ['Very high', '3× — print, or when text must survive zooming'],
+        ['Output', 'One PNG per page'],
+        ['Choose PNG for', 'Text, diagrams, line art, screenshots of pages'],
+        ['Choose JPG for', 'Photographic pages — much smaller, no visible loss'],
+        ['Transparency', 'Not produced — PDF pages have a white background']
+      ]
+    },
+    steps: [
+      'Drop the PDF in.',
+      'Pick a resolution. <strong>High</strong> suits most uses; <strong>Very high</strong> only if it will be printed or zoomed into.',
+      'Convert, then download the pages you need.'
+    ],
+    tip: 'Higher is not automatically better. At 3× a long document produces very large files and takes noticeably longer, and on screen it is indistinguishable from 2×. Match the setting to where the image is actually going.',
+    faqs: [
+      { q: 'PNG or JPG — which should I use?', a: 'PNG when the page is mostly text, tables or diagrams, because lossy compression puts a faint halo around hard edges and small type suffers most. JPG when the page is mostly photographic, where the files are far smaller and the loss is invisible.' },
+      { q: 'Can I get a transparent background?', a: 'No. PDF pages are opaque, so the render includes the white page. Removing it would need editing after export.' },
+      { q: 'The output is blurry even at Very high.', a: 'Then the source page is a low-resolution scan. Rendering cannot add detail that was never captured — the ceiling is whatever the original scan contains.' },
+      { q: 'I only want a few pages.', a: 'Run Extract PDF Pages first to make a shorter PDF, then convert that. It is faster and avoids rendering pages you will throw away.' }
+    ],
+    related: ['pdf-to-jpg', 'pdf-to-text', 'png-to-pdf', 'extract-pdf-pages', 'compress-pdf', 'split-pdf']
+  },
+
+  'png-to-pdf': {
+    intro: 'Screenshots are almost always PNGs, and a set of screenshots is almost always meant to be read in order. A PDF is how you send them as one document rather than a folder someone has to open file by file.',
+    what: [
+      'Combines up to 30 PNGs into a single PDF, one image per page, in the order you add them.',
+      'Page size is your call. "Fit to each image" gives every page the exact shape of its screenshot, which keeps things tight and avoids white bands. A4 or US Letter centres each image on a standard page, which is what you want if anyone will print it.'
+    ],
+    specs: {
+      caption: 'Limits and page options',
+      rows: [
+        ['Images per PDF', 'Up to 30'],
+        ['Total size', 'Up to 40 MB'],
+        ['Page size', 'Fit to each image (default), A4 portrait, or US Letter'],
+        ['Margin', '0–100 pt, default 0'],
+        ['Page order', 'The order you add the images'],
+        ['Transparency', 'Flattened — PDF pages are opaque'],
+        ['Output', 'One PDF, one image per page']
+      ]
+    },
+    steps: [
+      'Add your PNGs <strong>in the order you want the pages</strong>.',
+      'Choose <strong>Page size</strong> — “Fit to each image” for screenshots, A4 or Letter if it will be printed.',
+      'Add a <strong>Margin</strong> of 20–40 pt if printing, so nothing sits against the edge.',
+      'Convert and download.'
+    ],
+    tip: 'PNG screenshots at retina resolution are large, and thirty of them will hit the 40 MB cap quickly. Running them through Bulk Image Resizer first — 1600 px wide is plenty for a document — keeps the PDF emailable and costs nothing visible on the page.',
+    faqs: [
+      { q: 'My transparent areas turned white.', a: 'Expected. PDF pages are opaque, so transparency has to be flattened onto the page. If the transparency matters, keep the PNGs alongside the PDF.' },
+      { q: 'The pages are in the wrong order.', a: 'Pages follow the order you added the files, not their filenames. Add them one at a time in sequence — the browser does not guarantee it hands over a multi-select in filename order.' },
+      { q: 'The PDF is too big to email.', a: 'It contains full-resolution images and the PDF wrapper adds very little. Resize the PNGs first, or run the finished file through Compress PDF.' },
+      { q: 'Should I use this or JPG to PDF?', a: 'Whichever matches your source files — they behave identically. PNGs are typical for screenshots, JPGs for photographs.' }
+    ],
+    related: ['jpg-to-pdf', 'merge-pdf', 'compress-pdf', 'pdf-to-png', 'bulk-resize', 'webp-to-pdf']
+  },
+
+  'delete-pdf-pages': {
+    intro: 'The blank sheet the scanner picked up, the internal cover page, the terms you do not need to send on. Sometimes it is far easier to say what should go than to list everything that should stay.',
+    what: [
+      'Removes the pages you name and returns a PDF containing everything else, in its original order.',
+      'This is the mirror image of Extract PDF Pages — same operation, opposite input. Use whichever describes your situation in fewer numbers, because that is the one you are less likely to get wrong.'
+    ],
+    specs: {
+      caption: 'Range syntax',
+      rows: [
+        ['Default', '2'],
+        ['A range', '4-6'],
+        ['Individual pages', '1,5,9'],
+        ['Mixed', '1,4-6,10'],
+        ['Numbering', 'Starts at 1, matching your PDF reader'],
+        ['Remaining pages', 'Keep their original order'],
+        ['Original file', 'Never modified']
+      ]
+    },
+    steps: [
+      'Drop the PDF in.',
+      'List the pages to <strong>remove</strong> in <strong>Pages to remove</strong> — not the ones to keep.',
+      'Run it and download the result.'
+    ],
+    tip: 'Page numbers refer to the original document throughout, so you do not have to account for pages shifting as earlier ones are removed. Entering 2,3,4 removes the second, third and fourth pages of the file you uploaded — not a moving target.',
+    faqs: [
+      { q: 'Do the numbers shift as pages are deleted?', a: 'No. Everything is evaluated against the original document, so 2,4,6 removes the second, fourth and sixth pages of the file you uploaded. You do not need to compensate for earlier deletions.' },
+      { q: 'What if I list a page that does not exist?', a: 'It is ignored rather than causing a failure. The remaining valid pages are still removed, so check the output page count if you suspect a typo.' },
+      { q: 'Should I use this or Extract PDF Pages?', a: 'Whichever needs fewer numbers. Dropping two pages from a hundred-page report is a deletion; keeping three pages out of a hundred is an extraction. Same result either way.' },
+      { q: 'Does the text stay selectable?', a: 'Yes. The surviving pages are copied rather than re-rendered, so text, links and vector graphics are untouched.' }
+    ],
+    related: ['extract-pdf-pages', 'split-pdf', 'merge-pdf', 'reorder-pdf', 'rotate-pdf', 'compress-pdf']
+  },
+
+  'reorder-pdf': {
+    intro: 'The classic case: a double-sided document scanned as two passes, so you have all the odd pages followed by all the even ones. Merging gets them into one file; only reordering makes it readable.',
+    what: [
+      'Rewrites a PDF with its pages in an order you specify, listing every page number in the sequence you want.',
+      'The order you type is exactly the order you get. You can also drop pages by leaving them out, and repeat a page by listing it twice — so this quietly covers deleting and duplicating as well.'
+    ],
+    specs: {
+      caption: 'How to write the order',
+      rows: [
+        ['Format', 'A comma-separated list of page numbers'],
+        ['Move a page to the front', '5,1,2,3,4'],
+        ['Reverse a 4-page file', '4,3,2,1'],
+        ['Interleave two scans', '1,5,2,6,3,7,4,8'],
+        ['Omit a page', 'Leave its number out'],
+        ['Repeat a page', 'List it twice'],
+        ['Numbering', 'Starts at 1, matching your PDF reader']
+      ]
+    },
+    steps: [
+      'Drop the PDF in.',
+      'Type the <strong>New page order</strong> as a comma-separated list.',
+      'Check the count before running — the output has exactly as many pages as numbers you typed.',
+      'Run it and download.'
+    ],
+    tip: 'For the odd-then-even scan, merge the two passes first so the odd pages are 1 to N and the evens follow, then interleave with 1, N+1, 2, N+2 and so on. Working it out on paper for the first four pages usually makes the pattern obvious for the rest.',
+    faqs: [
+      { q: 'My output has fewer pages than the original.', a: 'You left some numbers out. The output contains exactly the pages you listed, in that order — anything unlisted is dropped. Include every page you want to keep.' },
+      { q: 'Can I repeat a page?', a: 'Yes. List it as many times as you want it to appear. That is also what the Duplicate PDF Pages tool does if you would rather not retype the whole sequence.' },
+      { q: 'Is there a drag-and-drop version?', a: 'Not here — this is deliberately a typed list, which is faster and less error-prone for long documents than dragging thumbnails around.' },
+      { q: 'Does reordering re-render the pages?', a: 'No. Pages are copied across intact rather than redrawn, so text stays selectable, links keep working, vector graphics stay sharp and the file size barely changes. Reordering is one of the few PDF operations that costs you nothing at all in quality.' }
+    ],
+    related: ['merge-pdf', 'delete-pdf-pages', 'extract-pdf-pages', 'duplicate-pdf-pages', 'rotate-pdf', 'split-pdf']
+  },
+
+  'protect-pdf': {
+    intro: 'Before setting a password it is worth knowing which of the two kinds you are setting, because only one of them actually protects anything.',
+    what: [
+      'Sets a password on a PDF so it cannot be opened without it.',
+      'One caveat stated plainly: encryption depends on the PDF engine build, and if this browser build does not include it you will get an explicit error rather than a file that looks protected but is not. Silently producing an unprotected document would be far worse.'
+    ],
+    specs: {
+      caption: 'Passwords and what they do',
+      rows: [
+        ['Minimum password length', '4 characters'],
+        ['Open password', 'Genuinely encrypts — the file cannot be read without it'],
+        ['Permissions lock', 'Only discourages printing and copying; trivially removed'],
+        ['If encryption is unavailable', 'You get a clear error, never a false sense of security'],
+        ['Recovery', 'None — lose the password and the file is unreadable'],
+        ['Accepts', 'PDF']
+      ]
+    },
+    steps: [
+      'Drop the PDF in.',
+      'Enter a password of at least four characters — and make it a real one, since anything worth encrypting is worth more than four characters.',
+      'Save the password somewhere you will still have it later.',
+      'Protect and download.'
+    ],
+    tip: 'Never send the password down the same channel as the file. A protected PDF and its password in the same email thread is exactly as secure as an unprotected PDF, and it is the most common way this goes wrong.',
+    faqs: [
+      { q: 'I lost the password. Can it be recovered?', a: 'No, and that is the point of encryption. There is no reset and no back door. Anything claiming otherwise is either guessing common passwords or lying about what it does.' },
+      { q: 'It says encryption is not supported. What now?', a: 'The PDF engine build in your browser does not include it. Use your operating system’s “export as protected PDF”, or a desktop tool. The error appears deliberately rather than handing you a file you would wrongly trust.' },
+      { q: 'What is the difference between this and a permissions lock?', a: 'An open password encrypts the contents and is genuinely secure. A permissions lock leaves the file readable and only flags that printing and copying are discouraged — which readers may ignore, and which Remove PDF Password strips in seconds.' },
+      { q: 'Is a four-character password enough?', a: 'It is the minimum this tool accepts, not a recommendation. Four characters is guessable almost instantly. If the document is worth encrypting, use a long passphrase.' }
+    ],
+    related: ['remove-pdf-password', 'merge-pdf', 'compress-pdf', 'pdf-redact', 'split-pdf', 'pdf-signature']
+  },
+
+  'text-to-pdf': {
+    intro: 'Plain text into a paginated PDF, without opening a word processor. Useful for a quick note, a printable list, or turning something you have written into a file that looks the same on every machine.',
+    what: [
+      'Lays out text as a paginated PDF at A4 or US Letter, with an optional title on the first page.',
+      'It handles more than English. The font is chosen from the text you paste — Latin, Greek, Cyrillic, Arabic, Hebrew, Chinese, Japanese, Korean and Thai all render, with the right font downloaded only when it is actually needed so ordinary English text stays instant.'
+    ],
+    specs: {
+      caption: 'Options and script support',
+      rows: [
+        ['Page size', 'A4 or US Letter'],
+        ['Pages', '1–200'],
+        ['Title', 'Optional, appears on page 1'],
+        ['Scripts supported', 'Latin, Greek, Cyrillic, Arabic, Hebrew, CJK, Thai'],
+        ['Not supported', 'Devanagari — see the FAQ below'],
+        ['Font download', 'Only when the text needs a non-Latin font'],
+        ['Output', 'Selectable, searchable text — not an image']
+      ]
+    },
+    steps: [
+      'Paste or type your text.',
+      'Choose <strong>Page size</strong> — A4 outside the US, Letter inside it.',
+      'Add a <strong>title</strong> if you want one on the first page.',
+      'Create the PDF and download.'
+    ],
+    tip: 'The output contains real text rather than a picture of it, so the result stays searchable, selectable and accessible to a screen reader. That is the difference between this and printing a screenshot to PDF, and it matters more than it sounds if anyone needs to find something in the document later.',
+    faqs: [
+      { q: 'My Hindi or Nepali text is refused.', a: 'Devanagari is deliberately blocked. The shaping it requires makes the in-browser renderer hang rather than fail, which would cost you the tab and your text. Refusing with a message is the better outcome, and it is being worked on.' },
+      { q: 'Can I control fonts, sizes and margins?', a: 'Not here — this is deliberately a fast path from text to a clean document. For layout control, write in a word processor and export from there.' },
+      { q: 'Why did it pause before generating?', a: 'Your text needed a non-Latin font, which is fetched on demand. Latin-only text skips the download entirely and generates immediately.' },
+      { q: 'Is the text selectable in the PDF?', a: 'Yes. It is embedded as real text, so it can be searched, copied and read aloud by a screen reader.' }
+    ],
+    related: ['markdown-to-pdf', 'pdf-to-text', 'merge-pdf', 'jpg-to-pdf', 'pdf-page-numbers', 'compress-pdf']
+  },
+
+  'image-watermark': {
+    intro: 'A watermark is a deterrent, not a lock. Done well it makes casual reuse obvious and annoying to remove; done badly it either ruins your own image or wipes off with a two-second crop.',
+    what: [
+      'Overlays text across an image at a size, opacity and position you control.',
+      'Position is the setting that decides whether the watermark actually works. A single mark in a corner is removed by cropping. Tiled across the whole image cannot be cropped out without destroying the picture, which is the entire point.'
+    ],
+    specs: {
+      caption: 'Settings',
+      rows: [
+        ['Text size', '2–20% of image width, default 6%'],
+        ['Opacity', '5–100%, default 35%'],
+        ['Position', 'Tiled across (default), Centre, or Bottom right'],
+        ['Hardest to remove', 'Tiled — it cannot be cropped away'],
+        ['Easiest to remove', 'Bottom right — one crop and it is gone'],
+        ['Accepts', 'Any image the browser can open'],
+        ['Resolution', 'Unchanged']
+      ]
+    },
+    steps: [
+      'Drop the image in and enter your watermark text.',
+      'Set <strong>Position</strong>. Choose <strong>Tiled across</strong> if the point is deterrence rather than attribution.',
+      'Set <strong>Opacity</strong> — 35% is the default and is the usual sweet spot; below about 20% it stops being a deterrent.',
+      'Adjust <strong>Text size</strong> and download.'
+    ],
+    tip: 'Watermark a copy, never your original. The mark is drawn into the pixels and cannot be removed afterwards, so keep the clean file somewhere safe — the number of people who discover this after overwriting the only version is not small.',
+    faqs: [
+      { q: 'What opacity should I use?', a: 'Around 35% for most images. High enough to be unmistakable, low enough to leave the picture usable. Below 20% it becomes easy to paint out; above 60% you have largely ruined your own image.' },
+      { q: 'Can the watermark be removed?', a: 'A corner mark can be cropped off in seconds. A tiled one cannot be removed without visibly damaging the image, which is as far as any watermark goes — it raises the cost of theft rather than preventing it.' },
+      { q: 'Can I use a logo instead of text?', a: 'Not in this tool, which is text-only. For a logo you would need to composite the images in an editor.' },
+      { q: 'Does it work on transparent images?', a: 'Yes, though the text is drawn over transparent areas as well, which may look odd. Watermarking usually makes more sense on a finished image with a background.' }
+    ],
+    related: ['pdf-watermark', 'compress-image', 'resize-image', 'exif-viewer', 'crop-image', 'batch-compress']
+  },
+
+  'favicon-generator': {
+    intro: 'The little icon in a browser tab is not one file any more. Between tabs, bookmarks, phone home screens and web app manifests, a site needs the same square at half a dozen sizes.',
+    what: [
+      'Generates the full set of favicon sizes from one square image, and gives you the HTML to reference them.',
+      'The sizes are the ones that are actually used: 16 and 32 for browser tabs, 48 for Windows shortcuts, 180 for the Apple touch icon, and 192 and 512 for Android and web app manifests.'
+    ],
+    specs: {
+      caption: 'Sizes produced and what uses them',
+      rows: [
+        ['16×16', 'Browser tab, at the smallest size'],
+        ['32×32', 'Browser tab on high-density screens; the one most often seen'],
+        ['48×48', 'Windows site shortcuts'],
+        ['180×180', 'Apple touch icon — iOS home screen'],
+        ['192×192', 'Android home screen and web app manifest'],
+        ['512×512', 'Manifest, splash screens, app listings'],
+        ['Best source', 'A square image, 512×512 or larger'],
+        ['Output', 'PNG files plus the HTML to paste']
+      ]
+    },
+    steps: [
+      'Prepare a <strong>square</strong> source image, ideally 512×512 or larger. A non-square image will be distorted.',
+      'Drop it in and generate.',
+      'Download all six PNGs into the root of your site.',
+      'Paste the generated HTML into the <code>&lt;head&gt;</code> of every page.'
+    ],
+    tip: 'Design for 16 pixels, not for 512. A detailed logo becomes an unreadable smudge in a browser tab — most good favicons are a single letter, a simple mark, or a heavily simplified version of the full logo. Check the 16×16 output before shipping, because that is the one people actually see.',
+    faqs: [
+      { q: 'My icon looks like a blur in the tab.', a: 'Too much detail for 16 pixels. Simplify: one letter or one shape, strong contrast, no fine lines or small text. Judge the result at actual size rather than zoomed in.' },
+      { q: 'Do I still need an .ico file?', a: 'Not for current browsers, which all accept PNG favicons. Only very old Internet Explorer required .ico, and it is no longer worth carrying.' },
+      { q: 'My source image is not square.', a: 'It will be squashed to fit. Crop it to a square first — Crop Image with the 1:1 ratio does this in two clicks.' },
+      { q: 'Where do the files go?', a: 'The root of your site, so they sit at /favicon-32x32.png and so on, matching the generated HTML. If you put them in a subfolder, update the paths to match.' }
+    ],
+    related: ['crop-image', 'resize-image', 'svg-to-png', 'circle-crop', 'convert-image', 'compress-image']
+  },
+
+  'exif-viewer': {
+    intro: 'A photo straight off a phone usually records where it was taken, to within a few metres, along with the camera, the settings and the exact time. Most people posting photos publicly have no idea that data is travelling with them.',
+    what: [
+      'Reads the EXIF metadata embedded in a JPEG and shows you exactly what is in there — camera, lens settings, timestamps, orientation and, where present, location.',
+      'This is the check to run before publishing. It is read-only: it tells you what is in the file rather than changing it, so you can decide what to do with that knowledge.'
+    ],
+    specs: {
+      caption: 'What EXIF can contain',
+      rows: [
+        ['Camera', 'Make and model'],
+        ['Settings', 'Aperture, shutter speed, ISO, focal length'],
+        ['Timestamps', 'When the photo was taken and last modified'],
+        ['Software', 'What edited it, and sometimes the author name'],
+        ['Orientation', 'The rotation flag readers use to display it upright'],
+        ['Location', 'GPS coordinates, where the camera recorded them'],
+        ['Format', 'JPEG — PNG and WebP rarely carry EXIF']
+      ]
+    },
+    steps: [
+      'Choose a JPEG.',
+      'Read what is listed. Pay particular attention to any location and timestamp data.',
+      'If you are publishing the photo, strip it — running the file through the Image Compressor or Image Converter re-encodes it and does not carry EXIF across.'
+    ],
+    tip: 'Most social platforms strip EXIF when you upload, but forums, direct file shares, cloud links and email attachments generally do not. The risk is not the photo you post to a big network — it is the one you attach to a message or upload to a small site.',
+    faqs: [
+      { q: 'Nothing was found in my image.', a: 'Either the file is not a JPEG — PNG and WebP rarely carry EXIF — or the metadata has already been stripped, which many apps and platforms do automatically. No EXIF is a good outcome if you were about to publish it.' },
+      { q: 'How do I remove the data?', a: 'Re-encode the image. Running it through the Image Compressor or Image Converter produces a file built from the decoded pixels, and the metadata does not come with it.' },
+      { q: 'Does removing EXIF change how the photo looks?', a: 'Only in one respect worth knowing: the orientation flag goes too. A photo taken sideways may then display sideways in some readers, so check the result and rotate it if needed.' },
+      { q: 'Is my photo uploaded to read the metadata?', a: 'No. The file is parsed in your browser — which matters more here than on most tools, since the whole point is inspecting data you may not want anyone else to have.' }
+    ],
+    related: ['compress-image', 'convert-image', 'image-watermark', 'batch-compress', 'resize-image', 'png-to-jpg']
   }
 };
 

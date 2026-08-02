@@ -19,12 +19,17 @@ short FAQ answers, stub spec tables and dead related links all fail the build.
 
 | | Pages | Unique words |
 |---|---|---|
-| Hand-written | **22** | 269–419 |
-| Derived spec table (auto, from source) | 68 | 102–169 |
-| Generic template | ~171 | ~96 |
+| Hand-written | **34** | 269–419 |
+| Derived spec table (auto, from source) | ~60 | 102–169 |
+| Generic template | ~167 | ~96 |
 
-Sitewide median: 95 → 101. It moves slowly because the median sits in the
-untouched majority; what matters is the count of pages over 275, now 22.
+Pages over 250 unique words: **34 of 261**.
+
+Sitewide median has moved 95 → 141, but read that with care: part of the rise is
+real and part is a shifting baseline. "Boilerplate" is defined as vocabulary
+appearing on more than 90% of pages, so as more pages diverge, fewer words
+qualify and every page scores higher. The count of pages over 250 is the honest
+measure; the median flatters.
 
 ---
 
@@ -34,21 +39,21 @@ untouched majority; what matters is the count of pages over 275, now 22.
 compress-image · resize-image · png-to-jpg · jpg-to-webp · heic-converter ·
 merge-pdf · split-pdf · compress-pdf · pdf-to-jpg · compress-for-discord
 
-**Batch 1 — high-demand converters and PDF operations**
+**Batch 1 — high-demand converters and PDF operations** *(277–350 words)*
 jpg-to-pdf · rotate-pdf · extract-pdf-pages · remove-pdf-password · crop-image ·
 convert-image · jpg-to-png · png-to-webp · webp-to-jpg · bulk-resize ·
 batch-compress · circle-crop
+
+**Batch 2 — remaining high-demand file tools** *(280–351 words)*
+webp-to-png · svg-to-png · pdf-to-text · pdf-to-png · png-to-pdf ·
+delete-pdf-pages · reorder-pdf · protect-pdf · text-to-pdf · image-watermark ·
+favicon-generator · exif-viewer
 
 ---
 
 ## Next up, in order
 
 Ordered by search demand, not by category. Do them in blocks of ~12.
-
-**Batch 2 — remaining high-demand file tools**
-webp-to-png · svg-to-png · pdf-to-text · pdf-to-png · png-to-pdf ·
-delete-pdf-pages · reorder-pdf · protect-pdf · text-to-pdf · image-watermark ·
-favicon-generator · exif-viewer
 
 **Batch 3 — text and developer tools** *(widget tools — options are not
 declared in a readable structure, so specs must be gathered by reading the
