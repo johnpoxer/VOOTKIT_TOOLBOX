@@ -1,6 +1,6 @@
 /* tools-video.js — streamer/creator calculators on the VKCalc engine.
  * Pure maths + lookups, no media processing, no heavy library. The clips-and-
- * encoding tools (compress-for-discord, trim, gif) come later on WebCodecs.
+ * encoding tools (compress-video, trim, gif) come later on WebCodecs.
  * Every formula here is unit-tested in test/video.test.js. */
 (function (root) {
   'use strict';

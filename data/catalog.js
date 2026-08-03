@@ -191,7 +191,7 @@
     t("image-to-text","images","Image to Text (OCR)","Extract text from a photo or screenshot with OCR.",{tier:"traffic",status:"live",kw:"image to text ocr photo screenshot extract recognize"}),
 
     /* ---------- RETENTION: video & streaming ---------- */
-    t("compress-for-discord","video","Compress for Discord","One-click 10 MB, 50 MB and 500 MB presets that actually fit.",{tier:"retention",status:"live",kw:"discord upload limit too big clip"}),
+    t("compress-video","video","Video Compressor","Shrink any video in your browser — pick a quality level or a size to fit.",{tier:"traffic",status:"live",kw:"compress reduce shrink make smaller file size mp4 mov discord email whatsapp upload limit too big"}),
     t("trim-video","video","Video Trimmer","Cut the segment you want and save it.",{tier:"retention",status:"live",kw:"clip cut shorten"}),
     t("bitrate-calculator","video","Streaming Bitrate Calculator","Best bitrate for your upload speed, resolution and platform.",{tier:"retention",status:"live",kw:"obs twitch youtube kick stream settings"}),
     t("vertical-reframe","video","Vertical Reframe 9:16","Reframe a clip for Shorts, TikTok and Reels.",{tier:"retention",status:"live",kw:"portrait tiktok shorts crop"}),

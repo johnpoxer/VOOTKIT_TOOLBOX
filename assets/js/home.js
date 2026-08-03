@@ -103,7 +103,7 @@
   document.querySelectorAll('[data-count="cats"]').forEach(function (n) { n.textContent = VK.CATEGORIES.length; });
 
   /* ---- popular tools (curated, high-intent) ---- */
-  var POPULAR = ['merge-pdf', 'compress-image', 'compress-for-discord', 'qr-generator', 'password-generator', 'word-counter', 'currency-converter', 'json-formatter', 'background-remover', 'pdf-to-jpg'];
+  var POPULAR = ['merge-pdf', 'compress-image', 'compress-video', 'qr-generator', 'password-generator', 'word-counter', 'currency-converter', 'json-formatter', 'background-remover', 'pdf-to-jpg'];
   var popWrap = document.getElementById('popular');
   if (popWrap) {
     var picks = POPULAR.map(function (id) { return VK.find(id); }).filter(function (t) { return t && t.status === 'live'; }).slice(0, 8);

@@ -35,12 +35,26 @@
   }
   function outBlob(data, mime) { return new Blob([data.buffer || data], { type: mime }); }
 
-  /* ffmpeg.wasm writes the whole input into a virtual filesystem inside a single
-     wasm heap that maxes out near 2 GB, and the encoder needs working room on top
-     of that. The old 500 MB cap let files through that always ended in an
-     out-of-memory crash mid-encode, which read to users as "the tool is broken".
-     200 MB is what actually completes reliably in a single-threaded core. */
-  var LIMIT = 200 * 1024 * 1024;
+  /* HOW BIG A FILE IS ALLOWED.
+   *
+   * This used to be a flat 200 MB, because ffmpeg.wasm copied the whole input
+   * into a virtual filesystem inside the same ~2 GB wasm heap the encoder works
+   * in. A 500 MB cap was tried before that and reliably died of out-of-memory
+   * part-way through an encode.
+   *
+   * The engine now MOUNTS the file instead of copying it (WORKERFS, read on
+   * demand via FileReaderSync), so the input no longer competes with the encoder
+   * for heap. That removes the reason for the old ceiling. What remains is the
+   * output plus the encoder's working set, and for a compressor the output is
+   * small by definition.
+   *
+   * 2 GB is the practical ceiling, not an arbitrary one: above it a File cannot
+   * be addressed reliably in a 32-bit wasm heap even by reference. The engine
+   * falls back to copying if mounting is unavailable, and refuses there with its
+   * own message rather than crashing — so this number is safe to be generous
+   * with. Duration and resolution are the guards that actually matter now, and
+   * they live in guardMeta below. */
+  var LIMIT = 2 * 1024 * 1024 * 1024;
 
   /* ffmpeg demuxes by content, but giving the real extension lets it pick the
      right demuxer immediately instead of guessing — and makes its error messages
@@ -56,7 +70,7 @@
      than after a 32 MB download. */
   function guardFile(file) {
     if (file && file.size > LIMIT) {
-      throw new Error('That file is bigger than the 200 MB limit for in-browser processing. Trim or compress it first.');
+      throw new Error('That file is over 2 GB, which is more than a browser tab can address. Split it into shorter pieces with the Video Trimmer first, then compress each piece.');
     }
   }
 
@@ -79,16 +93,36 @@
 
   var T = {
 
-    'compress-for-discord': {
+    'compress-video': {
       accept: 'video/*', action: 'Compress', dropLabel: 'Choose a video to shrink', maxBytes: LIMIT,
+      /* ONE DROPDOWN, TWO WAYS OF THINKING.
+       *
+       * Most people arriving at a video compressor want "smaller", full stop —
+       * no number in mind. A few have a hard limit to clear: an email
+       * attachment, a forum upload, a chat app. Both are legitimate and they
+       * need different maths, so both are offered in the same control rather
+       * than behind a mode switch nobody would find.
+       *
+       * The quality levels come first because they are the common case and they
+       * work on any clip of any length. The size targets are named after the
+       * limit rather than the service where possible, because service limits
+       * change and a label that goes stale is worse than a plain number. */
       options: [
-        { k: 'target', label: 'Fit into', type: 'select', def: 10,
-          options: [{ v: 10, label: '10 MB (Discord free)' }, { v: 50, label: '50 MB (Nitro Basic)' }, { v: 500, label: '500 MB (Nitro)' }] },
+        { k: 'level', label: 'Compression', type: 'select', def: 'balanced',
+          options: [
+            { v: 'light', label: 'Light — barely visible quality loss' },
+            { v: 'balanced', label: 'Balanced — recommended' },
+            { v: 'strong', label: 'Strong — smallest file, 720p max' },
+            { v: 'fit10', label: 'Fit 10 MB (Discord, most forums)' },
+            { v: 'fit25', label: 'Fit 25 MB (Gmail, Outlook)' },
+            { v: 'fit50', label: 'Fit 50 MB' },
+            { v: 'fit100', label: 'Fit 100 MB' },
+            { v: 'fit500', label: 'Fit 500 MB' }
+          ] },
         { k: 'audio', label: 'Audio quality', type: 'select', def: 128,
           options: [{ v: 96, label: '96 kbps' }, { v: 128, label: '128 kbps' }, { v: 192, label: '192 kbps' }] },
-        /* The file size is fixed by the target either way — this trades encode
-           time against how good the picture is within that budget, which is a
-           judgement call only the person waiting can make. */
+        /* This trades encode time against how good the picture is for the bits
+           spent — a judgement call only the person waiting can make. */
         { k: 'speed', label: 'Encoding', type: 'select', def: 'balanced',
           options: [{ v: 'balanced', label: 'Balanced quality' }, { v: 'fast', label: 'Faster (about 1.4×, slightly softer)' }] }
       ],
@@ -97,39 +131,45 @@
         var f = files[0];
         guardFile(f);
 
+        var fitMatch = /^fit(\d+)$/.exec(String(o.level || ''));
+        var targetMB = fitMatch ? parseInt(fitMatch[1], 10) : 0;
+
         /* ALREADY SMALL ENOUGH? DO NOTHING.
          *
          * Reported by a user: a 2.89 MB clip came back at 2.96 MB against a
          * 10 MB target. Re-encoding a file that already fits cannot help — it
-         * costs quality, costs the user minutes of CPU, and thanks to container
-         * overhead can genuinely produce a larger file.
+         * costs quality, costs minutes of CPU, and thanks to container overhead
+         * can genuinely produce a larger file. Only applies when there IS a
+         * target; "make it smaller" always has work to do.
          *
          * This runs before the engine is even downloaded, so it is instant. */
-        var targetBytes = o.target * 1048576;
-        if (f.size <= targetBytes) {
-          return {
-            stats: [
-              { label: 'Your file', value: api.bytes(f.size) },
-              { label: 'Discord limit', value: o.target + ' MB' },
-              { label: 'Headroom', value: api.bytes(targetBytes - f.size) },
-              { label: 'Action taken', value: 'None needed' }
-            ],
-            downloads: [{ label: 'Download original', blob: f, name: f.name }],
-            status: 'Already under ' + o.target + ' MB — nothing to do',
-            note: 'This clip is already small enough to upload, so it has been left exactly as it is. Compressing it would throw away quality for no benefit, and re-encoding a file that already fits can even make it slightly larger. Upload it as is.'
-          };
+        if (targetMB) {
+          var targetBytes = targetMB * 1048576;
+          if (f.size <= targetBytes) {
+            return {
+              stats: [
+                { label: 'Your file', value: api.bytes(f.size) },
+                { label: 'Target', value: targetMB + ' MB' },
+                { label: 'Headroom', value: api.bytes(targetBytes - f.size) },
+                { label: 'Action taken', value: 'None needed' }
+              ],
+              downloads: [{ label: 'Download original', blob: f, name: f.name }],
+              status: 'Already under ' + targetMB + ' MB — nothing to do',
+              note: 'This clip is already small enough, so it has been left exactly as it is. Compressing it would throw away quality for no benefit, and re-encoding a file that already fits can even make it slightly larger. If you wanted it smaller anyway, pick one of the quality levels instead of a size target.'
+            };
+          }
         }
 
         var inName = inputName(f);
-        /* Bitrate depends on duration, and duration is only knowable once
+        /* Both modes need the duration, and duration is only knowable once
            ffmpeg has the file open — so the arguments are built late, inside
            the engine. See the note at the top of this file. */
         var meta = null, built = null;
         var data = await root.VKVideo.run(f, inName, 'out.mp4', function (m) {
           meta = m;
           guardMeta(m);
-          built = root.VKVideo.buildCompressArgs(inName, 'out.mp4', {
-            targetMB: o.target, durationSec: m.duration, audioKbps: o.audio,
+          var common = {
+            durationSec: m.duration, audioKbps: o.audio,
             // The source's own average bitrate, so we never encode upwards.
             sourceKbps: m.duration > 0 ? (f.size * 8) / m.duration / 1000 : 0,
             // And never spend more on audio than the source itself did.
@@ -137,27 +177,56 @@
             // Let the builder scale down when the bitrate can't carry the frame.
             height: m.h || 0, width: m.w || 0,
             speed: o.speed
-          });
+          };
+          built = targetMB
+            ? root.VKVideo.buildCompressArgs(inName, 'out.mp4', Object.assign({ targetMB: targetMB }, common))
+            : root.VKVideo.buildQualityArgs(inName, 'out.mp4', Object.assign({ level: o.level }, common));
           return built;
         }, api.progress, api.status);
         var blob = outBlob(data, 'video/mp4');
         if (!blob.size) throw new Error('The compressed file came back empty — this clip may use a codec the in-browser encoder can’t read. Try converting it to MP4 first.');
-        var fit = blob.size <= o.target * 1048576;
+
         var scaled = built.height > 0;
+        var saved = f.size - blob.size;
+        var pct = f.size > 0 ? Math.round((saved / f.size) * 100) : 0;
+        var res = scaled ? built.height + 'p' : (meta && meta.h ? meta.h + 'p' : 'unchanged');
+        var suffix = targetMB ? '-' + targetMB + 'mb' : '-compressed';
+
+        if (targetMB) {
+          var fit = blob.size <= targetMB * 1048576;
+          return {
+            stats: [
+              { label: 'Original', value: api.bytes(f.size) },
+              { label: 'Compressed', value: api.bytes(blob.size) },
+              { label: 'Resolution', value: res },
+              { label: 'Bitrate', value: built.videoKbps + ' kbps video · ' + built.audioKbps + ' kbps audio' }
+            ],
+            downloads: [{ label: 'Download MP4', blob: blob, name: baseName(f.name) + suffix + '.mp4' }],
+            status: fit ? 'Compressed to fit ' + targetMB + ' MB' : 'Compressed (close to target)',
+            note: !fit
+              ? 'Landed just over target — try the next audio quality down, or trim a few seconds off the clip.'
+              : scaled
+                ? 'Scaled to ' + built.height + 'p — at ' + built.videoKbps + ' kbps that looks better than keeping the original frame size, and it encoded faster.'
+                : 'Saved ' + api.bytes(saved) + ' — ' + pct + '% smaller.'
+          };
+        }
+
         return {
           stats: [
             { label: 'Original', value: api.bytes(f.size) },
             { label: 'Compressed', value: api.bytes(blob.size) },
-            { label: 'Resolution', value: scaled ? built.height + 'p' : (meta && meta.h ? meta.h + 'p' : 'unchanged') },
-            { label: 'Bitrate', value: built.videoKbps + ' kbps video · ' + built.audioKbps + ' kbps audio' }
+            { label: 'Saved', value: pct > 0 ? pct + '% smaller' : 'no reduction' },
+            { label: 'Resolution', value: res }
           ],
-          downloads: [{ label: 'Download MP4', blob: blob, name: baseName(f.name) + '-' + o.target + 'mb.mp4' }],
-          status: fit ? 'Compressed to fit ' + o.target + ' MB' : 'Compressed (close to target)',
-          note: !fit
-            ? 'Landed just over target — try the next size down for audio, or trim a few seconds.'
+          downloads: [{ label: 'Download MP4', blob: blob, name: baseName(f.name) + suffix + '.mp4' }],
+          status: pct > 0 ? 'Compressed — ' + pct + '% smaller' : 'Compressed',
+          /* Being straight about the one case where this genuinely cannot help
+             is better than implying the user did something wrong. */
+          note: pct <= 0
+            ? 'This clip was already encoded about as efficiently as H.264 can manage, so there was nothing left to recover at this quality level. Try Strong, or a size target if you need it under a specific limit.'
             : scaled
-              ? 'Ready for Discord. Scaled to ' + built.height + 'p — at ' + built.videoKbps + ' kbps that looks better than keeping the original frame size, and it encoded faster.'
-              : 'Ready to drop into Discord.'
+              ? 'Saved ' + api.bytes(saved) + '. Scaled to ' + built.height + 'p, which is what Strong does to keep the file small.'
+              : 'Saved ' + api.bytes(saved) + ', at the original ' + res + '. Pick Strong if you need it smaller still.'
         };
       }
     },

@@ -277,7 +277,7 @@ function icon(name) {
 /* curated badge sets — only real, live tool ids */
 const POPULAR = new Set([
   "merge-pdf", "compress-pdf", "compress-image", "resize-image", "convert-image",
-  "compress-for-discord", "video-to-gif", "mortgage-calculator", "loan-calculator",
+  "compress-video", "video-to-gif", "mortgage-calculator", "loan-calculator",
   "json-formatter", "word-counter", "qr-generator", "password-generator",
   "unit-converter", "meta-tag-generator", "color-converter"
 ]);
@@ -1392,9 +1392,41 @@ const OLD_CAT = { "ai-on-device":"ai","utilities":"everyday","time":"everyday","
    duplicates every one of the 261 tool pages at a second URL. The canonical tag
    already points at the directory form — this stops the duplicate existing at
    all. `301!` forces the rule even though the file is present. */
+/* Tools that changed slug after they were already indexed. Keep these forever:
+   a 301 is how the old URL's ranking signals reach the new one, and dropping
+   the rule later would strand any external link still pointing at the old
+   address. The localised rule uses a Netlify path placeholder so one line
+   covers all nine language prefixes. */
+let staleRemoved = 0;
+const RENAMED = [
+  // "Compress for Discord" -> "Video Compressor", Aug 2026. The old slug named
+  // one chat app in a tool people mostly reach for to email a clip or clear a
+  // forum limit, and it competed for the wrong query.
+  ["video", "compress-for-discord", "compress-video"]
+];
+
 const lines = ["# 301s from the previous URL scheme — keep indexed pages alive", "",
   "# Directory URLs are canonical: /x/index.html duplicates /x/ on every page.",
   "/*/index.html   /:splat/   301!", ""];
+RENAMED.forEach(([cat, oldId, newId]) => {
+  lines.push(`# renamed tool: ${oldId} -> ${newId}`);
+  lines.push(`/tools/${cat}/${oldId}/   /tools/${cat}/${newId}/   301`);
+  lines.push(`/:lang/tools/${cat}/${oldId}/   /:lang/tools/${cat}/${newId}/   301`);
+  lines.push("");
+  /* THE REDIRECT ONLY WORKS IF THE OLD PAGE IS GONE.
+     Netlify serves an existing file in preference to a 301 rule, so leaving the
+     previously-generated directory in place would keep the old URL alive at 200
+     — the redirect would never fire and the two pages would compete as
+     duplicates. Build output is committed, so these have to be removed here
+     rather than relying on a clean checkout. */
+  [`tools/${cat}/${oldId}`].concat(
+    I18N.LOCALES.map((loc) => `${loc.code}/tools/${cat}/${oldId}`)
+  ).forEach((dir) => {
+    const p = path.join(ROOT, dir);
+    if (fs.existsSync(p)) { fs.rmSync(p, { recursive: true, force: true }); staleRemoved++; }
+  });
+});
+if (staleRemoved) console.log(`removed ${staleRemoved} stale directories for renamed tools`);
 Object.keys(OLD_TO_NEW).forEach((oldId) => {
   const t = VK.find(OLD_TO_NEW[oldId]);
   if (t) lines.push(`/t/${oldId}.html   /tools/${t.cat}/${t.id}/   301`);

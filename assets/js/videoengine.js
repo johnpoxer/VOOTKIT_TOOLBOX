@@ -62,6 +62,21 @@
      into a 2.96 MB "compressed" output. */
   var SHRINK_MARGIN = 0.92;
 
+  /* The ceiling for the COPY path only (writeFile into MEMFS). A 500 MB cap was
+     tried here and reliably died of out-of-memory mid-encode, so this stays
+     conservative. Files above it are only accepted when WORKERFS mounting works,
+     which keeps the input out of the wasm heap entirely — see run(). */
+  var MEMFS_SAFE_BYTES = 200 * 1024 * 1024;
+
+  /* Builders are handed a notional input name before run() knows whether the
+     file will be mounted or copied. Every builder emits that name as its own
+     argv element and never inside a filter string — verified across all ten —
+     so exact-match replacement is precise and cannot corrupt a filter graph. */
+  function remapInput(args, from, to) {
+    if (!args || !from || !to) return args;
+    return args.map(function (a) { return a === from ? to : a; });
+  }
+
   /* Video bitrate (kbps, integer) to land a clip of `durationSec` in `targetMB`,
      leaving room for `audioKbps` audio and 4% container/rate-control overhead. */
   function targetVideoKbps(targetMB, durationSec, audioKbps) {
@@ -143,15 +158,113 @@
     return speed === 'fast' ? 'superfast' : 'veryfast';
   }
 
+  /* Audio is never re-encoded ABOVE the source. A 69 kb/s track encoded at 128
+     adds bytes and cannot add back quality that was never there. Shared by both
+     compression modes. */
+  function cappedAudioKbps(wanted, sourceKbps) {
+    return (sourceKbps > 0 && sourceKbps < wanted) ? sourceKbps : wanted;
+  }
+
+  /* ---------- quality-level compression (no size target) ----------
+   *
+   * The default way to use a video compressor is "make this smaller", with no
+   * particular number in mind. That cannot be served by targeting a file size:
+   * a size target computes one bitrate for the whole clip regardless of what is
+   * in it, which wastes bits on a static screen recording and starves a hand-held
+   * shot of them.
+   *
+   * So quality mode uses CRF — constant rate factor — where you ask for a level
+   * of quality and the size falls out of how hard the footage is to encode.
+   * That is what every desktop tool does for this job.
+   *
+   * CRF alone has one failure mode, and it is exactly the one a user already
+   * reported: it can make a file BIGGER. A clip already encoded efficiently
+   * (H.265 off a modern phone, or something that has been through a compressor
+   * once) re-encoded to H.264 at a generous CRF will grow. So every level also
+   * carries a hard `-maxrate` ceiling set as a fraction of the source's own
+   * bitrate. CRF does the quality work; the ceiling makes shrinking a guarantee
+   * rather than an expectation.
+   *
+   * `ratio` is that ceiling. `crf` is x264's scale where lower is better
+   * quality and +6 is roughly half the bitrate. */
+  var LEVELS = {
+    light:    { crf: 23, ratio: 0.80, maxHeight: 0 },
+    balanced: { crf: 27, ratio: 0.55, maxHeight: 0 },
+    /* Strong caps the frame at 720p as well. At this quality level the bitrate
+       genuinely cannot carry 1080p, and a smaller frame both looks better and
+       encodes far faster. It is stated on the control so it is not a surprise. */
+    strong:   { crf: 31, ratio: 0.35, maxHeight: 720 }
+  };
+
+  function buildQualityArgs(inName, outName, opt) {
+    // opt: { level, sourceKbps, sourceAudioKbps, audioKbps, height, width, fps, durationSec, speed }
+    var L = LEVELS[opt.level] || LEVELS.balanced;
+    var audioKbps = cappedAudioKbps(opt.audioKbps, opt.sourceAudioKbps);
+
+    /* The ceiling. Without a readable source bitrate there is nothing to take a
+       fraction of, so CRF runs uncapped — still the right encode, just without
+       the shrink guarantee. That is better than refusing the job. */
+    var vCap = 0;
+    if (opt.sourceKbps > 0 && isFinite(opt.sourceKbps)) {
+      var budget = opt.sourceKbps * L.ratio;
+      /* AUDIO HAS TO LIVE INSIDE THE BUDGET TOO.
+       *
+       * Capping audio at the source's own rate is not enough on its own,
+       * because that rate is often unreadable (0) and the requested 128 kbps
+       * then stands. On a very low-bitrate source the audio alone can exceed
+       * the whole budget: measured here, a 100 kbps source came out with a
+       * 178 kbps ceiling — an inflation, which is the exact class of bug a user
+       * already reported. So audio may take at most half the budget.
+       *
+       * Below roughly 50 kbps total the guarantee genuinely cannot hold, because
+       * usable AAC has a floor. Video that thin is not something this tool is
+       * meant for and the size-target mode refuses it outright. */
+      audioKbps = Math.min(audioKbps, Math.max(clampInt(budget * 0.5, 0), 24));
+      vCap = clampInt(budget - audioKbps, 24);
+    }
+
+    var outHeight = 0;
+    if (L.maxHeight && opt.height > 0 && opt.height > L.maxHeight) outHeight = L.maxHeight;
+    /* And if the ceiling is too low to carry the frame at all, the ladder still
+       applies — the same reasoning as size-target mode. */
+    if (vCap > 0) {
+      var capH = heightForBitrate(vCap);
+      if (capH && opt.height > 0 && opt.height > capH && (!outHeight || capH < outHeight)) outHeight = capH;
+    }
+
+    var vf = outHeight ? ['-vf', 'scale=-2:' + outHeight + ':flags=bilinear'] : [];
+    var rate = vCap > 0 ? ['-maxrate', vCap + 'k', '-bufsize', (vCap * 2) + 'k'] : [];
+    var encH = outHeight || opt.height || 0;
+    var encW = (opt.width > 0 && opt.height > 0) ? Math.round(opt.width * (encH / opt.height)) : 0;
+    var preset = encodePreset(opt.speed);
+
+    return {
+      args: ['-i', inName]
+        .concat(cfrFlags(opt.fps))
+        .concat(vf)
+        .concat(['-c:v', 'libx264', '-preset', preset, '-crf', String(L.crf)])
+        .concat(rate)
+        .concat(['-pix_fmt', 'yuv420p',
+          '-c:a', 'aac', '-b:a', audioKbps + 'k',
+          '-movflags', '+faststart', '-y', outName]),
+      mode: 'quality',
+      level: opt.level in LEVELS ? opt.level : 'balanced',
+      crf: L.crf,
+      videoKbps: 0,            // decided by the encoder, not by us
+      maxKbps: vCap,           // 0 = uncapped
+      audioKbps: audioKbps,
+      height: outHeight,       // 0 = source resolution kept
+      preset: preset,
+      estimateSec: Math.round(estimateEncodeSeconds(encW, encH, opt.fps, opt.durationSec))
+    };
+  }
+
   function buildCompressArgs(inName, outName, opt) {
     // opt: { targetMB, durationSec, audioKbps }
     if (!(opt.durationSec > 0) || !isFinite(opt.durationSec)) {
       return { error: 'Could not read this video’s length, so there’s no way to work out the bitrate that fits. Converting it to MP4 first usually fixes it.' };
     }
-    /* Never re-encode audio ABOVE the source. A 69 kb/s track encoded at 128
-       adds bytes and cannot add back quality that was never there. */
-    var audioKbps = opt.audioKbps;
-    if (opt.sourceAudioKbps > 0 && opt.sourceAudioKbps < audioKbps) audioKbps = opt.sourceAudioKbps;
+    var audioKbps = cappedAudioKbps(opt.audioKbps, opt.sourceAudioKbps);
 
     var vk = clampInt(targetVideoKbps(opt.targetMB, opt.durationSec, audioKbps), 0);
     if (vk < 50) return { error: 'That size is too small for this clip — even at minimum quality it won’t fit. Pick a larger size or a shorter clip.' };
@@ -197,6 +310,7 @@
           '-pix_fmt', 'yuv420p',
           '-c:a', 'aac', '-b:a', audioKbps + 'k',
           '-movflags', '+faststart', '-y', outName]),
+      mode: 'size',
       videoKbps: vk,
       audioKbps: audioKbps,
       height: outHeight,       // 0 = source resolution kept
@@ -572,10 +686,53 @@
     }
     ff.on('progress', prog);
 
+    var mountDir = '', declaredIn = inName;
     try {
       say('Reading your video…');
       tick(P_DOWNLOAD_END);
-      await ff.writeFile(inName, await util.fetchFile(file));
+
+      /* MOUNT THE FILE INSTEAD OF COPYING IT INTO THE WASM HEAP.
+       *
+       * writeFile copies the entire input into MEMFS, which lives in the same
+       * ~2 GB wasm heap the encoder needs to work in. That is the whole reason
+       * this tool used to refuse anything over 200 MB: a 500 MB cap was tried
+       * and reliably died of out-of-memory mid-encode, which reads to a user as
+       * "the tool is broken".
+       *
+       * WORKERFS mounts the File itself as a read-only filesystem and reads it
+       * on demand with FileReaderSync. The bytes never enter the heap, so the
+       * input effectively stops counting against the memory budget and only the
+       * output and the encoder's working set do. For a COMPRESSOR that is the
+       * ideal shape, because the output is small by definition.
+       *
+       * Verified present in @ffmpeg/core 0.12.6 (a full emscripten FS, not a
+       * stub) and in @ffmpeg/ffmpeg 0.12.10, where mount() takes the fsType as
+       * a plain string and returns false rather than throwing when unavailable.
+       * Both failure shapes fall back to the old copy. */
+      var mountedPath = '';
+      /* WORKERFS names the mounted entry after the File, so a nameless Blob has
+         no path to reference and must take the copy route. */
+      if (file && file.name) {
+        try {
+          await ff.createDir('/vkin');
+          mountDir = '/vkin';
+          var okMount = await ff.mount('WORKERFS', { files: [file] }, mountDir);
+          if (okMount === false) { mountDir = ''; }
+          else { mountedPath = mountDir + '/' + file.name; }
+        } catch (e) { mountedPath = ''; mountDir = ''; }
+      }
+
+      if (mountedPath) {
+        inName = mountedPath;
+      } else {
+        mountDir = '';
+        /* Copying is the fallback, and it is the path with the hard ceiling.
+           Fail here with an honest reason rather than letting it OOM later. */
+        if (file && file.size > MEMFS_SAFE_BYTES) {
+          throw new Error('This browser can’t stream a file this large into the encoder, and copying it into memory would run out part-way through. Trim the clip into shorter pieces first, then compress each one.');
+        }
+        await ff.writeFile(inName, await util.fetchFile(file));
+      }
       tick(P_READ_END);
       if (isLate) {
         say('Checking the video…');
@@ -583,9 +740,15 @@
         durSec = meta.duration || 0;
         built = built(meta);
         if (!built || built.error) {
-          try { await ff.deleteFile(inName); } catch (e) {}
           throw new Error((built && built.error) || 'Could not work out how to process that video.');
         }
+      }
+      /* The builders were handed the notional input name before we knew whether
+         the file would be mounted or copied. Every builder emits that name as
+         its own argv element — never inside a filter string — so swapping exact
+         matches is precise. Checked across all ten builders. */
+      if (mountedPath && built.args) {
+        built.args = remapInput(built.args, declaredIn, mountedPath);
       }
       tick(P_PROBE_END);
       /* Say up front roughly how long this will take. "Slow" is mostly a
@@ -594,10 +757,20 @@
       say(built.estimateSec > 8 ? 'Converting… this usually takes about ' + roughTime(built.estimateSec) : 'Converting…');
       await ff.exec(built.args);
       var data = await ff.readFile(outName);
-      try { await ff.deleteFile(inName); await ff.deleteFile(outName); } catch (e) {}
       return data; // Uint8Array
     } finally {
       ff.off('progress', prog);
+      /* Cleanup belongs here, not on the success path. The instance is reused
+         across runs, so anything left behind on an ERROR — which is exactly when
+         a big file is still sitting in the VFS — is carried into the next job.
+         Each step is guarded separately so one failure cannot skip the rest. */
+      if (mountDir) {
+        try { await ff.unmount(mountDir); } catch (e) {}
+        try { await ff.deleteDir(mountDir); } catch (e) {}
+      } else {
+        try { await ff.deleteFile(declaredIn); } catch (e) {}
+      }
+      try { await ff.deleteFile(outName); } catch (e) {}
     }
   }
 
@@ -632,12 +805,15 @@
 
   root.VKVideo = {
     load: load, run: run, grabFrame: grabFrame, capability: capability,
-    buildCompressArgs: buildCompressArgs, buildTrimArgs: buildTrimArgs,
+    buildCompressArgs: buildCompressArgs, buildQualityArgs: buildQualityArgs,
+    LEVELS: LEVELS, buildTrimArgs: buildTrimArgs,
     buildGifArgs: buildGifArgs, buildReframeArgs: buildReframeArgs,
     buildMuteArgs: buildMuteArgs, buildExtractAudioArgs: buildExtractAudioArgs,
     buildConvertArgs: buildConvertArgs, buildResizeArgs: buildResizeArgs,
     buildLoopArgs: buildLoopArgs, buildVolumeArgs: buildVolumeArgs,
     clampFps: clampFps,
+    remapInput: remapInput,
+    MEMFS_SAFE_BYTES: MEMFS_SAFE_BYTES,
     targetVideoKbps: targetVideoKbps,
     heightForBitrate: heightForBitrate,
     estimateEncodeSeconds: estimateEncodeSeconds,

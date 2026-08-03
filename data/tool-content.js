@@ -32,7 +32,7 @@
 
 /* Shared, verified constants — referenced in prose so a change lands everywhere. */
 const LIMITS = {
-  videoInputMB: 200,        // tools-videofx.js LIMIT
+  videoInputGB: 2,          // tools-videofx.js LIMIT (WORKERFS-mounted input)
   videoMaxMinutes: 30,      // guardMeta()
   pdfMergeFiles: 20,        // tools-pdf.js merge-pdf maxFiles
   pdfMergeMB: 100           // tools-pdf.js merge-pdf maxBytes
@@ -344,39 +344,44 @@ module.exports = {
   },
 
   /* ------------------------------------------------------------------ */
-  'compress-for-discord': {
-    intro: 'Discord’s free upload limit is 10 MB, and the instinct is to hammer the quality slider until the number goes down — which is exactly how a clip ends up a smeary mess. Working backwards from the target size gets you a better result, and this tool does that arithmetic for you.',
+  'compress-video': {
+    intro: 'Phones record at bitrates built for editing, not for sending — which is why a two-minute clip off a modern handset can land somewhere north of 300 MB and bounce off every upload box you try it in. Compressing it is mostly a matter of re-encoding at a sane bitrate, and the video looks near enough identical afterwards. This does that in the browser, on your own machine.',
     what: [
-      'Takes a target file size and works out the video bitrate that fits it, leaving room for the audio you chose plus container overhead, then encodes to that.',
-      'Where the target bitrate is too low to carry the original frame size, the video is scaled down to a resolution that bitrate can actually support. At low bitrates a smaller frame genuinely looks better than a large one starved of data — and it encodes faster.'
+      'Two ways to ask for it. A <strong>quality level</strong> — Light, Balanced or Strong — just makes the file smaller with no target in mind, which is what most people want. Or a <strong>size target</strong>, when something has to clear a hard limit like a 25 MB email attachment.',
+      'Quality levels encode at a constant rate factor, so the bitrate rises and falls with how demanding the footage is: a static screen recording is not charged for motion it does not have, and a hand-held shot is not starved. Size targets work backwards from the number instead, computing the one bitrate that lands inside it.',
+      'Either way the output is capped below the source’s own bitrate, so compressing never returns a bigger file than it was given. If you pick a size target the file is already under, it is handed straight back untouched rather than being re-encoded for nothing.'
     ],
     specs: {
-      caption: 'Limits and targets',
+      caption: 'Levels, targets and limits',
       rows: [
-        ['Discord free', '10 MB'],
-        ['Nitro Basic', '50 MB'],
-        ['Nitro', '500 MB'],
-        ['Audio options', '96, 128 (default) or 192 kbps'],
+        ['Light', 'CRF 23, capped at 80% of the source bitrate'],
+        ['Balanced (default)', 'CRF 27, capped at 55%'],
+        ['Strong', 'CRF 31, capped at 35%, frame capped at 720p'],
+        ['Size targets', '10, 25, 50, 100 or 500 MB'],
+        ['Audio options', '96, 128 (default) or 192 kbps, never above the source'],
         ['Encoding', 'Balanced, or Faster (about 1.4× quicker, slightly softer)'],
-        ['Maximum input', LIMITS.videoInputMB + ' MB'],
+        ['Maximum input', LIMITS.videoInputGB + ' GB'],
         ['Maximum length', LIMITS.videoMaxMinutes + ' minutes'],
+        ['Input formats', 'MP4, MOV, MKV, AVI, WebM and most others'],
         ['Output', 'MP4 (H.264 + AAC), constant frame rate']
       ]
     },
     steps: [
-      'Drop the video in — MP4, MOV, MKV, AVI and WebM all work.',
-      'Choose <strong>Fit into</strong> to match your Discord plan.',
-      'Set <strong>Audio quality</strong>. 128 kbps is a good default; drop to 96 if you are close to the line.',
-      'Pick <strong>Encoding</strong> — Balanced, or Faster if the wait matters more than the last few percent of sharpness.'
+      'Drop the video in. Nothing is uploaded — the file is read straight off your disk by the encoder running in the page.',
+      'Pick a <strong>Compression</strong> level. Balanced is the sensible default; choose a Fit option instead if you have a specific limit to clear.',
+      'Set <strong>Audio quality</strong> if you care. 128 kbps is fine for speech and most music; 96 buys back a little room on a tight target.',
+      'Choose <strong>Encoding</strong> — Balanced, or Faster if the wait matters more than the last few percent of sharpness.'
     ],
-    tip: 'Trim before you compress. File size is bitrate times duration, so cutting four seconds of dead air off each end removes that share of the file at full quality. It is the only free step available, and it is often the whole gap between 12 MB and 9 MB.',
+    tip: 'Trim before you compress. File size is bitrate times duration, so cutting ten seconds of dead air off the front removes that share of the file at full quality rather than smearing the rest to pay for it. On a clip that is close to a limit it is often the whole gap.',
     faqs: [
-      { q: 'The result is still over the limit.', a: 'Usually the clip is long enough that even a low bitrate overshoots. Trim it, or step the audio down to 96 kbps. If a ten-minute video must fit in 10 MB, no encoder will make that look acceptable.' },
-      { q: 'Why did the resolution change?', a: 'The bitrate needed to hit your target could not carry the original frame size. Scaling down means the available bits are spread over fewer pixels, which looks better than the alternative and finishes sooner. The output stats show the resolution used.' },
-      { q: 'Why is it slow?', a: 'Encoding runs on your own processor rather than a server, so a long or high-resolution clip takes real time. The progress bar shows a live percentage and estimated time remaining. Choosing Faster trades a little sharpness for about 1.4× the speed.' },
-      { q: 'Can I compress a clip that is already small?', a: 'Yes, and it will not be made larger — the bitrate is capped at the source’s own, so a file that already fits comes back roughly as it was rather than being inflated to fill the target.' }
+      { q: 'How much smaller will my file get?', a: 'It depends far more on the source than on the setting. Footage straight off a phone or a camera is usually encoded very generously and routinely drops by 70–90% at Balanced with no visible difference. Something already compressed once — a download, a clip that has been through a messaging app — has much less slack, and may only give up a third. The result screen shows the actual percentage rather than a promise.' },
+      { q: 'Which level should I pick?', a: 'Balanced unless you have a reason. Light is for footage you intend to edit or archive, where you want the file smaller but nothing thrown away. Strong is for when small matters more than sharp — it also caps the frame at 720p, because at that bitrate a smaller frame genuinely looks better than a large one starved of data, and it encodes considerably faster.' },
+      { q: 'Can it make my file bigger?', a: 'No. Every level carries a hard ceiling set as a fraction of the source’s own bitrate, and the audio track is never re-encoded above the rate it already had. Both exist because an earlier version could inflate an efficiently-encoded clip by a few percent while claiming to compress it.' },
+      { q: 'Why did the resolution change?', a: 'Either you chose Strong, which caps the frame at 720p, or the bitrate needed to hit a size target could not carry the original frame size. Spreading the available bits over fewer pixels looks better than the alternative and finishes sooner. The result stats always show the resolution actually used.' },
+      { q: 'Why is it slow?', a: 'The encode runs on your own processor rather than a server, so a long or high-resolution clip takes real time — this is the trade for the file never leaving your machine. The progress bar shows a live percentage and a time estimate that adapts to your hardware. Choosing Faster trades a little sharpness for about 1.4× the speed.' },
+      { q: 'Is there a size limit?', a: 'Files up to ' + LIMITS.videoInputGB + ' GB are accepted, because the encoder reads the video off disk rather than copying it into memory first. The binding limits in practice are length and frame size: clips over ' + LIMITS.videoMaxMinutes + ' minutes or above 4K are refused, because in-browser encoding at that scale takes longer than anyone will wait. Split a long recording with the trimmer and compress the pieces.' }
     ],
-    related: ['trim-video', 'resize-video', 'convert-video', 'mute-video', 'video-to-gif', 'extract-audio']
+    related: ['trim-video', 'resize-video', 'convert-video', 'mute-video', 'video-to-gif', 'compress-image']
   }
 ,
 
@@ -2323,7 +2328,7 @@ module.exports = {
       { q: 'Why is it so much faster than compressing?', a: 'Because nothing is decoded or re-encoded — it copies the bytes you asked for and writes a new container. Compression has to process every frame; trimming does not.' },
       { q: 'Can I cut a section out of the middle?', a: 'Not in one pass. Trim the part before and the part after separately, then join them with a video joiner. This tool keeps one continuous section.' }
     ],
-    related: ['compress-for-discord', 'convert-video', 'video-to-gif', 'resize-video', 'mute-video', 'extract-audio']
+    related: ['compress-video', 'convert-video', 'video-to-gif', 'resize-video', 'mute-video', 'extract-audio']
   },
 
   'video-to-gif': {
@@ -2357,7 +2362,7 @@ module.exports = {
       { q: 'Why is the length capped at 15 seconds?', a: 'Past that the files become unreasonable for what they are. Most platforms convert uploaded GIFs to video anyway, so a long GIF costs you size and quality for no benefit.' },
       { q: 'Should I use a GIF at all?', a: 'For a two-second reaction, yes — it autoplays and loops everywhere. For anything longer, an MP4 is smaller and looks better, and every major platform will accept one.' }
     ],
-    related: ['trim-video', 'compress-for-discord', 'convert-video', 'resize-video', 'frame-grabber', 'mute-video']
+    related: ['trim-video', 'compress-video', 'convert-video', 'resize-video', 'frame-grabber', 'mute-video']
   },
 
   'convert-video': {
@@ -2390,7 +2395,7 @@ module.exports = {
       { q: 'Which frame rate should I choose?', a: 'Match the source. Converting 30 fps footage to 60 does not add smoothness, it duplicates frames and grows the file. Going from 60 to 30 halves the frames and is a reasonable size saving if you do not need the motion.' },
       { q: 'My file is over 200 MB.', a: 'Trim it first — that is lossless and usually what you wanted anyway. The limit exists because the whole file is held in memory in your browser, and above it the conversion fails partway through rather than completing badly.' }
     ],
-    related: ['compress-for-discord', 'trim-video', 'resize-video', 'video-to-gif', 'extract-audio', 'mute-video']
+    related: ['compress-video', 'trim-video', 'resize-video', 'video-to-gif', 'extract-audio', 'mute-video']
   },
 
   /* ================= session 6 — images, SEO, accessibility, business ================= */

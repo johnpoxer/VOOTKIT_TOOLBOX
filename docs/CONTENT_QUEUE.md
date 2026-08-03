@@ -37,7 +37,15 @@ measure; the median flatters.
 
 **Batch 0 — flagship (indexing requested 1 Aug 2026)**
 compress-image · resize-image · png-to-jpg · jpg-to-webp · heic-converter ·
-merge-pdf · split-pdf · compress-pdf · pdf-to-jpg · compress-for-discord
+merge-pdf · split-pdf · compress-pdf · pdf-to-jpg · compress-video
+
+> `compress-video` was `compress-for-discord` until 3 Aug 2026. It was renamed
+> and rewritten as a general compressor: the old slug named one chat app in a
+> tool people mostly use to email a clip or clear a forum limit, and it competed
+> for the wrong query. **Re-request indexing for the new URL** — the 301 carries
+> the old page's signals, but the new URL still has to be discovered. The old
+> page directories are deleted by `build.js` (see `RENAMED`), because Netlify
+> serves an existing file in preference to a redirect.
 
 **Batch 1 — high-demand converters and PDF operations** *(277–350 words)*
 jpg-to-pdf · rotate-pdf · extract-pdf-pages · remove-pdf-password · crop-image ·

@@ -492,7 +492,7 @@ has(V.buildCompressArgs("in.mp4", "out.mp4",
   ["-preset", "veryfast"], "the default reaches ffmpeg");
 
 /* The option must exist in the UI, or the engine parameter is unreachable. */
-const speedOpt = (FX["compress-for-discord"].options || []).find(o => o.k === "speed");
+const speedOpt = (FX["compress-video"].options || []).find(o => o.k === "speed");
 ok(speedOpt, "the compressor exposes an encoding-speed option");
 eq(speedOpt.def, "balanced", "quality is the default, not speed");
 eq(speedOpt.options.map(o => o.v).sort().join(","), "balanced,fast", "exactly the two documented choices");
@@ -550,3 +550,236 @@ console.log(`videofx progress: ${pass} total assertions passed`);
 
 
 
+
+/* ---------------------------------------------------------------------------
+ * A VIDEO COMPRESSOR, NOT A DISCORD COMPRESSOR
+ *
+ * The tool was built around Discord's upload tiers, which fixed it to one
+ * mental model: "what number must this fit inside". Most people arriving at a
+ * video compressor have no number in mind — they want the file smaller. That
+ * needs CRF encoding, where quality is fixed and size falls out of the footage,
+ * rather than a bitrate computed from a target.
+ *
+ * CRF alone can INFLATE an already-efficient file, which is exactly the bug a
+ * user reported against the size-target path. So every level also carries a
+ * hard ceiling derived from the source's own bitrate. These tests are mostly
+ * about that guarantee holding in both modes.
+ * ------------------------------------------------------------------------- */
+
+/* --- the levels exist and are ordered --- */
+["light", "balanced", "strong"].forEach(k => ok(V.LEVELS[k], "level '" + k + "' is defined"));
+ok(V.LEVELS.light.crf < V.LEVELS.balanced.crf && V.LEVELS.balanced.crf < V.LEVELS.strong.crf,
+   "CRF rises (quality falls) from Light through Strong");
+ok(V.LEVELS.light.ratio > V.LEVELS.balanced.ratio && V.LEVELS.balanced.ratio > V.LEVELS.strong.ratio,
+   "the bitrate ceiling tightens from Light through Strong");
+V_ratioSane();
+function V_ratioSane() {
+  ["light", "balanced", "strong"].forEach(k => {
+    const r = V.LEVELS[k].ratio;
+    ok(r > 0 && r < 1, "level '" + k + "' ceiling is a real reduction, not >= source (" + r + ")");
+  });
+}
+
+/* --- quality mode produces a CRF encode, not a bitrate one --- */
+let q = V.buildQualityArgs("in.mp4", "out.mp4",
+  { level: "balanced", durationSec: 60, audioKbps: 128, sourceKbps: 8000,
+    sourceAudioKbps: 192, height: 1080, width: 1920 });
+ok(!q.error, "quality mode builds without a size target");
+eq(q.mode, "quality", "it reports which mode it used");
+has(q.args, ["-crf", "27"], "balanced encodes at CRF 27");
+ok(!q.args.join(" ").includes("-b:v"), "quality mode sets no target video bitrate");
+has(q.args, ["-c:v", "libx264"], "quality mode still outputs H.264");
+has(q.args, ["-movflags", "+faststart"], "output stays streamable");
+
+/* The ceiling: 8000 * 0.55 = 4400, minus 128 audio = 4272. */
+has(q.args, ["-maxrate", "4272k"], "the ceiling is a fraction of the SOURCE bitrate, got " + q.maxKbps);
+eq(q.maxKbps, 4272, "the ceiling is reported for the UI");
+
+/* --- the no-inflate guarantee, which is the whole point --- */
+["light", "balanced", "strong"].forEach(level => {
+  const r = V.buildQualityArgs("in.mp4", "out.mp4",
+    { level: level, durationSec: 60, audioKbps: 128, sourceKbps: 1000,
+      sourceAudioKbps: 128, height: 720, width: 1280 });
+  const total = r.maxKbps + r.audioKbps;
+  ok(total < 1000, "level '" + level + "': video+audio ceiling " + total +
+     " kbps stays under the 1000 kbps source");
+});
+
+/* An already-efficient source is the case that used to inflate: a low source
+   bitrate must drive the ceiling down with it, not sit at some fixed floor. */
+let tight = V.buildQualityArgs("in.mp4", "out.mp4",
+  { level: "light", durationSec: 30, audioKbps: 192, sourceKbps: 400,
+    sourceAudioKbps: 64, height: 480, width: 854 });
+eq(tight.audioKbps, 64, "audio is never re-encoded above the source's own 64 kbps");
+ok(tight.maxKbps + tight.audioKbps < 400,
+   "even at Light, the ceiling stays under a 400 kbps source (got " +
+   (tight.maxKbps + tight.audioKbps) + ")");
+
+/* --- an unreadable source bitrate must not block the job --- */
+let nocap = V.buildQualityArgs("in.mp4", "out.mp4",
+  { level: "balanced", durationSec: 60, audioKbps: 128, height: 720, width: 1280 });
+ok(!nocap.error, "no source bitrate is not an error");
+eq(nocap.maxKbps, 0, "no ceiling when there is nothing to take a fraction of");
+ok(!nocap.args.join(" ").includes("-maxrate"), "and no -maxrate flag is emitted");
+has(nocap.args, ["-crf", "27"], "the CRF encode still runs");
+
+/* --- Strong caps the frame; Light and Balanced leave it alone --- */
+let strong = V.buildQualityArgs("in.mp4", "out.mp4",
+  { level: "strong", durationSec: 60, audioKbps: 128, sourceKbps: 20000,
+    sourceAudioKbps: 256, height: 1080, width: 1920 });
+eq(strong.height, 720, "Strong caps a 1080p source at 720p");
+ok(strong.args.join(" ").includes("scale=-2:720"), "and emits the scale filter");
+let light = V.buildQualityArgs("in.mp4", "out.mp4",
+  { level: "light", durationSec: 60, audioKbps: 128, sourceKbps: 20000,
+    sourceAudioKbps: 256, height: 1080, width: 1920 });
+eq(light.height, 0, "Light keeps the original frame size");
+ok(!light.args.join(" ").includes("scale="), "and emits no scale filter");
+/* Never upscale: a 480p source must not be stretched to the 720p cap. */
+let noUpscale = V.buildQualityArgs("in.mp4", "out.mp4",
+  { level: "strong", durationSec: 60, audioKbps: 128, sourceKbps: 20000,
+    sourceAudioKbps: 256, height: 480, width: 854 });
+eq(noUpscale.height, 0, "Strong never upscales a source already below the cap");
+
+/* An unknown level must not crash or silently pick the harshest setting. */
+["", null, undefined, "nonsense", "fit10"].forEach(bad => {
+  const r = V.buildQualityArgs("in.mp4", "out.mp4",
+    { level: bad, durationSec: 60, audioKbps: 128, sourceKbps: 5000, height: 720, width: 1280 });
+  eq(r.crf, V.LEVELS.balanced.crf, "unknown level '" + bad + "' falls back to Balanced");
+  eq(r.level, "balanced", "and reports that it did");
+});
+
+console.log(`videofx quality-levels: ${pass} total assertions passed`);
+
+/* ---------------------------------------------------------------------------
+ * THE UI OFFERS BOTH MODELS
+ * ------------------------------------------------------------------------- */
+const lvl = (FX["compress-video"].options || []).find(o => o.k === "level");
+ok(lvl, "the compressor exposes a compression-level option");
+eq(lvl.def, "balanced", "Balanced is the default, not a size target");
+const vals = lvl.options.map(o => o.v);
+["light", "balanced", "strong"].forEach(v => ok(vals.includes(v), "quality level '" + v + "' is offered"));
+["fit10", "fit25", "fit50", "fit100", "fit500"].forEach(v => ok(vals.includes(v), "size target '" + v + "' is offered"));
+ok(vals.indexOf("light") < vals.indexOf("fit10"),
+   "quality levels come before size targets — the common case is listed first");
+/* Every fit* value must parse with the same regex the tool uses, or the target
+   silently becomes 0 and the encode runs in the wrong mode. */
+vals.filter(v => /^fit/.test(v)).forEach(v => {
+  const m = /^fit(\d+)$/.exec(v);
+  ok(m && parseInt(m[1], 10) > 0, "'" + v + "' parses to a real target size");
+});
+ok(!vals.some(v => v === 10 || v === 50 || v === 500),
+   "the bare numeric Discord tiers are gone");
+
+/* No Discord framing left in the tool's own copy. One mention as a label for
+   the 10 MB target is fine and useful; the tool must not be ABOUT Discord. */
+const compressSrc = vfxSrc.slice(vfxSrc.indexOf("'compress-video'"), vfxSrc.indexOf("'trim-video'"));
+const discordHits = (compressSrc.match(/Discord/g) || []).length;
+ok(discordHits <= 1, "at most one Discord mention survives in the compressor, found " + discordHits);
+ok(!/Ready to drop into Discord|Ready for Discord/.test(compressSrc),
+   "the result copy no longer assumes Discord");
+
+/* The catalog must match. */
+const cv = VK.TOOLS.find(t => t.id === "compress-video");
+ok(cv, "the catalog has compress-video");
+ok(!VK.TOOLS.some(t => t.id === "compress-for-discord"), "and no longer has compress-for-discord");
+ok(!/discord/i.test(cv.name), "the tool name does not mention Discord");
+ok(/compress|shrink/i.test(cv.desc), "the description says what it does");
+
+console.log(`videofx compressor UI: ${pass} total assertions passed`);
+
+/* ---------------------------------------------------------------------------
+ * BIG FILES: MOUNTED, NOT COPIED
+ *
+ * The 200 MB ceiling existed because writeFile copied the whole input into the
+ * same wasm heap the encoder works in — a 500 MB cap was tried before that and
+ * reliably died of out-of-memory mid-encode. WORKERFS mounts the File and reads
+ * it on demand instead, so the input stops competing for heap.
+ * ------------------------------------------------------------------------- */
+const engSrc2 = require("fs").readFileSync(require("path").join(__dirname, "../assets/js/videoengine.js"), "utf8");
+ok(/ff\.mount\('WORKERFS'/.test(engSrc2), "the engine mounts the input rather than copying it");
+ok(/catch \(e\) \{ mountedPath = ''; mountDir = ''; \}/.test(engSrc2),
+   "a mount failure falls back to the copy path instead of throwing");
+ok(/okMount === false/.test(engSrc2),
+   "mount() returning false is handled — it does not throw when the FS is missing");
+ok(/file && file\.name/.test(engSrc2), "a nameless Blob cannot be mounted and takes the copy path");
+ok(/file\.size > MEMFS_SAFE_BYTES/.test(engSrc2),
+   "the copy fallback still refuses files too big for it, rather than OOM-ing");
+ok(V.MEMFS_SAFE_BYTES === 200 * 1024 * 1024,
+   "the copy-path ceiling stays at the 200 MB that was measured to work");
+ok(FX["compress-video"].maxBytes > V.MEMFS_SAFE_BYTES,
+   "the tool accepts more than the copy path alone could handle");
+ok(FX["compress-video"].maxBytes === 2 * 1024 * 1024 * 1024, "the ceiling is 2 GB");
+
+/* Cleanup must survive an error, or a failed run leaves the input in the VFS
+   and the NEXT run starts with the heap already occupied. */
+ok(/\} finally \{[\s\S]*ff\.unmount\(mountDir\)/.test(engSrc2),
+   "the mount is released in a finally block, not on the success path");
+ok(/\} finally \{[\s\S]*deleteFile\(outName\)/.test(engSrc2),
+   "the output is deleted in finally too");
+
+/* --- remapInput: the builders are handed a name before the path is known --- */
+eq(V.remapInput(["-i", "in.mp4", "-y", "out.mp4"], "in.mp4", "/vkin/My Clip.mp4"),
+   ["-i", "/vkin/My Clip.mp4", "-y", "out.mp4"], "the input path is swapped");
+eq(V.remapInput(["-i", "in.mp4", "-vf", "scale=-2:720"], "in.mp4", "/vkin/a.mp4"),
+   ["-i", "/vkin/a.mp4", "-vf", "scale=-2:720"], "filter strings are untouched");
+/* Exact match only — a substring replace would corrupt a filter that happened
+   to contain the name, and would rewrite the OUTPUT name too. */
+eq(V.remapInput(["-i", "in.mp4", "-y", "in.mp4.out.mp4"], "in.mp4", "/vkin/a.mp4"),
+   ["-i", "/vkin/a.mp4", "-y", "in.mp4.out.mp4"], "only whole-element matches are replaced");
+eq(V.remapInput(["-i", "in.mp4"], "in.mp4", ""), ["-i", "in.mp4"], "no target path is a no-op");
+eq(V.remapInput(null, "in.mp4", "/x"), null, "missing args is a no-op");
+
+/* Every builder must keep emitting the input name as its own argv element, or
+   remapInput cannot find it and a mounted run would reference a missing file. */
+[["buildCompressArgs", { targetMB: 10, durationSec: 60, audioKbps: 128 }],
+ ["buildQualityArgs", { level: "balanced", durationSec: 60, audioKbps: 128 }],
+ ["buildTrimArgs", { start: 0, duration: 5 }],
+ ["buildReframeArgs", {}],
+ ["buildMuteArgs", undefined],
+ ["buildExtractAudioArgs", { format: "mp3" }],
+ ["buildConvertArgs", {}],
+ ["buildResizeArgs", { height: 720 }],
+ ["buildLoopArgs", { count: 2 }],
+ ["buildVolumeArgs", { percent: 50 }]].forEach(([fn, opt]) => {
+  const built = V[fn]("in.mp4", "out.mp4", opt);
+  if (!built || !built.args) return;
+  ok(built.args.indexOf("in.mp4") !== -1,
+     fn + " emits the input name as a standalone argv element");
+});
+
+console.log(`videofx large files: ${pass} total assertions passed`);
+
+/* ---------------------------------------------------------------------------
+ * THE NO-INFLATE GUARANTEE HOLDS ALL THE WAY DOWN
+ *
+ * Capping audio at the source's own rate is not enough, because that rate is
+ * frequently unreadable and the requested 128 kbps then stands regardless of
+ * how small the source is. Measured before the fix: a 100 kbps source produced
+ * a 178 kbps ceiling. Audio now takes at most half the budget.
+ * ------------------------------------------------------------------------- */
+[5000, 2000, 1000, 400, 200, 100, 60, 50].forEach(src => {
+  ["light", "balanced", "strong"].forEach(level => {
+    /* sourceAudioKbps deliberately omitted — the unreadable case is the one
+       that broke, and it is the common one for odd containers. */
+    const r = V.buildQualityArgs("in.mp4", "out.mp4",
+      { level: level, durationSec: 60, audioKbps: 128, height: 480, width: 854, sourceKbps: src });
+    const total = r.maxKbps + r.audioKbps;
+    ok(total < src, level + " on a " + src + " kbps source stays under it (got " + total + ")");
+  });
+});
+
+/* Audio must still be usable, not squeezed to nothing on a normal file. */
+let normal = V.buildQualityArgs("in.mp4", "out.mp4",
+  { level: "balanced", durationSec: 60, audioKbps: 128, height: 1080, width: 1920,
+    sourceKbps: 8000, sourceAudioKbps: 192 });
+eq(normal.audioKbps, 128, "a healthy source still gets the audio rate the user asked for");
+eq(normal.maxKbps, 4272, "and the video ceiling is unchanged by the audio guard");
+
+/* The half-the-budget rule must not override the source-rate cap, which is the
+   tighter of the two on a normal file with a quiet audio track. */
+let quiet = V.buildQualityArgs("in.mp4", "out.mp4",
+  { level: "light", durationSec: 60, audioKbps: 192, height: 720, width: 1280,
+    sourceKbps: 4000, sourceAudioKbps: 64 });
+eq(quiet.audioKbps, 64, "the source's own 64 kbps audio still wins over the requested 192");
+
+console.log(`videofx no-inflate v3: ${pass} total assertions passed`);

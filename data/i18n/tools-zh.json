@@ -1,147 +1,582 @@
 {
-  "mortgage-calculator": { "name": "房贷计算器", "desc": "计算每月还款金额、总利息和完整贷款还款计划。" },
-  "loan-calculator": { "name": "贷款计算器", "desc": "计算个人贷款或商业贷款的还款、利息和偿还时间。" },
-  "auto-loan-calculator": { "name": "汽车贷款计算器", "desc": "根据期限和利率计算汽车月供、总成本和利息。" },
-  "refinance-calculator": { "name": "贷款再融资计算器", "desc": "查看再融资需要多少个月才能收回成本。" },
-  "credit-card-payoff": { "name": "信用卡还款计算器", "desc": "计算还清信用卡余额所需时间，以及额外还款可节省的利息。" },
-  "compound-interest": { "name": "复利计算器", "desc": "计算定期投入资金后的长期储蓄增长。" },
-  "savings-goal": { "name": "储蓄目标计算器", "desc": "计算每月需要存多少钱才能达到目标金额。" },
-  "retirement-calculator": { "name": "退休规划计算器", "desc": "预测退休年龄时养老金或投资账户的未来价值。" },
-  "crypto-profit": { "name": "加密货币收益计算器", "desc": "计算加密货币投资利润、亏损和DCA平均买入成本。" },
-  "currency-converter": { "name": "货币转换器", "desc": "使用实时汇率转换不同国家货币。" },
-  "percentage-calculator": { "name": "百分比计算器", "desc": "计算百分比、占比和百分比变化。" },
-  "tip-split": { "name": "小费分摊计算器", "desc": "多人之间快速分摊账单和小费。" },
-  "discount-calculator": { "name": "折扣计算器", "desc": "计算折扣后的价格、节省金额以及优惠后的总价。" },
-  "life-insurance-needs": { "name": "人寿保险需求计算器", "desc": "估算家庭实际需要的人寿保险保障金额。" },
-  "auto-insurance-estimator": { "name": "汽车保险估算器", "desc": "计算适合的保险责任范围和自付额度。" },
-  "deductible-calculator": { "name": "保险免赔额计算器", "desc": "比较保险费用节省与自付风险之间的关系。" },
-  "income-protection": { "name": "收入保障计算器", "desc": "计算能够覆盖日常支出的每月保障金额。" },
-  "rent-vs-buy": { "name": "租房还是买房计算器", "desc": "根据实际时间周期比较租房和购房成本。" },
-  "cap-rate": { "name": "资本化率计算器", "desc": "根据房产价值和收入计算资本化率。" },
-  "cash-on-cash": { "name": "现金回报率计算器", "desc": "计算实际投入现金产生的年度投资回报。" },
-  "closing-costs": { "name": "购房成交费用计算器", "desc": "估算购买房产时除房价之外的额外费用。" },
-  "home-affordability": { "name": "购房能力计算器", "desc": "根据收入和首付款计算可承担的房价范围。" },
-  "rental-yield": { "name": "租金收益率计算器", "desc": "计算出租房产的毛收益率和净收益率。" },
-  "mortgage-payoff": { "name": "提前还贷计算器", "desc": "计算额外还款可以节省的时间和利息。" },
-  "paycheck-calculator": { "name": "工资税后收入计算器", "desc": "根据税前工资估算实际到手收入。" },
-  "income-tax-estimator": { "name": "所得税计算器", "desc": "估算年度收入需要缴纳的税款或可退税金额。" },
-  "self-employment-tax": { "name": "自由职业税费计算器", "desc": "估算自由职业者需要支付的税费和社会保险。" },
-  "overtime-calculator": { "name": "加班工资计算器", "desc": "根据加班倍数计算额外工作时间收入。" },
-  "pto-accrual": { "name": "带薪休假计算器", "desc": "根据休假额度计算当前累计假期。" },
-  "employee-cost": { "name": "员工真实成本计算器", "desc": "计算工资、福利、税费、设备和管理成本。" },
-  "salary-converter": { "name": "工资转换器", "desc": "转换小时、周、月和年度工资金额。" },
-  "invoice-generator": { "name": "发票生成器", "desc": "创建包含项目明细并支持导出PDF的专业发票。" },
-  "quote-generator": { "name": "报价单生成器", "desc": "在开始工作前创建专业报价文件。" },
-  "hourly-rate": { "name": "小时费率计算器", "desc": "计算达到收入目标所需的小时收费标准。" },
-  "amazon-fba-calculator": { "name": "Amazon FBA利润计算器", "desc": "计算扣除Amazon和FBA费用后的净利润、利润率和投资回报率。" },
-  "etsy-fee-calculator": { "name": "Etsy费用计算器", "desc": "计算扣除Etsy刊登费、交易费和支付费用后的实际收入。" },
-  "stripe-fee-calculator": { "name": "Stripe手续费计算器", "desc": "计算Stripe手续费以及最终收到的金额。" },
-  "paypal-fee-calculator": { "name": "PayPal手续费计算器", "desc": "计算PayPal费用、实际到账金额以及需要收取的总金额。" },
-  "roas-calculator": { "name": "ROAS广告回报计算器", "desc": "计算广告投入回报率、投资回报率和盈亏平衡ROAS。" },
-  "cac-ltv-calculator": { "name": "CAC与LTV计算器", "desc": "计算客户获取成本、客户生命周期价值以及LTV:CAC比例。" },
-  "profit-margin": { "name": "利润率计算器", "desc": "根据成本计算利润率、加价比例和销售价格。" },
-  "break-even": { "name": "盈亏平衡计算器", "desc": "计算覆盖固定成本所需的销售数量和收入。" },
-  "late-fee": { "name": "逾期费用计算器", "desc": "计算过期账单产生的利息和滞纳费用。" },
-  "vat-gst": { "name": "增值税 / GST计算器", "desc": "为任何价格添加或扣除销售税。" },
-  "merge-pdf": { "name": "合并PDF", "desc": "将多个PDF文件按照指定顺序合并成一个文档。" },
-  "split-pdf": { "name": "拆分PDF", "desc": "提取PDF中的指定页面并创建新的PDF文件。" },
-  "compress-pdf": { "name": "压缩PDF", "desc": "减少PDF文件大小，方便上传或通过邮件发送。" },
-  "rotate-pdf": { "name": "旋转PDF页面", "desc": "将PDF页面旋转90度、180度或270度。" },
-  "delete-pdf-pages": { "name": "删除PDF页面", "desc": "删除不需要的PDF页面并重新保存文件。" },
-  "reorder-pdf": { "name": "整理PDF页面", "desc": "拖动页面并重新排列PDF文件顺序。" },
-  "pdf-to-jpg": { "name": "PDF转JPG", "desc": "将PDF每一页转换为可下载的JPG图片。" },
-  "jpg-to-pdf": { "name": "图片转PDF", "desc": "将照片或扫描文件转换成一个PDF文档。" },
-  "pdf-to-text": { "name": "PDF文字提取器", "desc": "从PDF文件中提取可编辑的文字内容。" },
-  "pdf-page-numbers": { "name": "PDF添加页码", "desc": "在PDF页面任意位置添加页码。" },
-  "pdf-watermark": { "name": "PDF水印工具", "desc": "在PDF页面添加文字水印，标记草稿或副本。" },
-  "protect-pdf": { "name": "保护PDF", "desc": "为PDF文档添加密码，保护分享文件安全。" },
-  "pdf-redact": { "name": "PDF内容遮盖", "desc": "隐藏敏感文字信息后再发送PDF文件。" },
-  "compare-pdf": { "name": "PDF比较工具", "desc": "比较两个PDF版本并找出内容变化。" },
-  "compress-image": { "name": "图片压缩器", "desc": "压缩JPG、PNG或WebP图片大小，同时保持可调节的质量。" },
-  "resize-image": { "name": "图片调整大小工具", "desc": "按照指定像素或百分比调整图片尺寸。" },
-  "convert-image": { "name": "图片格式转换器", "desc": "在PNG、JPG和WebP格式之间转换图片。" },
-  "heic-converter": { "name": "HEIC转换器", "desc": "将iPhone HEIC照片转换为JPG或PNG格式。" },
-  "crop-image": { "name": "图片裁剪工具", "desc": "按照比例或自定义区域裁剪图片。" },
-  "bulk-resize": { "name": "批量图片调整工具", "desc": "一次处理多张图片并调整尺寸。" },
-  "favicon-generator": { "name": "Favicon图标生成器", "desc": "生成所有网站所需尺寸的Favicon，并提供HTML代码。" },
-  "image-watermark": { "name": "图片水印工具", "desc": "在图片上添加文字水印，保护你的照片。" },
-  "exif-viewer": { "name": "EXIF查看与清除工具", "desc": "查看照片元数据并下载清除信息后的图片。" },
-  "color-from-image": { "name": "图片颜色提取器", "desc": "从任何图片中提取主要颜色。" },
-  "meme-generator": { "name": "Meme生成器", "desc": "为任何图片添加经典上下文字创建表情梗图。" },
-  "flip-image": { "name": "图片翻转工具", "desc": "水平或垂直镜像翻转图片。" },
-  "rotate-image": { "name": "图片旋转工具", "desc": "将照片旋转90°、180°或270°，保持图片质量。" },
-  "circle-crop": { "name": "圆形头像裁剪器", "desc": "将任何照片裁剪成带透明背景的圆形头像。" },
-  "grayscale-image": { "name": "黑白 / 复古滤镜工具", "desc": "将照片转换为灰度或暖色复古棕褐色效果。" },
-  "compress-for-discord": { "name": "Discord图片压缩器", "desc": "快速压缩图片以符合Discord上传大小限制。" },
-  "trim-video": { "name": "视频裁剪器", "desc": "剪切需要的视频片段并保存新的文件。" },
-  "bitrate-calculator": { "name": "视频码率计算器", "desc": "根据上传速度、分辨率和平台推荐最佳直播码率。" },
-  "vertical-reframe": { "name": "竖屏视频适配 9:16", "desc": "将视频重新调整为适合Shorts、TikTok和Reels的竖屏格式。" },
-  "video-to-gif": { "name": "视频转GIF", "desc": "将短视频转换为可分享的GIF动画。" },
-  "frame-grabber": { "name": "视频截图工具", "desc": "从视频中提取静态画面作为缩略图。" },
-  "mute-video": { "name": "视频去除声音", "desc": "删除视频音轨，避免版权音频问题。" },
-  "extract-audio": { "name": "视频提取音频", "desc": "将视频中的声音保存为MP3或WAV文件。" },
-  "convert-video": { "name": "视频格式转换器", "desc": "将MOV、MKV、AVI、WebM等格式转换为通用MP4。" },
-  "resize-video": { "name": "视频调整大小工具", "desc": "将视频调整为1080p、720p、480p或360p并保持比例。" },
-  "loop-video": { "name": "视频循环工具", "desc": "重复播放视频片段并生成新的循环视频文件。" },
-  "adjust-volume": { "name": "视频音量增强器", "desc": "提高或降低视频音量，不影响画面质量。" },
-  "stream-asset-sizer": { "name": "直播素材尺寸工具", "desc": "提供Twitch和YouTube直播横幅、头像和面板的正确尺寸。" },
-  "emote-resizer": { "name": "表情包调整工具", "desc": "调整图片大小以符合Discord和Twitch表情限制。" },
-  "brb-overlay": { "name": "BRB暂停与倒计时覆盖层", "desc": "创建可用于OBS浏览器来源的直播覆盖页面。" },
-  "upload-time": { "name": "上传时间计算器", "desc": "根据网络速度计算文件上传所需时间。" },
-  "meta-tag-generator": { "name": "Meta标签生成器", "desc": "生成网页标题、描述和Open Graph标签，可直接复制使用。" },
-  "serp-preview": { "name": "Google SERP搜索结果预览", "desc": "发布网页前预览页面在Google搜索结果中的显示效果。" },
-  "og-preview": { "name": "社交分享预览工具", "desc": "查看链接在社交媒体平台上的展示效果。" },
-  "robots-generator": { "name": "robots.txt生成器", "desc": "创建符合规范的robots.txt文件，控制搜索引擎抓取规则。" },
-  "sitemap-generator": { "name": "XML网站地图生成器", "desc": "将URL列表转换为有效的XML Sitemap文件。" },
-  "schema-generator": { "name": "Schema结构化数据生成器", "desc": "生成FAQ、文章、产品和面包屑导航的JSON-LD结构化数据。" },
-  "keyword-density": { "name": "关键词密度分析器", "desc": "分析网页关键词出现频率，避免关键词堆积。" },
-  "slug-generator": { "name": "URL Slug生成器", "desc": "根据标题创建简洁、易读的SEO友好URL。" },
-  "utm-builder": { "name": "UTM链接生成器", "desc": "创建带有UTM参数的营销追踪链接。" },
-  "url-shortener": { "name": "URL短链接生成器", "desc": "将长网址转换为简短、易分享的链接。" },
-  "contrast-checker": { "name": "颜色对比度检测工具", "desc": "根据WCAG AA和AAA标准检查文字颜色对比度。" },
-  "accessible-palette": { "name": "无障碍颜色方案生成器", "desc": "创建符合网页可访问性标准的颜色组合。" },
-  "color-blind-simulator": { "name": "色盲模拟器", "desc": "模拟不同类型色觉用户看到的设计效果。" },
-  "heading-checker": { "name": "标题结构检查器", "desc": "检查网页H1、H2、H3标题层级错误。" },
-  "alt-text-auditor": { "name": "图片ALT文本检测器", "desc": "查找缺少或不合适图片替代文本的问题。" },
-  "caption-validator": { "name": "字幕SRT验证器", "desc": "检查字幕时间轴和格式是否正确。" },
-  "metadata-remover": { "name": "元数据清除工具", "desc": "删除图片和文档中的隐藏信息。" },
-  "url-cleaner": { "name": "URL清理工具", "desc": "移除utm_、fbclid等追踪参数。" },
-  "screenshot-redactor": { "name": "截图隐私遮挡工具", "desc": "隐藏截图中的私人信息后再进行分享。" },
-  "password-generator": { "name": "密码生成器", "desc": "生成强随机密码，直接在设备本地创建，保护账户安全。" },
-  "password-strength": { "name": "密码强度检测器", "desc": "检测密码安全程度，并在本地分析密码强度。" },
-  "text-encrypt": { "name": "文本加密 / 解密工具", "desc": "使用密码通过AES算法加密和解密消息。" },
-  "file-checksum": { "name": "文件校验工具", "desc": "使用SHA-256哈希验证文件下载完整性。" },
-  "word-counter": { "name": "字数与字符统计工具", "desc": "实时统计字数、字符数、句子数量和阅读时间。" },
-  "case-converter": { "name": "大小写转换器", "desc": "转换为大写、小写、标题格式、camelCase和kebab-case。" },
-  "text-diff": { "name": "文本差异比较工具", "desc": "逐行比较两段文本并快速发现变化。" },
-  "readability": { "name": "文本可读性评分", "desc": "分析文章阅读难度和等级水平。" },
-  "line-tools": { "name": "文本行处理工具", "desc": "排序、反转、去重和随机排列文本行。" },
-  "lorem-ipsum": { "name": "Lorem Ipsum生成器", "desc": "根据段落数量或字数生成占位文本。" },
-  "markdown-editor": { "name": "Markdown编辑器", "desc": "支持实时预览和HTML导出的Markdown编辑工具。" },
-  "unit-converter": { "name": "单位转换器", "desc": "转换长度、重量、温度、面积、体积、速度和数据单位。" },
-  "age-calculator": { "name": "年龄与日期计算器", "desc": "计算精确年龄或两个日期之间的时间差。" },
-  "countdown": { "name": "活动倒计时工具", "desc": "计算距离任何日期和时间的剩余时间。" },
-  "pomodoro": { "name": "番茄工作法计时器", "desc": "帮助专注工作的倒计时工具，结束时提醒。" },
-  "stopwatch": { "name": "秒表", "desc": "精准计时并记录每圈时间。" },
-  "timezone-converter": { "name": "时区转换器", "desc": "比较全球不同城市之间的时间。" },
-  "random-picker": { "name": "随机选择器", "desc": "从列表中公平随机选择一个结果。" },
-  "typing-test": { "name": "打字速度测试", "desc": "测试每分钟输入字数和准确率。" },
-  "qr-generator": { "name": "二维码生成器", "desc": "将任何链接或文本转换为可下载的二维码。" },
-  "qr-scanner": { "name": "二维码扫描器", "desc": "使用摄像头或图片扫描二维码内容。" },
-  "barcode-generator": { "name": "条形码生成器", "desc": "生成CODE128和EAN条形码，可直接下载使用。" },
-  "color-converter": { "name": "颜色转换器", "desc": "转换HEX、RGB和HSL颜色格式，并提供实时颜色预览。" },
-  "gradient-generator": { "name": "CSS渐变生成器", "desc": "创建颜色渐变效果并生成可复制的CSS代码。" },
-  "palette-generator": { "name": "颜色调色板生成器", "desc": "快速生成协调的五色设计方案。" },
-  "shadow-generator": { "name": "CSS阴影生成器", "desc": "通过实时预览调整并生成CSS盒子阴影效果。" },
-  "json-formatter": { "name": "JSON格式化工具", "desc": "美化、压缩和验证JSON数据。" },
-  "base64": { "name": "Base64编码 / 解码工具", "desc": "将文本转换为Base64格式，或还原原始内容。" },
-  "jwt-decoder": { "name": "JWT解码器", "desc": "查看JWT令牌的头部和有效载荷信息。" },
-  "uuid-generator": { "name": "UUID生成器", "desc": "生成随机UUID，用于应用程序和数据库开发。" },
-  "hash-generator": { "name": "哈希生成器", "desc": "生成文本的SHA-256、SHA-1和SHA-512哈希值。" },
-  "regex-tester": { "name": "正则表达式测试器", "desc": "测试正则表达式并查找文本匹配结果。" },
-  "url-encoder": { "name": "URL编码 / 解码工具", "desc": "对URL和查询参数进行编码与解码。" },
-  "timestamp-converter": { "name": "时间戳转换器", "desc": "Unix时间戳与普通日期格式互相转换。" },
-  "csv-viewer": { "name": "CSV查看器", "desc": "将CSV文件打开为可排序和筛选的数据表。" },
-  "csv-to-chart": { "name": "CSV图表生成器", "desc": "将CSV数据转换为柱状图或折线图。" },
-  "json-csv": { "name": "JSON ↔ CSV转换器", "desc": "在JSON数组和CSV格式之间快速转换。" }
+  "mortgage-calculator": {
+    "name": "房贷计算器",
+    "desc": "计算每月还款金额、总利息和完整贷款还款计划。"
+  },
+  "loan-calculator": {
+    "name": "贷款计算器",
+    "desc": "计算个人贷款或商业贷款的还款、利息和偿还时间。"
+  },
+  "auto-loan-calculator": {
+    "name": "汽车贷款计算器",
+    "desc": "根据期限和利率计算汽车月供、总成本和利息。"
+  },
+  "refinance-calculator": {
+    "name": "贷款再融资计算器",
+    "desc": "查看再融资需要多少个月才能收回成本。"
+  },
+  "credit-card-payoff": {
+    "name": "信用卡还款计算器",
+    "desc": "计算还清信用卡余额所需时间，以及额外还款可节省的利息。"
+  },
+  "compound-interest": {
+    "name": "复利计算器",
+    "desc": "计算定期投入资金后的长期储蓄增长。"
+  },
+  "savings-goal": {
+    "name": "储蓄目标计算器",
+    "desc": "计算每月需要存多少钱才能达到目标金额。"
+  },
+  "retirement-calculator": {
+    "name": "退休规划计算器",
+    "desc": "预测退休年龄时养老金或投资账户的未来价值。"
+  },
+  "crypto-profit": {
+    "name": "加密货币收益计算器",
+    "desc": "计算加密货币投资利润、亏损和DCA平均买入成本。"
+  },
+  "currency-converter": {
+    "name": "货币转换器",
+    "desc": "使用实时汇率转换不同国家货币。"
+  },
+  "percentage-calculator": {
+    "name": "百分比计算器",
+    "desc": "计算百分比、占比和百分比变化。"
+  },
+  "tip-split": {
+    "name": "小费分摊计算器",
+    "desc": "多人之间快速分摊账单和小费。"
+  },
+  "discount-calculator": {
+    "name": "折扣计算器",
+    "desc": "计算折扣后的价格、节省金额以及优惠后的总价。"
+  },
+  "life-insurance-needs": {
+    "name": "人寿保险需求计算器",
+    "desc": "估算家庭实际需要的人寿保险保障金额。"
+  },
+  "auto-insurance-estimator": {
+    "name": "汽车保险估算器",
+    "desc": "计算适合的保险责任范围和自付额度。"
+  },
+  "deductible-calculator": {
+    "name": "保险免赔额计算器",
+    "desc": "比较保险费用节省与自付风险之间的关系。"
+  },
+  "income-protection": {
+    "name": "收入保障计算器",
+    "desc": "计算能够覆盖日常支出的每月保障金额。"
+  },
+  "rent-vs-buy": {
+    "name": "租房还是买房计算器",
+    "desc": "根据实际时间周期比较租房和购房成本。"
+  },
+  "cap-rate": {
+    "name": "资本化率计算器",
+    "desc": "根据房产价值和收入计算资本化率。"
+  },
+  "cash-on-cash": {
+    "name": "现金回报率计算器",
+    "desc": "计算实际投入现金产生的年度投资回报。"
+  },
+  "closing-costs": {
+    "name": "购房成交费用计算器",
+    "desc": "估算购买房产时除房价之外的额外费用。"
+  },
+  "home-affordability": {
+    "name": "购房能力计算器",
+    "desc": "根据收入和首付款计算可承担的房价范围。"
+  },
+  "rental-yield": {
+    "name": "租金收益率计算器",
+    "desc": "计算出租房产的毛收益率和净收益率。"
+  },
+  "mortgage-payoff": {
+    "name": "提前还贷计算器",
+    "desc": "计算额外还款可以节省的时间和利息。"
+  },
+  "paycheck-calculator": {
+    "name": "工资税后收入计算器",
+    "desc": "根据税前工资估算实际到手收入。"
+  },
+  "income-tax-estimator": {
+    "name": "所得税计算器",
+    "desc": "估算年度收入需要缴纳的税款或可退税金额。"
+  },
+  "self-employment-tax": {
+    "name": "自由职业税费计算器",
+    "desc": "估算自由职业者需要支付的税费和社会保险。"
+  },
+  "overtime-calculator": {
+    "name": "加班工资计算器",
+    "desc": "根据加班倍数计算额外工作时间收入。"
+  },
+  "pto-accrual": {
+    "name": "带薪休假计算器",
+    "desc": "根据休假额度计算当前累计假期。"
+  },
+  "employee-cost": {
+    "name": "员工真实成本计算器",
+    "desc": "计算工资、福利、税费、设备和管理成本。"
+  },
+  "salary-converter": {
+    "name": "工资转换器",
+    "desc": "转换小时、周、月和年度工资金额。"
+  },
+  "invoice-generator": {
+    "name": "发票生成器",
+    "desc": "创建包含项目明细并支持导出PDF的专业发票。"
+  },
+  "quote-generator": {
+    "name": "报价单生成器",
+    "desc": "在开始工作前创建专业报价文件。"
+  },
+  "hourly-rate": {
+    "name": "小时费率计算器",
+    "desc": "计算达到收入目标所需的小时收费标准。"
+  },
+  "amazon-fba-calculator": {
+    "name": "Amazon FBA利润计算器",
+    "desc": "计算扣除Amazon和FBA费用后的净利润、利润率和投资回报率。"
+  },
+  "etsy-fee-calculator": {
+    "name": "Etsy费用计算器",
+    "desc": "计算扣除Etsy刊登费、交易费和支付费用后的实际收入。"
+  },
+  "stripe-fee-calculator": {
+    "name": "Stripe手续费计算器",
+    "desc": "计算Stripe手续费以及最终收到的金额。"
+  },
+  "paypal-fee-calculator": {
+    "name": "PayPal手续费计算器",
+    "desc": "计算PayPal费用、实际到账金额以及需要收取的总金额。"
+  },
+  "roas-calculator": {
+    "name": "ROAS广告回报计算器",
+    "desc": "计算广告投入回报率、投资回报率和盈亏平衡ROAS。"
+  },
+  "cac-ltv-calculator": {
+    "name": "CAC与LTV计算器",
+    "desc": "计算客户获取成本、客户生命周期价值以及LTV:CAC比例。"
+  },
+  "profit-margin": {
+    "name": "利润率计算器",
+    "desc": "根据成本计算利润率、加价比例和销售价格。"
+  },
+  "break-even": {
+    "name": "盈亏平衡计算器",
+    "desc": "计算覆盖固定成本所需的销售数量和收入。"
+  },
+  "late-fee": {
+    "name": "逾期费用计算器",
+    "desc": "计算过期账单产生的利息和滞纳费用。"
+  },
+  "vat-gst": {
+    "name": "增值税 / GST计算器",
+    "desc": "为任何价格添加或扣除销售税。"
+  },
+  "merge-pdf": {
+    "name": "合并PDF",
+    "desc": "将多个PDF文件按照指定顺序合并成一个文档。"
+  },
+  "split-pdf": {
+    "name": "拆分PDF",
+    "desc": "提取PDF中的指定页面并创建新的PDF文件。"
+  },
+  "compress-pdf": {
+    "name": "压缩PDF",
+    "desc": "减少PDF文件大小，方便上传或通过邮件发送。"
+  },
+  "rotate-pdf": {
+    "name": "旋转PDF页面",
+    "desc": "将PDF页面旋转90度、180度或270度。"
+  },
+  "delete-pdf-pages": {
+    "name": "删除PDF页面",
+    "desc": "删除不需要的PDF页面并重新保存文件。"
+  },
+  "reorder-pdf": {
+    "name": "整理PDF页面",
+    "desc": "拖动页面并重新排列PDF文件顺序。"
+  },
+  "pdf-to-jpg": {
+    "name": "PDF转JPG",
+    "desc": "将PDF每一页转换为可下载的JPG图片。"
+  },
+  "jpg-to-pdf": {
+    "name": "图片转PDF",
+    "desc": "将照片或扫描文件转换成一个PDF文档。"
+  },
+  "pdf-to-text": {
+    "name": "PDF文字提取器",
+    "desc": "从PDF文件中提取可编辑的文字内容。"
+  },
+  "pdf-page-numbers": {
+    "name": "PDF添加页码",
+    "desc": "在PDF页面任意位置添加页码。"
+  },
+  "pdf-watermark": {
+    "name": "PDF水印工具",
+    "desc": "在PDF页面添加文字水印，标记草稿或副本。"
+  },
+  "protect-pdf": {
+    "name": "保护PDF",
+    "desc": "为PDF文档添加密码，保护分享文件安全。"
+  },
+  "pdf-redact": {
+    "name": "PDF内容遮盖",
+    "desc": "隐藏敏感文字信息后再发送PDF文件。"
+  },
+  "compare-pdf": {
+    "name": "PDF比较工具",
+    "desc": "比较两个PDF版本并找出内容变化。"
+  },
+  "compress-image": {
+    "name": "图片压缩器",
+    "desc": "压缩JPG、PNG或WebP图片大小，同时保持可调节的质量。"
+  },
+  "resize-image": {
+    "name": "图片调整大小工具",
+    "desc": "按照指定像素或百分比调整图片尺寸。"
+  },
+  "convert-image": {
+    "name": "图片格式转换器",
+    "desc": "在PNG、JPG和WebP格式之间转换图片。"
+  },
+  "heic-converter": {
+    "name": "HEIC转换器",
+    "desc": "将iPhone HEIC照片转换为JPG或PNG格式。"
+  },
+  "crop-image": {
+    "name": "图片裁剪工具",
+    "desc": "按照比例或自定义区域裁剪图片。"
+  },
+  "bulk-resize": {
+    "name": "批量图片调整工具",
+    "desc": "一次处理多张图片并调整尺寸。"
+  },
+  "favicon-generator": {
+    "name": "Favicon图标生成器",
+    "desc": "生成所有网站所需尺寸的Favicon，并提供HTML代码。"
+  },
+  "image-watermark": {
+    "name": "图片水印工具",
+    "desc": "在图片上添加文字水印，保护你的照片。"
+  },
+  "exif-viewer": {
+    "name": "EXIF查看与清除工具",
+    "desc": "查看照片元数据并下载清除信息后的图片。"
+  },
+  "color-from-image": {
+    "name": "图片颜色提取器",
+    "desc": "从任何图片中提取主要颜色。"
+  },
+  "meme-generator": {
+    "name": "Meme生成器",
+    "desc": "为任何图片添加经典上下文字创建表情梗图。"
+  },
+  "flip-image": {
+    "name": "图片翻转工具",
+    "desc": "水平或垂直镜像翻转图片。"
+  },
+  "rotate-image": {
+    "name": "图片旋转工具",
+    "desc": "将照片旋转90°、180°或270°，保持图片质量。"
+  },
+  "circle-crop": {
+    "name": "圆形头像裁剪器",
+    "desc": "将任何照片裁剪成带透明背景的圆形头像。"
+  },
+  "grayscale-image": {
+    "name": "黑白 / 复古滤镜工具",
+    "desc": "将照片转换为灰度或暖色复古棕褐色效果。"
+  },
+  "compress-video": {
+    "name": "视频压缩器",
+    "desc": "在浏览器中压缩任意视频——选择画质级别或目标文件大小。"
+  },
+  "trim-video": {
+    "name": "视频裁剪器",
+    "desc": "剪切需要的视频片段并保存新的文件。"
+  },
+  "bitrate-calculator": {
+    "name": "视频码率计算器",
+    "desc": "根据上传速度、分辨率和平台推荐最佳直播码率。"
+  },
+  "vertical-reframe": {
+    "name": "竖屏视频适配 9:16",
+    "desc": "将视频重新调整为适合Shorts、TikTok和Reels的竖屏格式。"
+  },
+  "video-to-gif": {
+    "name": "视频转GIF",
+    "desc": "将短视频转换为可分享的GIF动画。"
+  },
+  "frame-grabber": {
+    "name": "视频截图工具",
+    "desc": "从视频中提取静态画面作为缩略图。"
+  },
+  "mute-video": {
+    "name": "视频去除声音",
+    "desc": "删除视频音轨，避免版权音频问题。"
+  },
+  "extract-audio": {
+    "name": "视频提取音频",
+    "desc": "将视频中的声音保存为MP3或WAV文件。"
+  },
+  "convert-video": {
+    "name": "视频格式转换器",
+    "desc": "将MOV、MKV、AVI、WebM等格式转换为通用MP4。"
+  },
+  "resize-video": {
+    "name": "视频调整大小工具",
+    "desc": "将视频调整为1080p、720p、480p或360p并保持比例。"
+  },
+  "loop-video": {
+    "name": "视频循环工具",
+    "desc": "重复播放视频片段并生成新的循环视频文件。"
+  },
+  "adjust-volume": {
+    "name": "视频音量增强器",
+    "desc": "提高或降低视频音量，不影响画面质量。"
+  },
+  "stream-asset-sizer": {
+    "name": "直播素材尺寸工具",
+    "desc": "提供Twitch和YouTube直播横幅、头像和面板的正确尺寸。"
+  },
+  "emote-resizer": {
+    "name": "表情包调整工具",
+    "desc": "调整图片大小以符合Discord和Twitch表情限制。"
+  },
+  "brb-overlay": {
+    "name": "BRB暂停与倒计时覆盖层",
+    "desc": "创建可用于OBS浏览器来源的直播覆盖页面。"
+  },
+  "upload-time": {
+    "name": "上传时间计算器",
+    "desc": "根据网络速度计算文件上传所需时间。"
+  },
+  "meta-tag-generator": {
+    "name": "Meta标签生成器",
+    "desc": "生成网页标题、描述和Open Graph标签，可直接复制使用。"
+  },
+  "serp-preview": {
+    "name": "Google SERP搜索结果预览",
+    "desc": "发布网页前预览页面在Google搜索结果中的显示效果。"
+  },
+  "og-preview": {
+    "name": "社交分享预览工具",
+    "desc": "查看链接在社交媒体平台上的展示效果。"
+  },
+  "robots-generator": {
+    "name": "robots.txt生成器",
+    "desc": "创建符合规范的robots.txt文件，控制搜索引擎抓取规则。"
+  },
+  "sitemap-generator": {
+    "name": "XML网站地图生成器",
+    "desc": "将URL列表转换为有效的XML Sitemap文件。"
+  },
+  "schema-generator": {
+    "name": "Schema结构化数据生成器",
+    "desc": "生成FAQ、文章、产品和面包屑导航的JSON-LD结构化数据。"
+  },
+  "keyword-density": {
+    "name": "关键词密度分析器",
+    "desc": "分析网页关键词出现频率，避免关键词堆积。"
+  },
+  "slug-generator": {
+    "name": "URL Slug生成器",
+    "desc": "根据标题创建简洁、易读的SEO友好URL。"
+  },
+  "utm-builder": {
+    "name": "UTM链接生成器",
+    "desc": "创建带有UTM参数的营销追踪链接。"
+  },
+  "url-shortener": {
+    "name": "URL短链接生成器",
+    "desc": "将长网址转换为简短、易分享的链接。"
+  },
+  "contrast-checker": {
+    "name": "颜色对比度检测工具",
+    "desc": "根据WCAG AA和AAA标准检查文字颜色对比度。"
+  },
+  "accessible-palette": {
+    "name": "无障碍颜色方案生成器",
+    "desc": "创建符合网页可访问性标准的颜色组合。"
+  },
+  "color-blind-simulator": {
+    "name": "色盲模拟器",
+    "desc": "模拟不同类型色觉用户看到的设计效果。"
+  },
+  "heading-checker": {
+    "name": "标题结构检查器",
+    "desc": "检查网页H1、H2、H3标题层级错误。"
+  },
+  "alt-text-auditor": {
+    "name": "图片ALT文本检测器",
+    "desc": "查找缺少或不合适图片替代文本的问题。"
+  },
+  "caption-validator": {
+    "name": "字幕SRT验证器",
+    "desc": "检查字幕时间轴和格式是否正确。"
+  },
+  "metadata-remover": {
+    "name": "元数据清除工具",
+    "desc": "删除图片和文档中的隐藏信息。"
+  },
+  "url-cleaner": {
+    "name": "URL清理工具",
+    "desc": "移除utm_、fbclid等追踪参数。"
+  },
+  "screenshot-redactor": {
+    "name": "截图隐私遮挡工具",
+    "desc": "隐藏截图中的私人信息后再进行分享。"
+  },
+  "password-generator": {
+    "name": "密码生成器",
+    "desc": "生成强随机密码，直接在设备本地创建，保护账户安全。"
+  },
+  "password-strength": {
+    "name": "密码强度检测器",
+    "desc": "检测密码安全程度，并在本地分析密码强度。"
+  },
+  "text-encrypt": {
+    "name": "文本加密 / 解密工具",
+    "desc": "使用密码通过AES算法加密和解密消息。"
+  },
+  "file-checksum": {
+    "name": "文件校验工具",
+    "desc": "使用SHA-256哈希验证文件下载完整性。"
+  },
+  "word-counter": {
+    "name": "字数与字符统计工具",
+    "desc": "实时统计字数、字符数、句子数量和阅读时间。"
+  },
+  "case-converter": {
+    "name": "大小写转换器",
+    "desc": "转换为大写、小写、标题格式、camelCase和kebab-case。"
+  },
+  "text-diff": {
+    "name": "文本差异比较工具",
+    "desc": "逐行比较两段文本并快速发现变化。"
+  },
+  "readability": {
+    "name": "文本可读性评分",
+    "desc": "分析文章阅读难度和等级水平。"
+  },
+  "line-tools": {
+    "name": "文本行处理工具",
+    "desc": "排序、反转、去重和随机排列文本行。"
+  },
+  "lorem-ipsum": {
+    "name": "Lorem Ipsum生成器",
+    "desc": "根据段落数量或字数生成占位文本。"
+  },
+  "markdown-editor": {
+    "name": "Markdown编辑器",
+    "desc": "支持实时预览和HTML导出的Markdown编辑工具。"
+  },
+  "unit-converter": {
+    "name": "单位转换器",
+    "desc": "转换长度、重量、温度、面积、体积、速度和数据单位。"
+  },
+  "age-calculator": {
+    "name": "年龄与日期计算器",
+    "desc": "计算精确年龄或两个日期之间的时间差。"
+  },
+  "countdown": {
+    "name": "活动倒计时工具",
+    "desc": "计算距离任何日期和时间的剩余时间。"
+  },
+  "pomodoro": {
+    "name": "番茄工作法计时器",
+    "desc": "帮助专注工作的倒计时工具，结束时提醒。"
+  },
+  "stopwatch": {
+    "name": "秒表",
+    "desc": "精准计时并记录每圈时间。"
+  },
+  "timezone-converter": {
+    "name": "时区转换器",
+    "desc": "比较全球不同城市之间的时间。"
+  },
+  "random-picker": {
+    "name": "随机选择器",
+    "desc": "从列表中公平随机选择一个结果。"
+  },
+  "typing-test": {
+    "name": "打字速度测试",
+    "desc": "测试每分钟输入字数和准确率。"
+  },
+  "qr-generator": {
+    "name": "二维码生成器",
+    "desc": "将任何链接或文本转换为可下载的二维码。"
+  },
+  "qr-scanner": {
+    "name": "二维码扫描器",
+    "desc": "使用摄像头或图片扫描二维码内容。"
+  },
+  "barcode-generator": {
+    "name": "条形码生成器",
+    "desc": "生成CODE128和EAN条形码，可直接下载使用。"
+  },
+  "color-converter": {
+    "name": "颜色转换器",
+    "desc": "转换HEX、RGB和HSL颜色格式，并提供实时颜色预览。"
+  },
+  "gradient-generator": {
+    "name": "CSS渐变生成器",
+    "desc": "创建颜色渐变效果并生成可复制的CSS代码。"
+  },
+  "palette-generator": {
+    "name": "颜色调色板生成器",
+    "desc": "快速生成协调的五色设计方案。"
+  },
+  "shadow-generator": {
+    "name": "CSS阴影生成器",
+    "desc": "通过实时预览调整并生成CSS盒子阴影效果。"
+  },
+  "json-formatter": {
+    "name": "JSON格式化工具",
+    "desc": "美化、压缩和验证JSON数据。"
+  },
+  "base64": {
+    "name": "Base64编码 / 解码工具",
+    "desc": "将文本转换为Base64格式，或还原原始内容。"
+  },
+  "jwt-decoder": {
+    "name": "JWT解码器",
+    "desc": "查看JWT令牌的头部和有效载荷信息。"
+  },
+  "uuid-generator": {
+    "name": "UUID生成器",
+    "desc": "生成随机UUID，用于应用程序和数据库开发。"
+  },
+  "hash-generator": {
+    "name": "哈希生成器",
+    "desc": "生成文本的SHA-256、SHA-1和SHA-512哈希值。"
+  },
+  "regex-tester": {
+    "name": "正则表达式测试器",
+    "desc": "测试正则表达式并查找文本匹配结果。"
+  },
+  "url-encoder": {
+    "name": "URL编码 / 解码工具",
+    "desc": "对URL和查询参数进行编码与解码。"
+  },
+  "timestamp-converter": {
+    "name": "时间戳转换器",
+    "desc": "Unix时间戳与普通日期格式互相转换。"
+  },
+  "csv-viewer": {
+    "name": "CSV查看器",
+    "desc": "将CSV文件打开为可排序和筛选的数据表。"
+  },
+  "csv-to-chart": {
+    "name": "CSV图表生成器",
+    "desc": "将CSV数据转换为柱状图或折线图。"
+  },
+  "json-csv": {
+    "name": "JSON ↔ CSV转换器",
+    "desc": "在JSON数组和CSV格式之间快速转换。"
+  }
 }

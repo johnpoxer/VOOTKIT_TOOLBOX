@@ -1,147 +1,582 @@
 {
-  "mortgage-calculator": { "name": "Hypothekenrechner", "desc": "Monatliche Zahlung, Gesamtzinsen und vollständiger Tilgungsplan." },
-  "loan-calculator": { "name": "Kreditrechner", "desc": "Berechnen Sie Zahlung, Zinsen und Rückzahlung für private oder geschäftliche Kredite." },
-  "auto-loan-calculator": { "name": "Autokreditrechner", "desc": "Berechnen Sie Fahrzeugrate, Gesamtkosten und Zinsen nach Laufzeit und Zinssatz." },
-  "refinance-calculator": { "name": "Refinanzierungsrechner", "desc": "Ermitteln Sie, nach wie vielen Monaten sich eine Refinanzierung lohnt." },
-  "credit-card-payoff": { "name": "Kreditkarten-Schuldenrechner", "desc": "Berechnen Sie die benötigte Zeit zur Tilgung und Einsparungen durch zusätzliche Zahlungen." },
-  "compound-interest": { "name": "Zinseszinsrechner", "desc": "Lassen Sie Ihre Ersparnisse durch regelmäßige Einzahlungen über die Zeit wachsen." },
-  "savings-goal": { "name": "Sparziel-Rechner", "desc": "Berechnen Sie, wie viel Sie monatlich sparen müssen, um Ihr Ziel zu erreichen." },
-  "retirement-calculator": { "name": "Rentenrechner", "desc": "Planen Sie Ihre Altersvorsorge bis zum gewünschten Rentenalter." },
-  "crypto-profit": { "name": "Krypto-Gewinn & DCA Rechner", "desc": "Berechnen Sie Gewinne, Verluste und durchschnittliche Einstiegspreise bei Kryptowährungen." },
-  "currency-converter": { "name": "Währungsrechner", "desc": "Live-Wechselkurse mit Daten der Europäischen Zentralbank." },
-  "percentage-calculator": { "name": "Prozentrechner", "desc": "Berechnen Sie Prozentsätze, Anteile und prozentuale Veränderungen." },
-  "tip-split": { "name": "Trinkgeld- und Rechnungsaufteilung", "desc": "Teilen Sie eine Rechnung inklusive Trinkgeld auf mehrere Personen auf." },
-  "discount-calculator": { "name": "Rabattrechner", "desc": "Berechnen Sie Endpreis und Ersparnis mit Rabatten und Steuern." },
-  "life-insurance-needs": { "name": "Lebensversicherungs-Rechner", "desc": "Schätzen Sie die passende Versicherungssumme für Ihre Familie." },
-  "auto-insurance-estimator": { "name": "Autoversicherungs-Rechner", "desc": "Berechnen Sie passende Haftungs- und Selbstbeteiligungsoptionen." },
-  "deductible-calculator": { "name": "Selbstbeteiligungs-Vergleich", "desc": "Vergleichen Sie Versicherungsersparnisse mit möglichen Eigenkosten." },
-  "income-protection": { "name": "Einkommensschutz-Rechner", "desc": "Berechnen Sie, welches monatliche Einkommen Ihre Verpflichtungen absichern würde." },
-  "rent-vs-buy": { "name": "Mieten oder Kaufen Rechner", "desc": "Vergleichen Sie Miete und Kauf anhand Ihrer tatsächlichen Situation." },
-  "cap-rate": { "name": "Cap-Rate Rechner", "desc": "Berechnen Sie die Kapitalisierungsrate anhand von Einkommen und Immobilienwert." },
-  "cash-on-cash": { "name": "Cash-on-Cash Rendite", "desc": "Berechnen Sie die jährliche Rendite auf Ihr tatsächlich investiertes Kapital." },
-  "closing-costs": { "name": "Nebenkosten-Rechner beim Immobilienkauf", "desc": "Schätzen Sie zusätzliche Kosten neben dem Kaufpreis einer Immobilie." },
-  "home-affordability": { "name": "Immobilien-Leistbarkeitsrechner", "desc": "Finden Sie heraus, welcher Immobilienpreis zu Einkommen und Eigenkapital passt." },
-  "rental-yield": { "name": "Mietrendite-Rechner", "desc": "Berechnen Sie die Brutto- und Nettorendite einer vermieteten Immobilie." },
-  "mortgage-payoff": { "name": "Hypotheken-Tilgungsrechner", "desc": "Erfahren Sie, wie viel Zeit und Zinsen zusätzliche Zahlungen sparen können." },
-  "paycheck-calculator": { "name": "Nettolohnrechner", "desc": "Schätzen Sie Ihren Nettolohn ausgehend vom Bruttogehalt." },
-  "income-tax-estimator": { "name": "Einkommensteuer-Rechner", "desc": "Schätzen Sie Ihre jährliche Steuerzahlung oder Rückerstattung." },
-  "self-employment-tax": { "name": "Steuerrechner für Selbstständige", "desc": "Berechnen Sie Steuern und Beiträge für Selbstständige." },
-  "overtime-calculator": { "name": "Überstunden-Rechner", "desc": "Berechnen Sie die Bezahlung für Überstunden und Zuschläge." },
-  "pto-accrual": { "name": "Urlaubsanspruch-Rechner", "desc": "Berechnen Sie angesammelte Urlaubstage basierend auf Ihrem Jahresanspruch." },
-  "employee-cost": { "name": "Mitarbeiterkosten-Rechner", "desc": "Gehalt plus Leistungen, Steuern, Ausrüstung und laufende Kosten." },
-  "salary-converter": { "name": "Gehaltsumrechner", "desc": "Konvertieren Sie Stunden-, Wochen-, Monats- und Jahresgehalt." },
-  "invoice-generator": { "name": "Rechnungsgenerator", "desc": "Erstellen Sie professionelle Rechnungen mit Positionen und PDF-Export." },
-  "quote-generator": { "name": "Angebotsgenerator", "desc": "Erstellen Sie professionelle Angebote vor Beginn einer Arbeit." },
-  "hourly-rate": { "name": "Stundensatz-Rechner", "desc": "Finden Sie heraus, welchen Stundensatz Sie für Ihr Einkommensziel benötigen." },
-  "amazon-fba-calculator": { "name": "Amazon FBA Gewinnrechner", "desc": "Nettogewinn, Marge und ROI pro Einheit nach Amazon-Gebühren." },
-  "etsy-fee-calculator": { "name": "Etsy-Gebührenrechner", "desc": "Berechnen Sie Ihren Auszahlungsbetrag nach Verkaufs- und Zahlungsgebühren." },
-  "stripe-fee-calculator": { "name": "Stripe-Gebührenrechner", "desc": "Berechnen Sie Gebühren und Nettobetrag oder den benötigten Verkaufspreis." },
-  "paypal-fee-calculator": { "name": "PayPal-Gebührenrechner", "desc": "Berechnen Sie PayPal-Gebühren und Ihren tatsächlichen Auszahlungsbetrag." },
-  "roas-calculator": { "name": "ROAS-Rechner", "desc": "Berechnen Sie Werberendite, ROI und Break-even ROAS." },
-  "cac-ltv-calculator": { "name": "CAC & LTV Rechner", "desc": "Berechnen Sie Kundenakquisekosten, Kundenwert und LTV:CAC-Verhältnis." },
-  "profit-margin": { "name": "Gewinnmargen-Rechner", "desc": "Berechnen Sie Marge, Aufschlag und Verkaufspreis anhand der Kosten." },
-  "break-even": { "name": "Break-even-Rechner", "desc": "Berechnen Sie benötigte Verkäufe und Umsatz zum Erreichen der Gewinnschwelle." },
-  "late-fee": { "name": "Mahngebühren-Rechner", "desc": "Berechnen Sie Zinsen und Gebühren für verspätete Rechnungen." },
-  "vat-gst": { "name": "MwSt. / GST Rechner", "desc": "Fügen Sie Verkaufssteuer hinzu oder entfernen Sie sie aus einem Preis." },
-  "merge-pdf": { "name": "PDF zusammenführen", "desc": "Kombinieren Sie mehrere PDF-Dateien zu einem einzigen Dokument in der gewünschten Reihenfolge." },
-  "split-pdf": { "name": "PDF teilen", "desc": "Extrahieren Sie bestimmte Seiten und erstellen Sie ein neues Dokument." },
-  "compress-pdf": { "name": "PDF komprimieren", "desc": "Verkleinern Sie die Dateigröße eines PDFs für Uploads oder E-Mails." },
-  "rotate-pdf": { "name": "PDF drehen", "desc": "Drehen Sie alle Seiten um 90°, 180° oder 270°." },
-  "delete-pdf-pages": { "name": "PDF-Seiten löschen", "desc": "Entfernen Sie unnötige Seiten und speichern Sie eine neue Version." },
-  "reorder-pdf": { "name": "PDF-Seiten sortieren", "desc": "Ziehen Sie Seiten per Drag & Drop in die gewünschte Reihenfolge." },
-  "pdf-to-jpg": { "name": "PDF zu JPG konvertieren", "desc": "Wandeln Sie jede PDF-Seite in ein herunterladbares JPG-Bild um." },
-  "jpg-to-pdf": { "name": "Bilder zu PDF", "desc": "Erstellen Sie aus Fotos oder Scans eine einzelne PDF-Datei." },
-  "pdf-to-text": { "name": "PDF-Text extrahieren", "desc": "Extrahieren Sie auswählbaren Text aus einem PDF-Dokument." },
-  "pdf-page-numbers": { "name": "PDF-Seitennummern hinzufügen", "desc": "Fügen Sie Seitenzahlen an beliebiger Stelle im Dokument hinzu." },
-  "pdf-watermark": { "name": "PDF-Wasserzeichen hinzufügen", "desc": "Fügen Sie Text über Seiten hinzu, um Entwürfe oder Kopien zu markieren." },
-  "protect-pdf": { "name": "PDF schützen", "desc": "Fügen Sie Ihrem Dokument vor dem Teilen ein Passwort hinzu." },
-  "pdf-redact": { "name": "PDF-Informationen schwärzen", "desc": "Verdecken Sie vertrauliche Informationen dauerhaft vor dem Versand." },
-  "compare-pdf": { "name": "PDF vergleichen", "desc": "Finden Sie Unterschiede zwischen zwei Versionen eines PDF-Dokuments." },
-  "compress-image": { "name": "Bildkompressor", "desc": "Reduzieren Sie die Größe von JPG-, PNG- oder WebP-Bildern mit Qualitätskontrolle." },
-  "resize-image": { "name": "Bildgröße ändern", "desc": "Ändern Sie die Größe in exakten Pixelwerten oder Prozentangaben." },
-  "convert-image": { "name": "Bildkonverter", "desc": "Konvertieren Sie zwischen PNG-, JPG- und WebP-Formaten." },
-  "heic-converter": { "name": "HEIC-Konverter", "desc": "Konvertieren Sie iPhone-HEIC-Fotos in JPG oder PNG." },
-  "crop-image": { "name": "Bild zuschneiden", "desc": "Schneiden Sie Bilder nach Verhältnis oder individueller Auswahl zu." },
-  "bulk-resize": { "name": "Massen-Bildgrößenänderung", "desc": "Ändern Sie die Größe mehrerer Bilder gleichzeitig." },
-  "favicon-generator": { "name": "Favicon-Generator", "desc": "Erstellen Sie alle Favicon-Größen und den benötigten HTML-Code." },
-  "image-watermark": { "name": "Bild-Wasserzeichen hinzufügen", "desc": "Fügen Sie Text zu Bildern hinzu, um sie zu schützen." },
-  "exif-viewer": { "name": "EXIF-Anzeige und Entferner", "desc": "Sehen Sie Fotometadaten und laden Sie eine bereinigte Version herunter." },
-  "color-from-image": { "name": "Bild-Farbextraktor", "desc": "Extrahieren Sie die wichtigsten Farben aus jedem Bild." },
-  "meme-generator": { "name": "Meme-Generator", "desc": "Fügen Sie klassische Texte zu Bildern hinzu und erstellen Sie Memes." },
-  "flip-image": { "name": "Bild spiegeln", "desc": "Spiegeln Sie Bilder horizontal oder vertikal." },
-  "rotate-image": { "name": "Bild drehen", "desc": "Drehen Sie Fotos um 90°, 180° oder 270° ohne Qualitätsverlust." },
-  "circle-crop": { "name": "Rundes Profilbild erstellen", "desc": "Erstellen Sie kreisförmige Avatare mit transparentem Hintergrund." },
-  "grayscale-image": { "name": "Schwarzweiß- und Sepia-Effekt", "desc": "Konvertieren Sie Fotos in Graustufen oder mit Sepia-Effekt." },
-  "compress-for-discord": { "name": "Discord Bildkompressor", "desc": "Voreinstellungen für 10 MB, 50 MB und 500 MB zum einfachen Teilen." },
-  "trim-video": { "name": "Video schneiden", "desc": "Schneiden Sie den gewünschten Teil eines Videos aus und speichern Sie das Ergebnis." },
-  "bitrate-calculator": { "name": "Streaming-Bitrate-Rechner", "desc": "Finden Sie die beste Bitrate basierend auf Upload-Geschwindigkeit, Auflösung und Plattform." },
-  "vertical-reframe": { "name": "Vertikaler 9:16-Zuschnitt", "desc": "Passen Sie Videos für Shorts, TikTok und Reels an." },
-  "video-to-gif": { "name": "Video zu GIF Konverter", "desc": "Verwandeln Sie kurze Videos in teilbare GIFs." },
-  "frame-grabber": { "name": "Video-Bildextraktor", "desc": "Extrahieren Sie einzelne Bilder aus Videos für Vorschaubilder." },
-  "mute-video": { "name": "Video-Ton entfernen", "desc": "Entfernen Sie die Audiospur aus einem Video." },
-  "extract-audio": { "name": "Audio aus Video extrahieren", "desc": "Speichern Sie den Ton eines Videos als MP3 oder WAV." },
-  "convert-video": { "name": "Videokonverter", "desc": "Konvertieren Sie MOV, MKV, AVI, WebM und andere Formate in MP4." },
-  "resize-video": { "name": "Videogröße ändern", "desc": "Ändern Sie die Videoauflösung auf 1080p, 720p, 480p oder 360p." },
-  "loop-video": { "name": "Video wiederholen", "desc": "Wiederholen Sie einen Clip mehrmals in einer einzigen Videodatei." },
-  "adjust-volume": { "name": "Video-Lautstärke anpassen", "desc": "Erhöhen oder verringern Sie die Lautstärke eines Videos." },
-  "stream-asset-sizer": { "name": "Streaming-Asset-Größenrechner", "desc": "Optimale Größen für Banner, Avatare und Panels für Twitch und YouTube." },
-  "emote-resizer": { "name": "Emote- und Sticker-Größenänderung", "desc": "Passen Sie Bilder an Discord- und Twitch-Emote-Grenzen an." },
-  "brb-overlay": { "name": "BRB Overlay und Countdown", "desc": "Stilvolle Browserquelle für OBS-Streams." },
-  "upload-time": { "name": "Upload-Zeit-Rechner", "desc": "Berechnen Sie die benötigte Zeit zum Hochladen einer Datei." },
-  "meta-tag-generator": { "name": "Meta-Tag-Generator", "desc": "Erstellen Sie Titel, Beschreibungen und Open-Graph-Tags zum direkten Kopieren." },
-  "serp-preview": { "name": "Google SERP Vorschau", "desc": "Sehen Sie, wie Ihre Webseite in Google-Suchergebnissen angezeigt wird." },
-  "og-preview": { "name": "Social-Media-Vorschau", "desc": "Zeigen Sie die Darstellung eines Links beim Teilen in sozialen Netzwerken." },
-  "robots-generator": { "name": "robots.txt Generator", "desc": "Erstellen Sie eine gültige robots.txt Datei mit den gewünschten Regeln." },
-  "sitemap-generator": { "name": "Sitemap Generator", "desc": "Erstellen Sie eine gültige XML-Sitemap aus einer Liste von URLs." },
-  "schema-generator": { "name": "Schema-Markup Generator", "desc": "Erstellen Sie JSON-LD für FAQs, Artikel, Produkte und Breadcrumbs." },
-  "keyword-density": { "name": "Keyword-Dichte Analyse", "desc": "Analysieren Sie die Häufigkeit von Begriffen und Keyword-Überoptimierung." },
-  "slug-generator": { "name": "URL-Slug Generator", "desc": "Erstellen Sie saubere und lesbare URLs aus jedem Titel." },
-  "utm-builder": { "name": "UTM-Link-Generator", "desc": "Erstellen Sie Kampagnen-URLs mit strukturierten Tracking-Parametern." },
-  "url-shortener": { "name": "URL-Kürzer", "desc": "Verwandeln Sie lange Links in kurze, teilbare Vootkit-Links mit optionalem benutzerdefiniertem Namen." },
-  "contrast-checker": { "name": "Kontrast-Prüfer", "desc": "Prüfen Sie Textkontraste nach WCAG AA- und AAA-Standards." },
-  "accessible-palette": { "name": "Barrierefreie Farbpalette", "desc": "Erstellen Sie Farbkombinationen, die Kontrastanforderungen erfüllen." },
-  "color-blind-simulator": { "name": "Farbenblindheits-Simulator", "desc": "Sehen Sie Designs aus verschiedenen Perspektiven der Farbwahrnehmung." },
-  "heading-checker": { "name": "Überschriften-Prüfer", "desc": "Finden Sie fehlende Überschriftenebenen und fehlerhafte Strukturen." },
-  "alt-text-auditor": { "name": "Alt-Text-Prüfer", "desc": "Finden Sie fehlende oder schwache Bildbeschreibungen." },
-  "caption-validator": { "name": "SRT-Untertitel-Prüfer", "desc": "Überprüfen Sie Synchronisation und Formatierung von Untertiteln." },
-  "metadata-remover": { "name": "Metadaten-Entferner", "desc": "Entfernen Sie versteckte Daten aus Bildern und Dokumenten." },
-  "url-cleaner": { "name": "URL-Reiniger", "desc": "Entfernen Sie Tracking-Parameter wie utm_, fbclid und andere." },
-  "screenshot-redactor": { "name": "Screenshot-Privatsphäre-Tool", "desc": "Verbergen Sie private Informationen vor dem Teilen von Screenshots." },
-  "password-generator": { "name": "Passwortgenerator", "desc": "Erstellen Sie starke, zufällige Passwörter direkt auf Ihrem Gerät." },
-  "password-strength": { "name": "Passwort-Sicherheitsprüfung", "desc": "Prüfen Sie die Stärke eines Passworts mit lokaler Analyse." },
-  "text-encrypt": { "name": "Text verschlüsseln / entschlüsseln", "desc": "Schützen Sie Nachrichten mit AES-Verschlüsselung und einem Passwort." },
-  "file-checksum": { "name": "Datei-Hash-Prüfer", "desc": "Überprüfen Sie Downloads mit SHA-256-Prüfsummen." },
-  "word-counter": { "name": "Wort- und Zeichenzähler", "desc": "Zählen Sie Wörter, Zeichen, Sätze und Lesedauer in Echtzeit." },
-  "case-converter": { "name": "Groß-/Kleinschreibung ändern", "desc": "Konvertieren Sie Text in Großbuchstaben, Kleinbuchstaben, Titel, Satz, Camel Case und Kebab Case." },
-  "text-diff": { "name": "Textvergleich", "desc": "Vergleichen Sie zwei Texte Zeile für Zeile und finden Sie Unterschiede." },
-  "readability": { "name": "Lesbarkeitsanalyse", "desc": "Analysieren Sie Verständlichkeit und Bildungsniveau eines Textes." },
-  "line-tools": { "name": "Zeilenwerkzeuge", "desc": "Sortieren, umkehren, Duplikate entfernen und Zeilen mischen." },
-  "lorem-ipsum": { "name": "Lorem-Ipsum-Generator", "desc": "Erstellen Sie Platzhaltertexte nach Absätzen oder Wortanzahl." },
-  "markdown-editor": { "name": "Markdown-Editor", "desc": "Schreiben Sie Markdown mit Live-Vorschau und HTML-Export." },
-  "unit-converter": { "name": "Einheitenumrechner", "desc": "Konvertieren Sie Länge, Masse, Temperatur, Fläche, Volumen, Geschwindigkeit und Daten." },
-  "age-calculator": { "name": "Alters- und Datumsrechner", "desc": "Berechnen Sie ein genaues Alter oder den Zeitraum zwischen zwei Daten." },
-  "countdown": { "name": "Event-Countdown", "desc": "Zählen Sie die verbleibende Zeit bis zu einem Datum und einer Uhrzeit." },
-  "pomodoro": { "name": "Pomodoro-Timer", "desc": "Fokus-Timer mit Benachrichtigungen nach jeder Sitzung." },
-  "stopwatch": { "name": "Stoppuhr", "desc": "Präzise Stoppuhr mit Rundenaufzeichnung." },
-  "timezone-converter": { "name": "Zeitzonen-Umrechner", "desc": "Vergleichen Sie Uhrzeiten zwischen Städten weltweit." },
-  "qr-generator": { "name": "QR-Code-Generator", "desc": "Erstellen Sie QR-Codes aus Links oder Texten zum Herunterladen." },
-  "qr-scanner": { "name": "QR-Code-Scanner", "desc": "Scannen Sie QR-Codes mit Ihrer Kamera oder einem Bild." },
-  "barcode-generator": { "name": "Barcode-Generator", "desc": "Erstellen Sie CODE128- und EAN-Barcodes zum Herunterladen." },
-  "random-picker": { "name": "Zufallsauswahl", "desc": "Wählen Sie fair einen Gewinner aus einer Liste aus." },
-  "typing-test": { "name": "Tippgeschwindigkeitstest", "desc": "Messen Sie Wörter pro Minute und Ihre Genauigkeit." },
-  "color-converter": { "name": "Farbkonverter", "desc": "Konvertieren Sie HEX-, RGB- und HSL-Farben mit Live-Vorschau." },
-  "gradient-generator": { "name": "CSS-Verlaufs-Generator", "desc": "Erstellen Sie Farbverläufe und kopierfertigen CSS-Code." },
-  "palette-generator": { "name": "Farbpaletten-Generator", "desc": "Erstellen Sie sofort harmonische Farbpaletten mit fünf Farben." },
-  "shadow-generator": { "name": "Box-Shadow-Generator", "desc": "Erstellen Sie CSS-Schatten mit Live-Vorschau." },
-  "json-formatter": { "name": "JSON-Formatierer", "desc": "Formatieren, minimieren und validieren Sie JSON-Dateien." },
-  "base64": { "name": "Base64 Kodieren / Dekodieren", "desc": "Konvertieren Sie Text in Base64 und zurück." },
-  "jwt-decoder": { "name": "JWT-Decoder", "desc": "Zeigen Sie Header und Inhalt eines JWT-Tokens an." },
-  "uuid-generator": { "name": "UUID-Generator", "desc": "Erstellen Sie zufällige UUID-v4-IDs beliebig oft." },
-  "hash-generator": { "name": "Hash-Generator", "desc": "Erstellen Sie SHA-256-, SHA-1- und SHA-512-Hashes für beliebige Texte." },
-  "regex-tester": { "name": "Regex-Tester", "desc": "Testen Sie reguläre Ausdrücke mit Texten und zählen Sie Treffer." },
-  "url-encoder": { "name": "URL-Encoder / Decoder", "desc": "Kodieren und dekodieren Sie URLs und Parameter mit Prozentkodierung." },
-  "timestamp-converter": { "name": "Timestamp-Konverter", "desc": "Konvertieren Sie Unix-Zeitstempel in normale Daten und zurück." },
-  "csv-viewer": { "name": "CSV-Anzeige und Organisation", "desc": "Öffnen Sie CSV-Dateien als Tabellen mit Filtern und Sortierung." },
-  "csv-to-chart": { "name": "CSV zu Diagramm", "desc": "Erstellen Sie Balken- oder Liniendiagramme aus CSV-Daten." },
-  "json-csv": { "name": "JSON ↔ CSV", "desc": "Konvertieren Sie JSON-Listen in CSV und umgekehrt." }
+  "mortgage-calculator": {
+    "name": "Hypothekenrechner",
+    "desc": "Monatliche Zahlung, Gesamtzinsen und vollständiger Tilgungsplan."
+  },
+  "loan-calculator": {
+    "name": "Kreditrechner",
+    "desc": "Berechnen Sie Zahlung, Zinsen und Rückzahlung für private oder geschäftliche Kredite."
+  },
+  "auto-loan-calculator": {
+    "name": "Autokreditrechner",
+    "desc": "Berechnen Sie Fahrzeugrate, Gesamtkosten und Zinsen nach Laufzeit und Zinssatz."
+  },
+  "refinance-calculator": {
+    "name": "Refinanzierungsrechner",
+    "desc": "Ermitteln Sie, nach wie vielen Monaten sich eine Refinanzierung lohnt."
+  },
+  "credit-card-payoff": {
+    "name": "Kreditkarten-Schuldenrechner",
+    "desc": "Berechnen Sie die benötigte Zeit zur Tilgung und Einsparungen durch zusätzliche Zahlungen."
+  },
+  "compound-interest": {
+    "name": "Zinseszinsrechner",
+    "desc": "Lassen Sie Ihre Ersparnisse durch regelmäßige Einzahlungen über die Zeit wachsen."
+  },
+  "savings-goal": {
+    "name": "Sparziel-Rechner",
+    "desc": "Berechnen Sie, wie viel Sie monatlich sparen müssen, um Ihr Ziel zu erreichen."
+  },
+  "retirement-calculator": {
+    "name": "Rentenrechner",
+    "desc": "Planen Sie Ihre Altersvorsorge bis zum gewünschten Rentenalter."
+  },
+  "crypto-profit": {
+    "name": "Krypto-Gewinn & DCA Rechner",
+    "desc": "Berechnen Sie Gewinne, Verluste und durchschnittliche Einstiegspreise bei Kryptowährungen."
+  },
+  "currency-converter": {
+    "name": "Währungsrechner",
+    "desc": "Live-Wechselkurse mit Daten der Europäischen Zentralbank."
+  },
+  "percentage-calculator": {
+    "name": "Prozentrechner",
+    "desc": "Berechnen Sie Prozentsätze, Anteile und prozentuale Veränderungen."
+  },
+  "tip-split": {
+    "name": "Trinkgeld- und Rechnungsaufteilung",
+    "desc": "Teilen Sie eine Rechnung inklusive Trinkgeld auf mehrere Personen auf."
+  },
+  "discount-calculator": {
+    "name": "Rabattrechner",
+    "desc": "Berechnen Sie Endpreis und Ersparnis mit Rabatten und Steuern."
+  },
+  "life-insurance-needs": {
+    "name": "Lebensversicherungs-Rechner",
+    "desc": "Schätzen Sie die passende Versicherungssumme für Ihre Familie."
+  },
+  "auto-insurance-estimator": {
+    "name": "Autoversicherungs-Rechner",
+    "desc": "Berechnen Sie passende Haftungs- und Selbstbeteiligungsoptionen."
+  },
+  "deductible-calculator": {
+    "name": "Selbstbeteiligungs-Vergleich",
+    "desc": "Vergleichen Sie Versicherungsersparnisse mit möglichen Eigenkosten."
+  },
+  "income-protection": {
+    "name": "Einkommensschutz-Rechner",
+    "desc": "Berechnen Sie, welches monatliche Einkommen Ihre Verpflichtungen absichern würde."
+  },
+  "rent-vs-buy": {
+    "name": "Mieten oder Kaufen Rechner",
+    "desc": "Vergleichen Sie Miete und Kauf anhand Ihrer tatsächlichen Situation."
+  },
+  "cap-rate": {
+    "name": "Cap-Rate Rechner",
+    "desc": "Berechnen Sie die Kapitalisierungsrate anhand von Einkommen und Immobilienwert."
+  },
+  "cash-on-cash": {
+    "name": "Cash-on-Cash Rendite",
+    "desc": "Berechnen Sie die jährliche Rendite auf Ihr tatsächlich investiertes Kapital."
+  },
+  "closing-costs": {
+    "name": "Nebenkosten-Rechner beim Immobilienkauf",
+    "desc": "Schätzen Sie zusätzliche Kosten neben dem Kaufpreis einer Immobilie."
+  },
+  "home-affordability": {
+    "name": "Immobilien-Leistbarkeitsrechner",
+    "desc": "Finden Sie heraus, welcher Immobilienpreis zu Einkommen und Eigenkapital passt."
+  },
+  "rental-yield": {
+    "name": "Mietrendite-Rechner",
+    "desc": "Berechnen Sie die Brutto- und Nettorendite einer vermieteten Immobilie."
+  },
+  "mortgage-payoff": {
+    "name": "Hypotheken-Tilgungsrechner",
+    "desc": "Erfahren Sie, wie viel Zeit und Zinsen zusätzliche Zahlungen sparen können."
+  },
+  "paycheck-calculator": {
+    "name": "Nettolohnrechner",
+    "desc": "Schätzen Sie Ihren Nettolohn ausgehend vom Bruttogehalt."
+  },
+  "income-tax-estimator": {
+    "name": "Einkommensteuer-Rechner",
+    "desc": "Schätzen Sie Ihre jährliche Steuerzahlung oder Rückerstattung."
+  },
+  "self-employment-tax": {
+    "name": "Steuerrechner für Selbstständige",
+    "desc": "Berechnen Sie Steuern und Beiträge für Selbstständige."
+  },
+  "overtime-calculator": {
+    "name": "Überstunden-Rechner",
+    "desc": "Berechnen Sie die Bezahlung für Überstunden und Zuschläge."
+  },
+  "pto-accrual": {
+    "name": "Urlaubsanspruch-Rechner",
+    "desc": "Berechnen Sie angesammelte Urlaubstage basierend auf Ihrem Jahresanspruch."
+  },
+  "employee-cost": {
+    "name": "Mitarbeiterkosten-Rechner",
+    "desc": "Gehalt plus Leistungen, Steuern, Ausrüstung und laufende Kosten."
+  },
+  "salary-converter": {
+    "name": "Gehaltsumrechner",
+    "desc": "Konvertieren Sie Stunden-, Wochen-, Monats- und Jahresgehalt."
+  },
+  "invoice-generator": {
+    "name": "Rechnungsgenerator",
+    "desc": "Erstellen Sie professionelle Rechnungen mit Positionen und PDF-Export."
+  },
+  "quote-generator": {
+    "name": "Angebotsgenerator",
+    "desc": "Erstellen Sie professionelle Angebote vor Beginn einer Arbeit."
+  },
+  "hourly-rate": {
+    "name": "Stundensatz-Rechner",
+    "desc": "Finden Sie heraus, welchen Stundensatz Sie für Ihr Einkommensziel benötigen."
+  },
+  "amazon-fba-calculator": {
+    "name": "Amazon FBA Gewinnrechner",
+    "desc": "Nettogewinn, Marge und ROI pro Einheit nach Amazon-Gebühren."
+  },
+  "etsy-fee-calculator": {
+    "name": "Etsy-Gebührenrechner",
+    "desc": "Berechnen Sie Ihren Auszahlungsbetrag nach Verkaufs- und Zahlungsgebühren."
+  },
+  "stripe-fee-calculator": {
+    "name": "Stripe-Gebührenrechner",
+    "desc": "Berechnen Sie Gebühren und Nettobetrag oder den benötigten Verkaufspreis."
+  },
+  "paypal-fee-calculator": {
+    "name": "PayPal-Gebührenrechner",
+    "desc": "Berechnen Sie PayPal-Gebühren und Ihren tatsächlichen Auszahlungsbetrag."
+  },
+  "roas-calculator": {
+    "name": "ROAS-Rechner",
+    "desc": "Berechnen Sie Werberendite, ROI und Break-even ROAS."
+  },
+  "cac-ltv-calculator": {
+    "name": "CAC & LTV Rechner",
+    "desc": "Berechnen Sie Kundenakquisekosten, Kundenwert und LTV:CAC-Verhältnis."
+  },
+  "profit-margin": {
+    "name": "Gewinnmargen-Rechner",
+    "desc": "Berechnen Sie Marge, Aufschlag und Verkaufspreis anhand der Kosten."
+  },
+  "break-even": {
+    "name": "Break-even-Rechner",
+    "desc": "Berechnen Sie benötigte Verkäufe und Umsatz zum Erreichen der Gewinnschwelle."
+  },
+  "late-fee": {
+    "name": "Mahngebühren-Rechner",
+    "desc": "Berechnen Sie Zinsen und Gebühren für verspätete Rechnungen."
+  },
+  "vat-gst": {
+    "name": "MwSt. / GST Rechner",
+    "desc": "Fügen Sie Verkaufssteuer hinzu oder entfernen Sie sie aus einem Preis."
+  },
+  "merge-pdf": {
+    "name": "PDF zusammenführen",
+    "desc": "Kombinieren Sie mehrere PDF-Dateien zu einem einzigen Dokument in der gewünschten Reihenfolge."
+  },
+  "split-pdf": {
+    "name": "PDF teilen",
+    "desc": "Extrahieren Sie bestimmte Seiten und erstellen Sie ein neues Dokument."
+  },
+  "compress-pdf": {
+    "name": "PDF komprimieren",
+    "desc": "Verkleinern Sie die Dateigröße eines PDFs für Uploads oder E-Mails."
+  },
+  "rotate-pdf": {
+    "name": "PDF drehen",
+    "desc": "Drehen Sie alle Seiten um 90°, 180° oder 270°."
+  },
+  "delete-pdf-pages": {
+    "name": "PDF-Seiten löschen",
+    "desc": "Entfernen Sie unnötige Seiten und speichern Sie eine neue Version."
+  },
+  "reorder-pdf": {
+    "name": "PDF-Seiten sortieren",
+    "desc": "Ziehen Sie Seiten per Drag & Drop in die gewünschte Reihenfolge."
+  },
+  "pdf-to-jpg": {
+    "name": "PDF zu JPG konvertieren",
+    "desc": "Wandeln Sie jede PDF-Seite in ein herunterladbares JPG-Bild um."
+  },
+  "jpg-to-pdf": {
+    "name": "Bilder zu PDF",
+    "desc": "Erstellen Sie aus Fotos oder Scans eine einzelne PDF-Datei."
+  },
+  "pdf-to-text": {
+    "name": "PDF-Text extrahieren",
+    "desc": "Extrahieren Sie auswählbaren Text aus einem PDF-Dokument."
+  },
+  "pdf-page-numbers": {
+    "name": "PDF-Seitennummern hinzufügen",
+    "desc": "Fügen Sie Seitenzahlen an beliebiger Stelle im Dokument hinzu."
+  },
+  "pdf-watermark": {
+    "name": "PDF-Wasserzeichen hinzufügen",
+    "desc": "Fügen Sie Text über Seiten hinzu, um Entwürfe oder Kopien zu markieren."
+  },
+  "protect-pdf": {
+    "name": "PDF schützen",
+    "desc": "Fügen Sie Ihrem Dokument vor dem Teilen ein Passwort hinzu."
+  },
+  "pdf-redact": {
+    "name": "PDF-Informationen schwärzen",
+    "desc": "Verdecken Sie vertrauliche Informationen dauerhaft vor dem Versand."
+  },
+  "compare-pdf": {
+    "name": "PDF vergleichen",
+    "desc": "Finden Sie Unterschiede zwischen zwei Versionen eines PDF-Dokuments."
+  },
+  "compress-image": {
+    "name": "Bildkompressor",
+    "desc": "Reduzieren Sie die Größe von JPG-, PNG- oder WebP-Bildern mit Qualitätskontrolle."
+  },
+  "resize-image": {
+    "name": "Bildgröße ändern",
+    "desc": "Ändern Sie die Größe in exakten Pixelwerten oder Prozentangaben."
+  },
+  "convert-image": {
+    "name": "Bildkonverter",
+    "desc": "Konvertieren Sie zwischen PNG-, JPG- und WebP-Formaten."
+  },
+  "heic-converter": {
+    "name": "HEIC-Konverter",
+    "desc": "Konvertieren Sie iPhone-HEIC-Fotos in JPG oder PNG."
+  },
+  "crop-image": {
+    "name": "Bild zuschneiden",
+    "desc": "Schneiden Sie Bilder nach Verhältnis oder individueller Auswahl zu."
+  },
+  "bulk-resize": {
+    "name": "Massen-Bildgrößenänderung",
+    "desc": "Ändern Sie die Größe mehrerer Bilder gleichzeitig."
+  },
+  "favicon-generator": {
+    "name": "Favicon-Generator",
+    "desc": "Erstellen Sie alle Favicon-Größen und den benötigten HTML-Code."
+  },
+  "image-watermark": {
+    "name": "Bild-Wasserzeichen hinzufügen",
+    "desc": "Fügen Sie Text zu Bildern hinzu, um sie zu schützen."
+  },
+  "exif-viewer": {
+    "name": "EXIF-Anzeige und Entferner",
+    "desc": "Sehen Sie Fotometadaten und laden Sie eine bereinigte Version herunter."
+  },
+  "color-from-image": {
+    "name": "Bild-Farbextraktor",
+    "desc": "Extrahieren Sie die wichtigsten Farben aus jedem Bild."
+  },
+  "meme-generator": {
+    "name": "Meme-Generator",
+    "desc": "Fügen Sie klassische Texte zu Bildern hinzu und erstellen Sie Memes."
+  },
+  "flip-image": {
+    "name": "Bild spiegeln",
+    "desc": "Spiegeln Sie Bilder horizontal oder vertikal."
+  },
+  "rotate-image": {
+    "name": "Bild drehen",
+    "desc": "Drehen Sie Fotos um 90°, 180° oder 270° ohne Qualitätsverlust."
+  },
+  "circle-crop": {
+    "name": "Rundes Profilbild erstellen",
+    "desc": "Erstellen Sie kreisförmige Avatare mit transparentem Hintergrund."
+  },
+  "grayscale-image": {
+    "name": "Schwarzweiß- und Sepia-Effekt",
+    "desc": "Konvertieren Sie Fotos in Graustufen oder mit Sepia-Effekt."
+  },
+  "compress-video": {
+    "name": "Video-Kompressor",
+    "desc": "Verkleinere jedes Video direkt im Browser – wähle eine Qualitätsstufe oder eine Zielgröße."
+  },
+  "trim-video": {
+    "name": "Video schneiden",
+    "desc": "Schneiden Sie den gewünschten Teil eines Videos aus und speichern Sie das Ergebnis."
+  },
+  "bitrate-calculator": {
+    "name": "Streaming-Bitrate-Rechner",
+    "desc": "Finden Sie die beste Bitrate basierend auf Upload-Geschwindigkeit, Auflösung und Plattform."
+  },
+  "vertical-reframe": {
+    "name": "Vertikaler 9:16-Zuschnitt",
+    "desc": "Passen Sie Videos für Shorts, TikTok und Reels an."
+  },
+  "video-to-gif": {
+    "name": "Video zu GIF Konverter",
+    "desc": "Verwandeln Sie kurze Videos in teilbare GIFs."
+  },
+  "frame-grabber": {
+    "name": "Video-Bildextraktor",
+    "desc": "Extrahieren Sie einzelne Bilder aus Videos für Vorschaubilder."
+  },
+  "mute-video": {
+    "name": "Video-Ton entfernen",
+    "desc": "Entfernen Sie die Audiospur aus einem Video."
+  },
+  "extract-audio": {
+    "name": "Audio aus Video extrahieren",
+    "desc": "Speichern Sie den Ton eines Videos als MP3 oder WAV."
+  },
+  "convert-video": {
+    "name": "Videokonverter",
+    "desc": "Konvertieren Sie MOV, MKV, AVI, WebM und andere Formate in MP4."
+  },
+  "resize-video": {
+    "name": "Videogröße ändern",
+    "desc": "Ändern Sie die Videoauflösung auf 1080p, 720p, 480p oder 360p."
+  },
+  "loop-video": {
+    "name": "Video wiederholen",
+    "desc": "Wiederholen Sie einen Clip mehrmals in einer einzigen Videodatei."
+  },
+  "adjust-volume": {
+    "name": "Video-Lautstärke anpassen",
+    "desc": "Erhöhen oder verringern Sie die Lautstärke eines Videos."
+  },
+  "stream-asset-sizer": {
+    "name": "Streaming-Asset-Größenrechner",
+    "desc": "Optimale Größen für Banner, Avatare und Panels für Twitch und YouTube."
+  },
+  "emote-resizer": {
+    "name": "Emote- und Sticker-Größenänderung",
+    "desc": "Passen Sie Bilder an Discord- und Twitch-Emote-Grenzen an."
+  },
+  "brb-overlay": {
+    "name": "BRB Overlay und Countdown",
+    "desc": "Stilvolle Browserquelle für OBS-Streams."
+  },
+  "upload-time": {
+    "name": "Upload-Zeit-Rechner",
+    "desc": "Berechnen Sie die benötigte Zeit zum Hochladen einer Datei."
+  },
+  "meta-tag-generator": {
+    "name": "Meta-Tag-Generator",
+    "desc": "Erstellen Sie Titel, Beschreibungen und Open-Graph-Tags zum direkten Kopieren."
+  },
+  "serp-preview": {
+    "name": "Google SERP Vorschau",
+    "desc": "Sehen Sie, wie Ihre Webseite in Google-Suchergebnissen angezeigt wird."
+  },
+  "og-preview": {
+    "name": "Social-Media-Vorschau",
+    "desc": "Zeigen Sie die Darstellung eines Links beim Teilen in sozialen Netzwerken."
+  },
+  "robots-generator": {
+    "name": "robots.txt Generator",
+    "desc": "Erstellen Sie eine gültige robots.txt Datei mit den gewünschten Regeln."
+  },
+  "sitemap-generator": {
+    "name": "Sitemap Generator",
+    "desc": "Erstellen Sie eine gültige XML-Sitemap aus einer Liste von URLs."
+  },
+  "schema-generator": {
+    "name": "Schema-Markup Generator",
+    "desc": "Erstellen Sie JSON-LD für FAQs, Artikel, Produkte und Breadcrumbs."
+  },
+  "keyword-density": {
+    "name": "Keyword-Dichte Analyse",
+    "desc": "Analysieren Sie die Häufigkeit von Begriffen und Keyword-Überoptimierung."
+  },
+  "slug-generator": {
+    "name": "URL-Slug Generator",
+    "desc": "Erstellen Sie saubere und lesbare URLs aus jedem Titel."
+  },
+  "utm-builder": {
+    "name": "UTM-Link-Generator",
+    "desc": "Erstellen Sie Kampagnen-URLs mit strukturierten Tracking-Parametern."
+  },
+  "url-shortener": {
+    "name": "URL-Kürzer",
+    "desc": "Verwandeln Sie lange Links in kurze, teilbare Vootkit-Links mit optionalem benutzerdefiniertem Namen."
+  },
+  "contrast-checker": {
+    "name": "Kontrast-Prüfer",
+    "desc": "Prüfen Sie Textkontraste nach WCAG AA- und AAA-Standards."
+  },
+  "accessible-palette": {
+    "name": "Barrierefreie Farbpalette",
+    "desc": "Erstellen Sie Farbkombinationen, die Kontrastanforderungen erfüllen."
+  },
+  "color-blind-simulator": {
+    "name": "Farbenblindheits-Simulator",
+    "desc": "Sehen Sie Designs aus verschiedenen Perspektiven der Farbwahrnehmung."
+  },
+  "heading-checker": {
+    "name": "Überschriften-Prüfer",
+    "desc": "Finden Sie fehlende Überschriftenebenen und fehlerhafte Strukturen."
+  },
+  "alt-text-auditor": {
+    "name": "Alt-Text-Prüfer",
+    "desc": "Finden Sie fehlende oder schwache Bildbeschreibungen."
+  },
+  "caption-validator": {
+    "name": "SRT-Untertitel-Prüfer",
+    "desc": "Überprüfen Sie Synchronisation und Formatierung von Untertiteln."
+  },
+  "metadata-remover": {
+    "name": "Metadaten-Entferner",
+    "desc": "Entfernen Sie versteckte Daten aus Bildern und Dokumenten."
+  },
+  "url-cleaner": {
+    "name": "URL-Reiniger",
+    "desc": "Entfernen Sie Tracking-Parameter wie utm_, fbclid und andere."
+  },
+  "screenshot-redactor": {
+    "name": "Screenshot-Privatsphäre-Tool",
+    "desc": "Verbergen Sie private Informationen vor dem Teilen von Screenshots."
+  },
+  "password-generator": {
+    "name": "Passwortgenerator",
+    "desc": "Erstellen Sie starke, zufällige Passwörter direkt auf Ihrem Gerät."
+  },
+  "password-strength": {
+    "name": "Passwort-Sicherheitsprüfung",
+    "desc": "Prüfen Sie die Stärke eines Passworts mit lokaler Analyse."
+  },
+  "text-encrypt": {
+    "name": "Text verschlüsseln / entschlüsseln",
+    "desc": "Schützen Sie Nachrichten mit AES-Verschlüsselung und einem Passwort."
+  },
+  "file-checksum": {
+    "name": "Datei-Hash-Prüfer",
+    "desc": "Überprüfen Sie Downloads mit SHA-256-Prüfsummen."
+  },
+  "word-counter": {
+    "name": "Wort- und Zeichenzähler",
+    "desc": "Zählen Sie Wörter, Zeichen, Sätze und Lesedauer in Echtzeit."
+  },
+  "case-converter": {
+    "name": "Groß-/Kleinschreibung ändern",
+    "desc": "Konvertieren Sie Text in Großbuchstaben, Kleinbuchstaben, Titel, Satz, Camel Case und Kebab Case."
+  },
+  "text-diff": {
+    "name": "Textvergleich",
+    "desc": "Vergleichen Sie zwei Texte Zeile für Zeile und finden Sie Unterschiede."
+  },
+  "readability": {
+    "name": "Lesbarkeitsanalyse",
+    "desc": "Analysieren Sie Verständlichkeit und Bildungsniveau eines Textes."
+  },
+  "line-tools": {
+    "name": "Zeilenwerkzeuge",
+    "desc": "Sortieren, umkehren, Duplikate entfernen und Zeilen mischen."
+  },
+  "lorem-ipsum": {
+    "name": "Lorem-Ipsum-Generator",
+    "desc": "Erstellen Sie Platzhaltertexte nach Absätzen oder Wortanzahl."
+  },
+  "markdown-editor": {
+    "name": "Markdown-Editor",
+    "desc": "Schreiben Sie Markdown mit Live-Vorschau und HTML-Export."
+  },
+  "unit-converter": {
+    "name": "Einheitenumrechner",
+    "desc": "Konvertieren Sie Länge, Masse, Temperatur, Fläche, Volumen, Geschwindigkeit und Daten."
+  },
+  "age-calculator": {
+    "name": "Alters- und Datumsrechner",
+    "desc": "Berechnen Sie ein genaues Alter oder den Zeitraum zwischen zwei Daten."
+  },
+  "countdown": {
+    "name": "Event-Countdown",
+    "desc": "Zählen Sie die verbleibende Zeit bis zu einem Datum und einer Uhrzeit."
+  },
+  "pomodoro": {
+    "name": "Pomodoro-Timer",
+    "desc": "Fokus-Timer mit Benachrichtigungen nach jeder Sitzung."
+  },
+  "stopwatch": {
+    "name": "Stoppuhr",
+    "desc": "Präzise Stoppuhr mit Rundenaufzeichnung."
+  },
+  "timezone-converter": {
+    "name": "Zeitzonen-Umrechner",
+    "desc": "Vergleichen Sie Uhrzeiten zwischen Städten weltweit."
+  },
+  "qr-generator": {
+    "name": "QR-Code-Generator",
+    "desc": "Erstellen Sie QR-Codes aus Links oder Texten zum Herunterladen."
+  },
+  "qr-scanner": {
+    "name": "QR-Code-Scanner",
+    "desc": "Scannen Sie QR-Codes mit Ihrer Kamera oder einem Bild."
+  },
+  "barcode-generator": {
+    "name": "Barcode-Generator",
+    "desc": "Erstellen Sie CODE128- und EAN-Barcodes zum Herunterladen."
+  },
+  "random-picker": {
+    "name": "Zufallsauswahl",
+    "desc": "Wählen Sie fair einen Gewinner aus einer Liste aus."
+  },
+  "typing-test": {
+    "name": "Tippgeschwindigkeitstest",
+    "desc": "Messen Sie Wörter pro Minute und Ihre Genauigkeit."
+  },
+  "color-converter": {
+    "name": "Farbkonverter",
+    "desc": "Konvertieren Sie HEX-, RGB- und HSL-Farben mit Live-Vorschau."
+  },
+  "gradient-generator": {
+    "name": "CSS-Verlaufs-Generator",
+    "desc": "Erstellen Sie Farbverläufe und kopierfertigen CSS-Code."
+  },
+  "palette-generator": {
+    "name": "Farbpaletten-Generator",
+    "desc": "Erstellen Sie sofort harmonische Farbpaletten mit fünf Farben."
+  },
+  "shadow-generator": {
+    "name": "Box-Shadow-Generator",
+    "desc": "Erstellen Sie CSS-Schatten mit Live-Vorschau."
+  },
+  "json-formatter": {
+    "name": "JSON-Formatierer",
+    "desc": "Formatieren, minimieren und validieren Sie JSON-Dateien."
+  },
+  "base64": {
+    "name": "Base64 Kodieren / Dekodieren",
+    "desc": "Konvertieren Sie Text in Base64 und zurück."
+  },
+  "jwt-decoder": {
+    "name": "JWT-Decoder",
+    "desc": "Zeigen Sie Header und Inhalt eines JWT-Tokens an."
+  },
+  "uuid-generator": {
+    "name": "UUID-Generator",
+    "desc": "Erstellen Sie zufällige UUID-v4-IDs beliebig oft."
+  },
+  "hash-generator": {
+    "name": "Hash-Generator",
+    "desc": "Erstellen Sie SHA-256-, SHA-1- und SHA-512-Hashes für beliebige Texte."
+  },
+  "regex-tester": {
+    "name": "Regex-Tester",
+    "desc": "Testen Sie reguläre Ausdrücke mit Texten und zählen Sie Treffer."
+  },
+  "url-encoder": {
+    "name": "URL-Encoder / Decoder",
+    "desc": "Kodieren und dekodieren Sie URLs und Parameter mit Prozentkodierung."
+  },
+  "timestamp-converter": {
+    "name": "Timestamp-Konverter",
+    "desc": "Konvertieren Sie Unix-Zeitstempel in normale Daten und zurück."
+  },
+  "csv-viewer": {
+    "name": "CSV-Anzeige und Organisation",
+    "desc": "Öffnen Sie CSV-Dateien als Tabellen mit Filtern und Sortierung."
+  },
+  "csv-to-chart": {
+    "name": "CSV zu Diagramm",
+    "desc": "Erstellen Sie Balken- oder Liniendiagramme aus CSV-Daten."
+  },
+  "json-csv": {
+    "name": "JSON ↔ CSV",
+    "desc": "Konvertieren Sie JSON-Listen in CSV und umgekehrt."
+  }
 }

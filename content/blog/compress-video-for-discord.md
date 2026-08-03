@@ -34,7 +34,7 @@ A 60-second clip at 8 Mbps is about 60 MB. To fit that same minute into 10 MB yo
 
 This is why the answer is never one setting. You're looking for the combination of changes that gets you to a target bitrate while giving up the least you'll actually notice.
 
-Our [Compress for Discord](/tools/video/compress-for-discord/) tool works backwards from this: you pick the target size, it computes the bitrate that fits and encodes to it. No guessing at a quality number and re-trying.
+Our [Video Compressor](/tools/video/compress-video/) tool works backwards from this: you pick the target size, it computes the bitrate that fits and encodes to it. No guessing at a quality number and re-trying.
 
 ## What to cut, in order
 
@@ -80,7 +80,7 @@ If the clip doesn't need sound at all, [Mute / Strip Audio](/tools/video/mute-vi
 
 ## Doing it
 
-1. Open [Compress for Discord](/tools/video/compress-for-discord/)
+1. Open [Video Compressor](/tools/video/compress-video/)
 2. Drop your video in
 3. **Fit into** — choose 10 MB, 50 MB or 500 MB to match your plan
 4. **Audio quality** — 128 kbps is a good default; drop to 96 if you're close to the line
@@ -122,7 +122,7 @@ All fine. The output is always MP4 (H.264), which plays everywhere, including in
 
 ## Related tools
 
-- [Compress for Discord](/tools/video/compress-for-discord/) — target a specific file size
+- [Video Compressor](/tools/video/compress-video/) — target a specific file size
 - [Video Trimmer](/tools/video/trim-video/) — the free win, do this first
 - [Video Resizer](/tools/video/resize-video/) — explicit resolution control
 - [Mute / Strip Audio](/tools/video/mute-video/) — instant, lossless for video
