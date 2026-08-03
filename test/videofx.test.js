@@ -308,6 +308,108 @@ ok(/sourceKbps: m\.duration > 0 \? \(f\.size \* 8\) \/ m\.duration \/ 1000 : 0/.
 console.log(`videofx no-inflate: ${pass} total assertions passed`);
 
 /* ---------------------------------------------------------------------------
+ * USER-REPORTED, 2 Aug 2026: 2.89 MB IN, 2.96 MB OUT
+ *
+ * The first no-inflate fix capped the VIDEO bitrate at (source total − audio)
+ * and then added the audio back on top. That targets the source's own size, so
+ * MP4 container overhead and rate-control overshoot pushed the result over it.
+ * Screenshot from the user: original 2.89 MB, compressed 2.96 MB, at a 10 MB
+ * target — the tool had no business re-encoding that file at all.
+ *
+ * Three separate defects, three separate guards. All of them are asserted here
+ * because fixing one and believing the job done is what produced the second
+ * report.
+ * ------------------------------------------------------------------------- */
+
+/* (1) The cap now applies to the COMBINED output, with a real margin. */
+{
+  const bytes = 2.89 * 1048576, dur = 20;
+  const srcKbps = bytes * 8 / dur / 1000;
+  const b = V.buildCompressArgs("in.mp4", "out.mp4", {
+    targetMB: 10, durationSec: dur, audioKbps: 128,
+    sourceKbps: srcKbps, sourceAudioKbps: 69, height: 1080, width: 1920
+  });
+  const outKbps = b.videoKbps + b.audioKbps;
+  ok(outKbps < srcKbps,
+     `combined output (${outKbps}) must be under the source (${Math.round(srcKbps)})`);
+  ok(outKbps < srcKbps * 0.95,
+     "and by a real margin, not a rounding error — container overhead eats a thin one");
+}
+
+/* The margin must hold across a spread of shapes, not just the reported one. */
+[[1, 10], [2.89, 20], [8, 60], [9.5, 15], [40, 120]].forEach(([mb, dur]) => {
+  const srcKbps = mb * 1048576 * 8 / dur / 1000;
+  const b = V.buildCompressArgs("in.mp4", "out.mp4", {
+    targetMB: 500, durationSec: dur, audioKbps: 192,   // huge target => source is the binding constraint
+    sourceKbps: srcKbps, sourceAudioKbps: 96, height: 720, width: 1280
+  });
+  if (b.error) return;
+  ok(b.videoKbps + b.audioKbps < srcKbps,
+     `${mb} MB / ${dur}s never exceeds its source bitrate`);
+});
+
+/* (2) Audio is never encoded ABOVE the source. Spending 128 on a 69 kb/s track
+       adds bytes and cannot restore quality that was never captured. */
+{
+  const b = V.buildCompressArgs("in.mp4", "out.mp4", {
+    targetMB: 10, durationSec: 30, audioKbps: 192, sourceAudioKbps: 64,
+    height: 720, width: 1280
+  });
+  eq(b.audioKbps, 64, "audio is capped at the source's own bitrate");
+  has(b.args, ["-b:a", "64k"], "and the cap reaches ffmpeg, not just the stats");
+}
+{
+  const b = V.buildCompressArgs("in.mp4", "out.mp4", {
+    targetMB: 10, durationSec: 30, audioKbps: 96, sourceAudioKbps: 320,
+    height: 720, width: 1280
+  });
+  eq(b.audioKbps, 96, "a high-bitrate source does not raise the user's chosen audio setting");
+}
+{
+  const b = V.buildCompressArgs("in.mp4", "out.mp4", {
+    targetMB: 10, durationSec: 30, audioKbps: 128, height: 720, width: 1280
+  });
+  eq(b.audioKbps, 128, "unknown source audio leaves the user's choice alone");
+}
+
+/* (3) parseProbe reads the audio bitrate out of ffmpeg's real output. */
+{
+  const real = [
+    "  Duration: 00:00:20.00, start: 0.000000, bitrate: 1212 kb/s",
+    "  Stream #0:0[0x1](und): Video: h264 (High), yuv420p, 1920x1080 [SAR 1:1 DAR 16:9], 1140 kb/s, 30 fps",
+    "  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 44100 Hz, stereo, fltp, 69 kb/s (default)"
+  ];
+  const m = V.parseProbe(real);
+  eq(m.audioKbps, 69, "audio bitrate parsed from the Audio stream line");
+  eq(m.w, 1920, "the video line is still read correctly alongside it");
+  eq(V.parseProbe(["  Stream #0:0: Video: h264, 1920x1080, 1140 kb/s"]).audioKbps, 0,
+     "a video-only file reports no audio bitrate rather than borrowing the video's");
+  eq(V.parseProbe([]).audioKbps, 0, "empty log reports no audio bitrate");
+}
+
+/* (4) THE REAL FIX: a file that already fits is never re-encoded at all.
+       This is a guard in the tool, before the engine is even downloaded. */
+{
+  ok(/ALREADY SMALL ENOUGH\? DO NOTHING/.test(vfxSrc),
+     "the compressor short-circuits when the file already fits");
+  ok(/if \(f\.size <= targetBytes\)/.test(vfxSrc),
+     "the check is on the raw file size, so it costs nothing");
+  ok(/blob: f, name: f\.name/.test(vfxSrc),
+     "and hands back the ORIGINAL file untouched rather than a re-encode");
+  const guardAt = vfxSrc.indexOf("targetBytes");
+  const runAt = vfxSrc.indexOf("root.VKVideo.run");
+  ok(guardAt > 0 && guardAt < runAt,
+     "the guard runs BEFORE the 32 MB engine download, not after");
+  ok(/Already under/.test(vfxSrc), "and says plainly that nothing was done");
+}
+
+ok(/SHRINK_MARGIN = 0\.92/.test(engSrc), "the shrink margin is a named, documented constant");
+ok(/2\.89 MB/.test(engSrc), "the reported case is recorded in the source so it is not undone");
+
+console.log(`videofx no-inflate v2: ${pass} total assertions passed`);
+
+
+/* ---------------------------------------------------------------------------
  * SPEED: SCALE THE FRAME TO THE BITRATE
  *
  * The dominant cost of a wasm encode is output pixels. Measured here, Chrome,

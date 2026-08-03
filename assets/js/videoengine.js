@@ -56,6 +56,12 @@
   function ceil(n) { return Math.ceil(n); }
   function clampInt(n, lo) { n = Math.floor(n); return n < lo ? lo : n; }
 
+  /* How far under the source we aim when the SOURCE is the binding constraint
+     rather than the target. 8% covers MP4 container overhead and libx264's
+     rate-control overshoot — the two things that turned a user's 2.89 MB input
+     into a 2.96 MB "compressed" output. */
+  var SHRINK_MARGIN = 0.92;
+
   /* Video bitrate (kbps, integer) to land a clip of `durationSec` in `targetMB`,
      leaving room for `audioKbps` audio and 4% container/rate-control overhead. */
   function targetVideoKbps(targetMB, durationSec, audioKbps) {
@@ -142,16 +148,27 @@
     if (!(opt.durationSec > 0) || !isFinite(opt.durationSec)) {
       return { error: 'Could not read this video’s length, so there’s no way to work out the bitrate that fits. Converting it to MP4 first usually fixes it.' };
     }
-    var vk = clampInt(targetVideoKbps(opt.targetMB, opt.durationSec, opt.audioKbps), 0);
+    /* Never re-encode audio ABOVE the source. A 69 kb/s track encoded at 128
+       adds bytes and cannot add back quality that was never there. */
+    var audioKbps = opt.audioKbps;
+    if (opt.sourceAudioKbps > 0 && opt.sourceAudioKbps < audioKbps) audioKbps = opt.sourceAudioKbps;
+
+    var vk = clampInt(targetVideoKbps(opt.targetMB, opt.durationSec, audioKbps), 0);
     if (vk < 50) return { error: 'That size is too small for this clip — even at minimum quality it won’t fit. Pick a larger size or a shorter clip.' };
 
-    /* NEVER SPEND MORE BITS THAN THE SOURCE HAS. Working purely backwards from
-       the target means a clip that already fits gets re-encoded UP to fill the
-       budget: a 0.46 MB file came back at 1.31 MB, which is the opposite of
-       what a tool called "compress" should do. Capping at the source's own
-       average bitrate makes the target a ceiling rather than a quota. */
+    /* NEVER PRODUCE A FILE BIGGER THAN THE SOURCE.
+     *
+     * First attempt capped the video bitrate at (source total − audio), then
+     * added the audio back on top. That targets the SOURCE'S OWN SIZE, so any
+     * container overhead or rate-control overshoot pushes the result over it.
+     * Reported by a user: 2.89 MB in, 2.96 MB out.
+     *
+     * Two corrections. The cap is now applied to the COMBINED output bitrate,
+     * not to video alone, and it carries a real margin so "compressed" is
+     * always smaller rather than merely similar. */
     if (opt.sourceKbps > 0 && isFinite(opt.sourceKbps)) {
-      var cap = clampInt(opt.sourceKbps - opt.audioKbps, 50);
+      var budget = opt.sourceKbps * SHRINK_MARGIN;          // total we may spend
+      var cap = clampInt(budget - audioKbps, 50);           // what is left for video
       if (cap < vk) vk = cap;
     }
     var buf = vk * 2;
@@ -178,9 +195,10 @@
         .concat(['-c:v', 'libx264', '-preset', preset,
           '-b:v', vk + 'k', '-maxrate', ceil(vk * 1.1) + 'k', '-bufsize', buf + 'k',
           '-pix_fmt', 'yuv420p',
-          '-c:a', 'aac', '-b:a', opt.audioKbps + 'k',
+          '-c:a', 'aac', '-b:a', audioKbps + 'k',
           '-movflags', '+faststart', '-y', outName]),
       videoKbps: vk,
+      audioKbps: audioKbps,
       height: outHeight,       // 0 = source resolution kept
       preset: preset,
       estimateSec: Math.round(estimateEncodeSeconds(encW, encH, opt.fps, opt.durationSec))
@@ -296,11 +314,12 @@
 
   var RE_DURATION = /Duration:\s*(\d+):(\d\d):(\d\d(?:\.\d+)?)/;
   var RE_SIZE = /[,\s](\d{2,5})x(\d{2,5})(?=[\s,\[])/;
+  var RE_AUDIO_KBPS = /Stream #[^\n]*Audio:[^\n]*?,\s*(\d{1,4})\s*kb\/s/;
 
   /* Pure: ffmpeg log lines -> { duration, w, h }. Zero means "not reported",
      never "empty" — callers must treat it as unknown. */
   function parseProbe(lines) {
-    var out = { duration: 0, w: 0, h: 0 };
+    var out = { duration: 0, w: 0, h: 0, audioKbps: 0 };
     lines = lines || [];
     for (var i = 0; i < lines.length; i++) {
       var line = String(lines[i]);
@@ -315,6 +334,13 @@
       if (!out.w && /Stream #.*Video:/.test(line)) {
         var s = RE_SIZE.exec(line);
         if (s) { out.w = +s[1]; out.h = +s[2]; }
+      }
+      /* The source's audio bitrate. Needed so we never spend MORE on audio
+         than the original did — encoding a 69 kb/s track at 128 kb/s adds
+         bytes to a file we were asked to shrink. */
+      if (!out.audioKbps && /Stream #.*Audio:/.test(line)) {
+        var a = RE_AUDIO_KBPS.exec(line);
+        if (a) out.audioKbps = +a[1];
       }
     }
     return out;

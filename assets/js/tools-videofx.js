@@ -96,6 +96,30 @@
         warnCapability();
         var f = files[0];
         guardFile(f);
+
+        /* ALREADY SMALL ENOUGH? DO NOTHING.
+         *
+         * Reported by a user: a 2.89 MB clip came back at 2.96 MB against a
+         * 10 MB target. Re-encoding a file that already fits cannot help — it
+         * costs quality, costs the user minutes of CPU, and thanks to container
+         * overhead can genuinely produce a larger file.
+         *
+         * This runs before the engine is even downloaded, so it is instant. */
+        var targetBytes = o.target * 1048576;
+        if (f.size <= targetBytes) {
+          return {
+            stats: [
+              { label: 'Your file', value: api.bytes(f.size) },
+              { label: 'Discord limit', value: o.target + ' MB' },
+              { label: 'Headroom', value: api.bytes(targetBytes - f.size) },
+              { label: 'Action taken', value: 'None needed' }
+            ],
+            downloads: [{ label: 'Download original', blob: f, name: f.name }],
+            status: 'Already under ' + o.target + ' MB — nothing to do',
+            note: 'This clip is already small enough to upload, so it has been left exactly as it is. Compressing it would throw away quality for no benefit, and re-encoding a file that already fits can even make it slightly larger. Upload it as is.'
+          };
+        }
+
         var inName = inputName(f);
         /* Bitrate depends on duration, and duration is only knowable once
            ffmpeg has the file open — so the arguments are built late, inside
@@ -108,6 +132,8 @@
             targetMB: o.target, durationSec: m.duration, audioKbps: o.audio,
             // The source's own average bitrate, so we never encode upwards.
             sourceKbps: m.duration > 0 ? (f.size * 8) / m.duration / 1000 : 0,
+            // And never spend more on audio than the source itself did.
+            sourceAudioKbps: m.audioKbps || 0,
             // Let the builder scale down when the bitrate can't carry the frame.
             height: m.h || 0, width: m.w || 0,
             speed: o.speed
@@ -123,7 +149,7 @@
             { label: 'Original', value: api.bytes(f.size) },
             { label: 'Compressed', value: api.bytes(blob.size) },
             { label: 'Resolution', value: scaled ? built.height + 'p' : (meta && meta.h ? meta.h + 'p' : 'unchanged') },
-            { label: 'Video bitrate', value: built.videoKbps + ' kbps' }
+            { label: 'Bitrate', value: built.videoKbps + ' kbps video · ' + built.audioKbps + ' kbps audio' }
           ],
           downloads: [{ label: 'Download MP4', blob: blob, name: baseName(f.name) + '-' + o.target + 'mb.mp4' }],
           status: fit ? 'Compressed to fit ' + o.target + ' MB' : 'Compressed (close to target)',
