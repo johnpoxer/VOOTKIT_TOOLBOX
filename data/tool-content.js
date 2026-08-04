@@ -1505,6 +1505,435 @@ module.exports = {
     related: ['pdf-to-jpg', 'pdf-to-png', 'webp-to-pdf', 'webp-to-jpg', 'compress-image', 'pdf-to-text']
   },
 
+  /* ============ batch 9 — BUSINESS cluster, part 1 ============
+   * invoice / quote / receipt were 100% identical because the CODE is
+   * identical: tools-business.js exposes build('invoice'), build('quote'),
+   * build('receipt') from one function. The pages differ on what each document
+   * legally IS and when you send it, which is the real difference anyway.
+   * Shared mechanics read from computeTotals(): discount comes off the
+   * subtotal, then tax applies to the DISCOUNTED figure. */
+
+  'invoice-generator': {
+    intro: 'An invoice is a demand for payment, and the reason it gets paid on time is rarely the design — it is whether the client can match it to a purchase order, find your bank details, and see a due date without reading twice.',
+    what: [
+      'Builds a printable invoice from line items, then produces it two ways: <strong>Print → Save as PDF</strong>, or a downloadable HTML file. There is no PDF library involved, which is why it stays fast and why the output uses your system’s own fonts.',
+      'Totals follow the standard order: <strong>subtotal, then discount, then tax on the discounted figure</strong>. That sequence matters — taxing before discounting overcharges the client, and is the single most common arithmetic error on hand-made invoices.'
+    ],
+    specs: {
+      caption: 'How it calculates and exports',
+      rows: [
+        ['Line items', 'Description, quantity, unit price'],
+        ['Order of operations', 'Subtotal → minus discount → tax on the remainder'],
+        ['Tax', 'A percentage you set'],
+        ['Currency', 'Formatted with your locale’s conventions'],
+        ['Export', 'Print → Save as PDF, or download as HTML'],
+        ['Numbering', 'Yours to set — sequential is what accountants expect'],
+        ['Storage', 'Nothing is saved or uploaded'],
+        ['Privacy', 'Entirely on-device']
+      ]
+    },
+    steps: [
+      'Enter your details and the client’s.',
+      'Add line items — one line per thing you did, not one line saying "consulting".',
+      'Set tax and any discount.',
+      'Print to PDF, or download the HTML.'
+    ],
+    tip: 'Put the payment terms and the due date on the invoice as an actual date, not "net 30". Everyone reads a date; almost nobody converts "net 30" in their head, and an invoice whose deadline requires arithmetic is the one that sits in a pile.',
+    faqs: [
+      { q: 'Is tax calculated before or after the discount?', a: 'After. The discount comes off the subtotal, then tax is applied to what remains — which is the standard treatment in most jurisdictions and the one your client’s bookkeeper will expect. Taxing first would overcharge them.' },
+      { q: 'What should I number invoices?', a: 'Anything sequential and unique, and never reuse one. Most tax authorities require it, and gaps or duplicates are the thing an audit notices first. A simple 2026-001 pattern is enough.' },
+      { q: 'Is this a legally valid invoice?', a: 'Requirements vary by country — many require your tax registration number, a specific date format, or particular wording for reverse-charge and cross-border work. This produces a clean, standard document; whether it satisfies your local rules is a question for your accountant.' },
+      { q: 'Where is my data stored?', a: 'Nowhere. Nothing is saved between sessions and nothing is uploaded, so close the tab and it is gone. Download the HTML if you want a copy you can reopen and edit.' }
+    ],
+    related: ['quote-generator', 'receipt-generator', 'late-fee', 'vat-gst', 'hourly-rate', 'paypal-fee-calculator']
+  },
+
+  'quote-generator': {
+    intro: 'A quote is a promise about price made before the work exists — which makes it the riskiest document a small business sends. Get it wrong and you either lose the job or do it at a loss, and the difference usually comes down to what the quote said was <em>not</em> included.',
+    what: [
+      'Produces a professional estimate with line items and totals, headed <strong>QUOTE</strong> and addressed "Prepared for" rather than "Bill to" — because a quote invites a decision, it does not demand money.',
+      'Same arithmetic as the invoice tool: discount comes off the subtotal, tax applies to what remains. Export by printing to PDF or downloading HTML.'
+    ],
+    specs: {
+      caption: 'What a quote is, and is not',
+      rows: [
+        ['Document heading', 'QUOTE'],
+        ['Addressed', '"Prepared for" — not "Bill to"'],
+        ['Asks for payment?', 'No — that is the invoice’s job'],
+        ['Line items', 'Description, quantity, unit price'],
+        ['Order of operations', 'Subtotal → minus discount → tax on the remainder'],
+        ['Export', 'Print → Save as PDF, or download HTML'],
+        ['Validity period', 'Add it yourself in the notes — always add it'],
+        ['Privacy', 'Entirely on-device']
+      ]
+    },
+    steps: [
+      'Enter your details and the prospective client’s.',
+      'Break the work into line items — a quote with one line saying "website" is one nobody can question or approve.',
+      'Add a validity period and anything explicitly excluded.',
+      'Print to PDF or download.'
+    ],
+    tip: 'Write what is <em>excluded</em>, not only what is included. Scope disputes almost never start with someone denying a listed item — they start with an assumption about something the quote never mentioned. One line reading "Excludes hosting, stock photography and content writing" prevents more arguments than any amount of detail elsewhere.',
+    faqs: [
+      { q: 'What is the difference between a quote and an estimate?', a: 'Convention rather than law in most places: a quote implies a fixed price you are prepared to stand behind, an estimate implies an approximation that may move. If your price could change, say so on the document — the word alone will not protect you.' },
+      { q: 'How long should a quote stay valid?', a: 'Long enough to decide, short enough that your costs have not moved — 14 or 30 days is typical. Put the expiry date on the document, because a quote with no expiry is one someone may try to accept next year at last year’s prices.' },
+      { q: 'Is a quote legally binding?', a: 'Often it can become binding once accepted, which is exactly why the exclusions and the validity period matter. If the amounts are significant, have a professional look at your standard wording once — it will serve every quote you send afterwards.' },
+      { q: 'Can I turn an accepted quote into an invoice?', a: 'Re-enter the same line items in the Invoice Generator. Keeping the numbers identical between the two documents is what makes the invoice easy to approve.' }
+    ],
+    related: ['invoice-generator', 'receipt-generator', 'contract-generator', 'proposal-generator', 'hourly-rate', 'break-even']
+  },
+
+  'receipt-generator': {
+    intro: 'A receipt is proof that money moved. It is the document your client needs for their bookkeeping and their tax return, and the one you will want if a payment is ever disputed — which is why it says PAID and an invoice does not.',
+    what: [
+      'Produces a document headed <strong>RECEIPT</strong> with a green <strong>PAID</strong> badge, addressed "Received from". The badge is the functional part: it is what distinguishes this at a glance from an unpaid invoice sitting in the same folder.',
+      'Line items and totals work exactly as on the invoice, with the discount applied before tax.'
+    ],
+    specs: {
+      caption: 'What makes it a receipt',
+      rows: [
+        ['Document heading', 'RECEIPT'],
+        ['Status badge', 'PAID, shown in green'],
+        ['Addressed', '"Received from"'],
+        ['Records', 'Money already paid — not money owed'],
+        ['Line items', 'Description, quantity, unit price'],
+        ['Order of operations', 'Subtotal → minus discount → tax on the remainder'],
+        ['Export', 'Print → Save as PDF, or download HTML'],
+        ['Privacy', 'Entirely on-device']
+      ]
+    },
+    steps: [
+      'Enter your details and the payer’s.',
+      'List what was paid for, matching the original invoice if there was one.',
+      'Add the payment date and method in the notes.',
+      'Print to PDF or download, and send it promptly.'
+    ],
+    tip: 'Reference the invoice number on the receipt. Your client’s bookkeeper is trying to match two documents to one bank transaction, and a receipt with no reference makes that a manual job — which is how a paid invoice ends up chased anyway.',
+    faqs: [
+      { q: 'What is the difference between this and an invoice?', a: 'Timing and intent. An invoice requests payment; a receipt confirms it arrived. The heading, the PAID badge and the "Received from" wording all exist so nobody has to work out which they are holding.' },
+      { q: 'Do I have to issue receipts?', a: 'It depends where you are and what you sell — many jurisdictions require them for consumer sales, and some require specific details. Issuing one is good practice regardless, since it closes the transaction cleanly for both sides.' },
+      { q: 'Should the receipt show the payment method?', a: 'Yes, in the notes. "Paid by bank transfer, 12 March" makes reconciliation trivial for whoever is matching your document against a bank statement.' },
+      { q: 'Can I use this for cash payments?', a: 'That is exactly where a receipt matters most — a bank transfer leaves its own record, cash does not. Note the amount, the date and that it was cash, and keep your copy.' }
+    ],
+    related: ['invoice-generator', 'quote-generator', 'vat-gst', 'late-fee', 'paypal-fee-calculator', 'inventory-tracker']
+  },
+
+  'proposal-generator': {
+    intro: 'A proposal is not a longer quote. A quote answers "how much"; a proposal answers "why you, and what happens next" — and it is read by people who were not in the meeting where the work was discussed.',
+    what: [
+      'Fills a structured template — overview, scope, deliverables, timeline, pricing — into a clean formatted document, previewed live as you type and exported by printing to PDF or downloading HTML.',
+      'Bullet lists come from plain lines of text: type one item per line and they become a proper list, so you can write in a text box and get typography.'
+    ],
+    specs: {
+      caption: 'Structure and export',
+      rows: [
+        ['Sections', 'Overview, scope, deliverables, timeline, pricing'],
+        ['Lists', 'One item per line becomes a bullet'],
+        ['Preview', 'Live, as you type'],
+        ['Export', 'Print → Save as PDF, or download HTML'],
+        ['Fonts', 'Your system’s — no web fonts to load'],
+        ['Storage', 'Nothing saved or uploaded'],
+        ['Editable later?', 'Keep the HTML download and reopen it'],
+        ['Privacy', 'Entirely on-device']
+      ]
+    },
+    steps: [
+      'Write the overview last, even though it appears first — it is a summary and you cannot summarise what you have not written.',
+      'List deliverables as things the client will receive, not activities you will perform.',
+      'Add the timeline and pricing.',
+      'Print to PDF and read it once as if you were the client.'
+    ],
+    tip: 'Deliverables should be nouns, not verbs. "Five product photographs, retouched, supplied as high-resolution JPEG" can be delivered and checked off. "Photography services" cannot, and a proposal full of verbs is a proposal that ends in an argument about whether the work is finished.',
+    faqs: [
+      { q: 'How long should a proposal be?', a: 'As long as the decision requires and no longer. For a small engagement, one page that a decision-maker actually reads beats six that get skimmed. The overview should stand alone — assume some readers will read only that.' },
+      { q: 'Should pricing go in the proposal?', a: 'Usually yes, since a proposal without a price generates one extra round of email before any decision. If the price depends on choices, present two or three defined options rather than a range.' },
+      { q: 'Is this a contract?', a: 'No. A proposal describes intended work; a contract sets the terms that govern it — payment schedule, ownership, termination, liability. Use the Contract Generator for that, and have anything significant reviewed.' },
+      { q: 'Can I edit it after downloading?', a: 'Yes — the HTML download opens in any browser and can be edited in a text editor. Keep it if you expect to produce similar proposals; it is faster to adapt than to start again.' }
+    ],
+    related: ['quote-generator', 'contract-generator', 'invoice-generator', 'swot-generator', 'hourly-rate', 'landing-page-generator']
+  },
+
+  'contract-generator': {
+    intro: 'Most freelance disputes are not about the work. They are about what happens when the client goes quiet, or asks for a fourth revision, or wants to use the design for something nobody discussed. A short written agreement settles those before they happen.',
+    what: [
+      'Fills a simple services-agreement template — parties, scope, payment terms, timeline, termination — into a clean printable document.',
+      '<strong>This is a starting template, not legal advice.</strong> Contract law differs by country and by what you do, and no template can account for that. Treat this as a structured way to write down what you have already agreed.'
+    ],
+    specs: {
+      caption: 'Scope and limits',
+      rows: [
+        ['Covers', 'Parties, scope, payment, timeline, termination'],
+        ['Is it legal advice?', '<strong>No</strong>'],
+        ['Jurisdiction-specific?', 'No — you must adapt it'],
+        ['Signature', 'Add one with the PDF Signature tool after exporting'],
+        ['Export', 'Print → Save as PDF, or download HTML'],
+        ['Storage', 'Nothing saved or uploaded'],
+        ['Suitable for', 'Small, straightforward engagements'],
+        ['Not suitable for', 'Employment, IP assignment, anything high-value']
+      ]
+    },
+    steps: [
+      'Name both parties in full — legal entity names, not trading names.',
+      'Write the scope from the accepted quote or proposal so the documents agree.',
+      'Set payment terms as dates or milestones, and say what happens if either side stops.',
+      'Export, then have it reviewed if the amounts are meaningful.'
+    ],
+    tip: 'The clause worth arguing over is what happens when the project stalls on the client’s side. Work that is 80% done and waiting indefinitely for feedback is unpaid work with no end date. A line saying the balance becomes payable if the project is inactive for 30 days solves the most common cashflow problem in freelancing.',
+    faqs: [
+      { q: 'Can I use this without a lawyer?', a: 'For small, low-risk engagements many people do, and a plain written agreement is far better than nothing. But this is a template with no knowledge of your jurisdiction or your trade — if the value is significant, or it involves employment or intellectual property, have it reviewed. That review is reusable across every future client.' },
+      { q: 'What must a contract include to be valid?', a: 'That varies by country, and this cannot tell you. Broadly, an offer, acceptance and something of value exchanged — but formalities differ, and some agreements must be written or witnessed. Local advice is the only reliable answer.' },
+      { q: 'How do I get it signed?', a: 'Export to PDF, then use the PDF Signature tool for a drawn signature — noting that a drawn signature is visual rather than cryptographic. For anything valuable, use a certificate-based e-signature service.' },
+      { q: 'Should the scope repeat what is in my proposal?', a: 'Yes, or reference it explicitly as an attachment. The two documents disagreeing is precisely the ambiguity that gets exploited later.' }
+    ],
+    related: ['proposal-generator', 'quote-generator', 'invoice-generator', 'pdf-signature', 'late-fee', 'hourly-rate']
+  },
+
+  'resume-builder': {
+    intro: 'Most CVs are rejected in about seven seconds, and rarely for the reason the applicant imagines. Formatting that breaks in an applicant tracking system, or a first section that buries the relevant experience, loses more interviews than the experience itself.',
+    what: [
+      'Fills a clean, single-column resume template that prints properly and parses reliably — no tables, no text boxes, no multi-column layouts, which are exactly the things that scramble in automated screening.',
+      'Live preview as you type, exported by printing to PDF or downloading HTML.'
+    ],
+    specs: {
+      caption: 'Format and export',
+      rows: [
+        ['Layout', 'Single column — parses reliably in ATS'],
+        ['Avoids', 'Tables, text boxes, columns, graphics'],
+        ['Lists', 'One item per line becomes a bullet'],
+        ['Preview', 'Live, as you type'],
+        ['Export', 'Print → Save as PDF, or download HTML'],
+        ['Fonts', 'System fonts — no loading, no substitution surprises'],
+        ['Storage', 'Nothing saved or uploaded'],
+        ['Privacy', 'Your employment history stays on your device']
+      ]
+    },
+    steps: [
+      'Lead with the experience relevant to the specific job, not with the most recent if they differ.',
+      'Write achievements with numbers — what changed, by how much.',
+      'Keep it to one page for under ten years’ experience, two beyond that.',
+      'Print to PDF and send that, not the HTML.'
+    ],
+    tip: 'Send a PDF unless the posting asks for something else, and name the file <code>Firstname-Lastname-CV.pdf</code>. A file called <code>cv-final-v3.docx</code> arrives in a folder of two hundred others with the same name, and a .docx reflows differently on the reader’s machine than it did on yours.',
+    faqs: [
+      { q: 'Why single column? The two-column designs look better.', a: 'They look better to you and often parse badly in the software that reads them first. Applicant tracking systems read top to bottom, left to right; a sidebar can interleave with the main column and produce nonsense. A single column is boring and it survives.' },
+      { q: 'One page or two?', a: 'One for under about ten years of experience, two beyond that, and rarely more. The constraint is useful — it forces you to cut the roles that are no longer relevant, which is what a reader wants anyway.' },
+      { q: 'Should I include a photo?', a: 'It depends entirely on the country. Expected in parts of Europe and Asia, and actively discouraged in the US, UK and Canada where it raises discrimination concerns and some systems strip it. Check the local norm.' },
+      { q: 'Is my employment history uploaded anywhere?', a: 'No. Everything stays in your browser, and nothing is saved when you close the tab — which is the right default for a document containing your address, phone number and work history.' }
+    ],
+    related: ['proposal-generator', 'text-to-pdf', 'word-to-pdf', 'compress-pdf', 'readability', 'business-card-maker']
+  },
+
+  /* ============ batch 9 — BUSINESS cluster, part 2 (completes it) ============ */
+
+  'swot-generator': {
+    intro: 'A SWOT grid is easy to fill in and easy to waste. Most end up as four lists of adjectives that nobody reads again — because the value is not in naming a strength, it is in what the grid tells you to do next.',
+    what: [
+      'Lays out the four quadrants — strengths, weaknesses, opportunities, threats — into a clean printable grid, previewed live and exported by printing to PDF or downloading HTML.',
+      'The distinction the framework rests on: <strong>strengths and weaknesses are internal</strong> and you control them; <strong>opportunities and threats are external</strong> and you do not. Putting an external factor in the wrong box is what turns the exercise into a list.'
+    ],
+    specs: {
+      caption: 'The four quadrants',
+      rows: [
+        ['Strengths', 'Internal, positive — things you control'],
+        ['Weaknesses', 'Internal, negative — things you control'],
+        ['Opportunities', 'External, positive — things you can only respond to'],
+        ['Threats', 'External, negative — things you can only respond to'],
+        ['Entry format', 'One item per line'],
+        ['Export', 'Print → Save as PDF, or download HTML'],
+        ['Storage', 'Nothing saved or uploaded'],
+        ['Privacy', 'Entirely on-device']
+      ]
+    },
+    steps: [
+      'Fill the internal boxes first — they are the ones you have evidence for.',
+      'Keep each entry specific enough to act on. "Good customer service" is not a finding; "we answer support email within two hours, competitors take two days" is.',
+      'Pair items across boxes: which strength addresses which threat?',
+      'Export and revisit it in three months.'
+    ],
+    tip: 'The useful output is the pairings, not the lists. A strength that neutralises a threat is a strategy; a weakness that an opportunity would expose is a risk to fix first. If you finish the grid and no pairs jump out, the entries are too vague — go back and make them specific.',
+    faqs: [
+      { q: 'What is the difference between a weakness and a threat?', a: 'Control. A weakness is inside your organisation and you can change it — a slow website, no second developer. A threat is outside it and you can only prepare — a new competitor, a rule change. Misfiling them produces a plan aimed at the wrong things.' },
+      { q: 'How many items per box?', a: 'Three to five that matter beats fifteen that are true. Long lists feel thorough and dilute attention; the exercise is about prioritising, and a box with fifteen entries has prioritised nothing.' },
+      { q: 'Is SWOT still useful?', a: 'It is criticised for producing lists rather than decisions, and that criticism is fair when it is used as a checklist. Used to force pairings between internal capability and external circumstance, it is a fast and genuinely useful structuring tool.' },
+      { q: 'Can I use this for a personal decision?', a: 'Yes — it works for a career move or a big purchase as readily as for a company. The internal/external split still does the work.' }
+    ],
+    related: ['proposal-generator', 'break-even', 'cac-ltv-calculator', 'business-name-generator', 'roas-calculator', 'hourly-rate']
+  },
+
+  'landing-page-generator': {
+    intro: 'Testing whether anyone wants a thing should not require a hosting account, a framework and a weekend. A single HTML file with a headline, a few features and a call to action answers the question, and it will load faster than most funded startups’ homepages.',
+    what: [
+      'Generates a complete, self-contained landing page — hero, features, call to action — as one HTML file with the CSS inside it. No build step, no dependencies, nothing to install.',
+      'Because it is a single file with no external requests, it can be hosted anywhere that serves static files, and it will load almost instantly.'
+    ],
+    specs: {
+      caption: 'What you get',
+      rows: [
+        ['Output', 'One self-contained .html file'],
+        ['CSS', 'Inline — no external stylesheet'],
+        ['JavaScript', 'None required'],
+        ['Dependencies', 'None — no build, no framework'],
+        ['Sections', 'Hero, features, call to action'],
+        ['Hosting', 'Any static host — Netlify, GitHub Pages, S3'],
+        ['Editable', 'Yes — plain HTML in any text editor'],
+        ['Privacy', 'Generated on-device; nothing is uploaded']
+      ]
+    },
+    steps: [
+      'Write the headline as the outcome for the visitor, not a description of the product.',
+      'Add three or four features — benefits, not specifications.',
+      'Set one call to action. One.',
+      'Download the HTML and drop it on any static host.'
+    ],
+    tip: 'One call to action, repeated, beats three competing ones. A page offering "sign up", "read the docs" and "join our Discord" splits the visitor’s attention three ways and converts on none of them. Decide the single thing you want them to do and ask for it twice — once in the hero, once at the bottom.',
+    faqs: [
+      { q: 'Where can I host this?', a: 'Anywhere that serves a static file: Netlify, Vercel, GitHub Pages, Cloudflare Pages, or plain S3. With no build step and no dependencies, deploying is copying one file.' },
+      { q: 'Can I edit it afterwards?', a: 'Yes — it is ordinary HTML with the CSS in a style block. Open it in any text editor. If you want to restyle it heavily, the HTML to PDF tool follows the same inline-CSS approach if you later need a print version.' },
+      { q: 'Does it include analytics or a form?', a: 'No. It is a static page by design, which is what makes it instant to load and trivial to host. Paste your own analytics snippet or a form embed into the HTML if you need them.' },
+      { q: 'Is this enough to validate an idea?', a: 'For testing whether a message resonates, often yes — a page plus a way to capture interest answers more than months of planning. It will not tell you whether people will pay; only asking for money does that.' }
+    ],
+    related: ['html-to-pdf', 'business-name-generator', 'meta-tag-generator', 'serp-preview', 'og-preview', 'proposal-generator']
+  },
+
+  'business-name-generator': {
+    intro: 'Naming paralysis is real, and it is usually a shortage of options rather than a shortage of judgement. Seeing sixty combinations makes it obvious which two are worth checking — and which fifty-eight your instinct was right to reject.',
+    what: [
+      'Combines your keyword with prefixes and suffixes from a wordlist to produce candidate names. <strong>No AI and no tracking</strong> — it is deterministic combination, which means your idea is not sent anywhere to be processed.',
+      'It generates candidates. It cannot tell you whether a name is available, and that is the part that actually decides.'
+    ],
+    specs: {
+      caption: 'Method and limits',
+      rows: [
+        ['Method', 'Prefix/suffix combination against a wordlist'],
+        ['Uses AI?', 'No'],
+        ['Sends your keyword anywhere?', 'No'],
+        ['Checks domain availability?', '<strong>No</strong>'],
+        ['Checks trademarks?', '<strong>No</strong>'],
+        ['Deterministic', 'The same keyword gives the same candidates'],
+        ['Output', 'A list of names to shortlist from'],
+        ['Privacy', 'Entirely on-device']
+      ]
+    },
+    steps: [
+      'Enter a keyword that describes what you do.',
+      'Generate, and shortlist without overthinking — five candidates is enough.',
+      'Check domain availability and your national trademark register for each.',
+      'Say the survivors out loud before deciding.'
+    ],
+    tip: 'Say each shortlisted name down a phone line in your head. Names that read well and spell badly — anything with a silent letter, a doubled consonant or a creative misspelling — cost you every word-of-mouth referral, because the person retelling it gets the spelling wrong and the listener never finds you.',
+    faqs: [
+      { q: 'Does it check whether the domain is free?', a: 'No — it generates candidates only. Check availability separately at a registrar, and check the .com even if you plan to use something else, because someone else owning it affects how findable you are.' },
+      { q: 'Does it check trademarks?', a: 'No, and this genuinely matters. A name can be available as a domain and still infringe an existing mark in your industry. Search your national trademark register before you print anything, and take advice if you are investing in the brand.' },
+      { q: 'Why no AI?', a: 'Because it is not needed for combination, and using it would mean sending your business idea to a third-party service. Deterministic generation keeps the idea on your machine, which for an unlaunched business is worth more than novelty.' },
+      { q: 'The names feel generic.', a: 'Combination generators produce combinations — the good ones come from your keyword, not from the tool. Try several different keywords, including ones describing the outcome for your customer rather than what you do.' }
+    ],
+    related: ['landing-page-generator', 'slug-generator', 'business-card-maker', 'swot-generator', 'meta-tag-generator', 'qr-business-card']
+  },
+
+  'inventory-tracker': {
+    intro: 'Every small seller starts with a spreadsheet and discovers the same two problems: it is never open when a sale happens, and it tells you what you have without telling you what it is worth. This does both, and it opens in one tab.',
+    what: [
+      'Tracks items with quantity, cost and retail price, and computes stock value at both — so you can see your capital tied up in inventory and your potential revenue side by side.',
+      '<strong>Saved in your browser’s local storage</strong>, so it persists between visits. It also means it lives on that one device and in that one browser, which is the trade-off worth understanding before you rely on it.'
+    ],
+    specs: {
+      caption: 'What it tracks and where it lives',
+      rows: [
+        ['Per item', 'Quantity, unit cost, retail price'],
+        ['Computes', 'Total units, cost value, retail value'],
+        ['Storage', 'Browser local storage — persists between visits'],
+        ['Syncs across devices?', '<strong>No</strong>'],
+        ['Survives clearing browser data?', '<strong>No</strong>'],
+        ['Uploaded anywhere?', 'No'],
+        ['Multi-user', 'No — single device, single browser'],
+        ['Best for', 'A few dozen lines, one person']
+      ]
+    },
+    steps: [
+      'Add each item with its quantity, what it cost you, and what you sell it for.',
+      'Read the two totals — cost value is your capital tied up, retail is the ceiling on revenue.',
+      'Export or copy the data periodically. See the tip.'
+    ],
+    tip: 'Copy the data out somewhere else every so often. It is stored in this browser only — clearing site data, using a different device, or a browser deciding to reclaim storage will lose it, with no way back. Treat this as a fast working view, not as the only record of your stock.',
+    faqs: [
+      { q: 'Where is my inventory stored?', a: 'In your browser’s local storage on this device. Nothing is uploaded, which means nobody else can see it and also that nobody else can recover it. It will not appear on your phone or another computer.' },
+      { q: 'Will I lose it?', a: 'You can — clearing browsing data removes it, as can a browser reclaiming storage space under pressure. Keep a copy elsewhere. That warning is not boilerplate; it is the actual failure mode of local storage.' },
+      { q: 'Can two people use it together?', a: 'No. It is single-device by design. Shared stock across people needs a hosted system with accounts, and that is a different kind of product.' },
+      { q: 'Why show cost value and retail value separately?', a: 'They answer different questions. Cost value is the money currently sitting on your shelves — what you would lose if it were stolen. Retail value is what it could become. Confusing the two is how sellers overestimate how well they are doing.' }
+    ],
+    related: ['amazon-fba-calculator', 'etsy-fee-calculator', 'break-even', 'profit-margin', 'invoice-generator', 'csv-viewer']
+  },
+
+  'business-card-maker': {
+    intro: 'Business cards get rejected by printers for one reason more than any other: they were designed on screen at screen resolution, and screen resolution is roughly a quarter of what print needs. The result looks fine in the browser and fuzzy on card.',
+    what: [
+      'Produces a card at the standard <strong>3.5 × 2 inches</strong>, rendered at <strong>1050 × 600 pixels</strong> — which is exactly 300 DPI, the resolution commercial printers expect.',
+      'That arithmetic is the whole point: 3.5 × 300 = 1050, and 2 × 300 = 600. A card designed at 350 × 200 would look identical on screen and print badly.'
+    ],
+    specs: {
+      caption: 'Dimensions',
+      rows: [
+        ['Physical size', '3.5 × 2 inches (US standard)'],
+        ['Pixel size', '1050 × 600'],
+        ['Effective resolution', '300 DPI'],
+        ['Bleed included?', 'No — keep content away from the edge'],
+        ['Safe margin', 'Keep text ~3 mm inside the edge'],
+        ['Output', 'Downloadable image'],
+        ['Colour', 'RGB — printers may shift it slightly to CMYK'],
+        ['Privacy', 'Generated on-device']
+      ]
+    },
+    steps: [
+      'Enter your details — name, role, and the one or two ways you actually want to be contacted.',
+      'Keep text clear of the outer few millimetres.',
+      'Download and send to your printer.',
+      'Ask the printer whether they need bleed before ordering a large run.'
+    ],
+    tip: 'Leave about 3 mm of clear space inside every edge. Printers cut through stacks of cards and the blade drifts by a fraction of a millimetre — text set close to the edge on the design ends up touching the edge, or cut off, on some cards in the stack. That margin is why professional cards look centred and home-made ones do not.',
+    faqs: [
+      { q: 'Why 1050 × 600 pixels?', a: 'Because that is 3.5 × 2 inches at 300 DPI, the standard print resolution. Designing at screen resolution — say 350 × 200 — gives a file that looks correct in a browser and prints visibly soft, which is the most common reason a card comes back disappointing.' },
+      { q: 'Is this the right size everywhere?', a: '3.5 × 2 in is the US standard. Much of Europe uses 85 × 55 mm and Japan 91 × 55 mm — close but not identical. Check with your printer if you are outside the US.' },
+      { q: 'What is bleed, and do I need it?', a: 'Bleed is extra artwork past the trim line so that a colour running to the edge still does after cutting. This does not add bleed, so keep backgrounds and text away from the edge, or ask your printer whether they need a bleed version.' },
+      { q: 'Why might the colours look different when printed?', a: 'Screens are RGB and presses are CMYK, and some bright RGB colours simply cannot be reproduced in ink. Vivid blues and greens shift most. Ask for a proof before a large run.' }
+    ],
+    related: ['qr-business-card', 'business-name-generator', 'resume-builder', 'favicon-generator', 'social-media-image', 'compress-image']
+  },
+
+  'qr-business-card': {
+    intro: 'Handing someone a card means hoping they type your details in later. Most do not. A QR code that adds you to their phone directly removes the step where your contact information gets lost.',
+    what: [
+      'Encodes your details as a <strong>vCard</strong> — the standard contact format every phone understands — inside a QR code. Scanning it opens a prefilled "add contact" screen rather than a web page.',
+      'The data is <em>inside</em> the code, not fetched from a server. Nothing is stored anywhere, nothing expires, and the code keeps working forever with no service behind it.'
+    ],
+    specs: {
+      caption: 'Format and behaviour',
+      rows: [
+        ['Encoding', 'vCard, embedded directly in the QR'],
+        ['On scan', 'Opens the phone’s "add contact" screen'],
+        ['Requires a server?', 'No — the data is in the code itself'],
+        ['Can it expire?', 'No'],
+        ['Typical fields', 'Name, phone, email, organisation, website'],
+        ['Trade-off', 'More fields means a denser, harder-to-scan code'],
+        ['Scanner', 'Built into every modern phone camera'],
+        ['Privacy', 'Generated on-device; nothing is uploaded']
+      ]
+    },
+    steps: [
+      'Enter the details you actually want on a stranger’s phone.',
+      'Generate and download the code.',
+      'Print it at a decent size — around 2 cm square is the practical minimum.',
+      'Scan it yourself with a real phone before ordering anything.'
+    ],
+    tip: 'Include fewer fields than you think. Every extra character makes the QR pattern denser, and a dense code printed small on card stock fails to scan in ordinary indoor light — which is exactly where people will try it. Name, phone, email and company is plenty; the full postal address is what usually pushes it over.',
+    faqs: [
+      { q: 'What happens when someone scans it?', a: 'Their phone recognises the vCard and offers to add a new contact with the fields already filled. No app, no website, no typing — which is the entire advantage over printing your email address.' },
+      { q: 'Will it stop working?', a: 'No. The details are encoded in the pattern itself rather than pointing at a URL, so there is no service to shut down and no link to rot. Dynamic QR codes sold by marketing services do depend on their provider staying alive; this does not.' },
+      { q: 'How small can I print it?', a: 'About 2 cm square is the practical floor, and larger is safer for a denser code. Test the actual print rather than the screen — paper, ink and lighting all cost you scan reliability.' },
+      { q: 'Can I update my details later?', a: 'Not on cards already printed — the data is fixed in the pattern. That is the trade-off for it never expiring. If your details change often, encode a link to a page you control instead.' }
+    ],
+    related: ['business-card-maker', 'qr-generator', 'business-name-generator', 'barcode-generator', 'favicon-generator', 'resume-builder']
+  },
+
   /* ================= session 1 ================= */
 
   'jpg-to-pdf': {

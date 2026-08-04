@@ -19,10 +19,10 @@ short FAQ answers, stub spec tables and dead related links all fail the build.
 
 | | Pages | Unique words |
 |---|---|---|
-| Hand-written | **114** | 269–419 |
-| Generic template | ~143 | ~96 |
+| Hand-written | **126** | 269–419 |
+| Generic template | ~131 | ~96 |
 
-Pages over 250 unique words: **114 of 257** — 44% of the catalogue.
+Pages over 250 unique words: **126 of 257** — 49% of the catalogue.
 
 **Duplication is the metric that now matters more than length.** See the
 measurement below: 714 near-duplicate page pairs across 22 clusters. Batches are
@@ -185,8 +185,37 @@ uses mammoth and converts structure not layout; excel-to-pdf uses SheetJS and
 drops charts; html-to-pdf fetches nothing over the network; pdf-ocr runs
 Tesseract locally in six languages at 2x render scale.*
 
+### Batch 9 — the business cluster, complete (3 Aug 2026)
+
+| | Before | After |
+|---|---|---|
+| business (12 pages) | 97% avg, 100% max | **35.7% avg, 0 pairs** |
+| invoice / quote / receipt | **100% identical** | 48.3% max |
+
+*Those three were byte-for-byte the same page because the CODE is the same:
+`tools-business.js` exposes `build('invoice')`, `build('quote')`,
+`build('receipt')` from one function. Generic content over a shared
+implementation reproduces the sharing. The pages now differ on what each
+document legally IS and when you send it — a quote invites a decision, an
+invoice demands money, a receipt proves it moved — which is the real
+difference anyway.*
+
+*Shared mechanics stated once, accurately, from `computeTotals()`: discount
+comes off the subtotal, then tax applies to the DISCOUNTED figure. Taxing first
+overcharges the client and is the commonest error on hand-made invoices.*
+
+*Other figures read from source: business-card-maker renders 1050x600 px, which
+is exactly 3.5x2 inches at 300 DPI — the page explains that arithmetic because
+designing at screen resolution is why cards come back fuzzy. qr-business-card
+embeds a vCard IN the code, so it needs no server and cannot expire.
+inventory-tracker uses localStorage, and the page is blunt that clearing browser
+data destroys it.*
+
+*contract-generator states plainly that it is a template and not legal advice,
+and names what it is unsuitable for.*
+
 **Remaining clusters, largest first:** everyday+misc (21), streaming
-(13), business (12), tax (8), images (8), privacy (8), education (8), travel (7),
+(13), tax (8), images (8), privacy (8), education (8), travel (7),
 developer (7), audio (6), realestate (6), accessibility (5).
 
 ## Next up, in order
