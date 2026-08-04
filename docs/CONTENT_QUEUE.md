@@ -19,13 +19,13 @@ short FAQ answers, stub spec tables and dead related links all fail the build.
 
 | | Pages | Unique words |
 |---|---|---|
-| Hand-written | **191** | 269–419 |
-| Generic template | ~69 | ~96 |
+| Hand-written | **209** | 269–419 |
+| Generic template | ~51 | ~96 |
 
-Pages over 250 unique words: **191 of 260** — 73% of the catalogue.
+Pages over 250 unique words: **209 of 260** — **80% of the catalogue**.
 
-**Duplicate pairs sitewide: 714 → 177** across five clusters destroyed on
-3 Aug (video, health, pdf, business, converters, streaming, tax, images, privacy, education, travel, realestate).
+**Duplicate pairs sitewide: 714 → 126** (−82%) across five clusters destroyed on
+3 Aug (video, health, pdf, business, converters, streaming, tax, images, privacy, education, travel, realestate, developer, audio, accessibility).
 
 **Duplication is the metric that now matters more than length.** See the
 measurement below: 714 near-duplicate page pairs across 22 clusters. Batches are
@@ -386,6 +386,32 @@ rental-yield's gross figure ignores every cost of ownership, which is why
 listings quote it. mortgage-payoff's tip is to instruct the lender to reduce
 the TERM rather than the payment, since many default to the latter and it
 captures almost none of the interest saving.*
+
+### Batch 17 — developer + audio + accessibility, all three (3 Aug 2026)
+
+| | Before | After |
+|---|---|---|
+| developer (7) | 97% avg | **39.6% avg, 0 pairs** |
+| audio (6) | 97% avg | **43.5% avg, 0 pairs** |
+| accessibility (5) | 97% avg | **42.9% avg, 0 pairs** |
+
+*Three at once, on the same condition as batch 16: no shared vocabulary between
+them, so no risk of one batch duplicating another.*
+
+*The honest-limits pattern from the privacy batch continues, because these are
+tools people trust:*
+*• **credit-card-validator** passes Luhn on `4111 1111 1111 1111` — a test
+number. A pass means "not obviously mistyped", never "real, funded or yours".*
+*• **iban-validator**: a valid IBAN is not a verified recipient, which is
+precisely how invoice-redirection fraud works.*
+*• **speech-to-text** is the ONE tool on the site where "runs locally" is not
+guaranteed — Chromium may send audio to Google for recognition. That is the
+browser's behaviour and no page can change it, so the page says so and tells
+you not to dictate anything confidential.*
+*• **accessibility**: every page states what an automated check cannot see.
+Contrast passing does not cover colour blindness; valid headings may still be
+meaningless; alt text that exists may be useless. "Passes the checker" is
+routinely mistaken for "accessible", and that mistake excludes people.*
 
 **Remaining clusters, largest first:** travel (7),
 developer (7), audio (6), accessibility (5).

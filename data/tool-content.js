@@ -4185,6 +4185,629 @@ module.exports = {
     related: ['mortgage-calculator', 'refinance-calculator', 'rent-vs-buy', 'credit-card-payoff', 'compound-interest', 'home-affordability']
   },
 
+  /* ============ batch 17a — developer cluster (complete) ============ */
+
+  'xml-formatter': {
+    intro: 'XML arrives from APIs and config exports as one unbroken line, which is efficient to transmit and impossible to read. Indenting it is the difference between finding a mis-nested tag in seconds and squinting at a wall of angle brackets.',
+    what: [
+      'Reformats XML with consistent indentation, and minifies it back when you need the compact form for transmission.',
+      'Because it parses the document to reformat it, <strong>malformed XML fails rather than producing garbage</strong> — which makes it a quick validity check as well as a formatter.'
+    ],
+    specs: {
+      caption: 'What it does',
+      rows: [
+        ['Format', 'Indents nested elements consistently'],
+        ['Minify', 'Strips whitespace back out'],
+        ['Malformed input', 'Fails — so it doubles as a validity check'],
+        ['Attribute order', 'Preserved'],
+        ['CDATA', 'Preserved'],
+        ['Namespaces', 'Preserved'],
+        ['Runs', 'In your browser — nothing uploaded'],
+        ['Not', 'A schema validator — structure only']
+      ]
+    },
+    steps: [
+      'Paste the XML.',
+      'Format to read it, or minify to ship it.',
+      'If it refuses, the document is not well-formed — that is the useful answer.'
+    ],
+    tip: 'Use it as a first-line validity check. Well-formed XML always formats; malformed XML always fails, so a refusal locates the problem faster than reading. The commonest causes are an unclosed tag, a stray ampersand that should be <code>&amp;amp;</code>, and mismatched case in tag names.',
+    faqs: [
+      { q: 'It will not format my XML.', a: 'Then it is not well-formed. Look for an unclosed or mismatched tag, a bare <code>&amp;</code> that needs escaping as <code>&amp;amp;</code>, or a case mismatch between an opening and closing tag — XML is case-sensitive where HTML is forgiving.' },
+      { q: 'Does it validate against a schema?', a: 'No. It checks the document is structurally well-formed, which is a different and weaker thing than conforming to an XSD or DTD. Schema validation needs a validator with your schema.' },
+      { q: 'Will it change my data?', a: 'No — only whitespace between elements. Attribute order, CDATA sections and namespaces are preserved. Note that whitespace inside a text node can be significant in some formats.' },
+      { q: 'Is my XML uploaded?', a: 'No, it is processed in your browser — which matters, since XML pasted into a formatter is frequently an API response containing credentials or customer data.' }
+    ],
+    related: ['html-formatter', 'json-formatter', 'css-formatter', 'sql-formatter', 'json-csv', 'text-diff']
+  },
+
+  'html-formatter': {
+    intro: 'Generated HTML — from a CMS, an email builder, a framework — arrives without meaningful indentation, and finding the div that is one level too deep in a wall of markup is genuinely hard.',
+    what: [
+      'Indents HTML so nesting is visible, and minifies it when you want to ship it smaller.',
+      'HTML is far more forgiving than XML: browsers repair unclosed tags silently, which is convenient and means a formatter cannot reliably tell you the markup is broken.'
+    ],
+    specs: {
+      caption: 'What it does',
+      rows: [
+        ['Format', 'Indents to show nesting'],
+        ['Minify', 'Strips whitespace for transmission'],
+        ['Malformed HTML', 'Usually still formats — browsers are forgiving'],
+        ['Void elements', 'Handled (<code>br</code>, <code>img</code>, <code>input</code>)'],
+        ['Inline vs block', 'Whitespace between inline elements is significant'],
+        ['Runs', 'In your browser — nothing uploaded'],
+        ['Not', 'A validator — use the W3C validator for that'],
+        ['Minified saving', 'Small once gzip is applied — see the tip']
+      ]
+    },
+    steps: [
+      'Paste the HTML.',
+      'Format to read it, minify to ship it.',
+      'Check inline elements after formatting — see the tip.'
+    ],
+    tip: 'Watch whitespace between inline elements. A space between two <code>&lt;span&gt;</code> or <code>&lt;a&gt;</code> tags renders as a visible gap, so reformatting can shift a layout subtly — words running together or drifting apart. Block elements are safe; inline ones are not, which is why formatting a template is not always a no-op.',
+    faqs: [
+      { q: 'Will formatting break my layout?', a: 'It can, in one specific way: whitespace between inline elements renders as a space. Adding newlines between spans, links or inline-blocks can introduce visible gaps. Block-level markup is unaffected.' },
+      { q: 'Is minifying worth it?', a: 'Less than it used to be. Gzip and Brotli already compress repeated whitespace very efficiently, so minified HTML often saves only a few percent over the wire. Worth doing for large documents, rarely worth a build step on its own.' },
+      { q: 'Does it validate my HTML?', a: 'No. HTML is deliberately forgiving and browsers repair errors silently, so a formatter cannot reliably flag problems. Use the W3C validator for correctness.' },
+      { q: 'Is my HTML uploaded?', a: 'No — everything runs in your browser. That matters more than it might sound: HTML pasted into a formatter is frequently an email template containing client names, a CMS export with draft copy, or a page fragment carrying API keys in an inline script. None of it is transmitted.' }
+    ],
+    related: ['css-formatter', 'xml-formatter', 'json-formatter', 'html-to-pdf', 'markdown-editor', 'meta-tag-generator']
+  },
+
+  'css-formatter': {
+    intro: 'Minified CSS is one line of a few hundred kilobytes, and understanding what a rule does — or finding the one overriding your change — starts with getting it back into a readable shape.',
+    what: [
+      'Expands minified CSS into indented rules, and minifies it back for production.',
+      'Formatting also makes specificity visible. Most "my CSS is not applying" problems are a more specific selector elsewhere, and that is far easier to spot in formatted source.'
+    ],
+    specs: {
+      caption: 'What it does',
+      rows: [
+        ['Format', 'One declaration per line, indented rules'],
+        ['Minify', 'Strips whitespace and the last semicolon'],
+        ['Preserves', 'Declaration order — which decides overrides'],
+        ['Media queries', 'Indented as blocks'],
+        ['Comments', 'Preserved when formatting'],
+        ['Runs', 'In your browser — nothing uploaded'],
+        ['Not', 'An optimiser — no unused-rule removal'],
+        ['Not', 'An autoprefixer']
+      ]
+    },
+    steps: [
+      'Paste the CSS.',
+      'Format to read and debug it.',
+      'Minify for production, or let your build tool do it.'
+    ],
+    tip: 'When a rule is not applying, look for specificity before assuming a syntax error. An ID selector beats any number of classes, and an inline style beats both — so your carefully written class rule loses to something you have not looked at. Formatting the stylesheet is what lets you find the competing selector.',
+    faqs: [
+      { q: 'Why is my CSS rule not applying?', a: 'Usually specificity. IDs beat classes, classes beat elements, and inline styles beat all of them; where specificity ties, the later rule wins. Formatting the file makes both the competing selector and the ordering visible.' },
+      { q: 'Does it remove unused CSS?', a: 'No — it formats and minifies only. Removing unused rules needs a tool that can see your markup, since a class may be added by JavaScript at runtime.' },
+      { q: 'Does it add vendor prefixes?', a: 'No. Use Autoprefixer in a build step for that; hand-written prefixes go stale as browser support changes.' },
+      { q: 'Is minifying worth it?', a: 'For large stylesheets yes, though gzip already handles repeated whitespace well. The bigger win is usually removing rules you no longer use.' }
+    ],
+    related: ['html-formatter', 'xml-formatter', 'json-formatter', 'color-converter', 'gradient-generator', 'shadow-generator']
+  },
+
+  'sql-formatter': {
+    intro: 'A query written by an ORM, or grown one clause at a time over six months, is often a single line that nobody can safely change. Formatting it is the first step in understanding what it actually does.',
+    what: [
+      'Reformats SQL with keywords and clauses on their own lines, so joins, conditions and subqueries become visible as structure rather than prose.',
+      'This is a formatter, not a parser — it does not execute anything, connect anywhere, or tell you whether the query is correct.'
+    ],
+    specs: {
+      caption: 'What it does',
+      rows: [
+        ['Format', 'Clauses and keywords on their own lines'],
+        ['Makes visible', 'Joins, nesting, condition grouping'],
+        ['Executes anything?', '<strong>No — it never connects to a database</strong>'],
+        ['Validates syntax?', 'No'],
+        ['Dialect-specific?', 'Largely generic'],
+        ['Runs', 'In your browser — nothing uploaded'],
+        ['Safe with', 'Production queries — nothing leaves the page'],
+        ['Not', 'A query optimiser']
+      ]
+    },
+    steps: [
+      'Paste the query.',
+      'Format it.',
+      'Read the joins first — that is where most errors live.'
+    ],
+    tip: 'Read the joins before the conditions. The commonest serious SQL bug is a join condition that has quietly moved into the <code>WHERE</code> clause on an outer join, which converts it into an inner join and silently drops rows. Formatting is what makes that visible; in one long line it is invisible.',
+    faqs: [
+      { q: 'Does it run my query?', a: 'No. It never connects to anything and executes nothing — it reformats text. That is why it is safe to paste a production query into it, and worth saying plainly.' },
+      { q: 'Does it check my syntax?', a: 'No, and dialects differ enough that a generic formatter should not pretend to. Use your database client for validation.' },
+      { q: 'Will it optimise my query?', a: 'No. Formatting changes readability, not the execution plan. For performance, read the plan your database produces — that is the only authority on it.' },
+      { q: 'Is my query sent anywhere?', a: 'No. It runs entirely in your browser, which matters because queries frequently contain table names, business logic and sometimes literal values from production.' }
+    ],
+    related: ['json-formatter', 'csv-viewer', 'json-csv', 'xml-formatter', 'text-diff', 'html-formatter']
+  },
+
+  'cron-generator': {
+    intro: 'Cron syntax is five fields of numbers and asterisks that everybody writes by copying an example and editing it hopefully. Getting it wrong usually means a job that never runs, or one that runs far more often than intended.',
+    what: [
+      'Builds a cron expression from a schedule you describe, so you are not counting field positions by hand.',
+      'The five fields are <strong>minute, hour, day-of-month, month, day-of-week</strong> — and the ordering is the thing people get wrong, because two of them are days.'
+    ],
+    specs: {
+      caption: 'The five fields',
+      rows: [
+        ['Position 1', 'Minute (0–59)'],
+        ['Position 2', 'Hour (0–23)'],
+        ['Position 3', 'Day of month (1–31)'],
+        ['Position 4', 'Month (1–12)'],
+        ['Position 5', 'Day of week (0–6, Sunday 0)'],
+        ['<code>*</code>', 'Every value'],
+        ['<code>*/5</code>', 'Every 5 units'],
+        ['<strong>Timezone</strong>', '<strong>The server’s, not yours</strong>']
+      ]
+    },
+    steps: [
+      'Describe the schedule you want.',
+      'Copy the expression.',
+      '<strong>Check what timezone your server runs in</strong> before relying on the hour.'
+    ],
+    tip: 'Cron runs in the server’s timezone, which is frequently UTC even when you are not. A job set for 09:00 runs at 09:00 UTC — which is 10:00 or 11:00 for much of Europe depending on the season, and the previous evening in parts of the Americas. Check the server clock before scheduling anything that matters.',
+    faqs: [
+      { q: 'What happens if I set both day-of-month and day-of-week?', a: 'In most cron implementations the job runs when <em>either</em> matches, not both — which surprises people who expect an AND. "1st of the month AND a Monday" is not expressible in standard cron.' },
+      { q: 'Which timezone does it use?', a: 'The server’s. That is commonly UTC on cloud hosts, so a job scheduled for a local morning may run at a quite different local time. Some schedulers let you set a timezone explicitly; plain cron does not.' },
+      { q: 'What does <code>*/5</code> mean?', a: 'Every five units of that field. In the minute position it means every five minutes; in the hour position, every five hours. It is a step, not a specific value.' },
+      { q: 'Why did my job not run?', a: 'Common causes: the schedule never matches (29 February, or a day-of-month above the month length), the environment lacks a PATH your script assumes, or the machine was asleep. Cron does not retry missed runs.' }
+    ],
+    related: ['timestamp-converter', 'timezone-converter', 'uuid-generator', 'regex-tester', 'json-formatter', 'hash-generator']
+  },
+
+  'credit-card-validator': {
+    intro: 'Card numbers carry a built-in checksum, so a typo can be caught before a payment is attempted. What that check cannot tell you is whether the card exists, has money on it, or belongs to the person typing.',
+    what: [
+      'Applies the <strong>Luhn algorithm</strong> — the checksum built into every card number since the 1960s — to catch typos and transposed digits.',
+      '<strong>This only validates the format.</strong> A number can pass Luhn perfectly and be entirely fictional; <code>4111 1111 1111 1111</code> is the standard test number and it passes.'
+    ],
+    specs: {
+      caption: 'What Luhn does and does not do',
+      rows: [
+        ['Algorithm', 'Luhn checksum (mod 10)'],
+        ['Catches', 'Single-digit typos and most transpositions'],
+        ['<strong>Does NOT check</strong>', '<strong>That the card exists</strong>'],
+        ['Does NOT check', 'Balance, expiry, or the CVV'],
+        ['Does NOT check', 'Who owns it'],
+        ['Passes Luhn', '4111 1111 1111 1111 — a test number'],
+        ['Runs', 'In your browser — nothing transmitted'],
+        ['Real validation', 'Only your payment processor can do it']
+      ]
+    },
+    steps: [
+      'Enter the number.',
+      'Read whether the checksum passes.',
+      'Understand that a pass means "not obviously mistyped", nothing more.'
+    ],
+    tip: 'Use this to catch typos in a form, never as an authorisation check. Luhn is a 1960s error-detection scheme designed for manual entry; it says nothing about whether a card is real, funded or stolen. Only the payment processor can answer those, and building any trust decision on a Luhn pass is a serious mistake.',
+    faqs: [
+      { q: 'Does passing mean the card is real?', a: 'No. Luhn is a checksum, so any number constructed to satisfy it passes — which is exactly how test numbers like 4111 1111 1111 1111 work. It detects mistyping, nothing else.' },
+      { q: 'What is it useful for then?', a: 'Catching errors before a form is submitted, which saves a failed transaction and a confusing error message. It is a user-experience improvement, not a security control.' },
+      { q: 'Is my card number sent anywhere?', a: 'No. The check runs entirely in your browser and nothing is transmitted or stored — which is the only acceptable design for a tool that asks for a card number.' },
+      { q: 'Should I store card numbers if they pass?', a: 'No. Storing card data brings you into PCI DSS scope with substantial obligations. Use a payment processor’s tokenisation so the number never touches your systems.' }
+    ],
+    related: ['iban-validator', 'hash-generator', 'paypal-fee-calculator', 'stripe-fee-calculator', 'invoice-generator', 'password-strength']
+  },
+
+  'iban-validator': {
+    intro: 'A mistyped IBAN usually bounces, but not always — and a payment that reaches the wrong valid account is far harder to recover than one that fails. The checksum exists to catch the typo before the money moves.',
+    what: [
+      'Validates an IBAN using the <strong>mod-97 checksum</strong> defined in the standard, plus the expected length for the country.',
+      'Mod-97 is stronger than the simpler schemes used elsewhere: it catches essentially all single-digit errors and transpositions, which is why international banking adopted it.'
+    ],
+    specs: {
+      caption: 'What is checked',
+      rows: [
+        ['Checksum', 'mod-97 (ISO 13616)'],
+        ['Length', 'Checked against the country code'],
+        ['Length varies', 'By country — 15 to 34 characters'],
+        ['Catches', 'Nearly all typos and transpositions'],
+        ['<strong>Does NOT check</strong>', '<strong>That the account exists</strong>'],
+        ['Does NOT check', 'The account holder’s name'],
+        ['Spaces', 'Ignored — grouping is presentational'],
+        ['Runs', 'In your browser — nothing transmitted']
+      ]
+    },
+    steps: [
+      'Paste the IBAN — spaces do not matter.',
+      'Check the result.',
+      'Verify the recipient separately. See the tip.'
+    ],
+    tip: 'A valid IBAN is not a verified recipient. The checksum confirms the number is well-formed, not that it belongs to the person you think — and payment redirection fraud works precisely by sending a valid IBAN for an account the fraudster controls. Confirm bank details by phone, on a number you already had, before paying an invoice with changed details.',
+    faqs: [
+      { q: 'Does a valid IBAN mean the account exists?', a: 'No. It means the number is well-formed and passes its checksum. Whether it exists, and whose it is, can only be confirmed by the bank — and increasingly by confirmation-of-payee services where they are available.' },
+      { q: 'Why are IBANs different lengths?', a: 'Each country defines its own format within the standard, so length varies from 15 to 34 characters. The country code at the start tells the validator which length to expect.' },
+      { q: 'Do the spaces matter?', a: 'No. Grouping into blocks of four is purely for readability; the underlying value is the unspaced string, and both forms validate identically.' },
+      { q: 'How do I avoid paying the wrong account?', a: 'Verify changed bank details out of band — phone the supplier on a number you already had, never one from the email requesting the change. Invoice redirection fraud is common and a valid IBAN offers no protection against it.' }
+    ],
+    related: ['credit-card-validator', 'invoice-generator', 'currency-converter', 'paypal-fee-calculator', 'hash-generator', 'late-fee']
+  },
+
+  /* ============ batch 17b — audio cluster (complete) ============
+   * Two of these use browser speech APIs whose support is genuinely uneven,
+   * and the pages say so rather than letting someone discover it mid-task. */
+
+  'audio-converter': {
+    intro: 'Audio formats split into two camps that behave completely differently: lossy ones that discard sound to save space, and lossless ones that keep everything. Converting between them only goes one way without cost.',
+    what: [
+      'Converts between <strong>MP3</strong> and <strong>WAV</strong> in your browser.',
+      '<strong>Converting MP3 to WAV does not restore quality.</strong> It produces a large file containing exactly the audio the MP3 had — the discarded detail is gone permanently, and no format can bring it back.'
+    ],
+    specs: {
+      caption: 'The two formats',
+      rows: [
+        ['MP3', 'Lossy — small, universally supported'],
+        ['WAV', 'Lossless PCM — large, uncompressed'],
+        ['WAV size', 'About 10 MB per minute, stereo'],
+        ['MP3 size', 'About 1 MB per minute at typical rates'],
+        ['<strong>MP3 → WAV</strong>', '<strong>Bigger file, identical sound quality</strong>'],
+        ['WAV → MP3', 'Smaller file, some quality discarded'],
+        ['Re-encoding MP3 → MP3', 'Loses quality each time — avoid'],
+        ['Runs', 'In your browser — never uploaded']
+      ]
+    },
+    steps: [
+      'Add the audio file.',
+      'Choose the target format.',
+      'Convert and download.'
+    ],
+    tip: 'Convert to WAV when the audio has more editing ahead of it, and to MP3 only at the very end. Every MP3 encode discards detail, so editing an MP3 and re-saving applies that loss twice — audible as a hollow, swirly quality on cymbals and sibilance. Work lossless, export lossy once.',
+    faqs: [
+      { q: 'Will converting MP3 to WAV improve quality?', a: 'No. It produces a much larger file containing exactly what the MP3 contained. The information a lossy encoder discarded is not recoverable by any means — the WAV is simply an uncompressed copy of the degraded audio.' },
+      { q: 'Which should I use?', a: 'MP3 for anything to be listened to, shared or uploaded — it is a tenth of the size and universally playable. WAV for anything going into audio software, because further editing compounds lossy artefacts.' },
+      { q: 'Why is my WAV so large?', a: 'Because it is uncompressed — roughly 10 MB per minute in stereo. That is the trade for keeping every sample exactly as recorded.' },
+      { q: 'Is my audio uploaded?', a: 'No. Conversion happens in your browser, which matters for voice notes, interviews and anything recorded privately.' }
+    ],
+    related: ['audio-compressor', 'audio-trimmer', 'extract-audio', 'voice-recorder', 'compress-video', 'speech-to-text']
+  },
+
+  'audio-compressor': {
+    intro: 'A one-hour recording at full quality is far too large to email and far larger than speech needs. Speech in particular compresses extremely well, because most of what a high bitrate preserves is detail the human voice never produced.',
+    what: [
+      'Re-encodes audio at a lower bitrate to reduce file size, producing MP3 output.',
+      'How much you can cut depends entirely on the content. Speech survives aggressive compression; music does not.'
+    ],
+    specs: {
+      caption: 'Rough guidance',
+      rows: [
+        ['Speech, mono', '64 kbps is usually plenty'],
+        ['Speech, stereo', '96 kbps'],
+        ['Music, acceptable', '128 kbps'],
+        ['Music, good', '192 kbps and above'],
+        ['Rough size', '1 MB per minute at 128 kbps'],
+        ['<strong>Already compressed?</strong>', '<strong>Re-encoding loses quality again</strong>'],
+        ['Output', 'MP3'],
+        ['Runs', 'In your browser — never uploaded']
+      ]
+    },
+    steps: [
+      'Add the file.',
+      'Choose a bitrate appropriate to the content, not to the file size you want.',
+      'Listen to the result before deleting the original.'
+    ],
+    tip: 'Speech and music need completely different bitrates, and treating them the same wastes space or ruins the audio. A podcast at 64 kbps mono sounds fine and is a quarter the size of the same recording at 256; music at 64 kbps sounds obviously damaged. Identify what you have before choosing a number.',
+    faqs: [
+      { q: 'What bitrate should I use?', a: '64 kbps mono for speech, 128 for acceptable music, 192 or above for music you care about. The gap is large because speech occupies a narrow frequency range and music does not.' },
+      { q: 'Can I compress an already-compressed file?', a: 'You can, and it loses quality again — lossy encoding is not idempotent. If you have the original, compress that instead of the compressed copy.' },
+      { q: 'Why does my music sound hollow?', a: 'The bitrate is too low, or it has been through more than one lossy encode. The characteristic swirly, underwater quality on cymbals is the signature of an over-compressed or re-encoded file.' },
+      { q: 'Is my audio uploaded?', a: 'No — it is processed in your browser. That matters for the recordings people most often need to shrink: interviews, lecture captures, therapy or medical notes, and voice memos that were never meant to leave the device they were recorded on.' }
+    ],
+    related: ['audio-converter', 'audio-trimmer', 'extract-audio', 'compress-video', 'voice-recorder', 'upload-time']
+  },
+
+  'audio-trimmer': {
+    intro: 'Most recordings have dead space at both ends — the fumble before you started and the reach for the stop button afterwards. Cutting it is the single fastest improvement to any voice recording.',
+    what: [
+      'Cuts a section from an audio file by start and end time.',
+      'Trimming removes data at full quality, which makes it the best first step before compressing: the seconds you cut cost nothing in fidelity, while the ones you compress do.'
+    ],
+    specs: {
+      caption: 'How it works',
+      rows: [
+        ['Selection', 'By start and end time'],
+        ['Quality cost', 'None for the audio you keep'],
+        ['Do this', 'Before compressing, not after'],
+        ['Removes', 'Dead air, fumbles, false starts'],
+        ['Output', 'The trimmed section'],
+        ['Runs', 'In your browser — never uploaded'],
+        ['Best for', 'Voice notes, interviews, podcast tops and tails'],
+        ['Not', 'A multi-region editor']
+      ]
+    },
+    steps: [
+      'Add the file.',
+      'Set start and end times, leaving a beat of silence at each end.',
+      'Trim and download.'
+    ],
+    tip: 'Trim before you compress. File size is bitrate times duration, so removing thirty seconds of dead air takes that share out at full quality — whereas achieving the same saving by lowering the bitrate degrades the whole recording. Cut first, compress second, and only if it is still too big.',
+    faqs: [
+      { q: 'Does trimming reduce quality?', a: 'Not for the audio you keep — it removes a section rather than re-encoding what remains. That is why it is the right first step whenever a file is too large.' },
+      { q: 'Can I cut a section from the middle?', a: 'This selects a range to keep. To remove a middle section you would trim twice and rejoin in an audio editor.' },
+      { q: 'How much silence should I leave?', a: 'A beat at each end — around half a second. Cutting hard against the first word sounds clipped and abrupt, and a little air makes a recording sound deliberate.' },
+      { q: 'Is my recording uploaded?', a: 'No. Everything happens in your browser, which matters for interviews and voice notes.' }
+    ],
+    related: ['audio-compressor', 'audio-converter', 'trim-video', 'extract-audio', 'voice-recorder', 'mute-video']
+  },
+
+  'voice-recorder': {
+    intro: 'Recording a quick voice note usually means opening an app, granting permissions and finding the file afterwards. A browser recorder skips all of it — and, unusually for a web recorder, keeps the audio on your machine.',
+    what: [
+      'Records from your microphone using the browser’s <strong>MediaRecorder</strong> API, producing <strong>WebM</strong> audio.',
+      'Nothing is uploaded. The recording exists in the page until you download it, which is the right arrangement for a voice note and unusual among web recorders.'
+    ],
+    specs: {
+      caption: 'How it works',
+      rows: [
+        ['API', 'MediaRecorder — built into the browser'],
+        ['Output format', 'WebM'],
+        ['Permission', 'Your browser will ask for microphone access'],
+        ['Uploaded?', '<strong>No — the recording stays on your device</strong>'],
+        ['Stored?', 'Only until you leave the page — download it'],
+        ['Need MP3?', 'Convert afterwards with the Audio Converter'],
+        ['Quality', 'Depends on your microphone, not the tool'],
+        ['Background noise', 'Not removed — see the tip']
+      ]
+    },
+    steps: [
+      'Allow microphone access when asked.',
+      'Record, then stop.',
+      '<strong>Download before closing the tab</strong> — nothing is saved automatically.'
+    ],
+    tip: 'Get closer to the microphone than feels natural. Distance is what makes recordings sound thin and echoey, because a distant mic picks up more room than voice — and no processing fixes that afterwards. Six inches away in a soft-furnished room beats any amount of editing on audio recorded across a desk.',
+    faqs: [
+      { q: 'Is my recording uploaded?', a: 'No. It is captured by the browser and held in the page until you download it. Nothing is transmitted, which is the point — voice notes are frequently personal.' },
+      { q: 'Will I lose it if I close the tab?', a: 'Yes. Nothing is saved automatically, so download it before navigating away. That is the trade-off for not storing anything on a server.' },
+      { q: 'Why is the file WebM rather than MP3?', a: 'WebM is what the browser’s recorder produces natively. Run it through the Audio Converter if you need MP3 for compatibility.' },
+      { q: 'How do I improve the quality?', a: 'Get closer to the microphone and record somewhere with soft furnishings. Distance and hard surfaces cause the echoey, distant sound that no post-processing removes convincingly.' }
+    ],
+    related: ['audio-trimmer', 'audio-converter', 'audio-compressor', 'speech-to-text', 'text-to-speech', 'extract-audio']
+  },
+
+  'text-to-speech': {
+    intro: 'Hearing your own writing read aloud catches things reading never does — a sentence that runs too long, a repeated word, a rhythm that stumbles. Editors have used the technique for a century; the browser can now do the reading.',
+    what: [
+      'Uses the browser’s built-in <strong>speechSynthesis</strong> to read text aloud, with the voices installed on your device.',
+      '<strong>Available voices depend entirely on your operating system and browser</strong> — the same text sounds different on a Mac, a Windows machine and an Android phone, and some devices offer very few.'
+    ],
+    specs: {
+      caption: 'What to expect',
+      rows: [
+        ['API', 'speechSynthesis — built into the browser'],
+        ['Voices', '<strong>Whatever your OS provides — varies widely</strong>'],
+        ['Quality', 'System-dependent, not tool-dependent'],
+        ['Languages', 'Those your system has installed'],
+        ['Downloadable audio?', 'No — it speaks, it does not export a file'],
+        ['Sent anywhere?', 'No — synthesis is local'],
+        ['Best use', 'Proofreading your own writing'],
+        ['Also useful for', 'Accessibility and language learning']
+      ]
+    },
+    steps: [
+      'Paste the text.',
+      'Pick a voice if your system offers several.',
+      'Listen for the sentences that stumble — those are the ones to rewrite.'
+    ],
+    tip: 'Use it as a proofreading tool rather than a production one. A synthetic voice reads exactly what you wrote rather than what you meant, so it stumbles precisely where a reader will — over-long sentences, missing words, accidental repetition. It is the fastest way to find prose problems your eye has learned to skip.',
+    faqs: [
+      { q: 'Why do the voices differ on my phone and laptop?', a: 'Because they come from the operating system, not from this page. Windows, macOS, Android and iOS each ship different voices, and some browsers expose more of them than others.' },
+      { q: 'Can I download the audio?', a: 'No. The API speaks through your device but does not expose a recordable stream, so there is no file to save. Producing an audio file needs a dedicated TTS service.' },
+      { q: 'Is my text sent anywhere?', a: 'No — synthesis happens locally, using voices already installed on your device rather than a cloud service. Worth noting because the sibling tool, Speech to Text, genuinely may send audio to your browser vendor: recognition and synthesis are asymmetric, and only one of them is guaranteed local.' },
+      { q: 'Why does it mispronounce names?', a: 'Synthetic voices work from general pronunciation rules and struggle with proper nouns and loan words. For proofreading it does not matter; the rhythm is what you are listening for.' }
+    ],
+    related: ['speech-to-text', 'readability', 'word-counter', 'voice-recorder', 'audio-converter', 'vocabulary-builder']
+  },
+
+  'speech-to-text': {
+    intro: 'Dictation is several times faster than typing for a first draft, and browsers have built-in recognition — with one significant caveat about which browsers, and where the audio goes.',
+    what: [
+      'Uses the browser’s <strong>SpeechRecognition</strong> API to transcribe speech as you talk.',
+      '<strong>Support is uneven and this one is not necessarily local.</strong> Chrome and Edge implement it; Firefox largely does not. And unlike the other tools here, the browser may send audio to the vendor’s servers for recognition — that is the browser’s behaviour, not this page’s, and it is worth knowing before dictating anything sensitive.'
+    ],
+    specs: {
+      caption: 'Support and privacy',
+      rows: [
+        ['API', 'SpeechRecognition — browser-provided'],
+        ['Works in', 'Chrome, Edge and Chromium browsers'],
+        ['Limited or absent in', 'Firefox'],
+        ['<strong>Audio handling</strong>', '<strong>The browser may send it to its vendor</strong>'],
+        ['This page', 'Sends nothing itself — the API is the browser’s'],
+        ['Accuracy', 'Good for clear speech, poor with noise or accents it does not expect'],
+        ['Punctuation', 'Usually spoken — "comma", "full stop"'],
+        ['Best for', 'First drafts, not final text']
+      ]
+    },
+    steps: [
+      'Use Chrome or Edge — Firefox will likely not work.',
+      'Allow microphone access and speak clearly, at a normal pace.',
+      '<strong>Always proofread.</strong> Dictation errors are real words, so a spellchecker will not catch them.'
+    ],
+    tip: 'Do not dictate anything confidential. Unlike every other tool here, recognition may be performed on the browser vendor’s servers rather than on your device — so the audio can leave your machine. That is the browser’s design and no web page can change it. For sensitive material, type it.',
+    faqs: [
+      { q: 'Why does nothing happen in Firefox?', a: 'Because Firefox does not implement the SpeechRecognition API in the way Chrome and Edge do. This is a browser capability rather than something a page can provide — use a Chromium-based browser.' },
+      { q: 'Is my speech processed on my device?', a: 'Not necessarily, and this is the one tool on the site where the honest answer is "it depends on your browser". Chromium may send audio to Google for recognition. This page transmits nothing itself, but it cannot control what the browser API does.' },
+      { q: 'Why is the accuracy poor?', a: 'Background noise, distance from the microphone, fast speech and accents outside the model’s training all reduce it. Getting closer to the microphone helps more than speaking slowly.' },
+      { q: 'Does it add punctuation?', a: 'Usually only when you say it — "comma", "full stop", "new paragraph". Expect to add most of it yourself, and proofread carefully: dictation errors are valid words, so spellcheck will not flag them.' }
+    ],
+    related: ['voice-recorder', 'text-to-speech', 'word-counter', 'readability', 'audio-trimmer', 'pdf-ocr']
+  },
+
+  /* ============ batch 17c — accessibility cluster (complete) ============
+   * WCAG figures read from source: 4.5:1 for AA normal text. Each page states
+   * what an automated check CANNOT see, because "passes the checker" is
+   * routinely mistaken for "accessible" and that mistake excludes people. */
+
+  'accessible-palette': {
+    intro: 'A palette can be beautiful and unusable. Contrast is the difference, and it is measurable — which means it is one of the few design questions with an actual right answer.',
+    what: [
+      'Builds colour combinations that meet <strong>WCAG AA</strong>, which requires a contrast ratio of at least <strong>4.5:1</strong> for normal text.',
+      'The ratio is computed from relative luminance, not from how different two colours look. Two colours can feel strongly contrasting and fail — which is why designing by eye produces text that some people cannot read.'
+    ],
+    specs: {
+      caption: 'WCAG thresholds',
+      rows: [
+        ['AA, normal text', '<strong>4.5:1</strong>'],
+        ['AA, large text', '3:1 (18pt, or 14pt bold)'],
+        ['AAA, normal text', '7:1'],
+        ['UI components and graphics', '3:1'],
+        ['Based on', 'Relative luminance, not perceived difference'],
+        ['<strong>Does not cover</strong>', '<strong>Colour blindness — separate problem</strong>'],
+        ['Also not covered', 'Font weight and size, which affect legibility'],
+        ['Runs', 'On your device']
+      ]
+    },
+    steps: [
+      'Build the combination you want to use.',
+      'Check it clears 4.5:1 for body text.',
+      '<strong>Then test it for colour blindness separately.</strong>'
+    ],
+    tip: 'Passing 4.5:1 does not mean the palette works for colour-blind users — those are different problems with different tests. Contrast measures lightness difference; colour blindness is about hue confusion, and a red and a green of identical luminance pass contrast while being indistinguishable to roughly 8% of men. Run both checks.',
+    faqs: [
+      { q: 'Why 4.5:1?', a: 'It is the WCAG AA threshold for normal text, chosen to remain readable for users with moderately low vision — roughly 20/40 acuity — without requiring assistive technology. Large text gets 3:1 because size compensates.' },
+      { q: 'My colours look high contrast but fail. Why?', a: 'Because the ratio uses relative luminance rather than perceived difference. Two saturated colours of similar lightness — a strong red and a strong blue — look dramatic and have almost no luminance difference between them.' },
+      { q: 'Is AA enough?', a: 'AA is the level most legislation and procurement references. AAA at 7:1 is stricter and worth targeting for body text where you can, particularly for content read at length.' },
+      { q: 'Does this cover colour blindness?', a: 'No — that is a separate check with a separate tool. Contrast and colour blindness are genuinely different failure modes and passing one says nothing about the other.' }
+    ],
+    related: ['contrast-checker', 'color-blind-simulator', 'palette-generator', 'color-converter', 'color-from-image', 'gradient-generator']
+  },
+
+  'color-blind-simulator': {
+    intro: 'Around one in twelve men has some form of colour vision deficiency, and the commonest design failure is not a bad colour — it is using colour alone to carry meaning that some users cannot see.',
+    what: [
+      'Simulates the three main types: <strong>protanopia</strong> (red-weak), <strong>deuteranopia</strong> (green-weak, the most common) and <strong>tritanopia</strong> (blue-weak, rare).',
+      'The point is not to design for the simulation but to find places where colour is the <em>only</em> signal — a red error state, a green success tick, a chart distinguished purely by hue.'
+    ],
+    specs: {
+      caption: 'The three types',
+      rows: [
+        ['Deuteranopia', 'Green-weak — the most common form'],
+        ['Protanopia', 'Red-weak'],
+        ['Tritanopia', 'Blue-weak — rare'],
+        ['Affects roughly', '1 in 12 men, 1 in 200 women'],
+        ['Classic failure', 'Red/green as the only distinction'],
+        ['<strong>The fix</strong>', '<strong>Never use colour alone — add text, icon or pattern</strong>'],
+        ['Complements', 'Contrast checking — different problem'],
+        ['Runs', 'On your device']
+      ]
+    },
+    steps: [
+      'Load the design or chart.',
+      'Compare the simulations, especially deuteranopia.',
+      'Anywhere meaning collapses, <strong>add a second signal</strong> — a label, an icon, a pattern.'
+    ],
+    tip: 'The fix is almost never a different colour — it is a second signal. Add an icon to the error state, a label to the chart line, a pattern to the bar. That works for every type of colour vision deficiency at once, survives greyscale printing, and helps in bright sunlight too. Choosing a "colour-blind-safe" palette solves one case; a second signal solves all of them.',
+    faqs: [
+      { q: 'Which type should I design for?', a: 'Check all three, but deuteranopia is the most common by a wide margin. If a design survives that and carries a non-colour signal everywhere meaning depends on it, the others are largely covered.' },
+      { q: 'Is red-green really the main problem?', a: 'Yes — it accounts for the overwhelming majority of cases, which is unfortunate given how universally red means bad and green means good in interfaces. That convention is exactly the one that fails.' },
+      { q: 'Does high contrast solve it?', a: 'No. They are separate problems. A red and a green of identical luminance pass contrast checks and are indistinguishable to a deuteranope. Both checks are needed.' },
+      { q: 'How do I fix a chart?', a: 'Label the lines directly rather than relying on a colour key, or vary line style and marker shape as well as colour. Direct labelling is better for everyone, not only colour-blind readers.' }
+    ],
+    related: ['accessible-palette', 'contrast-checker', 'palette-generator', 'color-converter', 'csv-to-chart', 'alt-text-auditor']
+  },
+
+  'heading-checker': {
+    intro: 'Screen reader users navigate by heading far more than by scrolling — jumping between sections the way a sighted reader skims. A page whose headings are chosen for size rather than structure is a page they cannot navigate.',
+    what: [
+      'Checks heading structure for the two problems that actually break navigation: a <strong>missing or duplicated <code>h1</code></strong>, and <strong>skipped levels</strong> such as an <code>h2</code> followed by an <code>h4</code>.',
+      'Headings are an outline, not a type scale. Choosing <code>h4</code> because it looks the right size is the root cause of most broken structures — that is what CSS is for.'
+    ],
+    specs: {
+      caption: 'What it checks',
+      rows: [
+        ['One <code>h1</code>', 'Exactly one per page'],
+        ['No skipped levels', '<code>h2</code> → <code>h4</code> is a break'],
+        ['Order', 'Document order, not visual position'],
+        ['Why it matters', 'Screen readers navigate by heading'],
+        ['Common cause', 'Picking a level for its font size'],
+        ['Correct fix', 'Use the right level, style it with CSS'],
+        ['<strong>Cannot check</strong>', '<strong>Whether the headings are meaningful</strong>'],
+        ['Runs', 'On your device']
+      ]
+    },
+    steps: [
+      'Paste the markup or content.',
+      'Fix the <code>h1</code> first — one per page.',
+      'Close any skipped levels, then read the headings alone and check they describe the page.'
+    ],
+    tip: 'Read your headings on their own, in order, with nothing else. They should work as a table of contents — if they do not tell you what the page covers, the structure is wrong even when every automated check passes. That is the test no tool can run and the one that decides whether the page is actually navigable.',
+    faqs: [
+      { q: 'Why does skipping a level matter?', a: 'Because heading levels express nesting. Jumping from <code>h2</code> to <code>h4</code> implies a missing section, and a screen reader user navigating by heading experiences a gap in the outline with nothing to explain it.' },
+      { q: 'Can I have more than one <code>h1</code>?', a: 'The HTML5 outline algorithm was never implemented by browsers or assistive technology, so in practice one <code>h1</code> per page remains the reliable convention. Multiple <code>h1</code>s make the page structure ambiguous.' },
+      { q: 'What if the right level looks wrong?', a: 'Style it. Choosing a heading level for its default size is precisely the mistake — the level is semantic structure and the appearance is CSS. An <code>h3</code> can look like anything you want.' },
+      { q: 'Does passing mean my headings are good?', a: 'No. It means the levels are structurally valid. Whether they actually describe the content is a judgement no automated check can make, and it is the part that matters most.' }
+    ],
+    related: ['alt-text-auditor', 'contrast-checker', 'readability', 'meta-tag-generator', 'accessible-palette', 'html-formatter']
+  },
+
+  'alt-text-auditor': {
+    intro: 'Missing alt text is the most common accessibility failure on the web, and bad alt text is nearly as unhelpful — "image", "photo", "IMG_4021" all pass an automated check and tell a screen reader user nothing.',
+    what: [
+      'Finds images without alt attributes, and flags values that are technically present but useless.',
+      'The distinction that matters most: <strong>a decorative image should have <code>alt=""</code></strong> — empty, not missing. Empty means "skip this"; absent means the screen reader may read the filename aloud.'
+    ],
+    specs: {
+      caption: 'What it checks',
+      rows: [
+        ['Missing <code>alt</code>', 'Flagged'],
+        ['<code>alt=""</code>', 'Correct for decorative images'],
+        ['<strong>Empty vs missing</strong>', '<strong>Not the same thing at all</strong>'],
+        ['Useless values', '"image", "photo", filenames'],
+        ['Good alt text', 'Describes function or content in context'],
+        ['Length', 'Usually under ~125 characters'],
+        ['<strong>Cannot check</strong>', '<strong>Whether the description is accurate</strong>'],
+        ['Runs', 'On your device']
+      ]
+    },
+    steps: [
+      'Paste the markup.',
+      'Give every meaningful image a description of its purpose in context.',
+      'Give every decorative image <code>alt=""</code> — empty, not absent.'
+    ],
+    tip: 'Write what the image <em>does</em>, not what it depicts. A photo of a person on an "About" page might be "Sarah Chen, founder"; the same photo as a link to a profile is "View Sarah Chen’s profile". Describing pixels is the common instinct and it is usually the less useful answer — context decides what a screen reader user actually needs.',
+    faqs: [
+      { q: 'What about decorative images?', a: 'Give them <code>alt=""</code>. That explicitly tells assistive technology to skip them. Omitting the attribute entirely is different and worse — some screen readers then announce the filename, which is noise.' },
+      { q: 'How long should alt text be?', a: 'Usually under about 125 characters. If an image genuinely needs more — a complex chart or diagram — describe it in the surrounding text and keep the alt short, since a long alt string is read as one unbroken utterance.' },
+      { q: 'Does an image need alt text if there is a caption?', a: 'Usually yes, and they should not simply repeat each other. The caption is read by everyone; the alt describes the image itself. Where a caption fully describes it, an empty alt avoids hearing the same sentence twice.' },
+      { q: 'Does passing mean my alt text is good?', a: 'No. A checker can see that text exists; it cannot tell whether it describes the image usefully. "image123" passes automated validation and helps nobody.' }
+    ],
+    related: ['heading-checker', 'contrast-checker', 'caption-validator', 'image-to-text', 'readability', 'accessible-palette']
+  },
+
+  'caption-validator': {
+    intro: 'A caption file that is a fraction of a second out is worse than no captions, because the words on screen belong to a sentence that has already finished — and a malformed timestamp can stop the whole file loading.',
+    what: [
+      'Checks <strong>SRT</strong> and <strong>VTT</strong> caption files for structural problems: malformed timestamps, out-of-order entries and overlaps.',
+      'The two formats look similar and differ in ways that break silently — <strong>SRT uses a comma before milliseconds, VTT uses a full stop</strong>, and VTT requires a <code>WEBVTT</code> header line.'
+    ],
+    specs: {
+      caption: 'The two formats',
+      rows: [
+        ['SRT timestamp', '<code>00:00:01,500</code> — <strong>comma</strong>'],
+        ['VTT timestamp', '<code>00:00:01.500</code> — <strong>full stop</strong>'],
+        ['VTT requires', 'A <code>WEBVTT</code> first line'],
+        ['Checks', 'Malformed timestamps, ordering, overlaps'],
+        ['Reading speed', 'Around 160–180 words per minute is comfortable'],
+        ['Line length', 'Two lines of ~32 characters is the usual limit'],
+        ['<strong>Cannot check</strong>', '<strong>Whether the text matches the audio</strong>'],
+        ['Runs', 'On your device']
+      ]
+    },
+    steps: [
+      'Paste the caption file.',
+      'Fix timestamp and ordering errors.',
+      '<strong>Watch the video with the captions on</strong> — that is the only real test.'
+    ],
+    tip: 'The comma-versus-full-stop difference between SRT and VTT is the single commonest cause of a caption file that will not load. Renaming a .srt to .vtt does not convert it: the timestamps still use commas, and the player rejects the file with an error that rarely says why. Convert properly, and add the WEBVTT header.',
+    faqs: [
+      { q: 'What is the difference between SRT and VTT?', a: 'VTT is the web standard and supports styling and positioning; SRT is older and plainer. Structurally the differences that break things are the millisecond separator — comma in SRT, full stop in VTT — and VTT’s required WEBVTT header.' },
+      { q: 'My captions will not load.', a: 'Check the separator first. A file renamed from .srt to .vtt keeps comma timestamps and will be rejected. Then check for a WEBVTT header, and for a stray blank line inside a cue.' },
+      { q: 'How fast should captions go?', a: 'Around 160–180 words per minute is comfortable to read. Faster than that and viewers miss text; the usual convention is two lines of roughly 32 characters per cue.' },
+      { q: 'Does valid mean accurate?', a: 'No. It means the file is well-formed. Whether the words match what is said, and whether the timing feels right, can only be judged by watching the video with them on.' }
+    ],
+    related: ['alt-text-auditor', 'speech-to-text', 'heading-checker', 'trim-video', 'readability', 'text-diff']
+  },
+
   /* ================= session 1 ================= */
 
   'jpg-to-pdf': {
