@@ -19,13 +19,13 @@ short FAQ answers, stub spec tables and dead related links all fail the build.
 
 | | Pages | Unique words |
 |---|---|---|
-| Hand-written | **154** | 269–419 |
-| Generic template | ~106 | ~96 |
+| Hand-written | **162** | 269–419 |
+| Generic template | ~98 | ~96 |
 
-Pages over 250 unique words: **154 of 260** — 59% of the catalogue.
+Pages over 250 unique words: **162 of 260** — 62% of the catalogue.
 
-**Duplicate pairs sitewide: 714 → 290** across five clusters destroyed on
-3 Aug (video, health, pdf, business, converters, streaming, tax).
+**Duplicate pairs sitewide: 714 → 269** across five clusters destroyed on
+3 Aug (video, health, pdf, business, converters, streaming, tax, images).
 
 **Duplication is the metric that now matters more than length.** See the
 measurement below: 714 near-duplicate page pairs across 22 clusters. Batches are
@@ -286,7 +286,31 @@ effective rate rather than your bracket — entering 40% because you are "in the
 40% bracket" understates take-home badly. That is a limitation of the tool
 stated plainly instead of hidden.*
 
-**Remaining clusters, largest first:** images (8), privacy (8), education (8), travel (7),
+### Batch 13 — the image-editing cluster, complete (3 Aug 2026)
+
+| | Before | After |
+|---|---|---|
+| images (8 pages) | 97% avg | **40.8% avg, 0 pairs** |
+
+*Two safety points are stated plainly because getting them wrong causes real
+harm:*
+
+*• **image-blur must never be used to redact.** Blur is a transformation, not a
+deletion, and blurred/pixelated text has been recovered in published research
+and in real leaks. The page says so and points at the tools that rasterise
+instead. This is the one page in the cluster where the tip is a warning.*
+
+*• **round-corners output must be saved as PNG.** JPEG has no alpha, so the
+transparent corners come back as solid black — the commonest way this export
+goes wrong, and now the first thing the page tells you.*
+
+*Ranges read from source: blur 1–40 (def 6), sharpen 1–10 (def 4), brightness
+and contrast 0–200 where 100 is unchanged, round-corners 2–50% of the SHORTER
+side (50% = a circle), collage cells 120–1000 px. grayscale uses Rec. 601
+weighting (0.299/0.587/0.114) rather than a flat average, which is why it does
+not look muddy.*
+
+**Remaining clusters, largest first:** privacy (8), education (8), travel (7),
 developer (7), audio (6), realestate (6), accessibility (5).
 
 ## Next up, in order

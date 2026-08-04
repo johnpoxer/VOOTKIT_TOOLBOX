@@ -2901,6 +2901,283 @@ module.exports = {
     related: ['salary-converter', 'overtime-calculator', 'payroll-calculator', 'hourly-rate', 'budget-calculator', 'employee-cost']
   },
 
+  /* ============ batch 13 — image-editing cluster (complete) ============
+   * 8 pages. Ranges read from tools-image*.js. image-sharpen and
+   * grayscale-image run through VKPixels (the worker), which is why they
+   * behave differently on large images from the canvas-filter tools. */
+
+  'grayscale-image': {
+    intro: 'Removing colour is not the same as averaging the channels, and the difference is why some black-and-white conversions look muddy while others look photographic. Human eyes are far more sensitive to green than to blue, and a conversion that ignores that flattens skin tones.',
+    what: [
+      'Converts to greyscale using <strong>Rec. 601 luminance</strong> — 29.9% red, 58.7% green, 11.4% blue — rather than a flat average of the three channels. A flat average would make a pure green and a pure blue the same shade of grey, which is not how they look.',
+      'Also offers <strong>sepia</strong>, which warms the image rather than merely tinting it: red is lifted above green above blue, and values are clamped so highlights do not wrap around to dark.'
+    ],
+    specs: {
+      caption: 'How the conversion works',
+      rows: [
+        ['Method', 'Rec. 601 luminance weighting'],
+        ['Weights', 'R 0.299 · G 0.587 · B 0.114'],
+        ['Flat average would give', 'A muddier, less photographic result'],
+        ['Sepia', 'Warms red over green over blue, clamped at both ends'],
+        ['Transparency', 'Preserved — alpha is never altered'],
+        ['Processing', 'Runs off the main thread on large images'],
+        ['Output', 'PNG or JPEG'],
+        ['Privacy', 'Runs in your browser — never uploaded']
+      ]
+    },
+    steps: [
+      'Add the image.',
+      'Choose greyscale or sepia.',
+      'Download.'
+    ],
+    tip: 'If a black-and-white conversion elsewhere has ever looked flat and lifeless, a flat channel average is usually why. Luminance weighting keeps the tonal separation your eye expects — greens stay lighter than blues, which is what makes foliage and skin read correctly rather than turning to mush.',
+    faqs: [
+      { q: 'Why not just average the three channels?', a: 'Because your eye does not. Green contributes nearly six times more to perceived brightness than blue, so an average makes greens too dark and blues too light. The result looks flat, and it is the commonest reason amateur black-and-white conversions disappoint.' },
+      { q: 'What happens to transparent areas?', a: 'They stay transparent. The alpha channel is passed through untouched — a greyscale that flattened alpha would silently ruin every logo run through it.' },
+      { q: 'Is this reversible?', a: 'No. Three colour channels are collapsed into one brightness value and the colour information is gone. Keep your original.' },
+      { q: 'Why is it fast on a large photo?', a: 'The per-pixel work runs off the main thread, so the page stays responsive and the progress bar actually moves. Tools that do this on the main thread appear frozen on a 12-megapixel image.' }
+    ],
+    related: ['filter-studio', 'image-brightness', 'image-sharpen', 'compress-image', 'convert-image', 'color-from-image']
+  },
+
+  'image-sharpen': {
+    intro: 'Sharpening does not add detail — nothing can. It increases local contrast at edges so that detail already present reads more clearly, and pushed too far it produces halos that look worse than the softness you were fixing.',
+    what: [
+      'Applies a convolution kernel that brightens each pixel relative to its neighbours, at an <strong>amount from 1 to 10</strong> with 4 as the default. Amount 0 is a true identity — nothing changes at all.',
+      'Runs on a background worker for large images, so the page stays usable and progress is real. Results are clamped rather than wrapped, so an over-bright result stops at white instead of turning black.'
+    ],
+    specs: {
+      caption: 'Controls and behaviour',
+      rows: [
+        ['Amount', '1 to 10, default 4'],
+        ['Method', 'Convolution — raises local edge contrast'],
+        ['Adds detail?', 'No — nothing can'],
+        ['Clamping', 'Results stop at 0 and 255, never wrap'],
+        ['Alpha', 'Never sharpened — avoids edge fringing'],
+        ['Large images', 'Processed off the main thread'],
+        ['Best for', 'Slightly soft scans and web resizes'],
+        ['Cannot fix', 'Motion blur or a missed focus']
+      ]
+    },
+    steps: [
+      'Add the image.',
+      'Start at 4 and increase only if it still looks soft.',
+      'Check the edges of high-contrast objects before downloading.'
+    ],
+    tip: 'Sharpen last, after resizing, never before. Resizing an already-sharpened image amplifies the halos into visible outlines, while sharpening a correctly sized image fixes exactly the softness that resizing introduced. If you can see a pale line around dark objects, the amount is too high.',
+    faqs: [
+      { q: 'Can this fix a blurry photo?', a: 'No. Motion blur and missed focus destroy information, and sharpening only increases contrast around what survived. It rescues slightly soft images; it cannot rescue genuinely blurred ones, and pushing the amount up will make them look worse rather than better.' },
+      { q: 'What are the halos around objects?', a: 'Over-sharpening. The kernel brightens one side of an edge and darkens the other, and at high amounts that becomes a visible outline. Reduce the amount until they disappear.' },
+      { q: 'Should I sharpen before or after resizing?', a: 'After. Downscaling softens an image, so sharpening afterwards corrects exactly that. Doing it first means the resize amplifies artefacts you already created.' },
+      { q: 'Does it affect transparency?', a: 'No. Alpha is deliberately left alone — sharpening the alpha channel produces visible fringing on anything with a transparent background.' }
+    ],
+    related: ['image-blur', 'resize-image', 'grayscale-image', 'compress-image', 'image-brightness', 'filter-studio']
+  },
+
+  'image-blur': {
+    intro: 'Blur is used for two opposite reasons: to make something look intentional, and to make something unreadable. Only one of those is safe, and the difference matters more than any setting.',
+    what: [
+      'Applies a blur at a <strong>radius from 1 to 40 pixels</strong>, default 6. Larger radii cost more processing and remove more detail.',
+      '<strong>Do not use blur to hide sensitive text.</strong> A blurred image still contains the underlying structure, and text blurred at a modest radius has been recovered in practice. For anything that must stay private, cover it with a solid block instead.'
+    ],
+    specs: {
+      caption: 'Controls and warnings',
+      rows: [
+        ['Radius', '1 to 40 px, default 6'],
+        ['Good for', 'Backgrounds, depth effects, softening'],
+        ['<strong>Not safe for</strong>', '<strong>Hiding text, faces or numbers</strong>'],
+        ['Why not', 'Blur is reversible enough to be unreliable'],
+        ['Use instead', 'Screenshot Redactor or PDF Redact — solid blocks'],
+        ['Larger radius', 'Slower, and softens more than intended'],
+        ['Output', 'PNG or JPEG'],
+        ['Privacy', 'Runs in your browser — never uploaded']
+      ]
+    },
+    steps: [
+      'Add the image.',
+      'Set the radius — 6 is a gentle softening, 30 or more obliterates detail.',
+      'Download.'
+    ],
+    tip: 'Never blur to redact. Blurring is a mathematical transformation, not a deletion, and researchers have repeatedly recovered text and faces from blurred and pixelated images. If information must not be readable, paint a solid black rectangle over it — the Screenshot Redactor and PDF Redact tools do exactly that, and destroy the pixels underneath.',
+    faqs: [
+      { q: 'Is blurring safe for hiding personal information?', a: 'No, and this is worth being blunt about. Blur is reversible enough that blurred and pixelated text has been recovered in published research and in real leaks. Use a solid block, and use a tool that rasterises the result so nothing survives underneath.' },
+      { q: 'What radius should I use?', a: 'Around 6 for gentle softening, 15–25 for a clearly blurred background, and 30 or more when you want detail gone entirely — for aesthetic reasons, not privacy ones.' },
+      { q: 'Why is a large radius slow?', a: 'Because each output pixel is computed from a larger neighbourhood, so the work rises sharply with radius. On a large photo a radius of 40 is a lot of arithmetic.' },
+      { q: 'Can I blur only part of the image?', a: 'Not here — the blur applies to the whole image. For a selective effect, crop the region, blur it, and composite it back in an editor.' }
+    ],
+    related: ['screenshot-redactor', 'pdf-redact', 'image-sharpen', 'filter-studio', 'metadata-remover', 'image-brightness']
+  },
+
+  'image-brightness': {
+    intro: 'Brightness and contrast are the two adjustments that fix most badly-lit photographs, and they pull against each other — lifting brightness flattens contrast, and raising contrast darkens the shadows you just recovered.',
+    what: [
+      'Adjusts brightness and contrast independently, each on a <strong>0–200 scale where 100 is unchanged</strong>. Below 100 reduces, above 100 increases.',
+      'Brightness shifts every value up or down; contrast pushes values away from or toward the middle. Understanding that difference is what stops the two undoing each other.'
+    ],
+    specs: {
+      caption: 'Controls',
+      rows: [
+        ['Brightness', '0–200, default 100 (unchanged)'],
+        ['Contrast', '0–200, default 100 (unchanged)'],
+        ['Brightness does', 'Shifts all values up or down equally'],
+        ['Contrast does', 'Pushes values away from the midpoint'],
+        ['Above 100', 'Increases · below 100 reduces'],
+        ['Clipping', 'Values pinned at 0 or 255 lose detail permanently'],
+        ['Output', 'PNG or JPEG'],
+        ['Privacy', 'Runs in your browser — never uploaded']
+      ]
+    },
+    steps: [
+      'Add the image.',
+      'Correct brightness first, then contrast — in that order.',
+      'Check the darkest and brightest areas for lost detail before downloading.'
+    ],
+    tip: 'Watch the extremes, not the middle. Once a highlight is pushed to pure white or a shadow to pure black, the detail there is gone and no amount of pulling back recovers it. Adjust until the image looks right, then back off slightly — a photo that clips is harder to fix later than one that is merely a little flat.',
+    faqs: [
+      { q: 'What is the difference between brightness and contrast?', a: 'Brightness moves every value in the same direction, lightening or darkening the whole image uniformly. Contrast pushes values away from the middle, making darks darker and lights lighter. Raising brightness alone makes an image look washed out, which is why the two are usually adjusted together.' },
+      { q: 'Which should I adjust first?', a: 'Brightness, to get the overall level right, then contrast to restore the punch that lifting brightness removed. Doing it the other way round means re-doing the contrast.' },
+      { q: 'Why has detail disappeared in the bright areas?', a: 'It has clipped — those pixels hit maximum and everything above it flattened to the same white. That is permanent in the output, so reduce brightness or contrast and re-export from the original.' },
+      { q: 'Can this fix a very dark photo?', a: 'Partly. Raising brightness reveals what was recorded, but shadows also contain most of the noise, so a very underexposed photo gets brighter and grainier together. There is a limit to what was captured.' }
+    ],
+    related: ['filter-studio', 'grayscale-image', 'image-sharpen', 'compress-image', 'crop-image', 'image-blur']
+  },
+
+  'filter-studio': {
+    intro: 'Filters are presets — combinations of adjustments someone already tuned so you do not have to. The useful ones are not the dramatic ones; they are the ones that make a mediocre photo look deliberate.',
+    what: [
+      'Applies one of eight presets: <strong>black &amp; white, sepia, invert, vintage, cool, warm, high contrast and B&amp;W film</strong>.',
+      'Cool and warm shift colour temperature, which is the adjustment that most often rescues a photo — indoor lighting casts orange, overcast daylight casts blue, and correcting for that does more than any amount of brightness.'
+    ],
+    specs: {
+      caption: 'The eight filters',
+      rows: [
+        ['Black &amp; white', 'Luminance-weighted greyscale'],
+        ['Sepia', 'Warm monochrome tint'],
+        ['Invert', 'Negative — reverses every channel'],
+        ['Vintage', 'Faded, warm, lower contrast'],
+        ['Cool / Warm', 'Colour temperature shift'],
+        ['High contrast', 'Pushes darks and lights apart'],
+        ['B&amp;W film', 'Greyscale with a film-like tone curve'],
+        ['Privacy', 'Runs in your browser — never uploaded']
+      ]
+    },
+    steps: [
+      'Add the image.',
+      'Try warm or cool first if the colours look off — temperature is usually the real problem.',
+      'Download.'
+    ],
+    tip: 'Reach for warm or cool before anything more dramatic. Most disappointing photos are not badly exposed, they are badly white-balanced — indoor bulbs push everything orange and shade pushes it blue. Correcting the temperature makes a photo look professionally handled in a way that a heavy filter never does.',
+    faqs: [
+      { q: 'Which filter should I use?', a: 'For correcting a photo, warm or cool to fix temperature. For a deliberate look, vintage and B&W film are the subtler options; invert and high contrast are effects rather than corrections.' },
+      { q: 'Can I stack filters?', a: 'One at a time here. To combine, apply one, download, and run the result through again — noting that each JPEG save adds a little compression loss, so use PNG between steps.' },
+      { q: 'What is the difference between black & white and B&W film?', a: 'The first is a straight luminance conversion. The film preset applies a tone curve as well, lifting the shadows and rolling off the highlights the way film stock does, which reads as less clinical.' },
+      { q: 'Is the effect reversible?', a: 'Only invert, which is its own opposite. The others discard information — keep your original.' }
+    ],
+    related: ['image-brightness', 'grayscale-image', 'image-sharpen', 'compress-image', 'meme-generator', 'collage-maker']
+  },
+
+  'round-corners': {
+    intro: 'Rounded corners are what make an avatar or a card thumbnail look designed rather than pasted in. The detail that decides whether it works is the file format, not the radius.',
+    what: [
+      'Rounds the corners at a <strong>radius from 2% to 50%</strong> of the image’s shorter side, default 12%. Because it is a percentage, the same setting looks consistent across images of different sizes — and <strong>50% produces a circle</strong> on a square image.',
+      'The corners it removes become transparent, which is why the output format matters.'
+    ],
+    specs: {
+      caption: 'Controls',
+      rows: [
+        ['Radius', '2% to 50% of the shorter side, default 12%'],
+        ['Why a percentage', 'Consistent across different image sizes'],
+        ['50% on a square', 'A perfect circle'],
+        ['Corners become', 'Transparent'],
+        ['<strong>Save as</strong>', '<strong>PNG or WebP — JPEG has no transparency</strong>'],
+        ['Non-square images', 'Radius is based on the shorter side'],
+        ['Output', 'PNG recommended'],
+        ['Privacy', 'Runs in your browser — never uploaded']
+      ]
+    },
+    steps: [
+      'Add the image.',
+      'Set the radius — 12% is a subtle card corner, 50% is a circle.',
+      '<strong>Save as PNG</strong>, not JPEG.'
+    ],
+    tip: 'Save as PNG or the rounding is wasted. JPEG has no transparency, so the corners you removed come back as solid black or white — and the result looks like a mistake rather than a design choice. This is the single commonest way rounded-corner exports go wrong.',
+    faqs: [
+      { q: 'My corners came out black.', a: 'The file was saved as JPEG, which cannot store transparency, so the transparent corners were filled. Re-export as PNG or WebP.' },
+      { q: 'How do I make a perfect circle?', a: 'Set the radius to 50% on a square image. On a non-square image that gives a stadium shape instead — crop to square first, or use the Circle Crop tool.' },
+      { q: 'Why is the radius a percentage rather than pixels?', a: 'So the same setting looks right on a 200 px avatar and a 2000 px banner. A fixed pixel radius that suits one is invisible or overwhelming on the other.' },
+      { q: 'Will it work on a photo with a busy background?', a: 'Yes, but the effect is clearest against a plain background. The rounding removes the corners regardless of what is in them.' }
+    ],
+    related: ['circle-crop', 'crop-image', 'resize-image', 'favicon-generator', 'convert-image', 'emote-resizer']
+  },
+
+  'color-from-image': {
+    intro: 'Building a palette from a photograph is how brand colours, slide decks and site themes usually start — and picking them by eye from a screenshot gets you approximations of the colours actually there.',
+    what: [
+      'Extracts a palette by <strong>quantising</strong> the image — grouping millions of similar pixels into a small set of representative colours — and returns them as hex codes you can paste anywhere.',
+      'Quantisation is why the result is a handful of usable colours rather than a list of every shade present, which would be useless.'
+    ],
+    specs: {
+      caption: 'How it works',
+      rows: [
+        ['Method', 'Colour quantisation — grouping similar pixels'],
+        ['Output', 'Hex codes'],
+        ['Why quantise', 'A photo holds thousands of distinct colours'],
+        ['Dominant colour', 'The largest group, not the most striking'],
+        ['Works best on', 'Images with clear colour regions'],
+        ['Works poorly on', 'Very dark or very washed-out photos'],
+        ['Next step', 'Check contrast before using as text colours'],
+        ['Privacy', 'Runs in your browser — never uploaded']
+      ]
+    },
+    steps: [
+      'Add the image.',
+      'Read the palette and copy the hex codes.',
+      '<strong>Check contrast</strong> before using any of them for text.'
+    ],
+    tip: 'Run any pair you plan to use as text and background through the Contrast Checker before committing. Palettes pulled from photographs are frequently beautiful and completely unreadable — two mid-tone colours can look lovely side by side and fail accessibility contrast badly, which is a problem you inherit on every page.',
+    faqs: [
+      { q: 'Why are the colours not exactly what I see?', a: 'Because quantisation returns a representative colour for a group of similar pixels rather than any single one. A sky containing a thousand blues yields one blue that stands for them — which is what makes the palette usable.' },
+      { q: 'What is the dominant colour?', a: 'The largest group by pixel count, which is not always the most noticeable. A photo with a big grey wall and a small red door will report grey as dominant even though the door is what you noticed.' },
+      { q: 'Can I use these as a brand palette?', a: 'As a starting point. Check contrast for text use, and be aware that colours pulled from a photograph often need adjusting for saturation before they work in an interface.' },
+      { q: 'Is my photo uploaded?', a: 'No. The image is read in your browser and never leaves your device, which matters more here than it might seem — people extract palettes from unreleased product shots, client work under embargo and design comps that are not public yet. Nothing is transmitted, so none of that is exposed.' }
+    ],
+    related: ['contrast-checker', 'palette-generator', 'color-converter', 'accessible-palette', 'gradient-generator', 'filter-studio']
+  },
+
+  'collage-maker': {
+    intro: 'A grid of photographs is the fastest way to show a set of things at once — a product range, a before-and-after series, a week of progress — and the arrangement decides whether it reads as a set or as clutter.',
+    what: [
+      'Arranges images into a grid with a column count, cell size and gap you control. <strong>Cell size runs from 120 to 1000 px, default 400.</strong>',
+      'Every cell is the same size, so images of different aspect ratios are fitted into a uniform square — which is what makes a grid look ordered rather than ragged.'
+    ],
+    specs: {
+      caption: 'Controls',
+      rows: [
+        ['Columns', 'You choose — rows follow from the image count'],
+        ['Cell size', '120 to 1000 px, default 400'],
+        ['Gap', 'Spacing between cells, in pixels'],
+        ['Cells', 'All the same size'],
+        ['Output size', 'Roughly columns × cell size'],
+        ['Order', 'The order you add the images'],
+        ['Output', 'A single image'],
+        ['Privacy', 'Runs in your browser — never uploaded']
+      ]
+    },
+    steps: [
+      'Add your images in the order you want them.',
+      'Set columns — 2 or 3 for social, more for a contact sheet.',
+      'Set cell size and gap, then download.'
+    ],
+    tip: 'Crop to a consistent shape before building the collage. Mixing portrait and landscape photos into uniform cells means some get cropped in ways you did not choose, and it is the difference between a grid that looks composed and one that looks automatic. Square-crop everything first if the images matter.',
+    faqs: [
+      { q: 'How many columns should I use?', a: 'Two or three for anything going on social media, where it will be viewed small. More columns suit a contact sheet or a product grid meant to be viewed large — beyond about five, individual images become too small to read on a phone.' },
+      { q: 'Why are some of my photos cropped oddly?', a: 'Because cells are uniform and your images are not. A landscape photo in a square cell has to lose its sides. Crop deliberately beforehand if the composition matters.' },
+      { q: 'How large will the output be?', a: 'Roughly columns multiplied by cell size, plus gaps. Three columns at 400 px gives about 1200 px wide — plenty for social, and worth raising for print.' },
+      { q: 'Can I reorder images after adding them?', a: 'The grid follows the order you added them, so add them in the order you want. For a specific arrangement, add them one at a time rather than selecting a whole folder.' }
+    ],
+    related: ['crop-image', 'resize-image', 'bulk-resize', 'social-media-image', 'compress-image', 'circle-crop']
+  },
+
   /* ================= session 1 ================= */
 
   'jpg-to-pdf': {
