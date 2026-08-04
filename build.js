@@ -83,15 +83,53 @@ const PUB = ADS.client || "ca-pub-5906583727409402";
  * is a Cumulative Layout Shift hit, and CLS is a ranking signal, so an
  * unreserved ad unit costs organic traffic to buy ad impressions — the wrong
  * trade for a site whose whole strategy is search. */
+/* The network's loader, for the <head>. Exactly one network's tags ever ship:
+   running two at once leaves unfilled slots and is against Ezoic's own setup
+   guide, which tells you to remove other networks' code first. */
+function adLoader() {
+  if (!ADS.enabled) return "<!-- ads disabled -->";
+  const net = ADS.network || "adsense";
+  if (net === "adsense") {
+    return `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${PUB}" crossorigin="anonymous"></script>`;
+  }
+  if (net === "ezoic") {
+    /* Order matters and is theirs, not mine: the two consent scripts must load
+       BEFORE the header script. data-cfasync="false" must sit in front of src —
+       it stops Cloudflare reordering them, and this site is behind Cloudflare,
+       so it is load-bearing rather than decorative. */
+    return `<script data-cfasync="false" src="https://cmp.gatekeeperconsent.com/min.js"></script>
+<script data-cfasync="false" src="https://the.gatekeeperconsent.com/cmp.min.js"></script>
+<script async src="//www.ezojs.com/ezoic/sa.min.js"></script>
+<script>window.ezstandalone = window.ezstandalone || {}; ezstandalone.cmd = ezstandalone.cmd || [];</script>`;
+  }
+  return "<!-- no ad network configured -->";
+}
+
 function adUnit(slotKey, label) {
   if (!ADS.enabled) return "";
-  const slot = (ADS.slots || {})[slotKey];
-  if (!slot) return "";
+  const net = ADS.network || "adsense";
+  let inner = "";
+
+  if (net === "adsense") {
+    const slot = (ADS.slots || {})[slotKey];
+    if (!slot) return "";
+    inner =
+      `<ins class="adsbygoogle" style="display:block" data-ad-client="${PUB}" data-ad-slot="${slot}" data-ad-format="auto" data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>`;
+  } else if (net === "ezoic") {
+    /* Ezoic sizes each spot itself, so there is no slot id to configure — the
+       same snippet goes at every position and the dashboard decides. Their setup
+       guide is explicit that other networks' tags must be removed first, which
+       is why `network` is a single choice rather than a list. */
+    inner = `<script>ezstandalone.cmd.push(function () { ezstandalone.showAds({}); });</script>`;
+  } else {
+    return "";
+  }
+
   return `
   <aside class="ad-slot" aria-label="Advertisement">
     <span class="ad-label">Advertisement</span>
-    <ins class="adsbygoogle" style="display:block" data-ad-client="${PUB}" data-ad-slot="${slot}" data-ad-format="auto" data-full-width-responsive="true"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    ${inner}
   </aside>`;
 }
 /* Cache-bust key derived from the CONTENT of the CSS/JS assets, so it only
@@ -190,7 +228,7 @@ function head(o) {
 <link rel="apple-touch-icon" href="${up}apple-touch-icon.png">
 <link rel="manifest" href="${up}site.webmanifest">
 <link rel="stylesheet" href="${up}assets/css/app.css${V}">
-${o.ads ? `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${PUB}" crossorigin="anonymous"></script>` : "<!-- no ads inside an active tool workspace -->"}
+${o.ads ? adLoader() : "<!-- no ads inside an active tool workspace -->"}
 <script async src="https://www.googletagmanager.com/gtag/js?id=${GA4}"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA4}');</script>
 </head>

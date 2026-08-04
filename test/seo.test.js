@@ -464,3 +464,60 @@ console.log(`seo + titles: ${pass} total assertions passed`);
 }
 
 console.log(`seo + ad inventory: ${pass} total assertions passed`);
+
+/* ---------------------------------------------------------------------------
+ * THE AD LAYER IS NETWORK-AGNOSTIC
+ *
+ * The point of the SEO work is to reach a network paying 8-12x AdSense on the
+ * same traffic. Checked 3 Aug 2026, none of them are reachable yet: Ezoic went
+ * to 250,000 monthly users for new publishers on 19 Feb 2026, Raptive wants
+ * 25,000 pageviews with half from tier-one markets, Mediavine's lowest tier is
+ * 10,000 sessions. Vootkit is around 3,000 monthly visitors.
+ *
+ * So the switch is deliberately a config value rather than a template rewrite,
+ * and these assertions keep it that way.
+ * ------------------------------------------------------------------------- */
+{
+  const fs3 = require("fs"), path3 = require("path");
+  const src3 = fs3.readFileSync(path3.join(__dirname, "../build.js"), "utf8");
+  const cfg3 = require("../data/site.config.js");
+
+  ok("network" in cfg3.ads, "the network is a config value");
+  ok(["adsense", "ezoic", "none"].indexOf(cfg3.ads.network) !== -1,
+     "and is one of the supported values, got " + cfg3.ads.network);
+
+  /* Lift both helpers and run them against controlled configs. */
+  function lift(name, ADS) {
+    const start = src3.indexOf("function " + name + "(");
+    const body = src3.slice(start, src3.indexOf("\n}", start) + 2);
+    return new Function("ADS", "PUB", body + "; return " + name + ";")(ADS, ADS.client || "");
+  }
+  const slots = { inContent: "111", footer: "222" };
+
+  const gLoad = lift("adLoader", { enabled: true, network: "adsense", client: "ca-pub-X", slots });
+  ok(/pagead2\.googlesyndication\.com/.test(gLoad()), "adsense loads Google's tag");
+  ok(!/ezojs/.test(gLoad()), "and not Ezoic's");
+
+  const eLoad = lift("adLoader", { enabled: true, network: "ezoic", client: "ca-pub-X", slots });
+  const e = eLoad();
+  ok(/ezojs\.com\/ezoic\/sa\.min\.js/.test(e), "ezoic loads its header script");
+  ok(!/pagead2\.googlesyndication/.test(e),
+     "and Google's tag is GONE — running both leaves unfilled slots and breaks Ezoic's setup");
+  ok(e.indexOf("cmp.gatekeeperconsent.com") < e.indexOf("ezojs.com"),
+     "consent scripts load before the header script, as their docs require");
+  ok(/data-cfasync="false" src=/.test(e),
+     "data-cfasync sits in front of src — this site is behind Cloudflare, so the order is load-bearing");
+
+  const eUnit = lift("adUnit", { enabled: true, network: "ezoic", client: "", slots: {} });
+  ok(/ezstandalone\.showAds/.test(eUnit("inContent")),
+     "ezoic placements need no slot id — the dashboard sizes each spot");
+  ok(/class="ad-slot"/.test(eUnit("inContent")),
+     "and reuse the same reserved-height wrapper, so switching network cannot regress CLS");
+
+  const nLoad = lift("adLoader", { enabled: true, network: "none", client: "", slots });
+  ok(!/<script/.test(nLoad()), "network 'none' ships no ad script at all");
+  eq(lift("adUnit", { enabled: true, network: "none", client: "", slots })("inContent"), "",
+     "and no placements");
+}
+
+console.log(`seo + network switch: ${pass} total assertions passed`);

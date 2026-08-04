@@ -37,6 +37,30 @@
      * not worth the account. No sticky or anchor units for the same reason. */
     ads: {
       enabled: true,
+
+      /* WHICH NETWORK FILLS THE PLACEMENTS: "adsense" | "ezoic" | "none".
+       *
+       * The placements themselves are network-agnostic, so moving to a premium
+       * network later is this one string plus its credentials — not a template
+       * rewrite. That matters because the whole point of the SEO work is to
+       * reach a network that pays 8-12x AdSense on identical traffic.
+       *
+       * WHEN CAN WE ACTUALLY SWITCH? Checked 3 Aug 2026:
+       *   Ezoic    250,000 monthly users for NEW publishers (raised 19 Feb 2026;
+       *            existing partners grandfathered, we are not one). Below that,
+       *            only their Incubator — 20 places a month.
+       *   Raptive   25,000 monthly pageviews, but 25k-99k also requires 50% of
+       *            traffic from tier-one markets.
+       *   Mediavine 50,000 sessions; the "Journey" tier starts at 10,000.
+       *
+       * At roughly 3,000 monthly visitors today, Mediavine Journey at 10,000 is
+       * the nearest reachable tier and Ezoic is the furthest. Do not switch this
+       * on approval alone — the network must be live and filling before AdSense
+       * comes out, because running both at once is against Ezoic's setup guide
+       * and produces empty slots. */
+      network: "adsense",
+
+      /* AdSense: publisher id + one slot id per placement. */
       client: "ca-pub-5906583727409402",
       slots: {
         inContent: "",   // between the article body and the FAQ
