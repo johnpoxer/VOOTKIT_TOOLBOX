@@ -1934,6 +1934,254 @@ module.exports = {
     related: ['business-card-maker', 'qr-generator', 'business-name-generator', 'barcode-generator', 'favicon-generator', 'resume-builder']
   },
 
+  /* ============ batch 10 — the unit converters ============
+   * Seven pages that were 100% identical, from converterTool(UNITS, from, to)
+   * in tools-calc2.js — one factory, seven unit tables.
+   *
+   * The differentiator is that each dimension has its OWN trap, and they are
+   * genuinely different traps: temperature has an offset rather than a factor,
+   * US and UK gallons differ by 20%, storage vendors use 1000 where this uses
+   * 1024, and area factors are the SQUARE of the length factors. Every number
+   * below is the exact `f` value from the source. */
+
+  'length-converter': {
+    intro: 'Length is the conversion people get almost right and then get wrong by a fraction — because the factors everyone remembers are rounded, and rounding compounds. An inch is not about 2.5 cm; it is exactly 25.4 mm, by international agreement since 1959.',
+    what: [
+      'Converts between metric, imperial and nautical units using the exact defined factors rather than the approximations. A mile is exactly 1609.344 m, a yard exactly 0.9144 m, a foot exactly 0.3048 m.',
+      'Includes <strong>nautical miles</strong> at exactly 1852 m — a different unit from the statute mile, defined as one minute of latitude, and the reason aviation and shipping speeds are quoted in knots rather than mph.'
+    ],
+    specs: {
+      caption: 'Exact factors, in metres',
+      rows: [
+        ['Kilometre', '1000'],
+        ['Mile', '1609.344 — exact by definition'],
+        ['Nautical mile', '1852 — exact, one minute of latitude'],
+        ['Yard', '0.9144 — exact'],
+        ['Foot', '0.3048 — exact'],
+        ['Inch', '0.0254 — exactly 25.4 mm'],
+        ['Centimetre / millimetre', '0.01 / 0.001'],
+        ['Default conversion', 'Miles → kilometres']
+      ]
+    },
+    steps: [
+      'Enter the value.',
+      'Pick the unit you have and the unit you want.',
+      'Read the result — all other units are shown alongside.'
+    ],
+    tip: 'A nautical mile is not a mile. At 1852 m it is about 15% longer than the statute mile, which is why a boat doing 20 knots is moving at roughly 23 mph. Converting the two as though they were the same is a common and occasionally expensive error in navigation and shipping paperwork.',
+    faqs: [
+      { q: 'Is an inch exactly 2.54 cm?', a: 'Yes, exactly — since the 1959 international yard and pound agreement, which defined the inch as precisely 25.4 mm. Before that the US and UK inches differed very slightly, which caused real problems in engineering.' },
+      { q: 'What is a nautical mile for?', a: 'It equals one minute of latitude, so it maps directly onto a chart — 60 nautical miles is one degree of latitude. That makes navigation arithmetic trivial, which is why marine and aviation distances use it and speeds are given in knots.' },
+      { q: 'Why not just multiply by 1.6 for miles?', a: 'For rough mental arithmetic it is fine. Over a marathon it is out by about 150 m, and in anything engineering or legal the rounding is not acceptable — the exact factor is 1.609344.' },
+      { q: 'Which units are metric here?', a: 'Metre, kilometre, centimetre and millimetre. Mile, yard, foot and inch are imperial/US customary, and the nautical mile belongs to neither system.' }
+    ],
+    related: ['unit-converter', 'area-converter', 'speed-converter', 'weight-converter', 'distance-calculator', 'volume-converter']
+  },
+
+  'weight-converter': {
+    intro: 'Recipes, freight documents and bathroom scales all use different units for the same quantity, and the one that trips people up is the stone — a unit of 14 pounds that is still in everyday use in Britain and Ireland and almost nowhere else.',
+    what: [
+      'Converts between metric and imperial mass units using exact factors. A pound is exactly 0.45359237 kg, defined by the same 1959 agreement that fixed the inch.',
+      'Includes <strong>stone</strong> at 6.35029318 kg — exactly 14 pounds. Software written outside the UK routinely omits it, which is why British body-weight figures so often need converting by hand.'
+    ],
+    specs: {
+      caption: 'Exact factors, in kilograms',
+      rows: [
+        ['Tonne', '1000 — metric tonne, not a US ton'],
+        ['Pound', '0.45359237 — exact by definition'],
+        ['Ounce', '0.0283495231'],
+        ['Stone', '6.35029318 — exactly 14 pounds'],
+        ['Gram', '0.001'],
+        ['Milligram', '0.000001'],
+        ['Default conversion', 'Pounds → kilograms'],
+        ['Strictly', 'These are units of MASS, not weight']
+      ]
+    },
+    steps: [
+      'Enter the value.',
+      'Choose the unit you have and the one you want.',
+      'Read the result alongside every other unit.'
+    ],
+    tip: 'Watch which ton you mean. A metric tonne is 1000 kg, a US short ton is about 907 kg, and a UK long ton about 1016 kg — a spread of over 10%. Freight paperwork that says "ton" without qualifying it is ambiguous, and the difference is real money on a shipping invoice.',
+    faqs: [
+      { q: 'How many pounds in a stone?', a: 'Exactly 14, which is 6.35029318 kg. It survives in everyday use in Britain and Ireland for body weight and almost nowhere else, so most software omits it entirely.' },
+      { q: 'Is a tonne the same as a ton?', a: 'No, and this catches people out. A tonne is metric, 1000 kg. A US short ton is 2000 lb, about 907 kg; a UK long ton is 2240 lb, about 1016 kg. Only the metric tonne is listed here, to avoid the ambiguity.' },
+      { q: 'Mass or weight — does the distinction matter?', a: 'Technically these are mass units; weight is a force and varies with gravity. In everyday use the two are treated as interchangeable on Earth, and only physics and some engineering contexts need to care.' },
+      { q: 'Why is a pound such an odd number of kilograms?', a: 'Because 0.45359237 was chosen in 1959 to reconcile slightly different existing US and UK pounds. It is exact by definition rather than derived — the awkwardness is the price of making both countries agree.' }
+    ],
+    related: ['unit-converter', 'length-converter', 'volume-converter', 'bmi-calculator', 'ideal-weight-calculator', 'macro-calculator']
+  },
+
+  'temperature-converter': {
+    intro: 'Temperature is the one conversion you cannot do by multiplying, and that is why the mental shortcuts everyone uses for other units fail here. The scales have different zero points as well as different step sizes.',
+    what: [
+      'Converts between Celsius, Fahrenheit and Kelvin. Because the scales are <strong>offset</strong>, each conversion needs both a factor and an addition: °F = °C × 9/5 + 32, and K = °C + 273.15.',
+      'That offset is why doubling a temperature is meaningless. 20 °C is not twice as hot as 10 °C in any physical sense — only Kelvin, which starts at absolute zero, supports that kind of arithmetic.'
+    ],
+    specs: {
+      caption: 'Scales and reference points',
+      rows: [
+        ['Celsius → Fahrenheit', '× 9/5, then + 32'],
+        ['Celsius → Kelvin', '+ 273.15'],
+        ['Water freezes', '0 °C · 32 °F · 273.15 K'],
+        ['Water boils', '100 °C · 212 °F · 373.15 K'],
+        ['Absolute zero', '−273.15 °C · −459.67 °F · 0 K'],
+        ['The scales cross at', '−40 — the same number in °C and °F'],
+        ['Kelvin has no degree sign', 'Written "300 K", not "300 °K"'],
+        ['Why offsets matter', 'Ratios are only meaningful in Kelvin']
+      ]
+    },
+    steps: [
+      'Enter the temperature.',
+      'Choose the scale it is in.',
+      'Read all three scales at once.'
+    ],
+    tip: '−40 is the same in Celsius and Fahrenheit — the point where the two scales cross. It is a useful sanity check: if you have written a conversion and it does not agree at −40, the formula is wrong. It is also why the aviation industry can quote −40 without specifying which scale.',
+    faqs: [
+      { q: 'Why can I not just multiply to convert temperature?', a: 'Because the scales have different zero points. Length units all start at zero length, so a single factor works. Celsius starts at water freezing and Fahrenheit 32 degrees below it, so the conversion needs an addition as well as a multiplication.' },
+      { q: 'Is 20 °C twice as warm as 10 °C?', a: 'No. Ratios only mean anything on a scale that starts at absolute zero, which is Kelvin. In Kelvin those two are 293.15 and 283.15 — barely 3% apart, which is much closer to how they actually feel.' },
+      { q: 'Why 273.15 and not 273?', a: 'Because the Kelvin scale is defined so that water’s triple point falls at exactly 273.16 K, putting 0 °C at 273.15 K. The .15 is not a rounding artefact; dropping it introduces a real error in scientific work.' },
+      { q: 'Should I write °K?', a: 'No. Kelvin is an absolute unit and takes no degree symbol — 300 K, not 300 °K. Celsius and Fahrenheit do take it.' }
+    ],
+    related: ['unit-converter', 'length-converter', 'weight-converter', 'speed-converter', 'water-intake-calculator', 'electricity-cost']
+  },
+
+  'speed-converter': {
+    intro: 'Car dashboards, weather forecasts, marine charts and physics homework all measure the same thing in four different units — and knots, the one used at sea and in the air, is the one most converters leave out.',
+    what: [
+      'Converts between m/s, km/h, mph, knots and ft/s using exact factors relative to metres per second.',
+      'A <strong>knot</strong> is one nautical mile per hour — exactly 0.5144444… m/s. Because a nautical mile is a minute of latitude, a vessel at 30 knots covers half a degree of latitude an hour, which is why the unit survives.'
+    ],
+    specs: {
+      caption: 'Exact factors, in metres per second',
+      rows: [
+        ['m/s', '1 — the SI unit'],
+        ['km/h', '0.2777… — that is 1/3.6'],
+        ['mph', '0.44704 — exact'],
+        ['Knot', '0.5144444… — one nautical mile per hour'],
+        ['ft/s', '0.3048 — exact'],
+        ['Quick check', 'km/h ÷ 3.6 = m/s'],
+        ['Rough check', 'Knots × 1.15 ≈ mph'],
+        ['Default conversion', 'mph → km/h']
+      ]
+    },
+    steps: [
+      'Enter the speed.',
+      'Choose the unit you have and the unit you want.',
+      'Read every unit at once.'
+    ],
+    tip: 'Divide km/h by 3.6 to get m/s. It is exact rather than approximate, and it is the conversion that comes up constantly in physics problems where speeds are quoted in km/h and every formula expects m/s. 90 km/h is exactly 25 m/s.',
+    faqs: [
+      { q: 'What exactly is a knot?', a: 'One nautical mile per hour, so about 1.15 mph or 1.85 km/h. It persists because a nautical mile is one minute of latitude, making speed and position arithmetic straightforward on a chart.' },
+      { q: 'How do I convert km/h to m/s in my head?', a: 'Divide by 3.6. That is exact — there are 3600 seconds in an hour and 1000 metres in a kilometre, so the factor is 1000/3600.' },
+      { q: 'Is mph exactly defined?', a: 'Yes. A mile is exactly 1609.344 m and an hour is 3600 seconds, so one mph is exactly 0.44704 m/s. All the factors here are exact rather than rounded.' },
+      { q: 'Where is ft/s used?', a: 'Mostly US engineering and ballistics, where muzzle velocities are conventionally quoted in feet per second. It is otherwise rare in everyday use.' }
+    ],
+    related: ['unit-converter', 'length-converter', 'pace-calculator', 'distance-calculator', 'fuel-economy-converter', 'temperature-converter']
+  },
+
+  'area-converter': {
+    intro: 'Area is where unit conversion quietly goes wrong, because the factors are not the ones you already know. If a metre is 3.28 feet, a square metre is not 3.28 square feet — it is 10.76, because the factor gets squared along with the unit.',
+    what: [
+      'Converts between metric and imperial area units using exact squared factors. A square foot is 0.09290304 m² — which is 0.3048 squared, not 0.3048.',
+      'Includes the two units land is actually traded in: the <strong>hectare</strong> at exactly 10,000 m², and the <strong>acre</strong> at 4046.8564224 m². An acre is roughly 0.405 hectares, which is not a round number in either direction.'
+    ],
+    specs: {
+      caption: 'Exact factors, in square metres',
+      rows: [
+        ['km²', '1,000,000'],
+        ['Hectare', '10,000 — a square 100 m on each side'],
+        ['Acre', '4046.8564224'],
+        ['ft²', '0.09290304 — that is 0.3048²'],
+        ['yd²', '0.83612736 — that is 0.9144²'],
+        ['mi²', '2,589,988.11'],
+        ['cm²', '0.0001'],
+        ['Acres per hectare', 'About 2.471']
+      ]
+    },
+    steps: [
+      'Enter the area.',
+      'Pick the units.',
+      'Read the result — every unit is shown together.'
+    ],
+    tip: 'Never convert an area by applying a length factor. Doubling the sides of a room quadruples its floor area, and the same relationship applies to units: the length factor must be squared. This is the single commonest error in flooring, paint and land-area estimates, and it is always wrong by a factor of the conversion itself.',
+    faqs: [
+      { q: 'Why is a square foot 0.0929 m² and not 0.3048?', a: 'Because area is two-dimensional. A foot is 0.3048 m, and 0.3048 × 0.3048 = 0.09290304. Using the length factor for an area gives an answer wrong by a factor of about 3.28.' },
+      { q: 'How many acres in a hectare?', a: 'About 2.471. A hectare is exactly 10,000 m² — a neat square 100 m a side — while an acre is a historical unit at 4046.8564224 m², so the ratio is deliberately not round.' },
+      { q: 'Where did the acre come from?', a: 'Traditionally the area one man with one ox could plough in a day, which is why it is 4840 square yards rather than anything tidy. It survives in land dealings in the US, UK and Ireland.' },
+      { q: 'Which unit should I use for land?', a: 'Follow local convention: hectares in most of the world, acres in the US, and both in the UK and Ireland where deeds may use either. Converting between them is exactly what this is for.' }
+    ],
+    related: ['unit-converter', 'length-converter', 'volume-converter', 'cap-rate', 'rental-yield', 'percentage-calculator']
+  },
+
+  'volume-converter': {
+    intro: 'A recipe calling for a gallon means two different amounts depending on which side of the Atlantic wrote it — and the gap is 20%, which is more than enough to ruin the recipe or the fuel-economy figure.',
+    what: [
+      'Converts between metric and US customary volumes, and includes the <strong>UK gallon</strong> separately at 4.54609 L against the US gallon’s 3.785411784 L.',
+      'Every cooking unit here is <strong>US</strong> — cups, pints, quarts and fluid ounces all differ between the US and UK, and quietly mixing the two is how a recipe fails.'
+    ],
+    specs: {
+      caption: 'Exact factors, in litres',
+      rows: [
+        ['US gallon', '3.785411784'],
+        ['<strong>UK gallon</strong>', '<strong>4.54609 — 20% larger</strong>'],
+        ['US quart', '0.946352946'],
+        ['US pint', '0.473176473'],
+        ['US cup', '0.2365882365 — about 237 ml'],
+        ['US fluid ounce', '0.0295735296'],
+        ['Tablespoon / teaspoon', '0.0147867648 / 0.00492892159'],
+        ['m³', '1000']
+      ]
+    },
+    steps: [
+      'Enter the volume.',
+      'Choose the units — and check whether a recipe is US or UK before assuming.',
+      'Read the result.'
+    ],
+    tip: 'A UK pint is 568 ml and a US pint is 473 ml — a difference of nearly 20%. In a recipe that is the gap between working and not; in a fuel-economy figure it makes a car look dramatically more or less efficient than it is. If a source does not say which system it uses, the spelling usually tells you: "litre" and "colour" mean UK.',
+    faqs: [
+      { q: 'Why are US and UK gallons different?', a: 'They descend from different historical standards and were never reconciled. The US kept an older wine gallon; the UK redefined its gallon in 1824 as the volume of ten pounds of water. The 20% gap has persisted ever since.' },
+      { q: 'Is a cup here US or UK?', a: 'US, at about 237 ml. A metric cup is 250 ml and the UK does not really use cups at all, preferring weight. For baking especially, weigh ingredients if you can — it removes the ambiguity entirely.' },
+      { q: 'How much is a UK pint?', a: 'About 568 ml, against 473 ml for a US pint. It is why a pint of beer is noticeably larger in Britain, and why converting drinks measures across the Atlantic needs care.' },
+      { q: 'Which units here are metric?', a: 'Litres, millilitres and cubic metres. Everything else is US customary apart from the UK gallon, which is listed separately precisely because the ambiguity causes errors.' }
+    ],
+    related: ['unit-converter', 'weight-converter', 'length-converter', 'area-converter', 'fuel-economy-converter', 'water-intake-calculator']
+  },
+
+  'data-converter': {
+    intro: 'A 1 TB drive shows up as about 931 GB in your operating system, and nothing is wrong or missing. Two different definitions of "gigabyte" are in circulation, and the gap between them widens at every step up the scale.',
+    what: [
+      'Converts storage and bandwidth units using <strong>binary</strong> multiples of 1024 — the convention operating systems use, where a kilobyte is 1024 bytes and a gigabyte is 1,073,741,824.',
+      'Also converts <strong>bits</strong>. This is the other classic confusion: internet speeds are quoted in megabits per second, file sizes in megabytes, and there are 8 bits in a byte — so a 100 Mbps line downloads at about 12.5 MB/s at best.'
+    ],
+    specs: {
+      caption: 'Exact factors, in bytes',
+      rows: [
+        ['Kilobyte', '1024'],
+        ['Megabyte', '1,048,576 — that is 1024²'],
+        ['Gigabyte', '1,073,741,824 — 1024³'],
+        ['Terabyte', '1,099,511,627,776 — 1024⁴'],
+        ['Bit', '0.125 — eight bits to a byte'],
+        ['Megabit', '131,072'],
+        ['Drive manufacturers use', '1000, not 1024 — hence "missing" space'],
+        ['1 TB advertised shows as', 'About 931 GB in your OS']
+      ]
+    },
+    steps: [
+      'Enter the amount.',
+      'Choose the units, watching bits against bytes.',
+      'Read the result.'
+    ],
+    tip: 'Divide a megabit figure by 8 to get megabytes. A 100 Mbps connection tops out around 12.5 MB/s, so a 1 GB download takes at least 80 seconds even on a perfect line. Internet providers quote bits because the number is eight times bigger, and it is the single most misread figure in consumer technology.',
+    faqs: [
+      { q: 'Why does my 1 TB drive show as 931 GB?', a: 'Manufacturers count a terabyte as 1,000,000,000,000 bytes; your operating system counts it as 1024⁴, which is about 1.0995 trillion. Dividing one by the other gives roughly 931. Nothing is lost — the two are just using different definitions of the same word.' },
+      { q: 'Which does this tool use, 1000 or 1024?', a: '1024, matching what your operating system reports. If you are checking against a manufacturer’s figure, expect a difference of about 7% at gigabyte scale and 10% at terabyte scale.' },
+      { q: 'What is the difference between Mb and MB?', a: 'Capitalisation, and a factor of eight. Mb is megabits, used for connection speeds; MB is megabytes, used for file sizes. A 100 Mb/s line delivers at most about 12.5 MB/s.' },
+      { q: 'What are KiB and MiB?', a: 'The unambiguous binary units — kibibyte and mebibyte — defined precisely to end this confusion. They mean 1024 and 1024², exactly what this tool uses for KB and MB. Adoption outside technical documentation has been slow.' }
+    ],
+    related: ['unit-converter', 'upload-time', 'bitrate-calculator', 'compress-video', 'file-checksum', 'compress-image']
+  },
+
   /* ================= session 1 ================= */
 
   'jpg-to-pdf': {

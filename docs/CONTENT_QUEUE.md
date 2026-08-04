@@ -19,10 +19,13 @@ short FAQ answers, stub spec tables and dead related links all fail the build.
 
 | | Pages | Unique words |
 |---|---|---|
-| Hand-written | **126** | 269–419 |
-| Generic template | ~131 | ~96 |
+| Hand-written | **133** | 269–419 |
+| Generic template | ~124 | ~96 |
 
-Pages over 250 unique words: **126 of 257** — 49% of the catalogue.
+Pages over 250 unique words: **133 of 260** — 51% of the catalogue.
+
+**Duplicate pairs sitewide: 714 → 377** across five clusters destroyed on
+3 Aug (video, health, pdf, business, converters).
 
 **Duplication is the metric that now matters more than length.** See the
 measurement below: 714 near-duplicate page pairs across 22 clusters. Batches are
@@ -213,6 +216,34 @@ data destroys it.*
 
 *contract-generator states plainly that it is a template and not legal advice,
 and names what it is unsuitable for.*
+
+### Batch 10 — the unit converters (3 Aug 2026)
+
+| | Before | After |
+|---|---|---|
+| 7 converters | **100% identical** | **47.3% avg, 0 pairs** |
+
+length · weight · temperature · speed · area · volume · data
+
+*Same cause as invoice/quote/receipt: `converterTool(UNITS, from, to)` in
+tools-calc2.js is one factory driving seven unit tables, so the pages inherited
+the sharing exactly.*
+
+*Each dimension has its OWN trap, and they are genuinely different, which is what
+makes the pages unlike each other:*
+
+*• temperature is the only one with an OFFSET — you cannot convert by
+multiplying, and ratios are meaningless outside Kelvin*
+*• US and UK gallons differ by 20% (3.785 vs 4.546 L), and every cooking unit
+listed is US*
+*• area factors are the SQUARE of length factors — ft² is 0.3048², not 0.3048,
+the commonest error in flooring and paint estimates*
+*• data uses 1024 while drive manufacturers use 1000, which is the entire
+"where did my terabyte go" question; plus bits vs bytes at 8:1*
+*• length includes the nautical mile at exactly 1852 m, a different unit from
+the statute mile*
+
+*Every factor quoted is the exact `f` value from source.*
 
 **Remaining clusters, largest first:** everyday+misc (21), streaming
 (13), tax (8), images (8), privacy (8), education (8), travel (7),
