@@ -60,6 +60,37 @@
        * and produces empty slots. */
       network: "adsense",
 
+      /* EZOIC INCUBATOR — VERIFICATION ONLY, NOT SERVING.
+       *
+       * Ezoic's dashboard will not consider the Incubator application until it
+       * detects their header scripts on the site ("Connect Your Site … you must
+       * complete this step"). This flag injects THOSE SCRIPTS AND NOTHING ELSE:
+       * no showAds placements, no removal of AdSense.
+       *
+       * Why not just switch network to "ezoic" now: the application is pending,
+       * so Ezoic fills nothing. Their setup guide's instruction to remove other
+       * networks' code applies once Ezoic is serving — following it today would
+       * take AdSense down and leave the site earning zero for however long the
+       * review takes. Incubator intake is 20 publishers a month, so that could
+       * be a while, and rejection is possible.
+       *
+       * ON APPROVAL: set network to "ezoic" and this flag becomes irrelevant —
+       * that path emits the same header scripts, adds the placements and drops
+       * AdSense in one move. Do it only once Ezoic is actually filling.
+       *
+       * COST: the two consent scripts are deliberately NOT async (their required
+       * ordering depends on it), so they are render-blocking. On a site whose
+       * whole strategy is search, that is a real Core Web Vitals cost paid for a
+       * pending application.
+       *
+       * CURRENTLY OFF, on purpose. The plumbing is written and tested, but the
+       * decision was to wait rather than ship render-blocking third-party
+       * scripts for an application that may not land. Flip to true when you
+       * want Ezoic's dashboard to detect the site, deploy, then press CHECK
+       * CONNECTION at pubdash.ezoic.com/setup. Nothing else needs changing —
+       * the placements stay on AdSense until `network` moves. */
+      ezoicVerify: false,
+
       /* AdSense: publisher id + one slot id per placement. */
       client: "ca-pub-5906583727409402",
       slots: {

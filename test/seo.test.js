@@ -486,11 +486,17 @@ console.log(`seo + ad inventory: ${pass} total assertions passed`);
   ok(["adsense", "ezoic", "none"].indexOf(cfg3.ads.network) !== -1,
      "and is one of the supported values, got " + cfg3.ads.network);
 
-  /* Lift both helpers and run them against controlled configs. */
+  /* Lift the helpers and run them against controlled configs. adLoader calls
+     ezoicHeader, so that dependency is lifted alongside it — otherwise this
+     evaluates a function whose callee is out of scope. */
   function lift(name, ADS) {
-    const start = src3.indexOf("function " + name + "(");
-    const body = src3.slice(start, src3.indexOf("\n}", start) + 2);
-    return new Function("ADS", "PUB", body + "; return " + name + ";")(ADS, ADS.client || "");
+    const grab = (fn) => {
+      const s = src3.indexOf("function " + fn + "(");
+      return s === -1 ? "" : src3.slice(s, src3.indexOf("\n}", s) + 2);
+    };
+    const body = grab(name);
+    const deps = name === "ezoicHeader" ? "" : grab("ezoicHeader") + "\n";
+    return new Function("ADS", "PUB", deps + body + "; return " + name + ";")(ADS, ADS.client || "");
   }
   const slots = { inContent: "111", footer: "222" };
 
@@ -521,3 +527,55 @@ console.log(`seo + ad inventory: ${pass} total assertions passed`);
 }
 
 console.log(`seo + network switch: ${pass} total assertions passed`);
+
+/* ---------------------------------------------------------------------------
+ * EZOIC VERIFICATION MODE
+ *
+ * The Incubator application is not considered until Ezoic's dashboard detects
+ * their header scripts on the site. But the application is PENDING — Ezoic fills
+ * nothing yet — so following their "remove other networks' code" instruction now
+ * would take AdSense down and leave the site earning zero for however long a
+ * 20-places-a-month review takes, with rejection possible.
+ *
+ * Hence a verification mode distinct from a serving mode: header scripts present
+ * for detection, no Ezoic placements, AdSense untouched.
+ * ------------------------------------------------------------------------- */
+{
+  const fs4 = require("fs"), path4 = require("path");
+  const src4 = fs4.readFileSync(path4.join(__dirname, "../build.js"), "utf8");
+
+  function lift4(name, ADS) {
+    const start = src4.indexOf("function " + name + "(");
+    const body = src4.slice(start, src4.indexOf("\n}", start) + 2);
+    const helper = src4.slice(src4.indexOf("function ezoicHeader("),
+                              src4.indexOf("\n}", src4.indexOf("function ezoicHeader(")) + 2);
+    const pre = name === "ezoicHeader" ? "" : helper + "\n";
+    return new Function("ADS", "PUB", pre + body + "; return " + name + ";")(ADS, ADS.client || "");
+  }
+  const verify = lift4("adLoader", { enabled: true, network: "adsense", ezoicVerify: true, client: "ca-pub-X", slots: {} })();
+
+  ok(/ezojs\.com\/ezoic\/sa\.min\.js/.test(verify), "verification mode ships Ezoic's header script");
+  ok(/pagead2\.googlesyndication/.test(verify),
+     "AND keeps AdSense serving — Ezoic is not approved, so dropping AdSense would earn nothing");
+  ok(verify.indexOf("gatekeeperconsent") < verify.indexOf("ezojs.com"),
+     "consent scripts still precede the header script");
+  ok(verify.indexOf("ezojs.com") < verify.indexOf("pagead2"),
+     "Ezoic's scripts sit as high in the head as possible, per their guidance");
+
+  /* The thing that would break it: emitting placements while unapproved. */
+  const vUnit = lift4("adUnit", { enabled: true, network: "adsense", ezoicVerify: true, client: "ca-pub-X", slots: { inContent: "111" } })("inContent");
+  ok(!/ezstandalone\.showAds/.test(vUnit),
+     "verification mode emits NO Ezoic placements — unapproved slots would render empty");
+  ok(/class="adsbygoogle"/.test(vUnit), "placements stay on AdSense until the switch is thrown");
+
+  /* And with the flag off, nothing Ezoic ships at all. */
+  const off = lift4("adLoader", { enabled: true, network: "adsense", ezoicVerify: false, client: "ca-pub-X", slots: {} })();
+  ok(!/ezojs|gatekeeperconsent/.test(off), "ezoicVerify:false ships no Ezoic scripts");
+
+  /* Full switch still drops AdSense entirely. */
+  const full = lift4("adLoader", { enabled: true, network: "ezoic", ezoicVerify: true, client: "ca-pub-X", slots: {} })();
+  ok(!/pagead2\.googlesyndication/.test(full),
+     "network:'ezoic' drops AdSense — running both once Ezoic serves breaks their setup");
+}
+
+console.log(`seo + ezoic verification: ${pass} total assertions passed`);

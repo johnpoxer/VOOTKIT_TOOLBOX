@@ -86,22 +86,29 @@ const PUB = ADS.client || "ca-pub-5906583727409402";
 /* The network's loader, for the <head>. Exactly one network's tags ever ship:
    running two at once leaves unfilled slots and is against Ezoic's own setup
    guide, which tells you to remove other networks' code first. */
+/* Ezoic's header scripts. Ordering is theirs, not mine, and both details are
+   load-bearing: the two consent scripts must load BEFORE the header script, and
+   data-cfasync="false" must sit IN FRONT OF src — it stops Cloudflare reordering
+   them, and this site is behind Cloudflare. */
+function ezoicHeader() {
+  return `<script data-cfasync="false" src="https://cmp.gatekeeperconsent.com/min.js"></script>
+<script data-cfasync="false" src="https://the.gatekeeperconsent.com/cmp.min.js"></script>
+<script async src="//www.ezojs.com/ezoic/sa.min.js"></script>
+<script>window.ezstandalone = window.ezstandalone || {}; ezstandalone.cmd = ezstandalone.cmd || [];</script>`;
+}
+
 function adLoader() {
   if (!ADS.enabled) return "<!-- ads disabled -->";
   const net = ADS.network || "adsense";
   if (net === "adsense") {
-    return `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${PUB}" crossorigin="anonymous"></script>`;
+    const g = `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${PUB}" crossorigin="anonymous"></script>`;
+    /* Verification mode: Ezoic's header scripts present so their dashboard can
+       detect the site, while AdSense keeps serving. Deliberately does NOT emit
+       showAds placements — Ezoic is not approved yet, so those would render
+       empty boxes. See the note on ezoicVerify in site.config.js. */
+    return ADS.ezoicVerify ? ezoicHeader() + "\n" + g : g;
   }
-  if (net === "ezoic") {
-    /* Order matters and is theirs, not mine: the two consent scripts must load
-       BEFORE the header script. data-cfasync="false" must sit in front of src —
-       it stops Cloudflare reordering them, and this site is behind Cloudflare,
-       so it is load-bearing rather than decorative. */
-    return `<script data-cfasync="false" src="https://cmp.gatekeeperconsent.com/min.js"></script>
-<script data-cfasync="false" src="https://the.gatekeeperconsent.com/cmp.min.js"></script>
-<script async src="//www.ezojs.com/ezoic/sa.min.js"></script>
-<script>window.ezstandalone = window.ezstandalone || {}; ezstandalone.cmd = ezstandalone.cmd || [];</script>`;
-  }
+  if (net === "ezoic") return ezoicHeader();
   return "<!-- no ad network configured -->";
 }
 
