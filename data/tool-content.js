@@ -4808,6 +4808,420 @@ module.exports = {
     related: ['alt-text-auditor', 'speech-to-text', 'heading-checker', 'trim-video', 'readability', 'text-diff']
   },
 
+  /* ============ batch 18a — fees & margins cluster (complete) ============
+   * Six pages that all compute money out of money, and were consequently
+   * identical. Differentiated on WHOSE money and WHICH direction. */
+
+  'vat-gst': {
+    intro: 'Adding tax to a price and removing it are not the same sum reversed, and getting them the wrong way round is the commonest arithmetic error in small-business bookkeeping.',
+    what: [
+      'Adds tax to a net price, or extracts it from a gross one — you say which the amount already is. Defaults to <strong>20%</strong> on 100.',
+      '<strong>Removing tax is not "subtract the percentage".</strong> To strip 20% from a gross 120 you divide by 1.20 to get 100, not subtract 20% to get 96. That mistake is off by 4% and it compounds across every line of a return.'
+    ],
+    specs: {
+      caption: 'The two directions',
+      rows: [
+        ['Add tax', 'net × (1 + rate)'],
+        ['<strong>Remove tax</strong>', '<strong>gross ÷ (1 + rate)</strong>'],
+        ['At 20%: 100 net', '120 gross'],
+        ['At 20%: 120 gross', '<strong>100 net — not 96</strong>'],
+        ['Default rate', '20%'],
+        ['Knows your rate?', 'No — you supply it'],
+        ['Rates vary by', 'Country, and by product category within it'],
+        ['Not', 'Tax advice']
+      ]
+    },
+    steps: [
+      'Enter the amount and say whether it already includes tax.',
+      'Enter your rate.',
+      'Read the net, the tax and the gross.'
+    ],
+    tip: 'To remove tax, divide — never subtract. Stripping 20% from a gross 120 by subtracting 20% gives 96, which is wrong; dividing by 1.20 gives the correct 100. The gap widens with the rate, and on a VAT return applied across hundreds of lines it becomes a material error rather than a rounding one.',
+    faqs: [
+      { q: 'Why can I not just subtract the percentage?', a: 'Because the tax was calculated on the net amount, not the gross. 20% of 100 is 20, giving 120 — but 20% of 120 is 24. Subtracting works from the wrong base, which is why the answer comes out low.' },
+      { q: 'What rate should I use?', a: 'Whatever applies where you are selling, which often depends on the product too — many countries apply reduced rates to food, books or children’s clothing. Cross-border digital sales frequently use the customer’s rate rather than yours.' },
+      { q: 'Should my prices include tax?', a: 'Consumer prices are usually quoted gross and business-to-business prices net, but conventions differ by country and are sometimes legally required. Say clearly on your invoice which you have quoted.' },
+      { q: 'Is this tax advice?', a: 'No. It applies a rate you supply. Registration thresholds, reverse-charge rules and cross-border obligations are genuinely complicated and need an accountant.' }
+    ],
+    related: ['invoice-generator', 'percentage-calculator', 'profit-margin', 'income-tax-estimator', 'late-fee', 'discount-calculator']
+  },
+
+  'paypal-fee-calculator': {
+    intro: 'Payment processors take a percentage plus a fixed fee, and the fixed part is what makes small transactions disproportionately expensive. On a five-dollar payment it can be most of the cost.',
+    what: [
+      'Calculates the fee and your net from an amount, defaulting to <strong>2.99% plus a fixed fee</strong> on 100.',
+      'It also handles the reverse problem — <strong>grossing up</strong>, or working out what to charge so that the amount you receive is the amount you wanted.'
+    ],
+    specs: {
+      caption: 'Fee structure',
+      rows: [
+        ['Percentage', 'Default 2.99% — you set it'],
+        ['Fixed fee', 'Per transaction, on top'],
+        ['<strong>Small payments</strong>', '<strong>The fixed fee dominates</strong>'],
+        ['On $5', 'The fixed fee can exceed the percentage'],
+        ['Cross-border', 'Usually adds a further percentage'],
+        ['Currency conversion', 'Charged on top of that again'],
+        ['Grossing up', 'Not simply adding the fee back — see the tip'],
+        ['Rates change', 'Check your account’s current schedule']
+      ]
+    },
+    steps: [
+      'Enter the amount and your actual rate — check your account, not a general figure.',
+      'Read the fee and your net.',
+      'Use the gross-up direction if you need a specific amount to land.'
+    ],
+    tip: 'Grossing up is not adding the fee back. If you want 100 net at 2.99% plus 0.30, charging 103.29 does not work — the fee applies to the larger amount too. The correct figure is (100 + 0.30) ÷ (1 − 0.0299) ≈ 103.40, and the gap grows with the amount.',
+    faqs: [
+      { q: 'Why are small payments so expensive proportionally?', a: 'The fixed fee. At a typical 0.30 fixed charge, a 5.00 payment loses 0.30 before the percentage is applied at all — around 9% total. On 500 the same fixed fee is negligible. It is why micro-payments through general processors rarely work.' },
+      { q: 'How do I charge so I receive a specific amount?', a: 'Divide rather than add: (target + fixed) ÷ (1 − percentage). Adding the fee back undercharges, because the fee is then levied on the higher amount as well.' },
+      { q: 'What about international payments?', a: 'Most processors add a cross-border percentage, and a further margin on currency conversion. Both are on top of the base rate, and the conversion margin is frequently the larger of the two.' },
+      { q: 'Are these the current rates?', a: 'The default is a common figure, not your account’s. Rates vary by country, volume and account type, and they change. Check your own fee schedule and enter it.' }
+    ],
+    related: ['stripe-fee-calculator', 'etsy-fee-calculator', 'invoice-generator', 'profit-margin', 'currency-converter', 'vat-gst']
+  },
+
+  'etsy-fee-calculator': {
+    intro: 'Marketplace fees stack in a way that surprises sellers: a listing fee, a transaction fee on the item, another on the shipping you charged, and a payment processing fee on the total. Four deductions, one sale.',
+    what: [
+      'Works out your actual payout and profit after Etsy’s layered fees, defaulting to a 25 item with 5 shipping.',
+      '<strong>The transaction fee applies to shipping too</strong>, which sellers routinely forget — charging more for postage does not pass the full amount through.'
+    ],
+    specs: {
+      caption: 'The fee layers',
+      rows: [
+        ['Listing fee', 'Per listing, and again on renewal'],
+        ['Transaction fee', 'On the item price'],
+        ['<strong>Transaction fee</strong>', '<strong>On the shipping you charge, too</strong>'],
+        ['Payment processing', 'Percentage plus fixed, on the total'],
+        ['Offsite ads fee', 'May apply, and can be mandatory above a threshold'],
+        ['Default item / shipping', '25 / 5'],
+        ['Your cost to make', 'Entered separately, for true profit'],
+        ['Rates change', 'Check Etsy’s current schedule']
+      ]
+    },
+    steps: [
+      'Enter the item price, shipping charged and your cost to make it.',
+      'Enter the current fee rates from your Etsy account.',
+      'Read the payout and the actual profit per sale.'
+    ],
+    tip: 'Include your own time in "cost to make". Sellers routinely price against materials alone, discover a healthy-looking margin, and find themselves working for very little once the hours are counted. If an item takes ninety minutes and nets eight after fees, that is the number to look at before scaling production.',
+    faqs: [
+      { q: 'Do fees apply to shipping?', a: 'The transaction fee does, and payment processing applies to the whole amount collected. So raising your shipping charge does not pass the full increase to you — a portion is taken on the way through.' },
+      { q: 'What is the offsite ads fee?', a: 'A share of the sale price when a buyer arrives via an ad Etsy placed. Above a revenue threshold participation is mandatory, so it is not always something you can opt out of. Check your current status.' },
+      { q: 'Why is my profit lower than I expected?', a: 'Usually the layering — four separate deductions on one sale — plus unaccounted materials, packaging and time. Packaging in particular is invisible until you total a month of it.' },
+      { q: 'Are these the current rates?', a: 'They are defaults, and marketplace fees change. Take the figures from your own Etsy fee schedule; a stale rate here produces a confidently wrong margin.' }
+    ],
+    related: ['paypal-fee-calculator', 'stripe-fee-calculator', 'profit-margin', 'break-even', 'inventory-tracker', 'amazon-fba-calculator']
+  },
+
+  'break-even': {
+    intro: 'Break-even is the number that tells you whether a business idea is arithmetic or wishful thinking: how many units you must sell before you have covered the costs you pay whether you sell anything or not.',
+    what: [
+      'Divides fixed costs by <strong>contribution margin</strong> — price minus variable cost per unit — to give the units needed. Defaults to 4,000 monthly fixed costs, 49 price, 18 variable cost.',
+      'The contribution margin is what matters, not the price. At 49 against an 18 cost, each sale contributes 31 toward the fixed costs, so you need 130 sales a month before anything is profit.'
+    ],
+    specs: {
+      caption: 'The calculation',
+      rows: [
+        ['Formula', 'Fixed costs ÷ (price − variable cost)'],
+        ['Contribution margin', 'Price minus variable cost per unit'],
+        ['Default fixed / price / cost', '4,000 / 49 / 18'],
+        ['Fixed costs', 'Rent, salaries, software — paid regardless'],
+        ['Variable costs', 'Materials, shipping, fees — per unit'],
+        ['Raising price', 'Lowers break-even fastest'],
+        ['Cutting fixed costs', 'Lowers it directly'],
+        ['Not', 'A forecast — it says nothing about demand']
+      ]
+    },
+    steps: [
+      'List fixed costs honestly — including your own salary if you take one.',
+      'Work out true variable cost per unit, including payment fees.',
+      'Read the units needed, then ask whether that many sales is realistic.'
+    ],
+    tip: 'Raising the price lowers break-even faster than cutting variable costs, because it widens the contribution margin from the top. Going from 49 to 55 on an 18 cost takes break-even from 130 units to 108 — a 17% drop from a 12% price rise. Discounting does the same thing in reverse, which is why sales targets set alongside a discount so often fail.',
+    faqs: [
+      { q: 'What counts as a fixed cost?', a: 'Anything you pay regardless of sales — rent, salaries, software subscriptions, insurance. If it appears on the bank statement in a month you sell nothing, it is fixed.' },
+      { q: 'Should I include my own salary?', a: 'If you need to be paid, yes. A business that breaks even only because the founder works unpaid is not breaking even, and the number is misleading precisely to the person relying on it.' },
+      { q: 'Does break-even mean the idea works?', a: 'No. It tells you how many units are required; it says nothing about whether that many people want the thing. A break-even of 130 a month is trivial for some products and impossible for others.' },
+      { q: 'Why does price affect it more than cost?', a: 'Because contribution margin is price minus cost, and a price rise increases the margin without increasing anything else. A 12% price rise can cut break-even by 17%, which is why discounting is so expensive.' }
+    ],
+    related: ['profit-margin', 'roas-calculator', 'hourly-rate', 'cac-ltv-calculator', 'etsy-fee-calculator', 'inventory-tracker']
+  },
+
+  'roas-calculator': {
+    intro: 'Return on ad spend is the number every ad platform reports, and taken alone it is misleading — because a 4× return on a product with a 20% margin is losing money.',
+    what: [
+      'Calculates ROAS from revenue and spend, and the figure that actually decides things: <strong>break-even ROAS</strong>, which is 1 divided by your profit margin. Defaults to 5,000 revenue on 1,250 spend.',
+      'At a 25% margin you need a ROAS of 4 just to stand still. Any campaign below that is buying revenue at a loss, however impressive the multiple looks.'
+    ],
+    specs: {
+      caption: 'What decides profitability',
+      rows: [
+        ['ROAS', 'Revenue ÷ ad spend'],
+        ['<strong>Break-even ROAS</strong>', '<strong>1 ÷ profit margin</strong>'],
+        ['At 50% margin', 'Break-even ROAS = 2'],
+        ['At 25% margin', 'Break-even ROAS = 4'],
+        ['At 10% margin', 'Break-even ROAS = 10'],
+        ['Default revenue / spend', '5,000 / 1,250 = 4×'],
+        ['Ignores', 'Repeat purchases — see LTV:CAC'],
+        ['Platform-reported ROAS', 'Often over-attributed']
+      ]
+    },
+    steps: [
+      'Enter revenue and ad spend for the period.',
+      'Enter your <strong>real</strong> profit margin, after cost of goods and fees.',
+      'Compare ROAS against break-even ROAS. Below it, the campaign loses money.'
+    ],
+    tip: 'Work out your break-even ROAS before you launch, not after. A 4× return sounds like a strong campaign and is exactly break-even on a 25% margin — so a business celebrating "4× ROAS" while running a thin margin is spending to stand still. The margin decides the target; the platform never tells you it.',
+    faqs: [
+      { q: 'What ROAS should I aim for?', a: 'Above 1 ÷ your profit margin, which is your break-even point. At a 25% margin that is 4×; at 50% it is 2×. There is no universal good number, which is why the platform cannot tell you one.' },
+      { q: 'Why is my profitable-looking ROAS losing money?', a: 'Because ROAS uses revenue, not profit. If cost of goods, shipping and payment fees consume 75% of revenue, a 3× return is below the 4× you needed. The multiple looks healthy and the bank balance disagrees.' },
+      { q: 'Should I account for repeat purchases?', a: 'For a business with genuine repeat custom, yes — a first order below break-even can be sound if customers come back. That is a lifetime-value calculation rather than a ROAS one; use LTV:CAC.' },
+      { q: 'Why does the ad platform report a higher ROAS than I see?', a: 'Attribution. Platforms tend to claim credit for conversions that would have happened anyway, and use generous attribution windows. Compare against total revenue rather than trusting the dashboard alone.' }
+    ],
+    related: ['cac-ltv-calculator', 'profit-margin', 'break-even', 'percentage-calculator', 'stream-revenue-calculator', 'budget-calculator']
+  },
+
+  'late-fee': {
+    intro: 'Charging interest on an overdue invoice is usually less about the money than about the signal — an invoice that costs nothing to ignore is the one that gets paid last.',
+    what: [
+      'Calculates interest on an overdue amount from an annual rate and the days outstanding, defaulting to 2,500 at 45 days.',
+      'The daily rate is the annual rate divided by 365, so the charge accrues gradually rather than arriving as a lump on day one.'
+    ],
+    specs: {
+      caption: 'How it accrues',
+      rows: [
+        ['Invoice amount', 'Default 2,500'],
+        ['Days overdue', 'Default 45'],
+        ['Rate', 'Annual percentage'],
+        ['Daily rate', 'Annual ÷ 365'],
+        ['Returns', 'Interest accrued and the new total'],
+        ['<strong>Must be agreed</strong>', '<strong>In your terms, before the work</strong>'],
+        ['Statutory rights', 'Some jurisdictions allow interest by law'],
+        ['Not', 'Legal advice']
+      ]
+    },
+    steps: [
+      'Check your contract states a late-payment charge — see the tip.',
+      'Enter the amount, days overdue and rate.',
+      'Reference the clause when you send the updated invoice.'
+    ],
+    tip: 'The clause has to exist before the invoice does. Adding interest that was never in your terms is generally unenforceable and reads as opportunistic, which damages the relationship you are trying to preserve. Put a late-payment term in your standard contract once and it covers every client afterwards — several jurisdictions also grant statutory interest on commercial debts even without a clause, which is worth checking locally.',
+    faqs: [
+      { q: 'Can I charge interest without it being in the contract?', a: 'Often not by contract, but some jurisdictions grant a statutory right to interest on late commercial payments regardless. Check your local position — in several countries that statutory rate is higher than most people would have written into their terms.' },
+      { q: 'What rate is reasonable?', a: 'Commonly a base rate plus a margin, and some jurisdictions specify the formula. An unreasonably high rate risks being treated as a penalty and struck out entirely, which leaves you with nothing.' },
+      { q: 'Should I actually charge it?', a: 'Judgement. Its main value is deterrent — clients who know interest accrues pay sooner. Many businesses state the term, invoke it rarely, and find the stating alone does the work.' },
+      { q: 'What if they still do not pay?', a: 'Escalate in writing with a clear deadline, then consider formal recovery. Interest keeps accruing but does not compel anyone; the letter that says what happens next is what usually moves things.' }
+    ],
+    related: ['invoice-generator', 'contract-generator', 'receipt-generator', 'compound-interest', 'percentage-calculator', 'iban-validator']
+  },
+
+  /* ============ batch 18b — SEO cluster (complete) ============ */
+
+  'og-preview': {
+    intro: 'A link shared without an Open Graph image renders as a bare line of text, and a link with the wrong dimensions renders cropped through the middle of your headline. Both cost clicks that the page never learns about.',
+    what: [
+      'Previews how a URL will appear when shared, so you see the card before a platform builds it rather than after.',
+      'The dimensions that matter are <strong>1200 × 630</strong> — the ratio every major platform crops toward. An image at a different ratio gets cut, usually from the top and bottom.'
+    ],
+    specs: {
+      caption: 'What platforms expect',
+      rows: [
+        ['Image size', '<strong>1200 × 630</strong> (1.91:1)'],
+        ['<code>og:image</code>', 'Must be an ABSOLUTE url'],
+        ['Relative paths', 'Silently produce no card at all'],
+        ['<code>og:title</code>', 'Around 60 characters before truncation'],
+        ['<code>og:description</code>', 'Around 155 characters'],
+        ['Twitter', 'Needs <code>summary_large_image</code> for the big card'],
+        ['Caching', 'Platforms cache aggressively — see the tip'],
+        ['Runs', 'On your device']
+      ]
+    },
+    steps: [
+      'Enter the URL or the tags.',
+      'Check the image is 1200 × 630 and the URL is absolute.',
+      'After changing tags, <strong>force a re-scrape</strong> — see the tip.'
+    ],
+    tip: 'Platforms cache the card, sometimes for days. Fixing your tags and re-sharing shows the old broken preview, which convinces people the fix did not work. Use the platform’s own debugger — Facebook’s Sharing Debugger, LinkedIn’s Post Inspector — to force a re-scrape after any change.',
+    faqs: [
+      { q: 'My image is not showing.', a: 'Nearly always a relative URL. <code>og:image</code> must be absolute, including the protocol — a relative path yields no card and looks identical to having no tag at all. After fixing it, force a re-scrape.' },
+      { q: 'Why does my old preview still appear?', a: 'Platform caching. They store the scraped card and do not re-fetch on every share. Each major platform has a debugger tool that forces a refresh; that is the only reliable way.' },
+      { q: 'What size should the image be?', a: '1200 × 630. That is the ratio platforms crop toward, so a square or portrait image loses its top and bottom — frequently the part with your text on it.' },
+      { q: 'Do I need separate Twitter tags?', a: 'Twitter falls back to Open Graph for most fields, but <code>twitter:card</code> set to <code>summary_large_image</code> is needed for the large card. Without it you get the small thumbnail version.' }
+    ],
+    related: ['meta-tag-generator', 'serp-preview', 'social-media-image', 'schema-generator', 'thumbnail-maker', 'url-cleaner']
+  },
+
+  'robots-generator': {
+    intro: 'robots.txt is four lines of plain text with the power to remove an entire site from search. Most of the damage done with it comes from one misunderstanding: it controls crawling, not indexing.',
+    what: [
+      'Generates a robots.txt with the rules and sitemap reference you specify.',
+      '<strong>Disallow does not remove a page from search results.</strong> It stops crawling — and a page that is linked from elsewhere can still be indexed, showing in results with no description because Google was forbidden from reading it. To keep a page out, use a <code>noindex</code> tag and <em>allow</em> the crawl so it can be seen.'
+    ],
+    specs: {
+      caption: 'What it does and does not do',
+      rows: [
+        ['<code>Disallow</code>', 'Requests that crawlers do not fetch'],
+        ['<strong>Does NOT</strong>', '<strong>Remove a page from the index</strong>'],
+        ['To deindex', 'Use <code>noindex</code>, and ALLOW crawling'],
+        ['<code>Disallow: /</code>', 'Blocks the entire site — one character'],
+        ['Sitemap line', 'Should be an absolute URL'],
+        ['Not a security control', 'The file is public and lists what you hid'],
+        ['Case sensitive', 'Paths are'],
+        ['Location', 'Must be at the domain root']
+      ]
+    },
+    steps: [
+      'Add the paths you genuinely want left uncrawled.',
+      'Add the absolute URL of your sitemap.',
+      '<strong>Check for a stray <code>Disallow: /</code></strong> before deploying.'
+    ],
+    tip: 'Never use robots.txt to hide sensitive paths. The file is public at yourdomain.com/robots.txt, so a list of admin URLs you did not want found is a directory of exactly where to look — it is the first file an attacker reads. Protect those paths with authentication and leave them out of robots.txt entirely.',
+    faqs: [
+      { q: 'Will Disallow remove my page from Google?', a: 'No, and this is the single most common misunderstanding. It asks crawlers not to fetch the page; if other sites link to it, it can still appear in results — with no description, because Google was not allowed to read it. Use a <code>noindex</code> meta tag and permit crawling so the tag can be seen.' },
+      { q: 'Is it a security measure?', a: 'The opposite. The file is publicly readable and effectively publishes the list of paths you would rather nobody visited. Use authentication for anything that matters.' },
+      { q: 'Do all crawlers obey it?', a: 'Well-behaved ones do. It is a convention, not an enforcement mechanism, and scrapers ignore it freely. Anything you need to actually block requires server-side controls.' },
+      { q: 'What is the most dangerous mistake?', a: 'A stray <code>Disallow: /</code>, which blocks the whole site. It happens most often when a staging file is copied to production, and the traffic loss is total and takes weeks to recover from.' }
+    ],
+    related: ['sitemap-generator', 'meta-tag-generator', 'schema-generator', 'serp-preview', 'keyword-density', 'og-preview']
+  },
+
+  'sitemap-generator': {
+    intro: 'A sitemap is a request for crawl attention, not a command. Google decides what to index; the sitemap only tells it what exists and when it last changed.',
+    what: [
+      'Builds an XML sitemap from your URLs, with optional change frequency and last-modified dates.',
+      '<strong><code>lastmod</code> is the field that does real work.</strong> A changed date is the signal that a page is worth recrawling — which matters far more than <code>priority</code>, a field Google has said it ignores.'
+    ],
+    specs: {
+      caption: 'What matters in a sitemap',
+      rows: [
+        ['<code>lastmod</code>', '<strong>The useful field — signals a recrawl</strong>'],
+        ['<code>priority</code>', 'Ignored by Google'],
+        ['<code>changefreq</code>', 'A hint at best'],
+        ['Maximum URLs', '50,000 per file'],
+        ['Maximum size', '50 MB uncompressed'],
+        ['More than that', 'Use a sitemap index'],
+        ['Include', 'Only canonical, indexable URLs'],
+        ['Submit at', 'Search Console → Sitemaps']
+      ]
+    },
+    steps: [
+      'List only canonical URLs you actually want indexed.',
+      'Set <code>lastmod</code> honestly — see the tip.',
+      'Submit the absolute URL in Search Console.'
+    ],
+    tip: 'Only update <code>lastmod</code> when the page genuinely changed. Setting every page to today on every build teaches Google the field is meaningless on your site, and it stops acting on it — which costs you the one lever a sitemap actually gives you. An honest date on a genuinely changed page is worth more than a fresh date on everything.',
+    faqs: [
+      { q: 'Does a sitemap guarantee indexing?', a: 'No. It tells Google what exists and when it changed; indexing remains a judgement about whether the page is worth including. Thin or duplicate pages listed in a sitemap stay unindexed.' },
+      { q: 'Should I set priority?', a: 'It does not matter — Google has stated it ignores the field. Spend the effort on <code>lastmod</code>, which does influence recrawl scheduling.' },
+      { q: 'What should I leave out?', a: 'Non-canonical duplicates, redirects, error pages, and anything marked <code>noindex</code>. A sitemap full of pages you do not want indexed dilutes the signal and wastes crawl budget.' },
+      { q: 'How many URLs can one file hold?', a: '50,000, or 50 MB uncompressed, whichever comes first. Beyond that, split into several sitemaps and reference them from a sitemap index file.' }
+    ],
+    related: ['robots-generator', 'meta-tag-generator', 'schema-generator', 'serp-preview', 'og-preview', 'slug-generator']
+  },
+
+  'schema-generator': {
+    intro: 'Structured data is how a page tells search engines what it <em>is</em> rather than what it says — and it is what turns a plain result into one with stars, prices or an FAQ dropdown.',
+    what: [
+      'Generates <strong>JSON-LD</strong> markup, the format Google recommends, for common schema types.',
+      'JSON-LD sits in a script tag rather than being woven through your HTML, which is why it is preferred: the markup and the content stay independent, so a redesign cannot silently break your structured data.'
+    ],
+    specs: {
+      caption: 'Format and rules',
+      rows: [
+        ['Format', 'JSON-LD — Google’s recommendation'],
+        ['Placement', 'A <code>&lt;script type="application/ld+json"&gt;</code> block'],
+        ['<strong>Must match</strong>', '<strong>Visible page content</strong>'],
+        ['Marking up invisible content', 'A guidelines violation'],
+        ['Rich results', 'Eligible, never guaranteed'],
+        ['Validate with', 'Google’s Rich Results Test'],
+        ['Common types', 'FAQPage, Product, Article, BreadcrumbList'],
+        ['Runs', 'On your device']
+      ]
+    },
+    steps: [
+      'Pick the type that genuinely describes the page.',
+      'Fill in details that <strong>appear on the page itself</strong>.',
+      'Validate with Google’s Rich Results Test before shipping.'
+    ],
+    tip: 'Never mark up content that is not visible on the page. Adding FAQ schema for questions a visitor cannot see, or review stars for reviews you do not display, is a guidelines violation — and the penalty is losing rich results across the whole site, not just that page. The markup describes the page; it must not exceed it.',
+    faqs: [
+      { q: 'Will this get me rich results?', a: 'It makes you eligible, not guaranteed. Google decides per query whether to show enhanced results, and eligibility is necessary but not sufficient. Correct markup gets you into the running.' },
+      { q: 'Why JSON-LD rather than microdata?', a: 'Google recommends it, and it separates the markup from the HTML. Microdata is woven through your elements, so a template change can silently break it; a JSON-LD block survives redesigns.' },
+      { q: 'Can I mark up content that is not shown?', a: 'No. Structured data must reflect what a visitor sees. Marking up hidden FAQs or non-existent reviews violates the guidelines and risks a manual action that removes rich results sitewide.' },
+      { q: 'How do I check it works?', a: 'Google’s Rich Results Test for eligibility, and Search Console’s enhancement reports once the page is live. Validation is fast and catches most mistakes before they matter.' }
+    ],
+    related: ['meta-tag-generator', 'serp-preview', 'og-preview', 'sitemap-generator', 'robots-generator', 'json-formatter']
+  },
+
+  'keyword-density': {
+    intro: 'Keyword density was a ranking factor two decades ago and is now mainly a diagnostic — useful for noticing that you never actually said the thing your page is about, and useless as a target to hit.',
+    what: [
+      'Counts word frequency with stop-words excluded, so "the" and "and" do not crowd out anything meaningful.',
+      '<strong>There is no correct density.</strong> Modern search engines work on meaning rather than repetition, and writing to hit a percentage produces the stilted prose that keyword stuffing penalties exist for.'
+    ],
+    specs: {
+      caption: 'What it is good for',
+      rows: [
+        ['Counts', 'Word frequency, stop-words excluded'],
+        ['<strong>Target density</strong>', '<strong>There is not one</strong>'],
+        ['Genuinely useful for', 'Noticing your topic is never stated plainly'],
+        ['Also useful for', 'Spotting accidental repetition'],
+        ['Not useful for', 'Hitting a percentage'],
+        ['Search engines now use', 'Semantic relevance, not repetition'],
+        ['Stuffing', 'Actively penalised'],
+        ['Runs', 'On your device']
+      ]
+    },
+    steps: [
+      'Paste the page copy.',
+      'Check the topic actually appears — a surprising number of pages never say it.',
+      'Look for words you have repeated without noticing, and vary them.'
+    ],
+    tip: 'The useful finding is absence, not frequency. Pages written by someone deep in a subject often never state it plainly — an article about compressing video that says "the tool" and "this" throughout and never the phrase itself. Density analysis catches that. Chasing a target percentage does the opposite of helping.',
+    faqs: [
+      { q: 'What density should I aim for?', a: 'None. There is no threshold that helps, and writing toward one produces exactly the unnatural repetition that search engines penalise. Write for the reader and use this to check nothing important went unsaid.' },
+      { q: 'Is keyword density still a ranking factor?', a: 'Not meaningfully. Search engines model meaning, synonyms and context rather than counting occurrences. Extreme repetition is still detected — as spam.' },
+      { q: 'What is it actually useful for?', a: 'Two things: confirming your page states its topic explicitly somewhere, and catching accidental repetition of a word you leaned on without noticing. Both are editorial, not algorithmic.' },
+      { q: 'Should I use synonyms?', a: 'Yes, because people search in different words and because it reads better. That is writing well rather than an SEO technique, which is rather the point.' }
+    ],
+    related: ['readability', 'word-counter', 'meta-tag-generator', 'serp-preview', 'text-diff', 'slug-generator']
+  },
+
+  'utm-builder': {
+    intro: 'UTM parameters are how a campaign becomes visible in analytics, and the thing that ruins them is not complexity — it is inconsistency. <code>Facebook</code> and <code>facebook</code> are two different sources forever.',
+    what: [
+      'Builds tagged URLs with source, medium, campaign and optional term and content.',
+      '<strong>The values are case-sensitive</strong> and analytics will never merge them. One person tagging <code>Email</code> and another <code>email</code> splits a campaign into two reports permanently.'
+    ],
+    specs: {
+      caption: 'The parameters',
+      rows: [
+        ['<code>utm_source</code>', 'Where it came from — newsletter, facebook'],
+        ['<code>utm_medium</code>', 'The channel type — email, cpc, social'],
+        ['<code>utm_campaign</code>', 'The specific campaign'],
+        ['<code>utm_term</code>', 'Paid keyword — optional'],
+        ['<code>utm_content</code>', 'Which variant — for A/B tests'],
+        ['<strong>Case sensitive</strong>', '<strong>Always use lowercase</strong>'],
+        ['<strong>Never use on</strong>', '<strong>Internal links — see the tip</strong>'],
+        ['Visible to users', 'Yes, in the address bar']
+      ]
+    },
+    steps: [
+      'Use lowercase for every value, without exception.',
+      'Keep <code>medium</code> to a short fixed vocabulary — email, cpc, social, referral.',
+      'Write the convention down somewhere the whole team can see it.'
+    ],
+    tip: 'Never put UTM parameters on internal links. A tagged link from one page of your site to another <strong>starts a new session</strong> and reattributes it to that campaign — so your own navigation gets credited for conversions the original source earned. It is one of the fastest ways to make analytics data untrustworthy, and it is usually done with good intentions.',
+    faqs: [
+      { q: 'Does capitalisation matter?', a: 'Yes, and it is unforgiving. <code>Facebook</code> and <code>facebook</code> appear as separate sources and analytics will not merge them retroactively. Use lowercase everywhere and write it down as a rule.' },
+      { q: 'What is the difference between source and medium?', a: 'Source is the specific origin — <code>newsletter</code>, <code>partner-site</code>. Medium is the channel type — <code>email</code>, <code>cpc</code>, <code>social</code>. Keeping medium to a small fixed vocabulary is what makes reports comparable.' },
+      { q: 'Can I use them on internal links?', a: 'No. Doing so starts a new session and reattributes it to that campaign, so your internal navigation steals credit from the real source. Use event tracking for internal clicks.' },
+      { q: 'Users can see these — does that matter?', a: 'Sometimes. They make URLs long and reveal your campaign naming, and anyone sharing a tagged link passes your parameters on. Consider a short link for anything shared publicly.' }
+    ],
+    related: ['url-cleaner', 'slug-generator', 'url-encoder', 'meta-tag-generator', 'roas-calculator', 'og-preview']
+  },
+
   /* ================= session 1 ================= */
 
   'jpg-to-pdf': {
