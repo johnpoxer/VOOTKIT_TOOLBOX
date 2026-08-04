@@ -385,6 +385,502 @@ module.exports = {
   }
 ,
 
+  /* ================= batch 7 — VIDEO cluster (complete) =================
+   * Written to destroy a duplicate cluster, not merely to lengthen pages.
+   * Measured 3 Aug 2026: these seven shared 90%+ of their vocabulary with one
+   * another — 21 near-identical pairs. Half a cluster is not worth writing,
+   * because the pages left behind still twin with each other.
+   *
+   * The differentiator here is real and technical: mute and loop are STREAM
+   * COPIES (-c copy) so they finish in seconds and lose nothing; volume copies
+   * the video and touches only audio; resize and reframe re-encode. Every page
+   * below leads with its own mechanism, read out of videoengine.js. */
+
+  'mute-video': {
+    intro: 'Silencing a clip usually means opening an editor, waiting for it to import, muting a track and exporting — several minutes of work and a full re-encode that costs quality. Removing an audio track needs neither. The video data is already correct; the audio simply stops being copied across.',
+    what: [
+      'Strips the audio track and copies the video through untouched. The exact command is <code>-c copy -an</code>: no decoding, no re-encoding, no quality loss whatsoever. The picture in the output is bit-for-bit the picture you put in.',
+      'Because nothing is re-encoded it finishes in seconds even on a long clip, and the file gets slightly <em>smaller</em> — you removed a track and added nothing.',
+      'Three situations account for most muting. A background soundtrack that would earn an automated copyright claim on YouTube or Instagram. A recording that accidentally captured a conversation, a doorbell, a name — removing the track is the only way to be certain that audio is gone, since lowering the volume leaves it recoverable. And footage destined for an edit where a voiceover or licensed track will be laid over the top anyway, in which case the original sound is dead weight.'
+    ],
+    specs: {
+      caption: 'How it works',
+      rows: [
+        ['Method', 'Stream copy (<code>-c copy -an</code>) — no re-encode'],
+        ['Video quality', 'Identical to source, bit for bit'],
+        ['Speed', 'Seconds, regardless of clip length'],
+        ['Output', 'MP4, same resolution and frame rate as the source'],
+        ['Maximum input', LIMITS.videoInputGB + ' GB'],
+        ['Maximum length', LIMITS.videoMaxMinutes + ' minutes'],
+        ['Privacy', 'Runs in your browser — the file is never uploaded']
+      ]
+    },
+    steps: [
+      'Drop in the video. MP4, MOV, MKV, AVI and WebM all work.',
+      'Press Mute. There are no settings — there is only one way to remove a track.',
+      'Download. The result plays exactly as before, without sound.'
+    ],
+    tip: 'This is the right tool before posting gameplay or a screen recording where background music would trigger a copyright claim. Because it is a stream copy, muting first and compressing afterwards costs you nothing — the quality loss only happens at the compression step, and it happens once.',
+    faqs: [
+      { q: 'Does muting reduce the quality?', a: 'No, and that is the point. The video track is copied rather than re-encoded, so the output is mathematically identical to the input. Anything that re-encodes to mute — most desktop editors, by default — throws away quality for no reason.' },
+      { q: 'Why is it so much faster than the other video tools?', a: 'Nothing is decoded. Compressing or resizing has to decode every frame, process it and encode it again, which is why those take minutes. Removing a track only requires rewriting the container, so the work is proportional to file size rather than to frame count.' },
+      { q: 'Can I lower the volume instead of removing it?', a: 'Use the Volume Adjuster, which keeps the track and scales it. Note that it must re-encode the audio to do so, though it still copies the video through untouched.' },
+      { q: 'Can I get the audio back afterwards?', a: 'Not from the muted file — the track is genuinely removed rather than silenced, so there is nothing left to recover. That is deliberate, and it is why this is the right tool when the point is that nobody should be able to hear what was recorded. Keep your original, or run Extract Audio first to save the soundtrack separately before muting.' },
+      { q: 'Which formats can I mute?', a: 'MP4, MOV, MKV, AVI and WebM all work. Because the streams are copied rather than converted, the video comes out in the same codec it went in as — muting an H.265 recording gives you an H.265 file, not a re-encoded H.264 one.' }
+    ],
+    related: ['extract-audio', 'adjust-volume', 'compress-video', 'trim-video', 'convert-video', 'resize-video']
+  },
+
+  'extract-audio': {
+    intro: 'The audio inside a video file is already a complete, finished recording — an interview, a lecture, a song, a podcast take. Pulling it out is not a conversion so much as a separation, and it does not require the video to be decoded at all.',
+    what: [
+      'Discards the video stream and writes the audio to its own file. <strong>MP3</strong> uses LAME at quality level 2, a variable bitrate that averages roughly 190 kbps — transparent for speech and close to it for music, at about a tenth of the size of the lossless option.',
+      '<strong>WAV</strong> writes uncompressed 16-bit PCM. Nothing is thrown away, which matters if the audio is going into an editor for further work, but the file is large: roughly 10 MB per minute of stereo.'
+    ],
+    specs: {
+      caption: 'Formats and settings',
+      rows: [
+        ['MP3', 'LAME VBR, quality 2 (~190 kbps average)'],
+        ['WAV', '16-bit PCM, uncompressed'],
+        ['Rough size, MP3', 'About 1.4 MB per minute'],
+        ['Rough size, WAV', 'About 10 MB per minute, stereo'],
+        ['Video handling', 'Discarded (<code>-vn</code>) — never decoded'],
+        ['Maximum input', LIMITS.videoInputGB + ' GB'],
+        ['Maximum length', LIMITS.videoMaxMinutes + ' minutes']
+      ]
+    },
+    steps: [
+      'Drop the video in.',
+      'Choose <strong>MP3</strong> for listening, sharing or transcription; <strong>WAV</strong> if the audio is going into an editor.',
+      'Extract, then download.'
+    ],
+    tip: 'Choose WAV whenever the audio has more work ahead of it — noise reduction, levelling, mixing. Every MP3 encode is lossy, so editing an MP3 and re-saving it applies that loss twice. If the file is only ever going to be listened to, MP3 is the sensible default and a tenth of the size.',
+    faqs: [
+      { q: 'Which should I pick, MP3 or WAV?', a: 'MP3 for anything you will listen to, upload or send — at quality 2 most people cannot distinguish it from the source. WAV if it is going into audio software, because further editing compounds the loss from a lossy format.' },
+      { q: 'Is the MP3 a fixed bitrate?', a: 'No. It uses variable bitrate at quality level 2, which spends more data on complex passages and less on quiet ones. That gives better quality per megabyte than a fixed rate, so the average lands near 190 kbps rather than being pinned there.' },
+      { q: 'Can this be better than the original audio?', a: 'No, and nothing can. If the video already contained a heavily compressed 64 kbps track, extracting it to WAV produces a large file that sounds exactly like a 64 kbps track. Extraction preserves; it cannot restore.' },
+      { q: 'Why is this fast when compressing a video is slow?', a: 'The video is never decoded — it is discarded with a single flag. Only the audio is processed, and audio is a fraction of the data in a video file.' }
+    ],
+    related: ['mute-video', 'adjust-volume', 'trim-video', 'convert-video', 'compress-video', 'video-to-gif']
+  },
+
+  'frame-grabber': {
+    intro: 'A thumbnail is usually already somewhere inside your video — the frame where the subject looks right, the moment before the cut. Taking a still out of it needs no encoder at all: the browser can already decode video, so it decodes one frame and paints it to a canvas.',
+    what: [
+      'Seeks to the second you specify, draws that frame to a canvas and saves it as a <strong>PNG</strong>. This is the only video tool here that does not use ffmpeg — it uses the browser’s own decoder, so it runs instantly and downloads nothing.',
+      'PNG rather than JPEG on purpose: the frame is going to be a thumbnail, and a thumbnail is usually edited afterwards. Starting from a lossless still means text and edges stay sharp through whatever you do next.'
+    ],
+    specs: {
+      caption: 'What it produces',
+      rows: [
+        ['Output format', 'PNG, lossless'],
+        ['Resolution', 'The video’s native frame size'],
+        ['Time control', 'Seconds, in 0.1 s steps'],
+        ['Engine', 'Browser decoder + canvas — no ffmpeg download'],
+        ['Speed', 'Instant'],
+        ['Codec support', 'Whatever your browser can play — MP4/H.264 is safest'],
+        ['Privacy', 'The file never leaves your device']
+      ]
+    },
+    steps: [
+      'Add the video.',
+      'Set <strong>Time</strong> to the moment you want, in seconds. Decimals work, so 12.4 is a valid answer.',
+      'Grab the frame, check the preview, and adjust the time if you were slightly early or late.',
+      'Download the PNG.'
+    ],
+    tip: 'Motion blur is what usually ruins a grabbed thumbnail. Try a few tenths either side of your first guess — during fast movement, 0.2 s can be the difference between a sharp face and a smear. The preview shows you the result before you commit.',
+    faqs: [
+      { q: 'Why does my video not load here when the other tools accept it?', a: 'This tool uses your browser’s decoder rather than ffmpeg, so it is limited to formats the browser can play. MKV and some MOV files are decoded by ffmpeg but not by browsers. Run it through the Video Converter to MP4 first and it will work.' },
+      { q: 'Can I get JPEG instead?', a: 'The output is PNG so nothing is lost at this stage. If you need JPEG, convert afterwards with the Image Converter — that way any compression happens once, after your edits, rather than before them.' },
+      { q: 'How exact is the time?', a: 'It seeks to the nearest available frame, so at 30 fps you land within about a thirtieth of a second. Precise seeking also depends on keyframes, so on a heavily compressed clip the actual frame can be marginally off your requested time.' },
+      { q: 'Why is this instant when other video tools take minutes?', a: 'It decodes one frame. The others decode, process and re-encode every frame in the clip — thousands of them.' }
+    ],
+    related: ['thumbnail-maker', 'video-to-gif', 'trim-video', 'compress-image', 'resize-image', 'compress-video']
+  },
+
+  'loop-video': {
+    intro: 'Looping a short clip — a logo sting, a background plate, a two-second reaction — normally means pasting it end to end in an editor and exporting the whole thing. There is a much cheaper way: write the same encoded stream out several times in a row. No re-encoding, no generation loss.',
+    what: [
+      'Repeats the clip end to end for the number of plays you choose, using <code>-stream_loop</code> with <code>-c copy</code>. The video is never decoded, so a three-times loop of a 10-second clip takes about as long as copying the file.',
+      'Output length and size scale linearly and predictably: three plays is three times the duration and very close to three times the bytes.'
+    ],
+    specs: {
+      caption: 'Limits and behaviour',
+      rows: [
+        ['Total plays', '2 to 20'],
+        ['Method', 'Stream copy (<code>-stream_loop</code>) — no re-encode'],
+        ['Quality', 'Identical to source on every repetition'],
+        ['Output duration', 'Source length × plays'],
+        ['Output size', 'Roughly source size × plays'],
+        ['Maximum input', LIMITS.videoInputGB + ' GB'],
+        ['Maximum length', LIMITS.videoMaxMinutes + ' minutes for the SOURCE clip']
+      ]
+    },
+    steps: [
+      'Add the clip you want repeated.',
+      'Set <strong>Total plays</strong> — this is the finished count, so 3 means the clip appears three times, not that it repeats three extra times.',
+      'Loop, then download.'
+    ],
+    tip: 'Loops read as seamless only when the last frame flows into the first. Trim the clip so it starts and ends at the same point in the motion before looping — a quarter of a second of dead air at the end becomes a visible stutter every time round.',
+    faqs: [
+      { q: 'Does looping degrade the quality each time?', a: 'No. The same encoded data is written repeatedly rather than being decoded and re-encoded, so the twentieth repetition is identical to the first. Doing this in an editor typically re-encodes everything and loses a little quality across the whole file.' },
+      { q: 'Does "Total plays: 3" give me three or four copies?', a: 'Three. The number is the finished count rather than the number of extra repeats, which is the opposite of how ffmpeg counts internally — <code>-stream_loop</code> takes the number of ADDITIONAL loops, so three plays is passed as two. The tool does that subtraction for you, because "how many times will this appear" is the question people actually have.' },
+      { q: 'Why cap it at 20?', a: 'Because size scales with it. A 40 MB clip looped twenty times is 800 MB, which is awkward to handle in a browser tab and awkward to upload anywhere. If you need more, loop the looped file.' },
+      { q: 'Will the audio loop too?', a: 'Yes — the whole stream repeats, video and audio together, and they stay in sync because neither is re-timed.' }
+    ],
+    related: ['trim-video', 'video-to-gif', 'compress-video', 'mute-video', 'convert-video', 'resize-video']
+  },
+
+  'resize-video': {
+    intro: 'A 4K recording of a screen share is mostly wasted data — the detail is not there to preserve, but the pixel count still has to be stored, uploaded and decoded by whoever watches it. Dropping the frame size is often a bigger, safer saving than squeezing the bitrate.',
+    what: [
+      'Scales the video to a target height and works the width out from the source aspect ratio, so nothing is stretched or cropped. Scaling uses <strong>lanczos</strong>, which is slower per frame than the alternatives and noticeably sharper on text and fine detail — the right trade when someone chose to downscale deliberately.',
+      'The width is always forced even, because H.264 requires it. A 1440×1080 source scaled to 720p becomes 960×720, not 959×720.'
+    ],
+    specs: {
+      caption: 'Resolutions and method',
+      rows: [
+        ['1080p', 'Full HD, 1920 wide at 16:9'],
+        ['720p (default)', 'HD, 1280 wide at 16:9'],
+        ['480p', 'SD, 854 wide at 16:9'],
+        ['360p', 'Small, 640 wide at 16:9'],
+        ['Scaler', 'Lanczos — sharper than bilinear on text'],
+        ['Aspect ratio', 'Preserved; width derived and forced even'],
+        ['Output', 'MP4 (H.264 + AAC)'],
+        ['Maximum input', LIMITS.videoInputGB + ' GB']
+      ]
+    },
+    steps: [
+      'Drop the video in.',
+      'Pick a <strong>Resolution</strong>. 720p is the sensible default for anything being watched rather than archived.',
+      'Resize, then download.'
+    ],
+    tip: 'Resize before compressing, not after. File size scales with pixel count, so halving the height quarters the pixels — a 1080p to 540p change removes about 75% of the data before the encoder makes a single quality decision. Then compress the smaller file if it still needs to be smaller.',
+    faqs: [
+      { q: 'Should I resize or compress?', a: 'Resize when the frame is bigger than anyone needs — a 4K screen recording watched on a phone. Compress when the resolution is right but the bitrate is generous. Doing both, in that order, gives the smallest file for a given visual quality.' },
+      { q: 'Can I make a video larger?', a: 'You can select a height above the source, but do not — upscaling invents pixels from nothing, producing a bigger file that looks softer than the original. The tool will not stop you; physics will.' },
+      { q: 'What happens to a vertical or square video?', a: 'The height you choose is applied and the width follows from the source ratio, so a 1080×1920 vertical clip set to 720 becomes 405×720. To change the shape rather than the size, use the Vertical Reframe tool.' },
+      { q: 'Why lanczos rather than something faster?', a: 'Because downscaling is where sharpness is won or lost. Lanczos preserves edge detail that bilinear softens, and it matters most on exactly the content people downscale — screen recordings, slides, anything with text.' }
+    ],
+    related: ['compress-video', 'vertical-reframe', 'convert-video', 'trim-video', 'video-to-gif', 'resize-image']
+  },
+
+  'adjust-volume': {
+    intro: 'Quiet audio is the most common fixable problem in amateur video — a clip recorded across a room, or a phone that decided the scene was louder than it was. Scaling the volume is a small change to the audio track and needs no change to the picture at all.',
+    what: [
+      'Multiplies the audio by the percentage you choose and copies the video through untouched (<code>-c:v copy</code>). Only the sound is re-encoded, so the picture is bit-for-bit identical and the job runs far faster than a full re-encode.',
+      'Boosting cannot add information that was never recorded. It raises the whole signal, so the hiss and room noise come up with the voice.'
+    ],
+    specs: {
+      caption: 'Levels and behaviour',
+      rows: [
+        ['50%', 'About 6 dB quieter'],
+        ['100%', 'Unchanged'],
+        ['150% (default)', 'About 3.5 dB louder'],
+        ['200%', 'About 6 dB louder'],
+        ['300%', 'About 9.5 dB louder — clipping likely'],
+        ['Video track', 'Copied, never re-encoded'],
+        ['Audio codec', 'AAC'],
+        ['Maximum input', LIMITS.videoInputGB + ' GB']
+      ]
+    },
+    steps: [
+      'Add the video.',
+      'Choose a <strong>Volume</strong> percentage. Start at 150% and listen before reaching for more.',
+      'Apply, download, and check the loudest moment rather than an average one.'
+    ],
+    tip: 'Judge a boost on the loudest part of the clip, never the quietest. Anything that exceeds the maximum level is clipped flat and turns to distortion, and clipping cannot be undone afterwards. If the quiet parts still need lifting at 200%, the recording needs compression in an audio editor rather than a bigger multiplier.',
+    faqs: [
+      { q: 'Why does 300% sound distorted?', a: 'Digital audio has a hard ceiling. Multiplying by three pushes anything above a third of maximum past it, and everything past it is flattened — that flattening is the crackle you hear. Lower percentages that stay under the ceiling sound clean.' },
+      { q: 'Does this re-encode my video?', a: 'No. The video is stream-copied and only the audio track is re-encoded, so the picture is unchanged and the job is quick.' },
+      { q: 'Can I make one part louder and leave the rest?', a: 'Not here — the multiplier applies to the whole clip. Trim the section you want, adjust it, and rejoin in an editor, or use audio software for a level ride.' },
+      { q: 'Will lowering the volume hurt quality?', a: 'Almost never audibly. Reducing scales the signal down and re-encodes the result; the AAC encode is the only loss, and it is far smaller than the problem you were fixing.' }
+    ],
+    related: ['mute-video', 'extract-audio', 'compress-video', 'trim-video', 'convert-video', 'audio-converter']
+  },
+
+  'vertical-reframe': {
+    intro: 'Shorts, TikTok and Reels want a tall frame, and almost everything is filmed wide. Simply squeezing a 16:9 video into 9:16 makes everyone look stretched; the honest fix is to take a tall slice out of the wide frame and accept that you lose the sides.',
+    what: [
+      'Centre-crops the source to the target shape, then scales the result — the filter is <code>crop</code> followed by <code>scale</code> with lanczos. Nothing is stretched: the aspect ratio of everything inside the frame is preserved exactly.',
+      '<strong>The crop is from the centre, and it is not smart.</strong> There is no subject tracking here. If your subject sits to one side of the frame, they will be cut off, and no setting will change that.'
+    ],
+    specs: {
+      caption: 'Target shapes',
+      rows: [
+        ['9:16 (default)', 'Shorts, TikTok, Reels, Stories'],
+        ['1:1', 'Square — feed posts'],
+        ['4:5', 'Portrait feed — the tallest most feeds allow'],
+        ['Method', 'Centre crop, then lanczos scale'],
+        ['Distortion', 'None — proportions preserved'],
+        ['Audio', 'Copied unchanged'],
+        ['Output', 'MP4 (H.264)'],
+        ['Maximum input', LIMITS.videoInputGB + ' GB']
+      ]
+    },
+    steps: [
+      'Add a landscape clip.',
+      'Choose the <strong>Target shape</strong> for wherever it is going.',
+      'Reframe, then watch the result before posting — the centre crop is decided for you.'
+    ],
+    tip: 'Going from 16:9 to 9:16 keeps only about a third of the width. That is a severe cut, so it works on a talking head near the middle of frame and fails on a wide shot or a two-person interview. If the subject is off-centre, crop manually in an editor instead — this tool cannot follow them.',
+    faqs: [
+      { q: 'Will people look stretched?', a: 'No. The frame is cropped rather than squashed, so proportions are exactly as filmed. Stretching is what happens when software forces a wide frame into a tall one without cropping, and this deliberately does not do that.' },
+      { q: 'Can it follow my subject?', a: 'No, and it is better to say so plainly than to imply otherwise. The crop is fixed at the centre for the whole clip. Subject-tracking reframes need a full editor.' },
+      { q: 'How much of the picture do I lose?', a: 'Going 16:9 to 9:16 keeps roughly 32% of the width — the outer two-thirds are gone. 4:5 keeps about 56%, and 1:1 about 56% as well, so both are much gentler crops if the platform allows them.' },
+      { q: 'Does the resolution drop?', a: 'The frame is cropped and then scaled to the target, so vertical detail is preserved and the pixel count falls with the narrower frame. Reframing from a 1080p source gives plenty of resolution for any vertical feed.' }
+    ],
+    related: ['resize-video', 'trim-video', 'compress-video', 'social-media-image', 'video-to-gif', 'thumbnail-maker']
+  },
+
+  /* ================= batch 7 — HEALTH cluster (complete) =================
+   * The second duplicate cluster: seven pages sharing 90%+ of their vocabulary.
+   *
+   * YMYL, and written to the same standard as bmi-calculator. Every page states
+   * the NAMED formula it uses and what that formula cannot see. These tools
+   * compute; they do not advise. Where a number is commonly misread — body fat
+   * from a tape measure, 220 minus age — the page says so plainly rather than
+   * presenting an estimate as a measurement. Keep this framing on anything
+   * added to this category later. */
+
+  'bmr-calculator': {
+    intro: 'Every calorie target starts from one number: what your body spends doing nothing at all. That figure is not measurable at home, but it is estimable — and the estimate is good enough to plan from, provided you know how wide the error bars are.',
+    what: [
+      'Calculates basal metabolic rate with the <strong>Mifflin-St Jeor</strong> equation: <code>10 × kg + 6.25 × cm − 5 × age</code>, then <code>+5</code> for men and <code>−161</code> for women. It replaced the older Harris-Benedict formula because it is more accurate for modern body compositions.',
+      'Multiplies that by an activity factor to give total daily energy expenditure — the number you would actually eat to maintain weight.'
+    ],
+    specs: {
+      caption: 'Formula and activity factors',
+      rows: [
+        ['Equation', 'Mifflin-St Jeor (1990)'],
+        ['Sedentary', '× 1.2 — desk job, little exercise'],
+        ['Light', '× 1.375 — 1–3 days a week'],
+        ['Moderate (default)', '× 1.55 — 3–5 days a week'],
+        ['Active', '× 1.725 — 6–7 days a week'],
+        ['Very active', '× 1.9 — physical job or twice-daily training'],
+        ['Units', 'Metric (kg, cm) or imperial (lb, in)'],
+        ['Age range', '10 to 100']
+      ]
+    },
+    steps: [
+      'Choose units and enter age, sex, weight and height.',
+      'Pick the <strong>activity level</strong> that matches a normal week, not a good one.',
+      'Read BMR (at rest) and TDEE (with activity).'
+    ],
+    tip: 'Almost everyone overestimates their activity level, and it is the single biggest source of error here — the gap between "moderate" and "active" is around 270 calories a day for a 75 kg adult. Choose one level lower than feels right, then adjust after two weeks against what actually happens on the scale.',
+    faqs: [
+      { q: 'How accurate is this?', a: 'Mifflin-St Jeor lands within about 10% of measured BMR for most people, which is roughly 150–200 calories a day. It is derived from population averages, so it cannot see your particular muscle mass, thyroid function or genetics. Treat it as a starting point to be corrected by observation.' },
+      { q: 'Why does it ask my sex?', a: 'The equation carries a constant that differs by sex — +5 for men, −161 for women — reflecting average differences in lean mass. It is a population average and will fit some individuals poorly.' },
+      { q: 'What is the difference between BMR and TDEE?', a: 'BMR is what you would burn lying still all day — breathing, circulation, keeping warm. TDEE is BMR multiplied by your activity factor, and it is the number that matters for eating to maintain, gain or lose.' },
+      { q: 'Should I eat my BMR to lose weight?', a: 'This tool cannot answer that and neither should any calculator. Eating at or below BMR is aggressive and, sustained, is the kind of thing that needs professional supervision. Take an energy target to a dietitian or doctor, particularly if you have any medical condition.' }
+    ],
+    related: ['macro-calculator', 'bmi-calculator', 'ideal-weight-calculator', 'body-fat-calculator', 'water-intake-calculator', 'percentage-calculator']
+  },
+
+  'macro-calculator': {
+    intro: 'A calorie target says how much to eat; it says nothing about what. Splitting those calories into carbohydrate, protein and fat is arithmetic — the useful part is that the three do not convert at the same rate, which is why the gram figures look so lopsided.',
+    what: [
+      'Divides a daily calorie figure into grams using the standard energy densities: <strong>4 calories per gram</strong> for carbohydrate and protein, <strong>9 per gram</strong> for fat. That difference is why a keto split with 65% of calories from fat still gives fewer fat grams than you might expect.',
+      'Four presets, each stated as carbohydrate / protein / fat by percentage of calories.'
+    ],
+    specs: {
+      caption: 'Splits, as % of calories',
+      rows: [
+        ['Balanced (default)', '50% carbs · 25% protein · 25% fat'],
+        ['High protein', '40% · 40% · 20%'],
+        ['Low carb', '25% · 40% · 35%'],
+        ['Keto', '5% · 30% · 65%'],
+        ['Carbohydrate', '4 cal per gram'],
+        ['Protein', '4 cal per gram'],
+        ['Fat', '9 cal per gram'],
+        ['Calorie range', '800 to 6,000']
+      ]
+    },
+    steps: [
+      'Enter your daily calorie target — the BMR Calculator produces one if you do not have it.',
+      'Choose a <strong>split</strong>.',
+      'Read the grams. Those are the numbers to track, since food labels are in grams.'
+    ],
+    tip: 'Protein is the number worth hitting precisely; carbohydrate and fat can move around it considerably without much consequence. If you only track one figure, track that one — and note that the percentage splits here are of calories, not of grams, which is the most common way these numbers get misread.',
+    faqs: [
+      { q: 'Why does keto give so few fat grams for 65% of calories?', a: 'Because fat carries 9 calories per gram against 4 for the others. At 2,000 calories, 65% is 1,300 calories, which is about 144 g — while 5% carbohydrate is 100 calories but only 25 g. The percentages are of energy, not of weight.' },
+      { q: 'Which split should I choose?', a: 'That depends on goals, medical history and what you can actually sustain, none of which a calculator can see. The presets are common conventions, not recommendations. A dietitian can tell you which suits you; this tool only does the arithmetic once you have decided.' },
+      { q: 'Where does the calorie number come from?', a: 'You supply it. The BMR Calculator estimates a maintenance figure from your height, weight, age, sex and activity, which is the usual starting point.' },
+      { q: 'Is keto safe?', a: 'That is a medical question, not a mathematical one. Very low carbohydrate diets interact with medication — diabetes drugs especially — and are not appropriate for everyone. Ask a clinician before starting one.' }
+    ],
+    related: ['bmr-calculator', 'bmi-calculator', 'water-intake-calculator', 'body-fat-calculator', 'percentage-calculator', 'unit-converter']
+  },
+
+  'body-fat-calculator': {
+    intro: 'Weight alone cannot tell muscle from fat, which is why two people of identical height and weight can be in visibly different condition. A tape measure gets closer than a scale does — though it is still an estimate, and a fairly rough one.',
+    what: [
+      'Uses the <strong>US Navy circumference method</strong>, which estimates body fat from neck, waist and height (plus hip for women) via a logarithmic formula. For men: <code>495 / (1.0324 − 0.19077·log₁₀(waist − neck) + 0.15456·log₁₀(height)) − 450</code>.',
+      'Requires only a tape measure, which is why it is used where calipers or scanners are impractical. It infers fat distribution from a few circumferences rather than measuring anything directly.'
+    ],
+    specs: {
+      caption: 'Method and measurements',
+      rows: [
+        ['Method', 'US Navy circumference (Hodgdon-Beckett)'],
+        ['Men need', 'Height, neck, waist'],
+        ['Women need', 'Height, neck, waist, hip'],
+        ['Units', 'Centimetres'],
+        ['Typical accuracy', '±3–4 percentage points vs DEXA'],
+        ['Neck measured at', 'Just below the larynx'],
+        ['Waist measured at', 'Navel, relaxed — not held in'],
+        ['Hip measured at', 'The widest point']
+      ]
+    },
+    steps: [
+      'Measure with a soft tape, snug but not compressing the skin.',
+      'Take the waist at the navel while breathing out normally — do not hold it in.',
+      'Enter the measurements and read the estimate.'
+    ],
+    tip: 'Measurement error dominates this result. A centimetre of difference at the waist can move the answer by more than a percentage point, so measure three times and use the middle value — and always at the same time of day, since waist circumference varies noticeably between morning and evening.',
+    faqs: [
+      { q: 'How accurate is this really?', a: 'Within about 3–4 percentage points of a DEXA scan for most people, which is useful for tracking a trend and poor for a single verdict. It is least accurate at the extremes — very lean and very heavy bodies both tend to be misestimated.' },
+      { q: 'Why does it need my neck?', a: 'The neck acts as a proxy for frame size, letting the formula separate build from fat. Without it, a naturally broad person and a heavier person of the same waist would score the same.' },
+      { q: 'Why do women need a hip measurement?', a: 'Because typical fat distribution differs, and the female version of the formula uses waist plus hip minus neck to account for it. Using the male formula on a female body gives a meaningfully wrong answer.' },
+      { q: 'It disagrees with my smart scale.', a: 'Both are estimates using entirely different assumptions — this one from circumferences, the scale from electrical impedance, which is sensitive to hydration and even to how recently you ate. Neither is ground truth. Pick one method and follow its trend rather than comparing across them.' }
+    ],
+    related: ['bmi-calculator', 'ideal-weight-calculator', 'bmr-calculator', 'macro-calculator', 'water-intake-calculator', 'percentage-calculator']
+  },
+
+  'ideal-weight-calculator': {
+    intro: 'There is no single agreed formula for what a person should weigh — which tells you most of what you need to know about the concept. This shows three of the standard formulas side by side, precisely so the disagreement between them is visible.',
+    what: [
+      'Runs <strong>Devine</strong>, <strong>Robinson</strong> and <strong>Miller</strong>, all of which work from height above five feet. Devine, for example, is 50 kg plus 2.3 kg per inch over 60 for men, and 45.5 kg plus 2.3 for women.',
+      'They routinely differ by several kilograms for the same person. That spread is the honest answer: these are clinical rules of thumb, originally built for drug dosing rather than for telling anybody what to weigh.'
+    ],
+    specs: {
+      caption: 'The three formulas',
+      rows: [
+        ['Devine (1974)', 'Men 50 kg + 2.3/in over 60″; women 45.5 + 2.3'],
+        ['Robinson (1983)', 'Men 52 kg + 1.9/in; women 49 + 1.7'],
+        ['Miller (1983)', 'Men 56.2 kg + 1.41/in; women 53.1 + 1.36'],
+        ['Baseline height', '60 inches (5 feet)'],
+        ['Units', 'Metric (cm) or imperial (inches)'],
+        ['Also shown', 'A healthy BMI range for your height'],
+        ['Accounts for build?', 'No — height and sex only'],
+        ['Accounts for muscle?', 'No']
+      ]
+    },
+    steps: [
+      'Choose units and enter height and sex.',
+      'Compare all three results rather than picking the flattering one.',
+      'Read the BMI range alongside them — a range is a more honest target than any single figure.'
+    ],
+    tip: 'Treat the spread between the three formulas as the real answer. If they give 70, 73 and 77 kg, the useful conclusion is "somewhere around the low seventies", not any one of those numbers. A healthy weight is a range, and these formulas were never designed to identify a personal target.',
+    faqs: [
+      { q: 'Why do the three disagree?', a: 'They were derived from different populations at different times and were built for clinical purposes such as drug dosing. None was validated as a personal weight target, so their disagreement is a fair reflection of how imprecise the underlying idea is.' },
+      { q: 'Which one should I use?', a: 'None, on its own. Look at the range they span, and at the healthy BMI range shown alongside. If you want a target that accounts for your build, training and health history, that is a conversation with a clinician rather than a formula.' },
+      { q: 'Why is there no input for frame size or muscle?', a: 'Because none of these formulas use one — they take height and sex and nothing else. That is their main limitation, and it is why a muscular athlete will be told to weigh substantially less than is appropriate.' },
+      { q: 'Does this work for children?', a: 'No. All three assume an adult body. Children and teenagers are assessed against growth percentile charts by a paediatrician, and adult formulas do not apply.' }
+    ],
+    related: ['bmi-calculator', 'body-fat-calculator', 'bmr-calculator', 'macro-calculator', 'unit-converter', 'percentage-calculator']
+  },
+
+  'water-intake-calculator': {
+    intro: 'The "eight glasses a day" rule is not from any study — it is a number that escaped into folklore. A slightly better estimate scales with body mass and adds for the two things that actually change requirement: sweating from exercise, and heat.',
+    what: [
+      'Starts from <strong>35 ml per kilogram</strong> of body weight, adds <strong>350 ml per 30 minutes</strong> of exercise, and adds a further <strong>500 ml</strong> in a hot climate. Results are shown in litres, millilitres, and as 250 ml glasses.',
+      'Every one of those coefficients is a convention rather than a measured personal requirement — which is why the result is a starting estimate and not a prescription.'
+    ],
+    specs: {
+      caption: 'How the estimate is built',
+      rows: [
+        ['Base', '35 ml per kg of body weight'],
+        ['Exercise', '+350 ml per 30 minutes'],
+        ['Hot climate', '+500 ml'],
+        ['Glass size used', '250 ml'],
+        ['Units', 'Metric (kg) or imperial (lb)'],
+        ['Exercise range', '0 to 600 minutes a day'],
+        ['Includes food?', 'No — food typically supplies 20–30% more'],
+        ['Includes tea/coffee?', 'They count toward total fluid']
+      ]
+    },
+    steps: [
+      'Choose units and enter your weight.',
+      'Add typical daily <strong>exercise minutes</strong> and pick your climate.',
+      'Read the total, and treat it as a rough target rather than a quota.'
+    ],
+    tip: 'Thirst and urine colour are better guides than any formula — pale straw is about right. The calculation ignores water in food, which typically supplies another 20–30%, so someone eating a lot of fruit and vegetables genuinely needs less from the glass than this suggests.',
+    faqs: [
+      { q: 'Where does 35 ml per kg come from?', a: 'It is a widely used clinical rule of thumb for adult maintenance fluid, not a finding from a specific trial. Individual requirement varies with kidney function, medication, diet and activity, none of which this can see.' },
+      { q: 'Do tea and coffee count?', a: 'Yes. The idea that caffeine dehydrates you at normal intakes has not held up — the fluid in a cup of coffee counts toward your total. Alcohol is genuinely different and increases fluid loss.' },
+      { q: 'Can I drink too much water?', a: 'Yes, and it is dangerous. Drinking far beyond thirst over a short period can dilute blood sodium, a condition called hyponatremia, which is a medical emergency. This tool estimates a daily total to spread across the day, not a volume to consume quickly.' },
+      { q: 'Should I follow this if I have a health condition?', a: 'No. Kidney disease, heart failure and several medications come with specific fluid instructions that override any general formula. Follow your clinician’s advice, not this.' }
+    ],
+    related: ['bmr-calculator', 'bmi-calculator', 'macro-calculator', 'unit-converter', 'body-fat-calculator', 'percentage-calculator']
+  },
+
+  'pace-calculator': {
+    intro: 'Runners think in minutes per kilometre; race results are published in total time; treadmills are labelled in kilometres per hour. They are the same fact expressed three ways, and converting between them in your head mid-run is how people mis-pace a race.',
+    what: [
+      'Takes a distance and a finishing time and returns pace per unit, speed, and the equivalent pace in the other unit — so a 5:00/km runner immediately sees 8:03/mile.',
+      'Also projects the same effort onto half marathon (21.0975 km) and marathon (42.195 km) distances, using the exact official figures rather than rounded ones.'
+    ],
+    specs: {
+      caption: 'Inputs and outputs',
+      rows: [
+        ['Distance units', 'Kilometres or miles'],
+        ['Time input', 'Hours, minutes, seconds'],
+        ['Pace output', 'Minutes per km and per mile'],
+        ['Speed output', 'km/h or mph'],
+        ['Half marathon', '21.0975 km / 13.1094 mi'],
+        ['Marathon', '42.195 km / 26.2188 mi'],
+        ['Conversion factor', '1 mile = 1.609344 km, exact'],
+        ['Minimum distance', '0.01']
+      ]
+    },
+    steps: [
+      'Enter the <strong>distance</strong> and choose km or miles.',
+      'Enter the time as hours, minutes and seconds.',
+      'Read pace, speed, and the equivalent in the other unit.'
+    ],
+    tip: 'The race projections assume you hold the same pace over a much longer distance, which almost nobody does. As a rough correction, expect roughly 5% slower per doubling of distance — a 25-minute 5K projects to about 52 minutes for 10K in the arithmetic, but 53–55 is the realistic range.',
+    faqs: [
+      { q: 'Why is my projected marathon time so optimistic?', a: 'Because it is pure arithmetic — your current pace multiplied by 42.195 km. It cannot model fatigue, fuelling or the wall. Established predictors like Riegel apply a fatigue exponent; treat the projection here as a ceiling on your best case.' },
+      { q: 'How do I convert pace between km and miles?', a: 'Multiply a per-kilometre pace by 1.609344 to get per-mile. The tool shows both, which avoids the common error of converting the distance and forgetting to convert the pace.' },
+      { q: 'What pace is a treadmill speed?', a: 'Divide 60 by the km/h figure to get minutes per km — 12 km/h is 5:00/km. The tool reports speed alongside pace so you can set a treadmill directly.' },
+      { q: 'Are the race distances exact?', a: 'Yes. A marathon is 42.195 km and a half is 21.0975 km by definition. Rounding to 42 km would understate a finishing time by about half a minute at typical paces.' }
+    ],
+    related: ['heart-rate-calculator', 'unit-converter', 'bmr-calculator', 'distance-calculator', 'percentage-calculator', 'timezone-converter']
+  },
+
+  'heart-rate-calculator': {
+    intro: 'Training zones are the difference between an easy run that builds fitness and one that quietly costs you recovery. Calculating them from resting heart rate is more informative than using percentages of maximum, because it accounts for the fitness you already have.',
+    what: [
+      'Estimates maximum heart rate as <code>220 − age</code>, then builds zones with the <strong>Karvonen method</strong>: zones are percentages of your heart rate <em>reserve</em> (maximum minus resting), added back to resting.',
+      'That distinction matters. Two people with the same maximum but resting rates of 50 and 75 get genuinely different zone boundaries — which is correct, and which the simpler percentage-of-max approach misses entirely.'
+    ],
+    specs: {
+      caption: 'Method and inputs',
+      rows: [
+        ['Maximum HR', '220 − age (estimate)'],
+        ['Zone method', 'Karvonen — % of heart rate reserve'],
+        ['Reserve', 'Maximum − resting'],
+        ['Zone formula', '(reserve × %) + resting'],
+        ['Age range', '5 to 120'],
+        ['Resting HR range', '30 to 120 bpm'],
+        ['Measure resting', 'On waking, before getting up'],
+        ['Accuracy of 220 − age', '±10–12 bpm standard deviation']
+      ]
+    },
+    steps: [
+      'Enter your age.',
+      'Enter <strong>resting heart rate</strong>, measured on waking before you get out of bed.',
+      'Read the zones and note which one your easy sessions actually fall into.'
+    ],
+    tip: 'Measure resting heart rate across several mornings and average them — a single reading after a bad night or a late coffee can be 10 bpm off, and that error propagates into every zone. If your resting rate is unusually high or has changed a lot recently, that is worth mentioning to a doctor rather than working around.',
+    faqs: [
+      { q: 'How accurate is 220 minus age?', a: 'It is a rough population fit with a standard deviation around 10–12 bpm, meaning a 40-year-old whose true maximum is 165 or 195 is entirely normal. It is convenient rather than precise — a supervised test is the only way to know your own.' },
+      { q: 'Why use resting heart rate at all?', a: 'Because the Karvonen method sets zones on the range you actually have available. A fit person with a resting rate of 45 has a much larger reserve than someone at 75, and their zones should differ even at the same age.' },
+      { q: 'What if my resting rate is close to my estimated maximum?', a: 'Then the estimate does not fit you and the zones will be meaningless — the tool says so rather than printing numbers. Get measured zones from a clinician or coach.' },
+      { q: 'Should I train by heart rate or by feel?', a: 'Both, and treat disagreement as information. Heart rate lags effort by a minute or two and drifts upward in heat, dehydration and fatigue, so a rate that seems high for an easy effort often means you need rest rather than a faster run.' }
+    ],
+    related: ['pace-calculator', 'bmr-calculator', 'bmi-calculator', 'water-intake-calculator', 'macro-calculator', 'unit-converter']
+  },
+
   /* ================= session 1 ================= */
 
   'jpg-to-pdf': {

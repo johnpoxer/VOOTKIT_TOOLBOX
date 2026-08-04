@@ -19,11 +19,14 @@ short FAQ answers, stub spec tables and dead related links all fail the build.
 
 | | Pages | Unique words |
 |---|---|---|
-| Hand-written | **82** | 269–419 |
-| Derived spec table (auto, from source) | ~35 | 102–169 |
-| Generic template | ~144 | ~96 |
+| Hand-written | **96** | 269–419 |
+| Generic template | ~161 | ~96 |
 
-Pages over 250 unique words: **82 of 261** — 31% of the catalogue.
+Pages over 250 unique words: **96 of 257** — 37% of the catalogue.
+
+**Duplication is the metric that now matters more than length.** See the
+measurement below: 714 near-duplicate page pairs across 22 clusters. Batches are
+chosen by cluster from here on, not by search demand.
 
 Sitewide median has moved 95 → 141, but read that with care: part of the rise is
 real and part is a shifting baseline. "Boilerplate" is defined as vocabulary
@@ -103,6 +106,60 @@ any country's tax rules and applies the rate you supply. Keep this framing on
 every finance page added later.*
 
 ---
+
+## THE REAL PROBLEM IS DUPLICATION, NOT LENGTH — measured 3 Aug 2026
+
+This queue was built around "thin pages". That framing was incomplete and the
+measurement is worse than it looked.
+
+Comparing every thin page against every other, on body text with head/script
+stripped:
+
+| | |
+|---|---|
+| Near-duplicate pairs (>=90% word overlap) | **714** |
+| Clusters | **22** |
+| Thin pages inside a cluster | **170 of 178** |
+
+Some pages were **100% identical** to a sibling apart from the title. That is
+not thin content, it is DUPLICATE content — a separate and more serious AdSense
+flag, and the obvious reason Google crawls these and declines to index them.
+
+**Consequence for how batches are chosen.** Writing twelve scattered pages
+barely helps: a cluster of seven with one page rewritten still contains fifteen
+duplicate pairs. **Take whole clusters.** A complete seven-page cluster removes
+21 pairs; half of one removes almost nothing.
+
+### Batch 7 — two complete clusters (3 Aug 2026)
+
+| Cluster | Before | After |
+|---|---|---|
+| video (7) | 99% avg overlap | **44.5%** |
+| health (7) | 99% avg overlap | **43.9%** |
+| formatters (4) — untouched control | 96.5% | 96.5% |
+
+video: mute-video · extract-audio · frame-grabber · loop-video · resize-video ·
+adjust-volume · vertical-reframe
+
+*Differentiated on real mechanism read from videoengine.js, not on adjectives:
+mute and loop are stream copies (`-c copy`) and finish in seconds losing
+nothing; adjust-volume copies the video and re-encodes only audio; resize and
+reframe re-encode; frame-grabber uses no ffmpeg at all. Those differences are
+what make the pages genuinely unlike each other.*
+
+health: bmr-calculator · macro-calculator · body-fat-calculator ·
+ideal-weight-calculator · water-intake-calculator · pace-calculator ·
+heart-rate-calculator
+
+*YMYL, written to the bmi-calculator standard. Every page names its actual
+formula — Mifflin-St Jeor, US Navy circumference, Devine/Robinson/Miller,
+Karvonen — and states what that formula cannot see. 220-age is labelled as
++/-10-12 bpm. ideal-weight shows three formulas precisely so their disagreement
+is visible. These compute; they never advise.*
+
+**Remaining clusters, largest first:** everyday+misc (21), pdf (18), streaming
+(13), business (12), tax (8), images (8), privacy (8), education (8), travel (7),
+developer (7), audio (6), realestate (6), accessibility (5).
 
 ## Next up, in order
 
