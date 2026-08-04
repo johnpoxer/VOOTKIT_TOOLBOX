@@ -5222,6 +5222,284 @@ module.exports = {
     related: ['url-cleaner', 'slug-generator', 'url-encoder', 'meta-tag-generator', 'roas-calculator', 'og-preview']
   },
 
+  /* ============ batch 19a — insurance cluster (complete) ============
+   * YMYL, highest-stakes category on the site. These estimate a coverage
+   * NEED; they never recommend a product, a provider or an amount to buy. */
+
+  'life-insurance-needs': {
+    intro: 'Life cover is bought to replace what a household loses, and the mistake in both directions is the same: guessing a round number instead of working out what actually needs replacing.',
+    what: [
+      'Estimates a cover amount from income to replace, years to replace it for, and debts to clear. Defaults to 65,000 income over 10 years.',
+      '<strong>This estimates a need, not a policy.</strong> It cannot see your health, your existing cover, your employer benefits or your tax position — all of which change both the amount and what it costs.'
+    ],
+    specs: {
+      caption: 'What goes in',
+      rows: [
+        ['Income to replace', 'Default 65,000 a year'],
+        ['Years', 'Default 10 — until dependants are independent'],
+        ['Debts', 'Mortgage, loans, anything that would survive you'],
+        ['Common convention', '10–12× annual income'],
+        ['Not counted here', 'Existing cover, employer death-in-service'],
+        ['Not counted here', 'Partner’s income, savings, state benefits'],
+        ['Also consider', 'Childcare costs a surviving partner would face'],
+        ['Is this advice?', '<strong>No</strong>']
+      ]
+    },
+    steps: [
+      'Set years to replace based on when dependants become independent, not a round number.',
+      'Add debts that would not die with you — the mortgage above all.',
+      '<strong>Subtract cover you already have</strong>, including through work.'
+    ],
+    tip: 'Check your employer death-in-service benefit before buying anything. Many employers provide two to four times salary automatically, and people routinely buy cover on top without counting it — paying for protection they already had. It also usually ends when the job does, which is the other half of the calculation.',
+    faqs: [
+      { q: 'How much cover do people usually take?', a: 'Ten to twelve times annual income is a common convention, but it is a rule of thumb rather than an answer. A household with a paid-off home and no dependants needs far less; one with young children and a large mortgage may need more.' },
+      { q: 'Does this include what I already have?', a: 'No — you should subtract it. Employer death-in-service cover, existing policies and mortgage protection all reduce the gap, and forgetting them is the commonest way people over-insure.' },
+      { q: 'How many years of income should I replace?', a: 'Usually until dependants are financially independent, or until a surviving partner reaches a pension. That is a household-specific judgement rather than a default.' },
+      { q: 'Should I buy the amount this suggests?', a: 'Treat it as a starting figure for a conversation, not a decision. Premiums depend on age, health and term, and the right structure varies. An independent adviser is worth the fee on a decision this size.' }
+    ],
+    related: ['income-protection', 'budget-calculator', 'mortgage-calculator', 'savings-goal', 'auto-insurance-estimator', 'investment-calculator']
+  },
+
+  'income-protection': {
+    intro: 'Being unable to work for months is more likely than dying young, and far less commonly insured. The number that matters is not your salary — it is what your household must cover each month regardless.',
+    what: [
+      'Compares essential monthly outgoings against take-home pay and any employer sick pay, to show the shortfall a policy would need to cover. Defaults to 3,400 take-home against 2,400 essentials.',
+      'It works from <strong>essentials</strong> rather than income, because that is what has to be met — and insuring your full salary is usually neither possible nor necessary.'
+    ],
+    specs: {
+      caption: 'What goes in',
+      rows: [
+        ['Monthly take-home', 'Default 3,400'],
+        ['Essential outgoings', 'Default 2,400 — the number that matters'],
+        ['Employer sick pay', 'In months — the deferred period should match'],
+        ['Returns', 'The monthly shortfall to cover'],
+        ['Typical policy cap', 'Around 50–70% of gross income'],
+        ['Deferred period', 'Longer wait = cheaper premium'],
+        ['Not counted', 'State benefits, savings, partner’s income'],
+        ['Is this advice?', '<strong>No</strong>']
+      ]
+    },
+    steps: [
+      'Work out genuine essentials — housing, food, utilities, debt, insurance.',
+      'Find out exactly how long your employer pays sick pay, and at what rate.',
+      'Match the policy’s deferred period to where that runs out. See the tip.'
+    ],
+    tip: 'Set the deferred period to start when your employer sick pay ends, not immediately. Paying for cover during months you would still be paid is money wasted, and a longer wait reduces the premium substantially — often by more than people expect. Find the exact number of months in your contract first; assumptions here are expensive in both directions.',
+    faqs: [
+      { q: 'Why calculate from essentials rather than salary?', a: 'Because essentials are what must be met, and policies typically cap at 50–70% of gross income anyway — insuring the full amount is usually not on offer. Working from outgoings gives a number you can actually buy.' },
+      { q: 'What is a deferred period?', a: 'The wait between being unable to work and the policy paying. Longer is cheaper. The right length is usually exactly where your employer sick pay stops, so you are never paying for overlap or facing a gap.' },
+      { q: 'Is this the same as critical illness cover?', a: 'No. Income protection pays a monthly amount while you cannot work, whatever the cause. Critical illness pays a lump sum on diagnosis of specific listed conditions. They solve different problems and many people hold both.' },
+      { q: 'Should I buy this?', a: 'That depends on your savings, your employer benefits, your state entitlements and your household — none of which this can see. It sizes the gap; an adviser can tell you how to fill it.' }
+    ],
+    related: ['life-insurance-needs', 'budget-calculator', 'payroll-calculator', 'savings-goal', 'deductible-calculator', 'paycheck-calculator']
+  },
+
+  'deductible-calculator': {
+    intro: 'A higher deductible always lowers the premium, and the question is never which number is smaller — it is whether the saving is worth the risk you have just taken on.',
+    what: [
+      'Compares premium savings against the extra you would pay out of pocket, so the trade-off is visible as a break-even rather than a hunch.',
+      'The result is a <strong>break-even claim frequency</strong>: how often you would have to claim before the higher deductible costs more than it saves.'
+    ],
+    specs: {
+      caption: 'The trade-off',
+      rows: [
+        ['Higher deductible', 'Lower premium, more risk retained'],
+        ['Lower deductible', 'Higher premium, less exposure'],
+        ['The real question', 'Can you pay the deductible tomorrow?'],
+        ['Break-even', 'Annual saving ÷ extra deductible'],
+        ['Rule of thumb', 'Only raise it to an amount you hold in cash'],
+        ['Also affects', 'Whether small claims are worth making at all'],
+        ['Claim history', 'Frequent small claims can raise renewal quotes'],
+        ['Is this advice?', '<strong>No</strong>']
+      ]
+    },
+    steps: [
+      'Compare quotes at two deductible levels.',
+      'Enter the premiums and deductibles.',
+      '<strong>Ask whether you could pay the higher figure tomorrow</strong> — see the tip.'
+    ],
+    tip: 'Never raise a deductible above what you could pay immediately from savings. The premium saving is certain and the claim is uncertain, which makes a high deductible look attractive right up until the day you need it. If paying it would mean borrowing, the saving is not saving — it is a loan you have agreed to take at the worst possible moment.',
+    faqs: [
+      { q: 'Is a higher deductible always cheaper?', a: 'The premium is lower, but total cost depends on whether you claim. The break-even tells you how often you would need to claim for the higher deductible to cost more — and if that frequency looks plausible for you, the saving is not real.' },
+      { q: 'How high should I go?', a: 'No higher than you could pay from savings tomorrow without borrowing. That is the constraint that matters, and it is about liquidity rather than arithmetic.' },
+      { q: 'Should I claim for small amounts?', a: 'Often not. A claim just above the deductible returns little and can raise your renewal for years. Many people set a deductible near the point where they would not bother claiming anyway, which is a coherent strategy.' },
+      { q: 'Does this apply to all insurance?', a: 'The trade-off is general — car, home, health all work this way — but terms and the effect of claims on renewal differ. Check the specific policy.' }
+    ],
+    related: ['auto-insurance-estimator', 'income-protection', 'budget-calculator', 'savings-goal', 'life-insurance-needs', 'percentage-calculator']
+  },
+
+  'auto-insurance-estimator': {
+    intro: 'Most drivers buy the legal minimum liability cover and never think about it again — which is fine until a serious accident, when the amount above the limit comes from whatever they own.',
+    what: [
+      'Helps size liability cover against what you could actually lose in a claim, defaulting to 120,000 in assets and 65,000 income.',
+      '<strong>Liability limits protect your assets, not your car.</strong> Damage above the limit is pursued personally — against savings, property and in some jurisdictions future earnings.'
+    ],
+    specs: {
+      caption: 'What is at stake',
+      rows: [
+        ['Assets at risk', 'Default 120,000'],
+        ['Income', 'Default 65,000 — future earnings can be pursued'],
+        ['Liability cover protects', 'What you own, not your vehicle'],
+        ['Above the limit', 'Comes from you personally'],
+        ['Legal minimums', 'Often far below a serious injury claim'],
+        ['Raising liability', 'Usually cheap relative to the protection'],
+        ['Umbrella policies', 'Extend limits across policies — often cheaper still'],
+        ['Is this advice?', '<strong>No</strong>']
+      ]
+    },
+    steps: [
+      'Total what you could lose — savings, home equity, investments.',
+      'Compare against your current liability limits.',
+      'Get a quote for the next tier up. See the tip.'
+    ],
+    tip: 'Raising liability limits is usually one of the cheapest things on an insurance quote, because severe claims are rare. Going from a minimum limit to several times it often costs a small amount a year — while the exposure it removes is everything you own. Ask for the quote before assuming it is unaffordable; most people never ask.',
+    faqs: [
+      { q: 'Is the legal minimum enough?', a: 'Frequently not. Minimums are set low and a serious injury claim can exceed them substantially, at which point the balance is pursued against you personally. Minimum cover protects you legally, not financially.' },
+      { q: 'What does liability actually cover?', a: 'Harm you cause to other people and their property — not your own vehicle, which is separate cover. It is the part that stands between an accident and your savings.' },
+      { q: 'What is an umbrella policy?', a: 'Additional liability cover sitting above your existing car and home policies. Because it only pays after those limits are exhausted, it is often surprisingly inexpensive for the amount of protection.' },
+      { q: 'How much should I carry?', a: 'A common approach is at least the value of what you could lose. This helps you total that; the specific limits and whether an umbrella suits you is a conversation with a broker.' }
+    ],
+    related: ['deductible-calculator', 'life-insurance-needs', 'income-protection', 'budget-calculator', 'auto-loan-calculator', 'fuel-cost-calculator']
+  },
+
+  /* ============ batch 19b — design cluster (complete) ============ */
+
+  'color-converter': {
+    intro: 'HEX, RGB and HSL describe the same colours in three different vocabularies, and the reason to know all three is that only one of them lets you adjust a colour predictably.',
+    what: [
+      'Converts between <strong>HEX</strong>, <strong>RGB</strong> and <strong>HSL</strong> with a live swatch.',
+      '<strong>HSL is the one worth thinking in.</strong> Hue, saturation and lightness map onto how people describe colour — "the same blue but lighter" is one number in HSL and three unpredictable ones in HEX.'
+    ],
+    specs: {
+      caption: 'The three notations',
+      rows: [
+        ['HEX', '<code>#RRGGBB</code> — compact, universal in CSS'],
+        ['RGB', '0–255 per channel — how screens work'],
+        ['HSL', 'Hue 0–360, saturation and lightness 0–100%'],
+        ['<strong>HSL is best for</strong>', '<strong>Adjusting a colour predictably</strong>'],
+        ['Lighter shade', 'Raise HSL lightness — one number'],
+        ['Same in HEX', 'Three unrelated values to guess'],
+        ['Alpha', 'RGBA and HSLA add opacity'],
+        ['Runs', 'On your device']
+      ]
+    },
+    steps: [
+      'Enter a colour in any notation.',
+      'Read the other two and the swatch.',
+      'Use HSL when you need variations of the same colour.'
+    ],
+    tip: 'Build palettes in HSL and export whatever your CSS needs. Keeping hue fixed and moving lightness gives you a tonal scale that is genuinely consistent — the thing designers build by eye and get subtly wrong. It is also why every serious design system stores colour as HSL underneath, whatever it ships.',
+    faqs: [
+      { q: 'Which notation should I use?', a: 'HEX for storing and sharing since it is compact and universal, HSL when adjusting. The conversion is lossless, so working in HSL and exporting HEX costs nothing.' },
+      { q: 'Why is HSL easier to adjust?', a: 'Because its axes match how people think. Making a colour lighter means raising one number; in HEX all three components change in ways that are hard to predict, and you end up guessing.' },
+      { q: 'Do the three describe identical colours?', a: 'Yes, within rounding — they are different coordinate systems over the same space. HSL uses percentages, so very occasionally a round trip shifts by one unit in the last digit.' },
+      { q: 'What about alpha?', a: 'RGBA and HSLA add an opacity channel, and CSS also accepts an 8-digit HEX where the last two characters are alpha. All describe the same transparency.' }
+    ],
+    related: ['palette-generator', 'gradient-generator', 'shadow-generator', 'contrast-checker', 'accessible-palette', 'color-from-image']
+  },
+
+  'palette-generator': {
+    intro: 'Palettes built by picking colours you like tend to fight each other. Ones built on a relationship — complementary, analogous, triadic — hold together, because the relationship does the work your eye was guessing at.',
+    what: [
+      'Generates a five-colour palette from harmonic relationships, with HEX, RGB and HSL for each.',
+      'The relationships are angles on the colour wheel: complementary is 180° apart, analogous adjacent, triadic 120°. That is why they look deliberate rather than assembled.'
+    ],
+    specs: {
+      caption: 'Harmonies and rules',
+      rows: [
+        ['Complementary', 'Opposite hues — 180° apart, high contrast'],
+        ['Analogous', 'Adjacent hues — calm, cohesive'],
+        ['Triadic', 'Three hues 120° apart — vivid and balanced'],
+        ['Output', 'Five colours, in HEX, RGB and HSL'],
+        ['<strong>60-30-10</strong>', '<strong>Dominant, secondary, accent</strong>'],
+        ['Always check', 'Contrast, before using any pair as text'],
+        ['Also check', 'Colour blindness'],
+        ['Runs', 'On your device']
+      ]
+    },
+    steps: [
+      'Pick a base colour and a harmony.',
+      'Apply the 60-30-10 rule rather than using all five equally.',
+      '<strong>Check contrast</strong> on any pair you will use for text.'
+    ],
+    tip: 'Use the 60-30-10 rule: about 60% of the surface in your dominant colour, 30% secondary, 10% accent. A palette used in equal parts looks chaotic no matter how well the colours relate — the harmony makes the colours work together, and the proportion makes the design work at all.',
+    faqs: [
+      { q: 'Which harmony should I pick?', a: 'Analogous for calm, cohesive interfaces; complementary when you need a strong accent to stand out; triadic for something vivid and playful. Most product interfaces sit in analogous with one complementary accent.' },
+      { q: 'Do I use all five colours equally?', a: 'No — that is the commonest mistake. Follow roughly 60-30-10 across dominant, secondary and accent, and treat the remaining colours as supporting rather than featured.' },
+      { q: 'Are generated palettes accessible?', a: 'Not automatically. Harmony is about hue relationships and contrast is about luminance, so a beautiful palette can fail badly for text. Check every text pairing separately.' },
+      { q: 'Can I build one from a photo instead?', a: 'Yes — Color from Image extracts a palette from a picture. That gives colours that already coexist in the real world, which is a different and often good starting point.' }
+    ],
+    related: ['color-converter', 'accessible-palette', 'contrast-checker', 'gradient-generator', 'color-from-image', 'color-blind-simulator']
+  },
+
+  'gradient-generator': {
+    intro: 'Gradients look easy and go wrong in a specific, recognisable way: a muddy grey band through the middle where two colours meet. That band is not a design failure — it is a mathematical one.',
+    what: [
+      'Builds linear and radial CSS gradients with copy-ready output.',
+      'The grey band happens because interpolating between complementary colours passes through neutral. <strong>Adding a mid-stop that stays saturated</strong> is the fix, and it is why professional gradients use three stops rather than two.'
+    ],
+    specs: {
+      caption: 'Types and fixes',
+      rows: [
+        ['Linear', 'Along an angle'],
+        ['Radial', 'Outward from a point'],
+        ['<strong>The grey band</strong>', '<strong>Interpolation passing through neutral</strong>'],
+        ['Fix', 'Add a saturated mid-stop'],
+        ['Better still', 'Use hues close on the wheel'],
+        ['Banding on large areas', 'Visible steps — add noise or use dithering'],
+        ['Output', 'Copy-ready CSS'],
+        ['Runs', 'On your device']
+      ]
+    },
+    steps: [
+      'Choose two colours reasonably close on the colour wheel.',
+      'If the middle looks muddy, add a saturated mid-stop.',
+      'Copy the CSS.'
+    ],
+    tip: 'Gradients between colours close on the wheel almost always look better than dramatic ones. Blue to purple stays saturated the whole way; blue to orange passes through grey in the middle because they are complementary, and mixing complements is how you make grey. If you need that combination, put a saturated colour in between and the problem disappears.',
+    faqs: [
+      { q: 'Why does my gradient look grey in the middle?', a: 'Because the two colours are far apart on the wheel and interpolating between them passes through neutral — mixing complements produces grey. Add a saturated mid-stop, or choose closer hues.' },
+      { q: 'How do I fix visible banding?', a: 'Banding shows on large areas where the steps between colours become discernible. Reducing the colour distance helps, as does a subtle noise overlay — a common trick in hero backgrounds.' },
+      { q: 'Linear or radial?', a: 'Linear for backgrounds and buttons, which is most cases. Radial for spotlight or glow effects. Radial over a large area tends to look dated unless it is very subtle.' },
+      { q: 'Do gradients affect performance?', a: 'CSS gradients are rendered by the browser and are far cheaper than an image — no request, no bytes, and they scale perfectly. They are one of the genuinely free wins in CSS.' }
+    ],
+    related: ['color-converter', 'palette-generator', 'shadow-generator', 'css-formatter', 'color-from-image', 'contrast-checker']
+  },
+
+  'shadow-generator': {
+    intro: 'Shadows suggest elevation, and the reason most hand-written ones look wrong is that they ignore how light actually behaves — a real shadow gets larger and softer the further an object sits from the surface.',
+    what: [
+      'Builds CSS <code>box-shadow</code> with live preview — offset, blur, spread and colour.',
+      'The rule that makes shadows look real: <strong>as an element rises, the shadow should get bigger, softer and lighter</strong>. Increasing offset without increasing blur produces the hard drop shadow that dates a design instantly.'
+    ],
+    specs: {
+      caption: 'The four values',
+      rows: [
+        ['X and Y offset', 'Direction — usually 0 and positive Y'],
+        ['Blur', 'Softness — should scale with offset'],
+        ['Spread', 'Grows or shrinks the shadow'],
+        ['Colour', 'Use a transparent black, not grey — see the tip'],
+        ['<strong>Higher elevation</strong>', '<strong>Larger offset, MORE blur, less opacity</strong>'],
+        ['Common mistake', 'Offset without blur — hard, dated shadow'],
+        ['Layering', 'Two or three shadows read more naturally than one'],
+        ['Output', 'Copy-ready CSS']
+      ]
+    },
+    steps: [
+      'Start with zero X offset and a small positive Y.',
+      'Set blur to roughly twice the Y offset.',
+      'Use a low-opacity black rather than a grey.'
+    ],
+    tip: 'Use <code>rgba(0,0,0,0.1)</code> rather than a solid grey. A transparent black tints whatever is behind it, so the shadow works on any background; a grey shadow is a fixed colour that looks correct on white and wrong everywhere else — including in dark mode, where it becomes a visible light-grey smear.',
+    faqs: [
+      { q: 'Why does my shadow look fake?', a: 'Usually offset without enough blur. Real shadows soften as they extend, so a large offset with a small blur reads as a hard shape rather than a shadow. Blur roughly double the Y offset is a reliable starting point.' },
+      { q: 'Should I use grey or black?', a: 'Transparent black. It tints whatever is behind it and works on any background, whereas a grey is a fixed colour that only looks right on white — and looks obviously wrong in dark mode.' },
+      { q: 'How do I show more elevation?', a: 'Increase offset, blur and spread together while reducing opacity. Bigger, softer and lighter is how distance reads. Just making the shadow darker makes it look heavier, not higher.' },
+      { q: 'Can I layer shadows?', a: 'Yes — comma-separate them, and it is what most design systems do. A tight dark shadow plus a wide soft one reads far more naturally than any single shadow can.' }
+    ],
+    related: ['gradient-generator', 'color-converter', 'palette-generator', 'css-formatter', 'contrast-checker', 'accessible-palette']
+  },
+
   /* ================= session 1 ================= */
 
   'jpg-to-pdf': {

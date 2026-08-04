@@ -19,13 +19,13 @@ short FAQ answers, stub spec tables and dead related links all fail the build.
 
 | | Pages | Unique words |
 |---|---|---|
-| Hand-written | **221** | 269–419 |
-| Generic template | ~39 | ~96 |
+| Hand-written | **229** | 269–419 |
+| Generic template | ~31 | ~96 |
 
-Pages over 250 unique words: **221 of 260** — **85% of the catalogue**.
+Pages over 250 unique words: **229 of 260** — **88% of the catalogue**.
 
-**Duplicate pairs sitewide: 714 → 101** (−86%) across five clusters destroyed on
-3 Aug (video, health, pdf, business, converters, streaming, tax, images, privacy, education, travel, realestate, developer, audio, accessibility, fees, seo).
+**Duplicate pairs sitewide: 714 → 89** (−88%) across five clusters destroyed on
+3 Aug (video, health, pdf, business, converters, streaming, tax, images, privacy, education, travel, realestate, developer, audio, accessibility, fees, seo, insurance, design).
 
 **Duplication is the metric that now matters more than length.** See the
 measurement below: 714 near-duplicate page pairs across 22 clusters. Batches are
