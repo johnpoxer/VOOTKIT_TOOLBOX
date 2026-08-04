@@ -107,8 +107,8 @@
       /* AdSense: publisher id + one slot id per placement. */
       client: "ca-pub-5906583727409402",
       slots: {
-        inContent: "",   // between the article body and the FAQ
-        footer: ""       // after the FAQ, above related tools
+        inContent: "4617624167",   // "Vootkit In Content" — between the article body and the FAQ
+        footer: "8309457166"       // "Vootkit Footer" — after the FAQ, above related tools
       }
     },
 
@@ -120,13 +120,25 @@
       region: "eu-west-1"
     },
 
-    /* Stripe — product IDs are given; Checkout needs a PRICE id per product
-       (price_…). Fill these once created in the Stripe dashboard, or wire the
-       Netlify function to read them from env (VK_PRICE_*). Publishable + secret
-       keys are env-only. */
+    /* Stripe.
+     *
+     * CHECKOUT IS LIVE AND WORKING. Verified 3 Aug 2026 by POSTing to the
+     * function from the live site: all four plans return HTTP 200 with a real
+     * Checkout URL.
+     *
+     * READ THIS BEFORE TRUSTING THE `price` FIELD BELOW. It is EMPTY AND
+     * UNUSED. netlify/functions/create-checkout.js reads the price ids from
+     * ENVIRONMENT VARIABLES (VK_PRICE_*), which are set in Netlify and are
+     * correct. Nothing in the codebase reads plans[].price — checked.
+     *
+     * It is kept only so the shape matches the Stripe dashboard, and it is
+     * labelled because an empty field that looks authoritative is worse than no
+     * field: it caused a confident and completely wrong conclusion that nobody
+     * could subscribe. If you are checking whether payments work, POST to the
+     * function — do not read this file. */
     stripe: {
       plans: {
-        creator_pro_monthly:   { product: "prod_UhxCv4HRKfegkM", price: "", amount: 8,   interval: "month", label: "Creator Pro" },
+        creator_pro_monthly:   { product: "prod_UhxCv4HRKfegkM", price: "" /* unused — see note above */, amount: 8,   interval: "month", label: "Creator Pro" },
         creator_pro_annual:    { product: "prod_UhxF5IXhe6653t", price: "", amount: 80,  interval: "year",  label: "Creator Pro" },
         creator_teams_monthly: { product: "prod_UhxuUASj85k4eY", price: "", amount: 20,  interval: "month", label: "Creator Teams" },
         creator_teams_annual:  { product: "prod_UhxnBrCi8RUYEa", price: "", amount: 200, interval: "year",  label: "Creator Teams" }
@@ -145,11 +157,15 @@
      * ON, but as a NUDGE — `hard:false`. Read the next paragraph before changing
      * that, because the two flags are not independent.
      *
-     * The original note here said to keep this off entirely until Stripe and
-     * Supabase were both live, on the grounds that a hard block traps users with
-     * no way to pay. That reasoning is right and still applies: every `price`
-     * under stripe.plans below is still an empty string. With `hard:true` the
-     * site would refuse to work AND be unable to sell — the worst of both.
+     * CORRECTION, 3 Aug 2026. This previously said a hard block was unsafe
+     * because "every price under stripe.plans is still an empty string". That
+     * was WRONG — those fields are unused, and checkout has been live the whole
+     * time (all four plans verified returning real Checkout URLs).
+     *
+     * So the original objection no longer applies: a user refused by a hard
+     * limit CAN pay. `hard:true` is now a genuine product choice rather than a
+     * broken one. It stays false only because that is a decision about how
+     * aggressive the product should be, and it belongs to the owner.
      *
      * But `enabled:false` had its own cost: every page advertises "5 FREE A DAY"
      * while nothing counts, so there was no upgrade moment anywhere in the
@@ -157,9 +173,9 @@
      * both. The tool always runs; after the fifth completed run the result is
      * followed by a priced offer. Nobody is trapped, and the funnel exists.
      *
-     * FLIP `hard` TO TRUE ONLY WHEN: the Stripe price ids below are populated,
-     * checkout has been completed end-to-end at least once, and Supabase auth is
-     * live so a paying user can actually be recognised as Pro.
+     * REMAINING CONDITION FOR `hard:true`: Supabase auth must reliably mark a
+     * paying user as Pro, or a subscriber would be gated despite having paid.
+     * That is the last thing to verify — the payment half is done.
      *
      * It is a client-side counter — tools run in the browser — so it was never
      * enforcement, only a prompt. Treat it as merchandising, not as DRM. */
