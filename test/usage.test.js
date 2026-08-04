@@ -33,17 +33,24 @@ const F = CFG.freeLimit;
 ok(F.enabled, "the free limit is switched on — otherwise there is no funnel at all");
 eq(F.count, 5, "five free runs, matching the '5 FREE A DAY' badge every page renders");
 
-/* THE INTERLOCK. A hard block is only honest once someone refused by it can
-   actually pay. Every Stripe price id is still an empty string, so hard:true
-   would refuse the tool AND be unable to sell — the worst of both. */
-const pricesSet = Object.keys(CFG.stripe.plans).filter((k) => CFG.stripe.plans[k].price);
-if (!pricesSet.length) {
-  eq(F.hard, false,
-    "Stripe price ids are unset, so the limit must nudge rather than block — " +
-    "a hard gate with no working checkout traps the user");
-}
-ok(F.hard === false || pricesSet.length > 0,
-   "hard:true is only permissible once checkout works");
+/* THE INTERLOCK — CORRECTED 3 Aug 2026.
+ *
+ * This block previously read the `price` field out of stripe.plans, found it
+ * empty, and asserted hard MUST be false because "checkout does not work".
+ * That was wrong twice over: the field is unused (create-checkout.js reads
+ * VK_PRICE_* environment variables), and checkout has been live the whole time
+ * — all four plans verified returning real Stripe Checkout URLs.
+ *
+ * The lesson is worth keeping: an empty config field that nothing reads is
+ * worse than no field, because it invites exactly this conclusion. The field is
+ * now labelled unused in site.config.js, and this test no longer keys off it.
+ *
+ * What remains true is the PRINCIPLE — never gate a user behind a payment path
+ * that cannot complete. But that is now a runtime property of the Netlify
+ * function, not something a unit test can read, so it is asserted where it can
+ * be: hard:true requires a deliberate choice, and the default stays soft. */
+ok(typeof F.hard === "boolean", "the hard/soft choice is explicit, not undefined");
+ok(!F.hard, "the limit currently nudges rather than blocks — a product decision, not a broken-checkout workaround");
 
 /* With a soft limit, no count can ever produce a block. */
 [5, 6, 20, 500].forEach((n) => {
