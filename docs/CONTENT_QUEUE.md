@@ -19,13 +19,13 @@ short FAQ answers, stub spec tables and dead related links all fail the build.
 
 | | Pages | Unique words |
 |---|---|---|
-| Hand-written | **170** | 269–419 |
-| Generic template | ~90 | ~96 |
+| Hand-written | **178** | 269–419 |
+| Generic template | ~82 | ~96 |
 
-Pages over 250 unique words: **170 of 260** — 65% of the catalogue.
+Pages over 250 unique words: **178 of 260** — 68% of the catalogue.
 
-**Duplicate pairs sitewide: 714 → 241** across five clusters destroyed on
-3 Aug (video, health, pdf, business, converters, streaming, tax, images, privacy).
+**Duplicate pairs sitewide: 714 → 213** across five clusters destroyed on
+3 Aug (video, health, pdf, business, converters, streaming, tax, images, privacy, education).
 
 **Duplication is the metric that now matters more than length.** See the
 measurement below: 714 near-duplicate page pairs across 22 clusters. Batches are
@@ -337,7 +337,30 @@ usually in the browser tabs and notifications rather than the content.*
 *• text-encrypt: **there is no passphrase recovery**, and the ciphertext and key
 must travel by different channels or nothing was gained.*
 
-**Remaining clusters, largest first:** education (8), travel (7),
+### Batch 15 — the education cluster, complete (3 Aug 2026)
+
+| | Before | After |
+|---|---|---|
+| education (8 pages) | 97% avg | **40.8% avg, 0 pairs** |
+
+*Four of these use localStorage, and each says so plainly in the specs table —
+losing a term's flashcards or study log to a cleared browser is real and
+unrecoverable, so it belongs in the specs rather than a footnote.*
+
+*Differentiation came from the learning science rather than the interface:
+flashcards work because retrieval builds memory, so the tip is "answer before
+you flip, every time" — flipping first produces the feeling of learning without
+the substance. quiz-maker's value is in WRITING the distractors, not answering
+them. learning-tracker exists because remembered study time is systematically
+inflated. study-planner's tip is to leave a catch-up slot empty, because a plan
+with no slack is abandoned the first bad evening.*
+
+*citation-generator does APA/MLA/Chicago and the tip is to ask which EDITION —
+APA 7 changed rules from APA 6, so a correct APA 6 reference is now wrong.
+diagram-maker emits Mermaid, which GitHub and GitLab render natively, so a
+diagram pasted into a README stays editable instead of drifting stale.*
+
+**Remaining clusters, largest first:** travel (7),
 developer (7), audio (6), realestate (6), accessibility (5).
 
 ## Next up, in order

@@ -3457,6 +3457,286 @@ module.exports = {
     related: ['metadata-remover', 'pdf-redact', 'image-blur', 'crop-image', 'url-cleaner', 'exif-viewer']
   },
 
+  /* ============ batch 15 — education cluster (complete) ============
+   * 8 pages from tools-edu.js. Four use localStorage, which is stated plainly
+   * on each because losing a term's study data to a cleared browser is a real
+   * and unrecoverable failure. citation-generator does APA/MLA/Chicago;
+   * diagram-maker emits Mermaid. */
+
+  'flashcard-maker': {
+    intro: 'Flashcards work because of a specific mechanism: forcing yourself to retrieve an answer strengthens memory far more than reading it again. The card is just a device for making retrieval unavoidable.',
+    what: [
+      'Builds a deck you can flip through, storing it in your browser so it survives closing the tab.',
+      '<strong>Saved in local storage on this device only.</strong> That means no account and nothing uploaded — and also that clearing browser data destroys the deck, with no way back.'
+    ],
+    specs: {
+      caption: 'How it works',
+      rows: [
+        ['Card format', 'Front and back — question and answer'],
+        ['Study mode', 'Flip to reveal'],
+        ['Storage', '<strong>Browser local storage, this device only</strong>'],
+        ['Syncs across devices?', '<strong>No</strong>'],
+        ['Survives clearing browser data?', '<strong>No — export or copy out</strong>'],
+        ['Account needed', 'None'],
+        ['Uploaded anywhere', 'No'],
+        ['Best deck size', '20–50 cards per session']
+      ]
+    },
+    steps: [
+      'Write one fact per card — a card with three facts tests none of them properly.',
+      'Phrase the front as a question, not a topic.',
+      'Study by answering before you flip, out loud if you can.',
+      'Copy the deck somewhere else periodically. See the tip.'
+    ],
+    tip: 'Answer before flipping, every time, even when you are sure. The moment of effortful retrieval is what builds the memory — flipping first and thinking "yes, I knew that" produces the feeling of learning without the substance. It is the single most common way flashcards get used badly.',
+    faqs: [
+      { q: 'Will I lose my deck?', a: 'You can. It lives in this browser’s local storage, so clearing site data removes it, it does not appear on another device, and a browser reclaiming storage can drop it. Copy your cards into a document periodically if the deck represents real work.' },
+      { q: 'How many cards should a deck have?', a: 'Twenty to fifty for a single session. Longer decks mean the cards you struggle with come round too rarely to help, and the session becomes a slog rather than practice.' },
+      { q: 'Should the front be a question or a topic?', a: 'A question. "Photosynthesis" prompts vague recognition; "What does photosynthesis convert light energy into?" forces an actual answer, and only the second builds retrievable memory.' },
+      { q: 'Does it do spaced repetition?', a: 'No — it is a straightforward deck you flip through. For scheduled review intervals you would want dedicated software; this is for building and drilling a set quickly.' }
+    ],
+    related: ['vocabulary-builder', 'quiz-maker', 'study-planner', 'learning-tracker', 'mind-map-generator', 'text-to-pdf']
+  },
+
+  'vocabulary-builder': {
+    intro: 'Learning a word means learning it in context. A list of translations produces recognition — you know the word when you see it — without production, which is the ability to reach for it when speaking.',
+    what: [
+      'Keeps a word list with meanings you can reveal one at a time, so you test yourself rather than read a table.',
+      'Stored in your browser, so the list persists between sessions without an account and without anything leaving your device.'
+    ],
+    specs: {
+      caption: 'How it works',
+      rows: [
+        ['Entry', 'Word and meaning'],
+        ['Study mode', 'Reveal the meaning after attempting it'],
+        ['Storage', '<strong>Browser local storage, this device only</strong>'],
+        ['Syncs?', 'No'],
+        ['Survives clearing browser data?', 'No'],
+        ['Language-specific features', 'None — works for any language'],
+        ['Account needed', 'None'],
+        ['Uploaded anywhere', 'No']
+      ]
+    },
+    steps: [
+      'Add words as you meet them, in context, rather than from a list.',
+      'Include a short example sentence in the meaning field.',
+      'Test in both directions — word to meaning, and meaning to word.'
+    ],
+    tip: 'Add an example sentence, not just a translation. A word learned alone gives you recognition; a word learned in a phrase gives you the grammar and collocation that let you actually use it. "Rendre" means little on its own — "rendre un livre" tells you what preposition to expect and what it goes with.',
+    faqs: [
+      { q: 'How many new words a day?', a: 'Ten to fifteen is sustainable for most people. More than that and the review burden compounds until you stop. Consistency matters more than volume — a hundred words a week retained beats three hundred forgotten.' },
+      { q: 'Why test in both directions?', a: 'Because recognising a word and producing it are different skills. Meaning-to-word is harder and is what you need to speak; word-to-meaning alone leaves you understanding a language you cannot use.' },
+      { q: 'Will my list sync to my phone?', a: 'No. It is stored in this browser on this device. Keep a copy elsewhere if the list matters — clearing site data removes it permanently.' },
+      { q: 'Does it work for any language?', a: 'Yes — the fields are just text, so scripts, tones and non-Latin alphabets all work. There is nothing language-specific in it.' }
+    ],
+    related: ['flashcard-maker', 'quiz-maker', 'study-planner', 'learning-tracker', 'word-counter', 'text-to-speech']
+  },
+
+  'citation-generator': {
+    intro: 'Citation styles differ in ways that look arbitrary and are enforced strictly. APA leads with the year, MLA with the page, Chicago with a note — and getting them mixed up is one of the easiest marks to lose.',
+    what: [
+      'Formats references in <strong>APA</strong>, <strong>MLA</strong> and <strong>Chicago</strong> from the details you enter.',
+      'The differences are not decorative: they reflect what each discipline considers most important. APA puts the year forward because currency matters in science; MLA emphasises the page because close reading matters in humanities.'
+    ],
+    specs: {
+      caption: 'The three styles',
+      rows: [
+        ['APA', 'Author (Year). Title. — sciences, social sciences'],
+        ['MLA', 'Author. "Title." — humanities, literature'],
+        ['Chicago', 'Notes or author-date — history, arts'],
+        ['APA emphasises', 'Year of publication'],
+        ['MLA emphasises', 'Page location'],
+        ['Chicago offers', 'Two systems — check which yours wants'],
+        ['Not included', 'Automatic metadata lookup — you enter the details'],
+        ['Runs', 'On your device']
+      ]
+    },
+    steps: [
+      'Check which style and which edition your institution requires.',
+      'Enter the source details.',
+      'Copy the formatted reference, then check it against your style guide.'
+    ],
+    tip: 'Ask which <em>edition</em> of the style you need. APA 7 changed several rules from APA 6 — including dropping the publisher location and how multiple authors are listed — so a correctly formatted APA 6 reference is now a wrong APA 7 one. Departments often specify an edition and rarely mention it twice.',
+    faqs: [
+      { q: 'Which style should I use?', a: 'Whichever your department requires — it is not a preference. APA is common in sciences and social sciences, MLA in humanities, Chicago in history and the arts. If the brief does not say, ask rather than guess.' },
+      { q: 'Why do the styles differ so much?', a: 'They encode disciplinary priorities. APA front-loads the year because research currency matters; MLA front-loads the page because humanities argue from specific passages; Chicago supports notes because historians cite discursively.' },
+      { q: 'Does it look up sources automatically?', a: 'No — you enter the details. That is slower and more reliable: automatic lookups routinely get author order, subtitles and edition numbers wrong, and those errors are invisible until someone checks.' },
+      { q: 'Should I check the output?', a: 'Yes, against your style guide. Edge cases — multiple authors, no author, translated works, chapters within edited volumes — have specific rules that a general formatter will not always match.' }
+    ],
+    related: ['word-counter', 'readability', 'text-to-pdf', 'markdown-to-pdf', 'study-planner', 'flashcard-maker']
+  },
+
+  'mind-map-generator': {
+    intro: 'A mind map turns a flat list into a shape, and the shape is the point — seeing which branch has ten items and which has one tells you where your thinking is thin.',
+    what: [
+      'Builds a map from plain text, <strong>one branch per line</strong>, so you type rather than drag boxes around.',
+      'Typing is faster than any drag-and-drop editor for the stage where you are still generating ideas, which is the stage mind maps are actually for.'
+    ],
+    specs: {
+      caption: 'How it works',
+      rows: [
+        ['Input', 'Plain text — one branch per line'],
+        ['Structure', 'Central topic with radiating branches'],
+        ['Editing', 'Type, do not drag'],
+        ['Best for', 'Generating and grouping ideas'],
+        ['Less good for', 'Precise diagrams — use Diagram Maker'],
+        ['Reveals', 'Uneven branches, where thinking is thin'],
+        ['Runs', 'On your device'],
+        ['Export', 'Save or print the result']
+      ]
+    },
+    steps: [
+      'Write the central topic.',
+      'Add one branch per line, without editing as you go.',
+      'Look at the balance — an overloaded branch usually wants splitting, an empty one usually needs work.'
+    ],
+    tip: 'Generate first, organise second. The value of a mind map comes from getting everything out before judging any of it, and stopping to reorganise mid-flow kills exactly the associative thinking you are trying to capture. Dump every branch, then look at the shape.',
+    faqs: [
+      { q: 'Mind map or diagram?', a: 'A mind map is for exploring — radiating associations from one idea, with no fixed relationships. A diagram is for describing something you already understand, with specific connections. Use Diagram Maker when the structure matters.' },
+      { q: 'Why type instead of dragging?', a: 'Speed at the stage that matters. During idea generation, the bottleneck should be your thinking, not your mouse — dragging boxes slows you to the pace of the interface and interrupts the flow.' },
+      { q: 'What does an unbalanced map tell me?', a: 'Usually that one branch is really several topics, or that a sparse branch is one you have not thought about. Both are useful findings, and both are invisible in a linear list.' },
+      { q: 'Can I keep it?', a: 'Save or print the result. Nothing is stored automatically, so export anything you want to keep before closing the tab.' }
+    ],
+    related: ['diagram-maker', 'study-planner', 'flashcard-maker', 'markdown-editor', 'text-to-pdf', 'quiz-maker']
+  },
+
+  'diagram-maker': {
+    intro: 'Diagrams drawn by hand in a graphics editor are painful to change, and they always need changing. Describing the diagram in text and letting software lay it out means editing is a one-line change rather than a redraw.',
+    what: [
+      'Renders <strong>Mermaid</strong> syntax — flowcharts and sequence diagrams — from a text description. You write the relationships; the layout is computed.',
+      'Because the source is text, it can live in a document, a README or version control, and a diff shows exactly what changed.'
+    ],
+    specs: {
+      caption: 'Syntax and use',
+      rows: [
+        ['Language', 'Mermaid'],
+        ['Diagram types', 'Flowchart, sequence diagram'],
+        ['Layout', 'Computed automatically — you do not position anything'],
+        ['Source is', 'Plain text — versionable and diffable'],
+        ['Editing', 'Change a line, the layout re-flows'],
+        ['Also supported by', 'GitHub, GitLab, Notion and many docs tools'],
+        ['Runs', 'In your browser'],
+        ['Best for', 'Process flows, decision trees, API interactions']
+      ]
+    },
+    steps: [
+      'Start with <code>flowchart TD</code> for top-down, or <code>sequenceDiagram</code> for interactions.',
+      'Describe nodes and arrows one relationship per line.',
+      'Let the layout resolve itself rather than fighting it.'
+    ],
+    tip: 'Because Mermaid renders natively on GitHub, GitLab and several documentation platforms, a diagram written here can be pasted straight into a README and stay editable there. That is the real advantage over an exported image — the diagram in your docs never drifts out of date because updating it is a text edit rather than a redraw.',
+    faqs: [
+      { q: 'Why Mermaid rather than drawing?', a: 'Because diagrams change. A drawn diagram is re-drawn every time the process shifts; a text description is a one-line edit and the layout recomputes. It also lives in version control, so changes are visible in a diff.' },
+      { q: 'Which diagram types work?', a: 'Flowcharts and sequence diagrams — the two that cover most process and interaction documentation. Flowcharts for decisions and steps, sequence diagrams for who calls whom in what order.' },
+      { q: 'Can I control the layout?', a: 'Only loosely — direction and grouping, not exact positions. That is deliberate: automatic layout is what makes editing cheap. If you need pixel control, you want a drawing tool and the maintenance burden that comes with it.' },
+      { q: 'Where else can I use the same code?', a: 'GitHub and GitLab render Mermaid in Markdown, as do Notion and many static site generators. The same block works in all of them.' }
+    ],
+    related: ['mind-map-generator', 'markdown-editor', 'markdown-to-pdf', 'html-to-pdf', 'json-formatter', 'study-planner']
+  },
+
+  'learning-tracker': {
+    intro: 'Study time is systematically misremembered — an evening that felt like three hours of work was often ninety minutes of work and ninety of drifting. Logging it turns an impression into a number.',
+    what: [
+      'Logs study sessions so you can see actual time spent rather than estimated time spent, kept in your browser between visits.',
+      'The honest total is usually lower than the felt one, and that gap is the useful finding.'
+    ],
+    specs: {
+      caption: 'How it works',
+      rows: [
+        ['Logs', 'Study sessions with duration'],
+        ['Storage', '<strong>Browser local storage, this device only</strong>'],
+        ['Syncs?', 'No'],
+        ['Survives clearing browser data?', 'No'],
+        ['Account needed', 'None'],
+        ['Best used', 'Logged at the end of each session, not weekly'],
+        ['Reveals', 'The gap between felt and actual study time'],
+        ['Uploaded anywhere', 'No']
+      ]
+    },
+    steps: [
+      'Log each session as it ends, while the time is accurate.',
+      'Record what you actually did, not what you intended.',
+      'Review weekly and compare against what you assumed.'
+    ],
+    tip: 'Log the session immediately, not at the end of the week. Reconstructed times are consistently inflated — people remember the duration of the sitting rather than the duration of the work — and a log built from memory measures your optimism rather than your effort.',
+    faqs: [
+      { q: 'Why track study time at all?', a: 'Because the estimate and the reality diverge sharply, and always in the same direction. Seeing that four claimed hours were two real ones is uncomfortable and far more actionable than any resolution to "study harder".' },
+      { q: 'Will I lose my log?', a: 'It is stored in this browser only, so clearing site data removes it and it will not appear on another device. Copy the totals out periodically if a term’s data matters to you.' },
+      { q: 'Should I count breaks?', a: 'No — count the work. A three-hour session with an hour of breaks is two hours of study, and recording it as three is exactly the self-deception this is meant to remove.' },
+      { q: 'How often should I review it?', a: 'Weekly. Daily is too noisy to show a pattern and monthly is too late to change anything before an exam.' }
+    ],
+    related: ['study-planner', 'pomodoro', 'flashcard-maker', 'vocabulary-builder', 'quiz-maker', 'countdown']
+  },
+
+  'quiz-maker': {
+    intro: 'Writing a quiz is a better way to learn a subject than answering one. Producing plausible wrong answers forces you to understand where the real confusions lie, which is exactly what an exam tests.',
+    what: [
+      'Builds a multiple-choice quiz you can take and score, marking correct answers as you go.',
+      'The effort is in the distractors. Obviously wrong options make a quiz that tests nothing; plausible ones make it test whether you actually know the distinction.'
+    ],
+    specs: {
+      caption: 'How it works',
+      rows: [
+        ['Question type', 'Multiple choice'],
+        ['Answers', 'Mark the correct option per question'],
+        ['Scoring', 'Check score after answering'],
+        ['Best distractor count', 'Three wrong options per question'],
+        ['Runs', 'On your device'],
+        ['Uploaded anywhere', 'No'],
+        ['Best for', 'Self-testing and revision groups'],
+        ['Not', 'A proctored assessment tool']
+      ]
+    },
+    steps: [
+      'Write questions covering things you find hard, not things you find easy.',
+      'Make every wrong answer plausible — ideally a real misconception.',
+      'Take the quiz cold, a day later.'
+    ],
+    tip: 'Write the wrong answers from your own mistakes. A distractor that reflects a confusion you actually had tests something real; one invented to fill a slot is dismissed at a glance and teaches nothing. Reviewing your errors and turning each into an option is the highest-value part of making the quiz.',
+    faqs: [
+      { q: 'Why make a quiz instead of just answering one?', a: 'Because writing questions requires deciding what matters and what could plausibly be confused with it — a much deeper engagement than answering. The making is the studying; taking it afterwards is a bonus.' },
+      { q: 'How many options per question?', a: 'Four total — one correct, three plausible wrong. Two is close to a coin flip; five or more usually means padding with options nobody would pick.' },
+      { q: 'Should I test what I know or what I do not?', a: 'What you do not. Testing comfortable material feels productive and changes nothing. The uncomfortable questions are where the marks are.' },
+      { q: 'Can I share the quiz with a study group?', a: 'It runs on your device and stores nothing, so you would rebuild it elsewhere. That is a limitation — it is designed for self-testing rather than distribution.' }
+    ],
+    related: ['flashcard-maker', 'vocabulary-builder', 'study-planner', 'learning-tracker', 'random-picker', 'citation-generator']
+  },
+
+  'study-planner': {
+    intro: 'Most study plans fail on the same day: the one where something overruns and the whole schedule collapses because it had no slack in it. A plan that survives contact with a real week is one that expected to be disrupted.',
+    what: [
+      'Organises subjects and sessions into a study schedule you can follow and adjust.',
+      'The design constraint is realism. A plan that assumes every day goes well is abandoned the first time one does not, and abandoned plans are worse than no plan because they cost you the confidence to make another.'
+    ],
+    specs: {
+      caption: 'How it works',
+      rows: [
+        ['Organises', 'Subjects and study sessions'],
+        ['Session length', '45–90 minutes suits most people'],
+        ['Slack', 'Leave one empty slot a week — see the tip'],
+        ['Spacing', 'Beats cramming for retention'],
+        ['Runs', 'On your device'],
+        ['Uploaded anywhere', 'No'],
+        ['Pair with', 'Learning Tracker, to compare plan against reality'],
+        ['Review', 'Weekly, not daily']
+      ]
+    },
+    steps: [
+      'List subjects with the time each genuinely needs, not equal time each.',
+      'Block sessions of 45–90 minutes.',
+      '<strong>Leave at least one slot empty every week.</strong>',
+      'Review weekly and move things rather than abandoning the plan.'
+    ],
+    tip: 'Build in a catch-up slot every week and do not fill it. Something always overruns, and a plan with no slack turns one bad evening into a week of being behind — which is the point at which most people stop following the plan at all. The empty slot is what makes it survivable.',
+    faqs: [
+      { q: 'How long should a study session be?', a: '45 to 90 minutes. Shorter rarely gets past setting up; much longer and attention degrades to the point where you are re-reading rather than learning. Break between sessions rather than pushing through.' },
+      { q: 'Should each subject get equal time?', a: 'No — weight by difficulty and by weight in the assessment. Equal time feels fair and is a poor use of a limited week; the subject you find hardest usually needs the most, and it is the one people avoid.' },
+      { q: 'Cramming or spacing?', a: 'Spacing, decisively, for anything you need to retain past the exam. Cramming can pass a test tomorrow and is close to useless a month later — which matters when next year’s material builds on it.' },
+      { q: 'What if I fall behind?', a: 'Use the catch-up slot, and if you are further behind than that, re-plan rather than abandon. A revised plan you follow beats an ideal one you have quietly stopped looking at.' }
+    ],
+    related: ['learning-tracker', 'pomodoro', 'flashcard-maker', 'quiz-maker', 'countdown', 'date-calculator']
+  },
+
   /* ================= session 1 ================= */
 
   'jpg-to-pdf': {
