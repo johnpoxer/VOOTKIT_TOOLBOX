@@ -16,6 +16,19 @@
     /* analytics (public measurement ID — safe to ship) */
     ga4: "G-KLEWTJ8WG2",
 
+    /* Cookie consent + Google Consent Mode v2.
+     *
+     * Google requires a consent solution for EEA and UK traffic. Without one,
+     * AdSense withholds personalised ads for those users and serves contextual
+     * only, which is worth a fraction as much. The site ships hreflang for
+     * de/fr/es/it/pt and reports in EUR, so that is a large share of the
+     * addressable audience, not an edge case.
+     *
+     * SET THIS TO FALSE if Ezoic or Mediavine goes live — both ship their own
+     * certified CMP, and two consent layers on one page is worse for the user
+     * and worse legally than either alone. */
+    consent: { enabled: true },
+
     /* AdSense.
      *
      * The script was shipping on every page with ZERO <ins> slots behind it, so

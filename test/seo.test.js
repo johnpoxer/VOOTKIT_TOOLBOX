@@ -445,7 +445,13 @@ console.log(`seo + titles: ${pass} total assertions passed`);
   ok(/class="adsbygoogle"/.test(configured), "a configured slot emits a real ad unit");
   ok(configured.includes('data-ad-slot="1234567890"'), "carrying the configured slot id");
   ok(configured.includes('data-ad-client="ca-pub-TEST"'), "and the publisher id");
-  ok(/adsbygoogle \|\| \[\]\)\.push/.test(configured), "with the push call that activates it");
+  /* The push USED to be inline here. It moved to assets/js/ads.js so units are
+     filled on approach instead of at load — an inline push spends main-thread
+     time on an off-screen ad while the visitor waits for the tool. So the
+     contract is now the opposite: the markup must NOT self-initialise. */
+  ok(!/adsbygoogle \|\| \[\]\)\.push/.test(configured),
+     "the unit does not self-initialise — ads.js fills it near the viewport");
+  ok(/data-ad-format="auto"/.test(configured), "and it is a responsive unit");
 
   eq(adUnitWith({ inContent: "" })("inContent"), "",
      "an empty slot id emits nothing — no placeholder <ins>, no blank reserved box");

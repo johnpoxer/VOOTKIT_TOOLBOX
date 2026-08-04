@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="google-adsense-account" content="ca-pub-5906583727409402">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#fbfcfe" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)">
+<title>Disclaimer — Vootkit</title>
+<meta name="description" content="What Vootkit&#39;s tools do and do not do — including the financial and health calculators.">
+<link rel="canonical" href="https://www.vootkit.com/disclaimer.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Vootkit">
+<meta property="og:title" content="Disclaimer — Vootkit">
+<meta property="og:description" content="What Vootkit&#39;s tools do and do not do — including the financial and health calculators.">
+<meta property="og:url" content="https://www.vootkit.com/disclaimer.html">
+<meta property="og:image" content="https://www.vootkit.com/assets/og-default.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Vootkit — free browser tools that never upload your files">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Disclaimer — Vootkit">
+<meta name="twitter:description" content="What Vootkit&#39;s tools do and do not do — including the financial and health calculators.">
+<meta name="twitter:image" content="https://www.vootkit.com/assets/og-default.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Disclaimer","url":"https://www.vootkit.com/disclaimer.html","description":"What Vootkit's tools do and do not do — including the financial and health calculators."}</script>
+<link rel="icon" href="./favicon.ico" sizes="any">
+<link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="manifest" href="./site.webmanifest">
+<link rel="stylesheet" href="./assets/css/app.css?v=f918126186">
+<script>(function (root) {
+  'use strict';
+  var KEY = 'vk-consent';
+  var VERSION = 1;          // bump to re-ask everyone after a material change
+  
+  var CONSENT_REQUIRED_REGIONS = [
+    'AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT',
+    'LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE',   // EU
+    'IS','LI','NO',                                                 // EEA
+    'GB','CH'                                                       // UK, CH
+  ];
+  function read() {
+    try {
+      var raw = root.localStorage.getItem(KEY);
+      if (!raw) return null;
+      var v = JSON.parse(raw);
+      if (!v || v.v !== VERSION) return null;
+      return v;
+    } catch (e) { return null; }
+  }
+  function write(granted) {
+    try {
+      root.localStorage.setItem(KEY, JSON.stringify({
+        v: VERSION, granted: !!granted, at: new Date().toISOString().slice(0, 10)
+      }));
+    } catch (e) {}
+  }
+  
+  function signals(granted) {
+    var v = granted ? 'granted' : 'denied';
+    return {
+      ad_storage: v,
+      ad_user_data: v,
+      ad_personalization: v,
+      analytics_storage: v,
+      functionality_storage: 'granted',   // theme, recent tools — strictly necessary
+      security_storage: 'granted'
+    };
+  }
+  function gtagSafe() {
+    if (typeof root.gtag === 'function') return root.gtag;
+    
+    root.dataLayer = root.dataLayer || [];
+    return function () { root.dataLayer.push(arguments); };
+  }
+  
+  function setDefaults() {
+    var g = gtagSafe();
+    var saved = read();
+    if (saved) {
+      
+      g('consent', 'default', signals(saved.granted));
+      return;
+    }
+    
+    g('consent', 'default', Object.assign(signals(false), {
+      region: CONSENT_REQUIRED_REGIONS,
+      wait_for_update: 500
+    }));
+    g('consent', 'default', signals(true));
+  }
+  function update(granted) {
+    gtagSafe()('consent', 'update', signals(granted));
+    write(granted);
+  }
+  root.VKConsent = {
+    KEY: KEY, VERSION: VERSION,
+    REGIONS: CONSENT_REQUIRED_REGIONS,
+    signals: signals, read: read, write: write,
+    setDefaults: setDefaults, update: update,
+    needsBanner: function () { return read() === null; }
+  };
+  if (typeof module === 'object' && module.exports) module.exports = root.VKConsent;
+})(typeof window !== 'undefined' ? window : globalThis);
+window.VKConsent&&window.VKConsent.setDefaults();</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5906583727409402" crossorigin="anonymous"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KLEWTJ8WG2"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-KLEWTJ8WG2');</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="hdr">
+  <div class="wrap hdr-in">
+    <a class="brand" href="./" aria-label="Vootkit home">
+      <svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="17.5" fill="none" stroke="var(--accent)" stroke-opacity=".45" stroke-width="1.3" stroke-dasharray="17 7"/><path d="M12.5 14.5 21.5 30 31.5 13.5" fill="none" stroke="var(--accent)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="33.5" cy="10.5" r="2.7" fill="#06b6d4"/></svg>
+      vootkit
+    </a>
+    <nav class="nav" id="nav" aria-label="Main">
+      <a href="./tools/">Tools</a>
+      <a href="./pricing.html">Pricing</a>
+      <a href="./#features">Features</a>
+      <a href="./blog/">Blog</a>
+      <a href="./about.html">About</a>
+      <a href="./contact.html">Contact</a>
+    </nav>
+    <div class="hdr-act">
+      <a class="icon-btn" href="./tools/" aria-label="Search tools">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+      </a>
+      
+      <button class="icon-btn" id="theme" type="button" aria-label="Switch theme">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.5M12 19v2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M2.5 12H5M19 12h2.5M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8"/></svg>
+      </button>
+      <a class="hdr-cta" href="./pricing.html">Get Pro</a>
+      <button class="icon-btn" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav">
+        <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1"><div class="wrap section tool-page">
+  <nav class="crumb" aria-label="Breadcrumb"><a href="./">Vootkit</a> <span aria-hidden="true">›</span> <span aria-current="page">Disclaimer</span></nav>
+  <h1 class="page-h1">Disclaimer</h1>
+  <p class="page-lede">Last updated 22 July 2026.</p>
+  <section class="prose">
+    <h2>General</h2>
+    <p>Vootkit's tools are provided for general use. They apply a stated method to the input you give them. We work hard to make them correct and they are covered by an automated test suite, but no tool is a substitute for checking a result that matters.</p>
+
+    <h2>Financial calculators</h2>
+    <p>The loan, mortgage, refinance, auto loan, affordability, credit-card, investment, savings, paycheck and currency tools <strong>perform a calculation. They do not give financial advice.</strong> Vootkit is not a lender, broker, tax adviser or financial adviser.</p>
+    <ul>
+      <li>Results are estimates based only on the figures you enter.</li>
+      <li>They exclude fees, insurance, local taxes and lender-specific rules unless you enter those yourself.</li>
+      <li>Thresholds such as a 36% debt-to-income ratio are common lender conventions, not targets or recommendations.</li>
+      <li>The paycheck tool does not know any country's tax rules — it applies the rate you supply.</li>
+      <li>Currency rates are indicative and are not dealing rates.</li>
+    </ul>
+    <p>Before borrowing, refinancing or investing, speak to a qualified professional who can see your full circumstances.</p>
+
+    <h2>Health calculators</h2>
+    <p>The BMI and related tools <strong>are not medical advice and cannot diagnose anything.</strong> BMI in particular is a population statistic that misclassifies muscular and older bodies, uses thresholds that differ by ancestry, and needs percentile charts rather than a single number for children. Talk to a clinician about your own health.</p>
+
+    <h2>File processing</h2>
+    <p>Most tools run entirely in your browser. Keep your own copy of anything important before converting, compressing or editing it — a browser tab can be closed, refreshed or run out of memory, and we cannot recover a file we never received.</p>
+
+    <h2>External services</h2>
+    <p>A small number of tools call an external service for live data, and those are labelled on the tool itself. We do not control the accuracy or availability of third-party data.</p>
+
+    <h2>Liability</h2>
+    <p>Vootkit is provided "as is". To the extent permitted by law, we are not liable for loss arising from the use of a result produced by these tools. Your use is subject to our <a href="terms.html">Terms of Use</a>.</p>
+  </section>
+</div></main>
+<footer class="ftr">
+  <div class="wrap">
+    <div class="ftr-grid">
+      <div><h4>Categories</h4><a href="./tools/pdf/">PDF</a><a href="./tools/images/">Images</a><a href="./tools/video/">Video &amp; Streaming</a><a href="./tools/finance/">Finance &amp; Loans</a><a href="./tools/insurance/">Insurance</a><a href="./tools/realestate/">Real Estate</a><a href="./tools/tax/">Tax, Payroll &amp; HR</a><a href="./tools/business/">Freelance &amp; Business</a></div>
+      <div><h4>Vootkit</h4><a href="./tools/">All tools</a><a href="./pricing.html">Pricing</a><a href="./about.html">About</a><a href="./privacy.html">Privacy</a><a href="./cookies.html">Cookies</a><a href="./terms.html">Terms</a><a href="./disclaimer.html">Disclaimer</a><a href="./contact.html">Contact &amp; support</a></div>
+      <div><h4>How it works</h4><p style="font-size:var(--t-sm);color:var(--ink-soft)">Most tools run entirely in your browser, so your files aren't uploaded and there's no queue. The free plan includes 5 tool runs a day.</p></div>
+    </div>
+    <p style="margin-top:var(--s-6);font-size:var(--t-sm)">&copy; <span id="yr"></span> Vootkit — every digital task, done in your browser.</p>
+  </div>
+</footer>
+<script src="./data/site.config.js?v=f918126186"></script>
+<script src="./data/catalog.js?v=f918126186"></script>
+<script>
+document.getElementById('yr').textContent=new Date().getFullYear();
+(function(){var b=document.getElementById('burger'),n=document.getElementById('nav');
+b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');b.setAttribute('aria-label',o?'Close menu':'Open menu');});
+var t=document.getElementById('theme'),s=null;try{s=localStorage.getItem('vk-theme');}catch(e){}
+if(s)document.documentElement.setAttribute('data-theme',s);
+t.addEventListener('click',function(){var c=document.documentElement.getAttribute('data-theme'),x=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',x);try{localStorage.setItem('vk-theme',x);}catch(e){}});})();
+</script>
+<script src="./assets/js/track.js?v=f918126186" defer></script>
+<script src="./assets/js/consent-ui.js?v=f918126186" defer></script>
+<script src="./assets/js/ads.js?v=f918126186" defer></script>
+<script src="./assets/js/ui.js?v=f918126186" defer></script>
+<script src="./assets/js/recent.js?v=f918126186" defer></script>
+<script src="./assets/js/supabase-config.js?v=f918126186" defer></script>
+<script src="./assets/js/errors.js?v=f918126186" defer></script>
+<script src="./assets/js/convert.js?v=f918126186" defer></script>
+<script src="./assets/js/auth.js?v=f918126186" defer></script>
+<script src="./assets/js/usage.js?v=f918126186" defer></script>
+
+</body>
+</html>

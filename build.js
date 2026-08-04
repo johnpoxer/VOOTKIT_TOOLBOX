@@ -68,7 +68,14 @@ const CFG = require("./data/site.config.js");
 const SITE = CFG.origin;
 const SUPPORT = CFG.supportEmail;
 const GA4 = CFG.ga4;
+/* Social preview. Every scraper (WhatsApp, Slack, Discord, X, Facebook)
+   requires an ABSOLUTE url — a relative path silently yields no card, which
+   is indistinguishable from having no tag at all. Measured before this: 0 of
+   283 tool pages had an og:image, so every link anyone shared rendered as
+   bare text on a product people recommend to each other by link. */
+const OG_DEFAULT = SITE + "/assets/og-default.png";
 const ADS = CFG.ads || { enabled: false, client: "", slots: {} };
+const CONSENT = CFG.consent || { enabled: true };
 const PUB = ADS.client || "ca-pub-5906583727409402";
 
 /* One AdSense display unit.
@@ -83,6 +90,36 @@ const PUB = ADS.client || "ca-pub-5906583727409402";
  * is a Cumulative Layout Shift hit, and CLS is a ranking signal, so an
  * unreserved ad unit costs organic traffic to buy ad impressions — the wrong
  * trade for a site whose whole strategy is search. */
+/* Consent Mode v2 defaults, INLINED and placed ABOVE the ad and GA4 tags.
+ *
+ * This ordering is the whole mechanism. Consent defaults must be in the
+ * dataLayer before gtag('config') and before the ad loader, so the signals ride
+ * the very first hit. Shipping consent.js as a deferred <script> alongside the
+ * others would set the defaults after the first pageview had already been sent
+ * unconsented — compliant-looking and useless.
+ *
+ * It is inlined rather than linked for the same reason: an external file is a
+ * network round trip during which the ad and analytics tags would race it. The
+ * file is small and cached as source-of-truth for the tests; this emits it. */
+function consentHead() {
+  if (CONSENT.enabled === false) return "<!-- consent handled by the ad network's own CMP -->";
+  let src = fs.readFileSync(path.join(ROOT, "assets/js/consent.js"), "utf8");
+  /* Strip comments before inlining. The source file is heavily commented on
+     purpose — the ordering rules in it are the kind of thing that gets broken by
+     someone tidying up later — but shipping ~4 KB of prose into the <head> of
+     1,478 pages is 6 MB of render-blocking explanation nobody reads. The file
+     stays the documentation; this ships the behaviour.
+     Conservative on purpose: block comments and whole-line // only. consent.js
+     contains no string literal holding a comment marker (checked), and a
+     general-purpose minifier is not worth the dependency for one file. */
+  src = src
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/^\s*\/\/.*$/gm, "")
+    .replace(/\n{2,}/g, "\n")
+    .trim();
+  return `<script>${src}\nwindow.VKConsent&&window.VKConsent.setDefaults();</script>`;
+}
+
 /* The network's loader, for the <head>. Exactly one network's tags ever ship:
    running two at once leaves unfilled slots and is against Ezoic's own setup
    guide, which tells you to remove other networks' code first. */
@@ -120,9 +157,15 @@ function adUnit(slotKey, label) {
   if (net === "adsense") {
     const slot = (ADS.slots || {})[slotKey];
     if (!slot) return "";
+    /* NOT initialised inline. The push() is deferred to assets/js/ads.js, which
+       fires it when the unit approaches the viewport.
+       Both placements sit below the article body, so on most visits they are
+       off-screen at load — and initialising them there would spend main-thread
+       time fetching and laying out an ad while the visitor is waiting for a PDF
+       or a video encode to start. The tool is what they came for; the ad can
+       wait until it is nearly visible. */
     inner =
-      `<ins class="adsbygoogle" style="display:block" data-ad-client="${PUB}" data-ad-slot="${slot}" data-ad-format="auto" data-full-width-responsive="true"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>`;
+      `<ins class="adsbygoogle" style="display:block" data-ad-client="${PUB}" data-ad-slot="${slot}" data-ad-format="auto" data-full-width-responsive="true"></ins>`;
   } else if (net === "ezoic") {
     /* Ezoic sizes each spot itself, so there is no slot id to configure — the
        same snippet goes at every position and the dashboard decides. Their setup
@@ -225,16 +268,17 @@ function head(o) {
 <meta property="og:site_name" content="Vootkit">
 <meta property="og:title" content="${esc(o.ogTitle || o.title)}">
 <meta property="og:description" content="${esc(o.desc)}">
-<meta property="og:url" content="${o.url}">${o.image ? `\n<meta property="og:image" content="${o.image}">` : ""}
-<meta name="twitter:card" content="${o.image ? "summary_large_image" : "summary"}">
+<meta property="og:url" content="${o.url}">\n<meta property="og:image" content="${o.image || OG_DEFAULT}">\n<meta property="og:image:width" content="1200">\n<meta property="og:image:height" content="630">\n<meta property="og:image:alt" content="Vootkit — free browser tools that never upload your files">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${esc(o.ogTitle || o.title)}">
-<meta name="twitter:description" content="${esc(o.desc)}">${o.image ? `\n<meta name="twitter:image" content="${o.image}">` : ""}
+<meta name="twitter:description" content="${esc(o.desc)}">\n<meta name="twitter:image" content="${o.image || OG_DEFAULT}">
 <script type="application/ld+json">${JSON.stringify(o.ld)}</script>
 <link rel="icon" href="${up}favicon.ico" sizes="any">
 <link rel="icon" href="${up}assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="${up}apple-touch-icon.png">
 <link rel="manifest" href="${up}site.webmanifest">
 <link rel="stylesheet" href="${up}assets/css/app.css${V}">
+${consentHead()}
 ${o.ads ? adLoader() : "<!-- no ads inside an active tool workspace -->"}
 <script async src="https://www.googletagmanager.com/gtag/js?id=${GA4}"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA4}');</script>
@@ -282,7 +326,7 @@ function foot(depth, extraScripts) {
   <div class="wrap">
     <div class="ftr-grid">
       <div><h4>Categories</h4>${cats}</div>
-      <div><h4>Vootkit</h4><a href="${up}tools/">All tools</a><a href="${up}pricing.html">Pricing</a><a href="${up}about.html">About</a><a href="${up}privacy.html">Privacy</a><a href="${up}terms.html">Terms</a><a href="${up}contact.html">Contact &amp; support</a></div>
+      <div><h4>Vootkit</h4><a href="${up}tools/">All tools</a><a href="${up}pricing.html">Pricing</a><a href="${up}about.html">About</a><a href="${up}privacy.html">Privacy</a><a href="${up}cookies.html">Cookies</a><a href="${up}terms.html">Terms</a><a href="${up}disclaimer.html">Disclaimer</a><a href="${up}contact.html">Contact &amp; support</a></div>
       <div><h4>How it works</h4><p style="font-size:var(--t-sm);color:var(--ink-soft)">Most tools run entirely in your browser, so your files aren't uploaded and there's no queue. The free plan includes 5 tool runs a day.</p></div>
     </div>
     <p style="margin-top:var(--s-6);font-size:var(--t-sm)">&copy; <span id="yr"></span> Vootkit — every digital task, done in your browser.</p>
@@ -299,6 +343,8 @@ if(s)document.documentElement.setAttribute('data-theme',s);
 t.addEventListener('click',function(){var c=document.documentElement.getAttribute('data-theme'),x=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',x);try{localStorage.setItem('vk-theme',x);}catch(e){}});})();
 </script>
 <script src="${up}assets/js/track.js${V}" defer></script>
+<script src="${up}assets/js/consent-ui.js${V}" defer></script>
+<script src="${up}assets/js/ads.js${V}" defer></script>
 <script src="${up}assets/js/ui.js${V}" defer></script>
 <script src="${up}assets/js/recent.js${V}" defer></script>
 <script src="${up}assets/js/supabase-config.js${V}" defer></script>
@@ -1258,6 +1304,86 @@ write("terms.html", legalPage({
     <p class="note" style="margin-top:var(--s-6)">These terms are written in plain language to be genuinely readable. They are not a substitute for legal advice tailored to your business.</p>`
 }));
 
+/* Cookie Policy — required by every ad network's reviewer, and the page the
+   consent banner links to. Written to describe what the site ACTUALLY sets,
+   which is why it names the specific keys: a generic template that lists
+   cookies the site does not use is worse than none, because the first thing a
+   reviewer does is compare it against the network tab. */
+write("cookies.html", legalPage({
+  file: "cookies.html", title: "Cookie Policy", updated: LAST_UPDATED,
+  desc: "Which cookies and browser storage Vootkit uses, what each one does, and how to refuse them.",
+  body: `
+    <h2>The short version</h2>
+    <p>Vootkit uses a small number of cookies and browser storage entries. <strong>None of them touch your files.</strong> Files you open in a tool are processed on your own device and are never uploaded, so they are never stored in a cookie, never sent to an analytics service and never seen by an advertiser.</p>
+    <p>You can refuse analytics and advertising storage from the banner shown on your first visit, and change your mind at any time by clearing this site's data in your browser.</p>
+
+    <h2>Strictly necessary</h2>
+    <p>These make the site work and are always on. They store nothing about you as a person.</p>
+    <table class="spec-table">
+      <tr><th>What</th><th>Why</th></tr>
+      <tr><td><code>vk-consent</code></td><td>Remembers your answer to the cookie banner so you are not asked again.</td></tr>
+      <tr><td><code>vk-theme</code></td><td>Remembers light or dark mode.</td></tr>
+      <tr><td><code>vk-recent</code>, <code>vk-tools</code></td><td>The "recently viewed" list on tool pages. Stays on your device.</td></tr>
+      <tr><td><code>vk-uses:&lt;date&gt;</code></td><td>Counts how many tools you have run today, for the free daily allowance.</td></tr>
+      <tr><td>Supabase session</td><td>Only if you create an account — keeps you signed in.</td></tr>
+    </table>
+
+    <h2>Analytics</h2>
+    <p>We use Google Analytics 4 to count visits and see which tools are used. It records the page, your approximate country, your device type and how you arrived. <strong>It never receives your file names, file contents, or anything you type into a tool.</strong></p>
+    <p>Analytics storage is refused by default in the EEA and UK until you accept.</p>
+
+    <h2>Advertising</h2>
+    <p>Some pages carry ads from Google AdSense, which may set cookies to measure and personalise them. Advertising storage is refused by default in the EEA and UK until you accept; if you refuse, you will still see ads, but they will be contextual rather than personalised.</p>
+    <p>Ads are never shown on account or sign-in pages, and never inside a tool while it is working.</p>
+
+    <h2>Refusing or removing them</h2>
+    <ul>
+      <li>Choose <strong>Reject</strong> on the banner. Analytics and advertising storage stay off.</li>
+      <li>Clear this site's data in your browser to reset everything, including your banner choice.</li>
+      <li>Browser-level cookie blocking works normally here — the tools do not depend on cookies to function.</li>
+    </ul>
+
+    <h2>Changes</h2>
+    <p>If we add or remove a cookie, this page changes and the banner asks again.</p>
+  `
+}));
+
+/* Disclaimer — needed regardless of monetisation. The catalogue includes
+   mortgage, loan, refinance, paycheck and BMI tools; those are health- and
+   money-adjacent calculations that people can act on, and the site must be
+   unambiguous that it computes a formula rather than giving advice. */
+write("disclaimer.html", legalPage({
+  file: "disclaimer.html", title: "Disclaimer", updated: LAST_UPDATED,
+  desc: "What Vootkit's tools do and do not do — including the financial and health calculators.",
+  body: `
+    <h2>General</h2>
+    <p>Vootkit's tools are provided for general use. They apply a stated method to the input you give them. We work hard to make them correct and they are covered by an automated test suite, but no tool is a substitute for checking a result that matters.</p>
+
+    <h2>Financial calculators</h2>
+    <p>The loan, mortgage, refinance, auto loan, affordability, credit-card, investment, savings, paycheck and currency tools <strong>perform a calculation. They do not give financial advice.</strong> Vootkit is not a lender, broker, tax adviser or financial adviser.</p>
+    <ul>
+      <li>Results are estimates based only on the figures you enter.</li>
+      <li>They exclude fees, insurance, local taxes and lender-specific rules unless you enter those yourself.</li>
+      <li>Thresholds such as a 36% debt-to-income ratio are common lender conventions, not targets or recommendations.</li>
+      <li>The paycheck tool does not know any country's tax rules — it applies the rate you supply.</li>
+      <li>Currency rates are indicative and are not dealing rates.</li>
+    </ul>
+    <p>Before borrowing, refinancing or investing, speak to a qualified professional who can see your full circumstances.</p>
+
+    <h2>Health calculators</h2>
+    <p>The BMI and related tools <strong>are not medical advice and cannot diagnose anything.</strong> BMI in particular is a population statistic that misclassifies muscular and older bodies, uses thresholds that differ by ancestry, and needs percentile charts rather than a single number for children. Talk to a clinician about your own health.</p>
+
+    <h2>File processing</h2>
+    <p>Most tools run entirely in your browser. Keep your own copy of anything important before converting, compressing or editing it — a browser tab can be closed, refreshed or run out of memory, and we cannot recover a file we never received.</p>
+
+    <h2>External services</h2>
+    <p>A small number of tools call an external service for live data, and those are labelled on the tool itself. We do not control the accuracy or availability of third-party data.</p>
+
+    <h2>Liability</h2>
+    <p>Vootkit is provided "as is". To the extent permitted by law, we are not liable for loss arising from the use of a result produced by these tools. Your use is subject to our <a href="terms.html">Terms of Use</a>.</p>
+  `
+}));
+
 write("about.html", infoPage({
   slug: "about.html", title: "About Vootkit", eyebrow: "About",
   h1: "One home for every digital task.",
@@ -1387,7 +1513,7 @@ console.log(`generated ${pages} pages (${localizedPages} localised)`);
  * so Google can still reach and cluster them through the alternates on every
  * English page. This only changes what we actively ask it to prioritise.
  * Revisit once English pages hold real positions. */
-const enUrls = ["/", "/tools/", "/pricing.html", "/about.html", "/contact.html", "/privacy.html", "/terms.html"]
+const enUrls = ["/", "/tools/", "/pricing.html", "/about.html", "/contact.html", "/privacy.html", "/terms.html", "/cookies.html", "/disclaimer.html"]
   .concat(POSTS.length ? ["/blog/"] : [])                       // only list blog when it has posts
   .concat(POSTS.map((p) => `/blog/${p.slug}/`))
   .concat(VK.CATEGORIES.map((c) => `/tools/${c.slug}/`))

@@ -261,3 +261,40 @@ video.wcode { padding: 0; }
 }
 .usage-nudge p { margin: 0; font-size: var(--t-sm); color: var(--ink-soft); flex: 1 1 20rem; }
 .usage-nudge strong { color: var(--ink); }
+
+/* --- cookie consent ---------------------------------------------------------
+ * Fixed, so it never shifts layout (CLS is a ranking signal and this appears on
+ * every first visit). Docked bottom so the tool above stays reachable — a
+ * visitor who cannot get to the tool bounces, and a bounced visitor is worth
+ * nothing whether they consented or not.
+ *
+ * Reject and Accept are the same size and the same distance from the thumb.
+ * A buried decline is the specific pattern regulators act on, and it is not
+ * worth the few percentage points of consent rate it buys. */
+.consent-bar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+  background: var(--surface); border-top: 1px solid var(--line);
+  box-shadow: 0 -8px 24px rgba(0,0,0,.10);
+  padding: var(--s-4) var(--s-5);
+  animation: consent-in .18s ease-out;
+}
+.consent-inner {
+  max-width: 68rem; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--s-5); flex-wrap: wrap;
+}
+.consent-text { margin: 0; font-size: var(--t-sm); color: var(--ink-soft); flex: 1 1 24rem; }
+.consent-text strong { color: var(--ink); }
+.consent-text a { color: var(--accent); }
+.consent-actions { display: flex; gap: var(--s-3); flex-shrink: 0; }
+.consent-actions .btn { min-width: 6.5rem; }
+
+@keyframes consent-in { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) { .consent-bar { animation: none; } }
+
+@media (max-width: 640px) {
+  .consent-inner { gap: var(--s-3); }
+  .consent-actions { width: 100%; }
+  .consent-actions .btn { flex: 1; }
+}
+@media print { .consent-bar { display: none; } }
