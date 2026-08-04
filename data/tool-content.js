@@ -3737,6 +3737,454 @@ module.exports = {
     related: ['learning-tracker', 'pomodoro', 'flashcard-maker', 'quiz-maker', 'countdown', 'date-calculator']
   },
 
+  /* ============ batch 16a — travel cluster (complete) ============ */
+
+  'fuel-cost-calculator': {
+    intro: 'Fuel is the cost people misjudge most when deciding whether to drive, because it feels like it belongs to the car rather than to the journey. Working it out changes a surprising number of drive-or-train decisions.',
+    what: [
+      'Multiplies distance by consumption by price. Handles both conventions — <strong>L/100km</strong> (lower is better) and <strong>MPG</strong> (higher is better) — which is the detail that trips people up when reading figures from another country.',
+      'Defaults to a 300-unit trip so the arithmetic is easy to sanity-check against your own experience.'
+    ],
+    specs: {
+      caption: 'Inputs',
+      rows: [
+        ['Distance', 'Default 300'],
+        ['Economy', 'L/100km or MPG'],
+        ['<strong>L/100km</strong>', '<strong>Lower is better</strong>'],
+        ['<strong>MPG</strong>', '<strong>Higher is better</strong>'],
+        ['Fuel price', 'Per litre or per gallon, to match'],
+        ['Returns', 'Total fuel cost for the trip'],
+        ['Excludes', 'Tolls, parking, wear, depreciation'],
+        ['Mind the gallon', 'US and UK gallons differ by 20%']
+      ]
+    },
+    steps: [
+      'Enter the distance and pick your units.',
+      'Enter your car’s real economy, not the manufacturer’s figure.',
+      'Add the current fuel price and read the trip cost.'
+    ],
+    tip: 'Use your own measured economy, not the number on the brochure. Official figures come from standardised test cycles and real driving is routinely 10–20% worse, more in cold weather or heavy traffic. Fill up, note the odometer, fill up again — that number is the one worth entering.',
+    faqs: [
+      { q: 'Is a higher number better or worse?', a: 'Depends on the unit, which is exactly why this catches people. MPG measures distance per fuel, so higher is better. L/100km measures fuel per distance, so lower is better. Reading a European figure as though it were MPG makes an efficient car look terrible.' },
+      { q: 'Why is my real economy worse than the official figure?', a: 'Test cycles are standardised and gentle. Real driving involves cold starts, traffic, hills, air conditioning and speed — all of which cost fuel. A 10–20% shortfall is normal rather than a fault.' },
+      { q: 'What is not included?', a: 'Tolls, parking, tyre and brake wear, servicing and depreciation. Fuel is usually the largest variable cost of a trip but it is not the whole cost of driving.' },
+      { q: 'Does it handle US and UK gallons?', a: 'Enter the price in the same gallon your economy figure uses. The two differ by about 20%, which is more than enough to make a comparison meaningless if they are mixed.' }
+    ],
+    related: ['fuel-economy-converter', 'mileage-reimbursement', 'distance-calculator', 'trip-cost-splitter', 'volume-converter', 'unit-converter']
+  },
+
+  'fuel-economy-converter': {
+    intro: 'Fuel economy is quoted four different ways depending on where the car was sold, and two of them run in opposite directions. Comparing a US review against a European one without converting produces confident nonsense.',
+    what: [
+      'Converts between <strong>MPG (US)</strong>, <strong>MPG (UK)</strong>, <strong>L/100km</strong> and <strong>km/L</strong>.',
+      '<strong>US and UK MPG are not the same figure</strong>, because the gallons differ: 30 MPG US is about 36 MPG UK for exactly the same car. That gap alone explains many baffling car-forum arguments.'
+    ],
+    specs: {
+      caption: 'The four units',
+      rows: [
+        ['MPG (US)', 'Miles per US gallon — 3.785 L'],
+        ['MPG (UK)', 'Miles per UK gallon — 4.546 L'],
+        ['<strong>Same car</strong>', '<strong>30 MPG US ≈ 36 MPG UK</strong>'],
+        ['L/100km', 'Litres per 100 km — <strong>lower is better</strong>'],
+        ['km/L', 'Kilometres per litre — higher is better'],
+        ['MPG and km/L', 'Distance per fuel — higher is better'],
+        ['L/100km', 'Fuel per distance — inverted'],
+        ['Conversion', 'Not linear between the two conventions']
+      ]
+    },
+    steps: [
+      'Enter the figure and say which unit it is in.',
+      'Read every other unit.',
+      'Check which MPG a source means before comparing — it often does not say.'
+    ],
+    tip: 'When a car review quotes MPG, find out whose gallon it means. A US publication quoting 30 MPG and a UK one quoting 36 MPG may be describing the identical car, and someone comparing the two numbers concludes the second is 20% more efficient. This is the commonest error in cross-border car comparisons.',
+    faqs: [
+      { q: 'Why are US and UK MPG different?', a: 'Because the gallon is. A US gallon is 3.785 litres, a UK gallon 4.546 — about 20% larger — so the same car travels further on one UK gallon. Same efficiency, different number.' },
+      { q: 'Why is L/100km inverted?', a: 'It measures fuel consumed per fixed distance rather than distance per fixed fuel, so a smaller figure means less fuel. It is arguably the more useful convention for budgeting, since fuel is what you buy.' },
+      { q: 'Is the conversion a simple multiplication?', a: 'Between MPG and km/L, yes. Between either of those and L/100km, no — it is a reciprocal relationship, which is why you cannot convert by scaling and why halving one does not halve the other.' },
+      { q: 'Which unit should I use?', a: 'Whichever your region uses, so your figures match the prices and reviews around you. When comparing across regions, convert first — every time.' }
+    ],
+    related: ['fuel-cost-calculator', 'unit-converter', 'volume-converter', 'mileage-reimbursement', 'distance-calculator', 'length-converter']
+  },
+
+  'trip-cost-splitter': {
+    intro: 'Group trips generate two problems: who paid for what, and who owes whom. The second is arithmetic and the first is memory — which is why splitting up at the end is where friendships get tested.',
+    what: [
+      'Divides a total across a group and shows the per-person share, defaulting to 1,200 split four ways.',
+      'It handles the even split. Uneven contributions — one person paid for the accommodation, another for fuel — need each person’s total recorded before the settling-up makes sense.'
+    ],
+    specs: {
+      caption: 'Inputs',
+      rows: [
+        ['Total trip cost', 'Default 1,200'],
+        ['Number of people', 'Default 4'],
+        ['Returns', 'Per-person share'],
+        ['Handles', 'An even split of a known total'],
+        ['Does not track', 'Who paid what — record that separately'],
+        ['Rounding', 'Someone absorbs the odd cent'],
+        ['Runs', 'On your device'],
+        ['Best used', 'During the trip, not at the end']
+      ]
+    },
+    steps: [
+      'Record what each person pays as it happens — a shared note is enough.',
+      'Enter the total and the group size for the per-person share.',
+      'Compare each person’s spend against that share; the difference is what they owe or are owed.'
+    ],
+    tip: 'Track expenses as they happen, not at the end. Reconstructing a week of shared spending from bank statements and memory is where disagreements start, and the person who paid most is usually the one who remembers least clearly. A shared note updated at each purchase removes the entire problem.',
+    faqs: [
+      { q: 'How do I handle uneven payments?', a: 'Work out the per-person share, then compare it against what each person actually paid. Someone who paid more than the share is owed the difference; someone who paid less owes it. That reduces a tangle of payments to one number each.' },
+      { q: 'What about costs only some people shared?', a: 'Split those separately among the people involved and add each person’s portion to their total before comparing against the group share. Lumping them in is what makes an "even split" feel unfair.' },
+      { q: 'Who takes the rounding?', a: 'Someone has to. Rotating it, or letting whoever paid the most absorb it, avoids a discussion about a few cents that costs more goodwill than the amount involved.' },
+      { q: 'Should I settle during or after?', a: 'Settling as you go avoids one large uncomfortable conversation at the end, and it means nobody is quietly carrying the group’s costs on their card for a fortnight.' }
+    ],
+    related: ['tip-split', 'tip-by-country', 'fuel-cost-calculator', 'percentage-calculator', 'currency-converter', 'budget-calculator']
+  },
+
+  'tip-by-country': {
+    intro: 'Tipping is a local custom that travellers routinely get wrong in both directions — under-tipping in the US where staff depend on it, and over-tipping in Japan where it can cause genuine awkwardness.',
+    what: [
+      'Suggests a tip for a given bill in <strong>nine countries</strong>: the US, Canada, UK, Germany, France, Italy, Spain, Australia and Japan.',
+      'The range between them is enormous, and it reflects how staff are paid rather than how generous the customers are.'
+    ],
+    specs: {
+      caption: 'Coverage',
+      rows: [
+        ['Countries', 'US · Canada · UK · Germany · France · Italy · Spain · Australia · Japan'],
+        ['United States', 'Highest — tipped wages are below minimum'],
+        ['<strong>Japan</strong>', '<strong>Not customary — can cause awkwardness</strong>'],
+        ['Australia', 'Low — staff are paid a full wage'],
+        ['Europe', 'Modest rounding is common'],
+        ['Bill amount', 'Default 50'],
+        ['Watch for', 'Service already included on the bill'],
+        ['Guidance is', 'Customary, not a rule']
+      ]
+    },
+    steps: [
+      'Enter the bill and choose the country.',
+      '<strong>Check the bill for service already added</strong> before tipping on top.',
+      'Adjust for the service you actually received.'
+    ],
+    tip: 'Read the bill before you tip. Many European restaurants add a service charge or a per-person cover, and tipping the customary percentage on top means paying twice — which visitors do constantly. If the bill lists "servizio", "service compris" or a cover charge, a small rounding-up is plenty.',
+    faqs: [
+      { q: 'Why is US tipping so much higher?', a: 'Because tipped staff in many US states may legally be paid below the standard minimum wage, with tips expected to make up the difference. The tip is part of the wage rather than a bonus, which is why not tipping there has a different meaning than elsewhere.' },
+      { q: 'Should I tip in Japan?', a: 'Generally no. It is not customary and can be genuinely awkward — service is included in the price and excellent service is the expectation rather than something purchased. Leaving money can be politely refused or cause confusion.' },
+      { q: 'What if service is already on the bill?', a: 'Then you have already tipped. Rounding up slightly is fine; adding the full customary percentage on top is paying twice, and it is the commonest visitor mistake in Europe.' },
+      { q: 'Are these rules?', a: 'Customs, and they shift. Treat them as a starting point, watch what locals do, and adjust for the service you received.' }
+    ],
+    related: ['tip-split', 'trip-cost-splitter', 'currency-converter', 'percentage-calculator', 'vat-gst', 'budget-calculator']
+  },
+
+  'mileage-reimbursement': {
+    intro: 'Claiming for business driving is straightforward arithmetic against a rate that changes annually — and using last year’s rate is how a claim gets queried or quietly underpaid.',
+    what: [
+      'Multiplies distance by a per-unit rate. Defaults to <strong>0.67</strong>, which reflects a recent published business rate.',
+      '<strong>Check the current rate before claiming.</strong> These are revised at least yearly, sometimes mid-year when fuel prices move sharply, and the published figure is what your employer or tax authority will apply.'
+    ],
+    specs: {
+      caption: 'Inputs',
+      rows: [
+        ['Distance driven', 'Default 250'],
+        ['Rate per mile/km', 'Default 0.67'],
+        ['<strong>Rate changes</strong>', '<strong>At least annually — check before claiming</strong>'],
+        ['Rate is meant to cover', 'Fuel, wear, insurance, depreciation'],
+        ['Commuting', 'Usually not claimable'],
+        ['Records needed', 'Date, purpose, distance'],
+        ['Returns', 'Total reimbursement'],
+        ['Knows your jurisdiction?', 'No — you supply the rate']
+      ]
+    },
+    steps: [
+      'Look up the current published rate for your country and year.',
+      'Enter the business distance — not commuting.',
+      'Keep a log of date, purpose and distance for each journey.'
+    ],
+    tip: 'Log each journey as you make it, with the purpose written down. Mileage claims are among the most commonly queried expenses precisely because they are easy to estimate and hard to evidence after the fact — a contemporaneous log with dates and reasons settles a query in seconds, and a reconstructed one invites more questions.',
+    faqs: [
+      { q: 'Can I claim my commute?', a: 'Usually not. Travel between home and your normal workplace is typically ordinary commuting rather than business travel in most tax systems. Journeys to a client, a temporary site or between offices generally do qualify — check your local rules.' },
+      { q: 'What does the rate cover?', a: 'It is meant to cover the full running cost — fuel, servicing, tyres, insurance and depreciation — not fuel alone. That is why it is several times the fuel-only cost per mile.' },
+      { q: 'Why does the rate change?', a: 'Because the costs it approximates change, particularly fuel. Authorities revise it at least annually and occasionally mid-year, so a claim submitted at last year’s rate will be adjusted or challenged.' },
+      { q: 'What records do I need?', a: 'Date, purpose and distance for each journey, at minimum. Some employers want start and end points too. Keep it as you go — that is the whole difference between a claim that is paid and one that is queried.' }
+    ],
+    related: ['fuel-cost-calculator', 'distance-calculator', 'income-tax-estimator', 'self-employment-tax', 'invoice-generator', 'unit-converter']
+  },
+
+  'distance-calculator': {
+    intro: 'Journey time is distance divided by average speed, and the word doing the work is <em>average</em> — the figure that includes the roadworks, the town you pass through and the stop for fuel.',
+    what: [
+      'Calculates travel time from a distance and an average speed, in kilometres or miles.',
+      'The common error is entering a cruising speed. Sustained motorway travel averages well below the limit once junctions, traffic and stops are counted, and a plan built on the limit is always optimistic.'
+    ],
+    specs: {
+      caption: 'Inputs',
+      rows: [
+        ['Distance', 'Default 100'],
+        ['Unit', 'Kilometres or miles'],
+        ['Average speed', 'Not cruising speed — see the tip'],
+        ['Returns', 'Journey time'],
+        ['Realistic motorway average', 'Around 80–90 km/h (50–55 mph)'],
+        ['Realistic mixed-road average', 'Around 60 km/h (40 mph)'],
+        ['Excludes', 'Breaks, unless you build them in'],
+        ['Runs', 'On your device']
+      ]
+    },
+    steps: [
+      'Enter the distance and unit.',
+      'Enter a realistic <em>average</em> speed, well below the limit.',
+      'Add breaks separately — roughly 15 minutes every two hours.'
+    ],
+    tip: 'Use about 80 km/h (50 mph) as a motorway average and 60 km/h (40 mph) for mixed roads, then add breaks. Entering the speed limit produces a time nobody achieves, and the gap compounds: on a six-hour drive the difference between limit and realistic average is well over an hour, which is the difference between arriving for dinner and arriving after it.',
+    faqs: [
+      { q: 'What average speed should I use?', a: 'Around 80 km/h or 50 mph for motorway journeys and 60 km/h or 40 mph for mixed roads. Both are well below the limits, and both are closer to what long journeys actually achieve once junctions, traffic and towns are included.' },
+      { q: 'Why is my real journey always longer?', a: 'Because the plan used a cruising speed and the reality includes stopping. Every set of lights, every slow section and every fuel stop pulls the average down, and they add up over distance.' },
+      { q: 'Should I add breaks?', a: 'Yes, separately — roughly 15 minutes every two hours, more with children. Driver fatigue is a real safety issue and breaks are not optional on a long drive.' },
+      { q: 'Does it know my route?', a: 'No — it works from a distance you supply. Get the distance from a mapping service, then use a realistic average here rather than the optimistic time the map offers.' }
+    ],
+    related: ['fuel-cost-calculator', 'pace-calculator', 'speed-converter', 'length-converter', 'timezone-converter', 'mileage-reimbursement']
+  },
+
+  'packing-list': {
+    intro: 'Packing badly is not usually about forgetting something exotic. It is forgetting the charger, the adapter or the medication — the small items that are annoying at best and trip-ruining at worst.',
+    what: [
+      'Builds a checklist you can work through and tick off, so the same forgotten item does not repeat trip after trip.',
+      'The value is in reusing and improving it: a list that gets one item added every time you forget something becomes genuinely reliable after three or four trips.'
+    ],
+    specs: {
+      caption: 'How to use it',
+      rows: [
+        ['Format', 'A checklist you tick off'],
+        ['Best built', 'Once, then reused and refined'],
+        ['Group by', 'Category — documents, electronics, clothing, health'],
+        ['Highest-value items', 'Chargers, adapters, medication, documents'],
+        ['Add to it', 'Every time you forget something'],
+        ['Runs', 'On your device'],
+        ['Uploaded anywhere', 'No'],
+        ['Pair with', 'A calendar reminder the day before']
+      ]
+    },
+    steps: [
+      'Group by category rather than listing randomly.',
+      'Put documents, medication and chargers at the top — those are the ones that matter.',
+      'Add anything you forgot last time before you start packing.'
+    ],
+    tip: 'Pack the irreplaceable things first, not the obvious ones. Passport, medication, chargers and adapters are the items that either cannot be bought at the destination or cost far more there — while socks and a toothbrush are available everywhere. Most packing anxiety is spent on the replaceable half of the list.',
+    faqs: [
+      { q: 'What gets forgotten most?', a: 'Chargers and adapters, consistently — because they are in use right up until you leave. Medication, travel documents and anything charging in another room are the next most common.' },
+      { q: 'Should I make a new list each trip?', a: 'No — reuse one and refine it. A list that gains an item every time you forget something becomes reliable quickly, whereas starting fresh repeats the same omissions.' },
+      { q: 'How should I organise it?', a: 'By category: documents, electronics, clothing, toiletries, health. It matches how you actually pack and makes a gap obvious in a way an alphabetical list does not.' },
+      { q: 'Is my list saved?', a: 'It lives in your browser session. Copy it out or print it if you want it for the next trip — that copy is what turns it into a reusable list rather than a one-off.' }
+    ],
+    related: ['trip-cost-splitter', 'timezone-converter', 'countdown', 'currency-converter', 'distance-calculator', 'tip-by-country']
+  },
+
+  /* ============ batch 16b — realestate cluster (complete) ============
+   * YMYL. These compute property investment metrics and never advise. Every
+   * threshold is labelled as a convention investors use, not a target. */
+
+  'rental-yield': {
+    intro: 'Yield is the first number property investors quote and the one most often quoted misleadingly, because gross yield ignores every cost of actually owning the thing.',
+    what: [
+      'Calculates both <strong>gross yield</strong> — annual rent divided by price — and <strong>net yield</strong>, which subtracts running costs and allows for vacancy.',
+      'The gap between them is the whole point. A property advertised at 8.8% gross can land nearer 5% net once management, maintenance, insurance and empty months are counted.'
+    ],
+    specs: {
+      caption: 'The two figures',
+      rows: [
+        ['Gross yield', '(Monthly rent × 12) ÷ price'],
+        ['Net yield', 'Gross minus costs, adjusted for vacancy'],
+        ['Default price / rent', '300,000 / 2,200 a month'],
+        ['Costs to include', 'Management, maintenance, insurance, tax, fees'],
+        ['Vacancy', 'Weeks empty per year — never assume zero'],
+        ['<strong>Listings usually quote</strong>', '<strong>Gross — the flattering one</strong>'],
+        ['Excludes', 'Mortgage interest — see Cash-on-Cash'],
+        ['Is this advice?', '<strong>No</strong>']
+      ]
+    },
+    steps: [
+      'Enter price and monthly rent for the gross figure.',
+      'Add real annual costs — management is typically 8–12% of rent.',
+      'Set a realistic vacancy allowance, then compare net against gross.'
+    ],
+    tip: 'Never assume zero vacancy. Even a well-run property loses time between tenants, and two or three empty weeks a year is a normal planning assumption. An investor modelling twelve months of rent is overstating income by 4–6% before any other cost, which is often the entire difference between the yield they expected and the one they get.',
+    faqs: [
+      { q: 'Gross or net — which matters?', a: 'Net, always, for a decision. Gross is useful only for quickly comparing listings, and it is what agents quote because it is the larger number. Two properties with identical gross yields can differ substantially once service charges and management are counted.' },
+      { q: 'What counts as a running cost?', a: 'Management fees, maintenance and repairs, insurance, service charges or ground rent, property taxes, letting fees and accountancy. Mortgage interest is treated separately — see Cash-on-Cash, which measures the return on your actual cash.' },
+      { q: 'What vacancy rate should I assume?', a: 'Two to four weeks a year is a common planning figure in a stable market, more where tenancies turn over quickly. Assuming none is the single most common error in a first rental model.' },
+      { q: 'Is a high yield always better?', a: 'Not necessarily, and this tool cannot judge it. High-yield areas often carry lower capital growth, higher management burden or more tenant turnover. Yield is one input to a decision that also involves risk, time and local knowledge — talk to a professional.' }
+    ],
+    related: ['cap-rate', 'cash-on-cash', 'rent-vs-buy', 'closing-costs', 'mortgage-payoff', 'profit-margin']
+  },
+
+  'cap-rate': {
+    intro: 'Capitalisation rate is how commercial property is compared, because it strips out how the buyer financed the deal. Two investors paying the same price for the same building get the same cap rate even if one paid cash and the other borrowed everything.',
+    what: [
+      'Divides <strong>net operating income</strong> by property value. NOI is rental income minus operating expenses, and <strong>explicitly excludes mortgage payments</strong> — that exclusion is what makes cap rates comparable across deals.',
+      'Defaults to a 300,000 property at 2,200 a month.'
+    ],
+    specs: {
+      caption: 'What goes in',
+      rows: [
+        ['Formula', 'Net operating income ÷ property value'],
+        ['NOI includes', 'Rent minus operating expenses'],
+        ['<strong>NOI excludes</strong>', '<strong>Mortgage payments — deliberately</strong>'],
+        ['Why exclude financing', 'So deals are comparable regardless of leverage'],
+        ['Higher cap rate', 'Higher return, usually higher risk'],
+        ['Lower cap rate', 'Lower return, usually prime location'],
+        ['Compare against', 'Other properties in the same market'],
+        ['Is this advice?', '<strong>No</strong>']
+      ]
+    },
+    steps: [
+      'Enter the property value and rent.',
+      'Subtract operating expenses — but not the mortgage.',
+      'Compare the result against similar properties in the same market, not a national average.'
+    ],
+    tip: 'A high cap rate is not a bargain, it is a price. Markets price risk into cap rates, so a building yielding 9% where comparable stock yields 5% is usually signalling something — a weak location, a short lease, a difficult tenant or deferred maintenance. The question to ask is what the market knows that makes it cheap.',
+    faqs: [
+      { q: 'Why does cap rate ignore the mortgage?', a: 'Because it describes the property, not the buyer. Two people can finance the same building completely differently; excluding debt lets them compare the asset on equal terms. Cash-on-Cash is the metric that does account for leverage.' },
+      { q: 'Is a higher cap rate better?', a: 'It is a higher return and usually a higher risk. Prime, low-risk property in strong locations trades at low cap rates precisely because buyers accept less return for more security. Comparing a high cap rate against a low one without asking why is how people buy problems.' },
+      { q: 'What is a normal cap rate?', a: 'It varies enormously by market, property type and interest rates, so a national figure is not much use. Compare against genuinely similar properties in the same area at the same time.' },
+      { q: 'Should I buy based on cap rate?', a: 'This calculates a metric; it cannot assess a deal. Cap rate ignores growth prospects, condition, lease terms and your own tax position. Property decisions of this size warrant professional advice.' }
+    ],
+    related: ['rental-yield', 'cash-on-cash', 'rent-vs-buy', 'closing-costs', 'mortgage-payoff', 'investment-calculator']
+  },
+
+  'cash-on-cash': {
+    intro: 'Cash-on-cash answers the question an investor actually cares about: what is my own money earning? Unlike cap rate, it includes the mortgage — because leverage is exactly what changes the answer.',
+    what: [
+      'Divides annual pre-tax cash flow by the cash you actually put in — deposit, closing costs and any initial works — rather than by the property price.',
+      'Defaults to a 300,000 purchase with 60,000 down. Because the denominator is your cash rather than the price, borrowing more can raise this figure while raising risk just as fast.'
+    ],
+    specs: {
+      caption: 'What goes in',
+      rows: [
+        ['Formula', 'Annual pre-tax cash flow ÷ total cash invested'],
+        ['Cash invested', 'Deposit + closing costs + initial works'],
+        ['<strong>Includes</strong>', '<strong>Mortgage payments — unlike cap rate</strong>'],
+        ['Default purchase / down', '300,000 / 60,000'],
+        ['Leverage', 'Raises the figure and the risk together'],
+        ['Pre-tax', 'Your tax position is not modelled'],
+        ['Excludes', 'Capital growth and principal paydown'],
+        ['Is this advice?', '<strong>No</strong>']
+      ]
+    },
+    steps: [
+      'Enter the purchase price and your actual cash in — including closing costs.',
+      'Enter rent and all costs including the mortgage payment.',
+      'Read the return on your own money, and note it is before tax.'
+    ],
+    tip: 'Include closing costs in the cash invested, not just the deposit. Legal fees, taxes, surveys and initial repairs routinely add several percent of the purchase price, and leaving them out inflates the return on a figure that was never the real outlay. It is the commonest way a first model comes out too optimistic.',
+    faqs: [
+      { q: 'How is this different from cap rate?', a: 'Cap rate measures the property and ignores financing. Cash-on-cash measures your money and includes the mortgage. The same building gives different cash-on-cash figures to a cash buyer and a leveraged one, which is the point.' },
+      { q: 'Does more leverage mean better returns?', a: 'It can raise the percentage, because the denominator shrinks. It also raises risk in the same motion — a vacancy or a rate rise is far more dangerous when the mortgage is large. A high figure achieved through heavy borrowing is not the same as a high figure achieved through a good purchase.' },
+      { q: 'What is missing?', a: 'Capital growth, mortgage principal paydown and your tax position. It measures cash in the year, which is why an investor might accept a low figure on a property expected to appreciate.' },
+      { q: 'What is a good number?', a: 'That depends on your market, your alternatives and your risk tolerance, none of which a calculator can see. Compare against what your money could do elsewhere, and take advice before committing.' }
+    ],
+    related: ['cap-rate', 'rental-yield', 'closing-costs', 'rent-vs-buy', 'mortgage-payoff', 'investment-calculator']
+  },
+
+  'closing-costs': {
+    intro: 'The deposit is the number buyers save for, and closing costs are the number that catches them out — several percent of the purchase price, due at exactly the moment their savings are lowest.',
+    what: [
+      'Estimates the one-off costs of completing a purchase from percentages you set, defaulting to <strong>1.5%</strong> and <strong>0.75%</strong> components against a 350,000 price.',
+      'The rates are yours to set because they vary enormously by country and even by region — transfer taxes alone range from near zero to well over 10%.'
+    ],
+    specs: {
+      caption: 'What is usually included',
+      rows: [
+        ['Purchase price', 'Default 350,000'],
+        ['Component rates', 'Default 1.5% and 0.75% — you set them'],
+        ['Typically covers', 'Transfer tax, legal fees, survey, registration'],
+        ['May also include', 'Lender fees, broker fees, insurance, valuation'],
+        ['Typical total', '2–5% of price in many markets'],
+        ['Transfer tax alone', 'Near zero to over 10%, depending on jurisdiction'],
+        ['<strong>Due</strong>', '<strong>At completion, on top of the deposit</strong>'],
+        ['Knows your jurisdiction?', '<strong>No</strong>']
+      ]
+    },
+    steps: [
+      'Look up the transfer tax and typical fees where you are buying.',
+      'Enter the price and those percentages.',
+      'Budget the total <em>separately</em> from your deposit.'
+    ],
+    tip: 'Budget closing costs as money you will never see again, separate from the deposit. The deposit becomes equity in the property; closing costs are simply spent. Buyers who count them as part of their savings target arrive at completion several thousand short — which is the point in the process where being short is most expensive.',
+    faqs: [
+      { q: 'How much should I budget?', a: 'Commonly 2–5% of the purchase price, but the range across countries is wide because transfer taxes differ so much. Look up your specific jurisdiction rather than relying on any general figure, including this one.' },
+      { q: 'What is usually included?', a: 'Transfer or stamp tax, legal or conveyancing fees, survey or inspection, land registry fees, and often lender arrangement fees, valuation and insurance. Some are negotiable, most are not.' },
+      { q: 'Can I add them to the mortgage?', a: 'Sometimes, depending on the lender and your loan-to-value. It is worth asking, but it means borrowing more against the same property and paying interest on the fees for the life of the loan.' },
+      { q: 'Are these figures accurate for me?', a: 'The percentages are placeholders, not your jurisdiction. Property transaction costs are highly local and often depend on price bands, first-time-buyer status and property type. Get figures from a local conveyancer.' }
+    ],
+    related: ['rent-vs-buy', 'mortgage-calculator', 'home-affordability', 'cash-on-cash', 'rental-yield', 'budget-calculator']
+  },
+
+  'rent-vs-buy': {
+    intro: 'The instinct that renting is "throwing money away" ignores the money buying throws away too — interest, transaction costs, maintenance and the return your deposit could have earned elsewhere.',
+    what: [
+      'Compares the cost of renting against buying over time, using a 350,000 property with a 70,000 deposit by default.',
+      'The comparison turns on how long you stay. Buying carries large one-off costs at both ends, and those only amortise over years — which is why the same purchase can be sensible at ten years and expensive at three.'
+    ],
+    specs: {
+      caption: 'What the comparison involves',
+      rows: [
+        ['Default price / deposit', '350,000 / 70,000'],
+        ['Buying costs include', 'Interest, closing costs, maintenance, insurance, tax'],
+        ['Renting costs include', 'Rent, and rent increases over time'],
+        ['<strong>Decisive variable</strong>', '<strong>How long you stay</strong>'],
+        ['Break-even', 'Commonly several years'],
+        ['Opportunity cost', 'What the deposit could earn invested'],
+        ['Not modelled', 'Job mobility, flexibility, security of tenure'],
+        ['Is this advice?', '<strong>No</strong>']
+      ]
+    },
+    steps: [
+      'Enter price, deposit and expected rent for the same standard of home.',
+      'Include maintenance — commonly around 1% of value a year.',
+      'Test it at three years and at ten. The answer often flips.'
+    ],
+    tip: 'Run the comparison at several time horizons before deciding. Buying carries heavy costs at purchase and at sale, and those need years of ownership to amortise — so a purchase that looks poor over three years can look strong over ten. If your job or circumstances might move you within a few years, that fact matters more than any of the percentages.',
+    faqs: [
+      { q: 'Is renting really throwing money away?', a: 'Not straightforwardly. Mortgage interest, closing costs, maintenance and the foregone return on your deposit are all money that does not build equity either. Early in a mortgage, most of the payment is interest rather than principal.' },
+      { q: 'What is the break-even point?', a: 'It depends on prices, rates, rent and local transaction costs, and is commonly several years. That is why the horizon is the most important input here — and why the tool cannot give one universal answer.' },
+      { q: 'What does it not account for?', a: 'Flexibility, job mobility, security of tenure, the stress of maintenance and the freedom to change a home you own. Those are real and they are not financial, but they decide plenty of cases.' },
+      { q: 'Should I buy?', a: 'This compares costs; it cannot answer that. The decision involves job security, family plans, local market conditions and your own tolerance for risk. Speak to an independent financial adviser rather than a calculator.' }
+    ],
+    related: ['mortgage-calculator', 'home-affordability', 'closing-costs', 'rental-yield', 'mortgage-payoff', 'budget-calculator']
+  },
+
+  'mortgage-payoff': {
+    intro: 'Overpaying a mortgage is unusually powerful because every extra pound goes straight against the principal — and the interest that principal would have generated for the rest of the term disappears with it.',
+    what: [
+      'Shows how extra payments shorten the term and reduce total interest, from a <strong>240,000</strong> balance at <strong>6.5%</strong> by default.',
+      'The effect is front-loaded and large: overpayments made early remove interest across the whole remaining term, while the same amount paid in the final years saves very little.'
+    ],
+    specs: {
+      caption: 'Inputs',
+      rows: [
+        ['Balance remaining', 'Default 240,000'],
+        ['Interest rate', 'Default 6.5%'],
+        ['Extra payment', 'Monthly or one-off'],
+        ['Returns', 'New term and interest saved'],
+        ['<strong>Early overpayments</strong>', '<strong>Save far more than late ones</strong>'],
+        ['Check first', 'Early repayment charges on your deal'],
+        ['Also check', 'That overpayments reduce TERM, not just payment'],
+        ['Is this advice?', '<strong>No</strong>']
+      ]
+    },
+    steps: [
+      'Enter your balance, rate and remaining term.',
+      'Add the overpayment you could realistically sustain.',
+      '<strong>Check your lender’s rules</strong> before starting — see the tip.'
+    ],
+    tip: 'Tell your lender to reduce the <em>term</em>, not the monthly payment. Many apply overpayments by lowering your future payments instead, which feels generous and captures almost none of the interest saving. Also check for early repayment charges — many fixed deals cap overpayments at around 10% of the balance a year, and exceeding it can cost more than the interest saved.',
+    faqs: [
+      { q: 'Why do early overpayments matter so much more?', a: 'Because interest accrues on the outstanding balance for the remaining term. A payment made in year two removes interest from twenty-plus years of compounding; the same payment in year twenty-four removes a few months of it.' },
+      { q: 'Term reduction or payment reduction?', a: 'Term reduction saves far more interest, but many lenders default to reducing the monthly payment. Ask explicitly, and confirm in writing — the difference over a mortgage is often tens of thousands.' },
+      { q: 'Are there penalties?', a: 'Frequently, on fixed-rate deals. Many allow overpayments up to about 10% of the balance a year and charge beyond that. Check your specific terms before making a large payment; the charge can exceed the saving.' },
+      { q: 'Should I overpay or invest instead?', a: 'That depends on your mortgage rate, your alternatives, your tax position and your appetite for risk — none of which this can see. Overpaying is a guaranteed return equal to your rate; investing is neither guaranteed nor necessarily higher. Take advice.' }
+    ],
+    related: ['mortgage-calculator', 'refinance-calculator', 'rent-vs-buy', 'credit-card-payoff', 'compound-interest', 'home-affordability']
+  },
+
   /* ================= session 1 ================= */
 
   'jpg-to-pdf': {

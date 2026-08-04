@@ -19,13 +19,13 @@ short FAQ answers, stub spec tables and dead related links all fail the build.
 
 | | Pages | Unique words |
 |---|---|---|
-| Hand-written | **178** | 269–419 |
-| Generic template | ~82 | ~96 |
+| Hand-written | **191** | 269–419 |
+| Generic template | ~69 | ~96 |
 
-Pages over 250 unique words: **178 of 260** — 68% of the catalogue.
+Pages over 250 unique words: **191 of 260** — 73% of the catalogue.
 
-**Duplicate pairs sitewide: 714 → 213** across five clusters destroyed on
-3 Aug (video, health, pdf, business, converters, streaming, tax, images, privacy, education).
+**Duplicate pairs sitewide: 714 → 177** across five clusters destroyed on
+3 Aug (video, health, pdf, business, converters, streaming, tax, images, privacy, education, travel, realestate).
 
 **Duplication is the metric that now matters more than length.** See the
 measurement below: 714 near-duplicate page pairs across 22 clusters. Batches are
@@ -360,8 +360,35 @@ APA 7 changed rules from APA 6, so a correct APA 6 reference is now wrong.
 diagram-maker emits Mermaid, which GitHub and GitLab render natively, so a
 diagram pasted into a README stays editable instead of drifting stale.*
 
+### Batch 16 — travel + realestate, both complete (3 Aug 2026)
+
+| | Before | After |
+|---|---|---|
+| travel (7 pages) | 97% avg | **41.1% avg, 0 pairs** |
+| realestate (6 pages) | 97% avg | **47.1% avg, 0 pairs** |
+
+*Two clusters in one pass. Doing two at once works when they share nothing —
+these have no overlapping vocabulary, so there is no risk of the second batch
+duplicating the first.*
+
+*travel: fuel-economy-converter carries the finding that **US and UK MPG are
+different numbers for the same car** (30 US ≈ 36 UK), and that L/100km runs
+inverted — lower is better. distance-calculator's tip is to use ~80 km/h as a
+motorway AVERAGE rather than the limit, because the gap compounds to over an
+hour on a six-hour drive. tip-by-country covers nine countries and leads on
+Japan, where tipping is not customary and can cause awkwardness.*
+
+*realestate: YMYL, same standard as finance. Every threshold is a convention
+investors use, never a target. The through-line is what each metric EXCLUDES —
+cap-rate deliberately ignores the mortgage so deals are comparable across
+different financing; cash-on-cash includes it because it measures your money;
+rental-yield's gross figure ignores every cost of ownership, which is why
+listings quote it. mortgage-payoff's tip is to instruct the lender to reduce
+the TERM rather than the payment, since many default to the latter and it
+captures almost none of the interest saving.*
+
 **Remaining clusters, largest first:** travel (7),
-developer (7), audio (6), realestate (6), accessibility (5).
+developer (7), audio (6), accessibility (5).
 
 ## Next up, in order
 
