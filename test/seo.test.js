@@ -585,3 +585,58 @@ console.log(`seo + network switch: ${pass} total assertions passed`);
 }
 
 console.log(`seo + ezoic verification: ${pass} total assertions passed`);
+
+/* ---------------------------------------------------------------------------
+ * THE NEWSLETTER IS ACTUALLY ON THE PAGES
+ *
+ * newsletter.js is well tested in isolation, which proves nothing about whether
+ * a slot for it ever reaches the HTML. The whole feature is one deleted line in
+ * build.js away from being dead code that passes its own unit tests — and the
+ * failure is silent, because a missing form looks exactly like a tidy page.
+ *
+ * These assertions read the BUILT output, not the template.
+ * ------------------------------------------------------------------------- */
+{
+  const fs3 = require("fs"), path3 = require("path");
+  const R = path3.join(__dirname, "..");
+  const read = (p) => { try { return fs3.readFileSync(path3.join(R, p), "utf8"); } catch (e) { return ""; } };
+  const slots = (html) => (html.match(/data-newsletter="([a-z_]+)"/g) || [])
+    .map((s) => s.replace(/.*="|"/g, "")).join(",");
+
+  const tool = read("tools/video/compress-video/index.html");
+  /* Build output is gitignored — Netlify regenerates it on deploy. On a clean
+     checkout there is nothing to inspect, and failing here would report a
+     missing build as a missing feature. Say which it is, out loud, the way the
+     jsdom-dependent checks elsewhere in this suite already do. */
+  if (!tool) {
+    console.log("  (skipped newsletter placement checks — run `node build.js` first)");
+  } else {
+  eq(slots(tool), "footer", "a tool page carries exactly one slot, in the footer");
+  ok(/assets\/js\/newsletter\.js/.test(tool), "and loads the script that fills it");
+
+  /* Script order is a real dependency: convert.js reaches for VKNewsletter at
+     the success moment, so newsletter.js must already have defined it. */
+  ok(tool.indexOf("convert.js") < tool.indexOf("newsletter.js"),
+     "newsletter.js loads after convert.js, which calls into it");
+
+  const blogFiles = (() => {
+    try { return fs3.readdirSync(path3.join(R, "blog")).filter((d) => d !== "index.html"); }
+    catch (e) { return []; }
+  })();
+  ok(blogFiles.length > 0, "there are blog posts to check");
+  blogFiles.forEach((d) => {
+    const html = read("blog/" + d + "/index.html");
+    if (!html) return;
+    eq(slots(html), "blog",
+       "blog post '" + d + "' has ONE slot and it is the in-body one, not the footer");
+  });
+
+  /* The unsubscribe page must not ask for the address it is removing. */
+  const unsub = read("unsubscribe/index.html");
+  ok(unsub.length > 0, "the unsubscribe page is built");
+  eq(slots(unsub), "", "the unsubscribe page carries NO signup form");
+  ok(/data-unsubscribe/.test(unsub), "it has the element newsletter.js reports into");
+  ok(/noindex/.test(unsub), "and is noindex — it is reached from an email, not a search");
+  }
+}
+console.log(`seo + newsletter placement: ${pass} total assertions passed`);

@@ -18,6 +18,7 @@
 (function (root) {
   'use strict';
 
+  var doc = typeof document !== 'undefined' ? document : null;
   var TOOLS_KEY = 'vk-tools-used';      // distinct tool ids, lifetime
   var DISMISS_KEY = 'vk-cta-dismissed'; // ISO date of last dismissal
   var MIN_TOOLS = 3;                    // prompt once they look like a repeat user
@@ -185,9 +186,27 @@
           dismissedAt: readDismissed(),
           now: Date.now()
         });
-        if (!show || !host) return;
-        if (host.querySelector('.cta-account')) return;   // never two at once
-        host.appendChild(buildCard(list.length));
+        if (!host) return;
+        if (host.querySelector('.cta-account') || host.querySelector('.nl')) return; // never two at once
+
+        if (show) { host.appendChild(buildCard(list.length)); return; }
+
+        /* ONE ASK PER SUCCESS MOMENT, AND THE ACCOUNT PROMPT WINS.
+         *
+         * Two offers on the same screen convert worse than either alone — the
+         * visitor has to choose rather than act, and the moment passes. So the
+         * newsletter only appears when the account prompt has decided NOT to:
+         * too few tools used, recently dismissed, or already signed in.
+         *
+         * That ordering is deliberate. An account is worth more than an email
+         * address (history, favourites, a route to Pro), so it gets first
+         * refusal; the lighter ask picks up everyone it passes over. */
+        if (!root.VKNewsletter || root.VKNewsletter.alreadySubscribed()) return;
+        var slot = doc.createElement('div');
+        slot.setAttribute('data-newsletter', 'tool_success');
+        slot.setAttribute('data-nl-compact', '1');
+        host.appendChild(slot);
+        root.VKNewsletter.init();
       }).catch(function () {});
     } catch (e) { /* conversion must never break a working tool */ }
   }

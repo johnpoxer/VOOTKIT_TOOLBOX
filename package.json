@@ -11,7 +11,7 @@
     "audit": "node test/audit-tools.js",
     "audit:json": "node test/audit-tools.js --json > docs/tool-registry.json",
     "audit:strict": "node test/audit-tools.js --strict",
-    "test": "node test/calc.test.js && node test/filetool.test.js && node test/pdf.test.js && node test/video.test.js && node test/videofx.test.js && node test/text.test.js && node test/dev.test.js && node test/widgets2.test.js && node test/seo.test.js && node test/dataimg.test.js && node test/codes.test.js && node test/a11y.test.js && node test/misc.test.js && node test/business.test.js && node test/ui.test.js && node test/auth.test.js && node test/usage.test.js && node test/link.test.js && node test/errors.test.js && node test/convert.test.js && node test/pixels.test.js && node test/track.test.js && node test/consent.test.js",
+    "test": "node test/calc.test.js && node test/filetool.test.js && node test/pdf.test.js && node test/video.test.js && node test/videofx.test.js && node test/text.test.js && node test/dev.test.js && node test/widgets2.test.js && node test/seo.test.js && node test/dataimg.test.js && node test/codes.test.js && node test/a11y.test.js && node test/misc.test.js && node test/business.test.js && node test/ui.test.js && node test/auth.test.js && node test/usage.test.js && node test/link.test.js && node test/errors.test.js && node test/convert.test.js && node test/pixels.test.js && node test/track.test.js && node test/consent.test.js && node test/newsletter.test.js",
     "check": "node test/calc.test.js && node test/filetool.test.js && node --check build.js && node --check data/catalog.js && node --check assets/js/home.js && node --check assets/js/recent.js && node build.js"
   }
 }

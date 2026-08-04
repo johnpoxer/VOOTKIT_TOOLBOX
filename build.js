@@ -317,8 +317,17 @@ ${o.ads ? adLoader() : "<!-- no ads inside an active tool workspace -->"}
 <main id="main" tabindex="-1">`;
 }
 
-function foot(depth, extraScripts) {
+/* The footer newsletter is the only capture that appears on EVERY page, which
+ * makes it the one that matters most: the tool-success slot only fires for
+ * people who complete a run, and the blog slot only for people who read. A
+ * visitor who lands, browses and leaves has no other point of contact.
+ *
+ * opts.noNewsletter suppresses it where asking would be absurd — the unsubscribe
+ * page above all, where a signup form next to "you have been removed" reads as
+ * either a bug or a dark pattern. */
+function foot(depth, extraScripts, opts) {
   const up = "../".repeat(depth) || "./";
+  const o = opts || {};
   const cats = VK.CATEGORIES.slice(0, 8)
     .map((c) => `<a href="${up}tools/${c.slug}/">${esc(c.name)}</a>`).join("");
   return `</main>
@@ -329,6 +338,7 @@ function foot(depth, extraScripts) {
       <div><h4>Vootkit</h4><a href="${up}tools/">All tools</a><a href="${up}pricing.html">Pricing</a><a href="${up}about.html">About</a><a href="${up}privacy.html">Privacy</a><a href="${up}cookies.html">Cookies</a><a href="${up}terms.html">Terms</a><a href="${up}disclaimer.html">Disclaimer</a><a href="${up}contact.html">Contact &amp; support</a></div>
       <div><h4>How it works</h4><p style="font-size:var(--t-sm);color:var(--ink-soft)">Most tools run entirely in your browser, so your files aren't uploaded and there's no queue. The free plan includes 5 tool runs a day.</p></div>
     </div>
+    ${o.noNewsletter ? "" : '<div class="ftr-nl" data-newsletter="footer"></div>'}
     <p style="margin-top:var(--s-6);font-size:var(--t-sm)">&copy; <span id="yr"></span> Vootkit — every digital task, done in your browser.</p>
   </div>
 </footer>
@@ -350,6 +360,7 @@ t.addEventListener('click',function(){var c=document.documentElement.getAttribut
 <script src="${up}assets/js/supabase-config.js${V}" defer></script>
 <script src="${up}assets/js/errors.js${V}" defer></script>
 <script src="${up}assets/js/convert.js${V}" defer></script>
+<script src="${up}assets/js/newsletter.js${V}" defer></script>
 <script src="${up}assets/js/auth.js${V}" defer></script>
 <script src="${up}assets/js/usage.js${V}" defer></script>
 ${(extraScripts||[]).map(function(x){return '<script src="'+up+x+V+'" defer></script>';}).join("\n")}
@@ -843,7 +854,7 @@ function infoPage(o) {
     ${o.lede ? `<p class="page-lede">${o.lede}</p>` : ""}
   </header>
   ${o.body}
-</div>` + foot(depth, o.scripts);
+</div>` + foot(depth, o.scripts, { noNewsletter: !!o.noNewsletter });
 }
 
 /* ---------- blog (Decap CMS writes markdown → content/blog/*.md) ---------- */
@@ -916,7 +927,8 @@ function blogPostPage(post) {
     <p class="page-lede" style="margin:0 auto var(--s-4)">Every Vootkit tool runs free in your browser.</p>
     <a class="btn btn-primary" href="../../tools/">Browse all tools</a>
   </div>
-</div>` + foot(2);
+  <div data-newsletter="blog"></div>
+</div>` + foot(2, null, { noNewsletter: true });
 }
 function blogIndexPage(posts) {
   const url = SITE + "/blog/";
@@ -1466,6 +1478,26 @@ write("contact-success/index.html", infoPage({
   <div class="cta-band" style="margin-top:var(--s-6);padding:var(--s-6);border:1px solid var(--line);border-radius:var(--r-lg);text-align:center">
     <h2 style="margin:0 0 var(--s-2)">In the meantime…</h2>
     <p class="page-lede" style="margin:0 auto var(--s-4)">Explore the tools while you wait for our reply.</p>
+    <a class="btn btn-primary" href="../tools/">Browse all tools</a>
+  </div>`
+}));
+
+/* Unsubscribe. Reached only from a link in an email, so it is noindex — and it
+ * carries no newsletter form, for the obvious reason. The work happens in
+ * newsletter.js against a SECURITY DEFINER function keyed on the token; this
+ * page is just the surface that reports the outcome. */
+write("unsubscribe/index.html", infoPage({
+  depth: 1, slug: "unsubscribe/", title: "Unsubscribe", eyebrow: "Email", noindex: true, noNewsletter: true,
+  h1: "Unsubscribing you now\u2026",
+  desc: "Remove your email address from the Vootkit mailing list.",
+  lede: "One click, no account needed. This takes a second.",
+  body: `
+  <p data-unsubscribe class="nl-status" role="status" aria-live="polite">Working\u2026</p>
+  <p class="note" style="margin-top:var(--s-4)">If this page does not confirm within a few seconds, the link may have been
+  broken by your email client. Reply to any email from us and we will remove you by hand.</p>
+  <div class="cta-band" style="margin-top:var(--s-6);padding:var(--s-6);border:1px solid var(--line);border-radius:var(--r-lg);text-align:center">
+    <h2 style="margin:0 0 var(--s-2)">The tools stay free either way</h2>
+    <p class="page-lede" style="margin:0 auto var(--s-4)">No account, no email address, no limits on the ones that run in your browser.</p>
     <a class="btn btn-primary" href="../tools/">Browse all tools</a>
   </div>`
 }));

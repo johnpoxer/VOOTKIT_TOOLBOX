@@ -19,6 +19,8 @@ Thumbs.db
 /contact.html
 /privacy.html
 /terms.html
+/cookies.html
+/disclaimer.html
 
 # Generated route directories
 /tools/
@@ -28,6 +30,7 @@ Thumbs.db
 /blog/
 /admin-console/
 /contact-success/
+/unsubscribe/
 
 # Generated localized directories (one per language)
 /es/
