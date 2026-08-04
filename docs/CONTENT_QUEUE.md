@@ -19,13 +19,13 @@ short FAQ answers, stub spec tables and dead related links all fail the build.
 
 | | Pages | Unique words |
 |---|---|---|
-| Hand-written | **133** | 269–419 |
-| Generic template | ~124 | ~96 |
+| Hand-written | **146** | 269–419 |
+| Generic template | ~114 | ~96 |
 
-Pages over 250 unique words: **133 of 260** — 51% of the catalogue.
+Pages over 250 unique words: **146 of 260** — 56% of the catalogue.
 
-**Duplicate pairs sitewide: 714 → 377** across five clusters destroyed on
-3 Aug (video, health, pdf, business, converters).
+**Duplicate pairs sitewide: 714 → 307** across five clusters destroyed on
+3 Aug (video, health, pdf, business, converters, streaming).
 
 **Duplication is the metric that now matters more than length.** See the
 measurement below: 714 near-duplicate page pairs across 22 clusters. Batches are
@@ -245,8 +245,26 @@ the statute mile*
 
 *Every factor quoted is the exact `f` value from source.*
 
-**Remaining clusters, largest first:** everyday+misc (21), streaming
-(13), tax (8), images (8), privacy (8), education (8), travel (7),
+### Batch 11 — the streaming cluster, complete (3 Aug 2026)
+
+| | Before | After |
+|---|---|---|
+| streaming (13 pages) | 97% avg | **38.1% avg, 0 pairs** |
+
+*Figures read from source: the OBS assistant uses **60% of measured upload** as
+headroom (`upload * 1000 * 0.6`), a resolution/fps ladder (1080p60 = 6000,
+1080p30 = 4500, 720p60 = 4500, 720p30 = 3000, 480p = 2000/1500) and per-platform
+caps (Twitch 8500, YouTube 12000, Kick 8000, Facebook 6000). Bits are **$0.01
+each** to the streamer. Twitch emotes need **all three** of 112/56/28 px;
+Discord uses 128.*
+
+*The operational warnings are the differentiator, and each is specific to its
+tool: mute the mic BEFORE switching to the BRB scene, not after; whatever
+appears in a chat overlay is permanent in the VOD even if moderators delete it;
+announce the giveaway redraw rule before drawing rather than after; design
+emotes for the 28 px version because that is what chat renders.*
+
+**Remaining clusters, largest first:** tax (8), images (8), privacy (8), education (8), travel (7),
 developer (7), audio (6), realestate (6), accessibility (5).
 
 ## Next up, in order

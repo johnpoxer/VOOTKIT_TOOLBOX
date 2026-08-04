@@ -2182,6 +2182,448 @@ module.exports = {
     related: ['unit-converter', 'upload-time', 'bitrate-calculator', 'compress-video', 'file-checksum', 'compress-image']
   },
 
+  /* ============ batch 11 — streaming cluster, part 1 ============
+   * 13 pages, 78 duplicate pairs. Figures read from tools-calc2.js and
+   * tools-video.js: the 60% upload-headroom rule, the resolution/fps bitrate
+   * ladder, per-platform caps, and the Twitch emote sizes. */
+
+  'obs-settings-assistant': {
+    intro: 'Dropped frames are almost never a hardware problem. They are a bitrate problem — the stream is trying to push more data than the connection can carry, and the encoder gives up frames rather than fall behind.',
+    what: [
+      'Works out a safe bitrate from three things: what your resolution and frame rate ideally want, what your platform will accept, and — the one that usually decides — what your upload can actually sustain.',
+      'The upload figure is deliberately conservative: it uses <strong>60% of your measured speed</strong>. Streaming at 100% of a line that occasionally dips is how you drop frames during exactly the moments that matter.'
+    ],
+    specs: {
+      caption: 'The ladder and the caps',
+      rows: [
+        ['1080p60', '6000 kbps ideal'],
+        ['1080p30', '4500 kbps'],
+        ['720p60', '4500 kbps'],
+        ['720p30', '3000 kbps'],
+        ['480p60 / 480p30', '2000 / 1500 kbps'],
+        ['Platform caps', 'Twitch 8500 · YouTube 12000 · Kick 8000 · Facebook 6000'],
+        ['<strong>Upload headroom</strong>', '<strong>60% of your measured speed</strong>'],
+        ['Floor', 'Never below 500 kbps']
+      ]
+    },
+    steps: [
+      'Test your upload speed and enter the real figure, not the one on your bill.',
+      'Choose your platform, resolution and frame rate.',
+      'If it warns that your upload limits you below the ideal, drop to 30 fps before dropping resolution.'
+    ],
+    tip: 'Prefer 720p60 over 1080p30 for anything with fast movement. Games especially look better at a higher frame rate and a smaller frame than the reverse, and 720p60 needs 4500 kbps against 1080p60’s 6000 — so it also fits on a connection that cannot sustain full HD.',
+    faqs: [
+      { q: 'Why only 60% of my upload speed?', a: 'Because the number you measure is a peak, not a floor. Real connections dip, other devices share the line, and a stream that needs 95% of your capacity drops frames the moment anything else uses the network. The 40% margin is what makes a stream stable rather than nominally possible.' },
+      { q: 'Should I stream 1080p or 720p?', a: 'If your upload cannot comfortably carry 6000 kbps, 720p60 at 4500 will look better than a starved 1080p. Viewers notice stutter far more than resolution, and most watch in a window smaller than full screen anyway.' },
+      { q: 'Why do the platform caps differ?', a: 'Each service sets its own ingest ceiling — YouTube accepts the most at 12000 kbps, Facebook the least at 6000. Sending above the cap does not improve quality; it is either rejected or re-encoded down.' },
+      { q: 'I still drop frames at the recommended bitrate.', a: 'Then the bottleneck is elsewhere: an overloaded CPU with x264, wifi rather than ethernet, or another device saturating the line. Try a hardware encoder such as NVENC, and use a cable — wifi is the commonest cause of intermittent drops.' }
+    ],
+    related: ['bitrate-calculator', 'upload-time', 'compress-video', 'resize-video', 'stream-asset-sizer', 'convert-video']
+  },
+
+  'bitrate-calculator': {
+    intro: 'Every upload limit is really a bitrate limit wearing a disguise. Fitting a video into a size cap means working backwards: the size and the duration are fixed, so the bitrate is whatever is left over.',
+    what: [
+      'Takes a target file size and a duration and returns the video bitrate that lands inside it, after subtracting the audio track and container overhead.',
+      'The relationship is simply <strong>size = bitrate × duration</strong>, which is why the same 25 MB limit is generous for a 30-second clip and impossible for an hour.'
+    ],
+    specs: {
+      caption: 'Inputs',
+      rows: [
+        ['Video length', 'In minutes, from 0.1'],
+        ['Target file size', 'In MB, from 1'],
+        ['Audio bitrate', 'Subtracted from the budget — default 128 kbps'],
+        ['Returns', 'The video bitrate that fits'],
+        ['Core relationship', 'Size = bitrate × duration'],
+        ['Halve the duration', 'Doubles the bitrate you can afford'],
+        ['Halve the bitrate', 'Halves the file size'],
+        ['Use with', 'OBS, ffmpeg, or any encoder that takes a target rate']
+      ]
+    },
+    steps: [
+      'Enter the duration and the size you must fit inside.',
+      'Set the audio bitrate you intend to use — it comes out of the same budget.',
+      'Take the video bitrate to your encoder.'
+    ],
+    tip: 'If the answer comes back under about 1000 kbps for 1080p, do not use it — drop the resolution instead. A frame that large starved of data looks blocky in exactly the places viewers look. The same bitrate at 720p, or 480p for a very tight budget, produces a visibly better result.',
+    faqs: [
+      { q: 'The bitrate it gives me looks impossibly low.', a: 'Then the target is too small for the duration, and no encoder setting fixes that. Your options are a shorter clip, a lower resolution, or a bigger limit. Trimming is usually the least painful, because it removes data at full quality rather than degrading all of it.' },
+      { q: 'Why does audio come out of the budget?', a: 'Because the limit applies to the finished file, and the audio track is inside it. At 128 kbps audio takes about 1 MB per minute — on a 25 MB cap for a ten-minute video that is 40% of the space.' },
+      { q: 'Should I use this or the Video Compressor?', a: 'The compressor does this arithmetic and the encoding in one step. This tool is for when you are configuring something else — OBS, a hardware encoder, an ffmpeg command — and just need the number.' },
+      { q: 'Is a higher bitrate always better?', a: 'Only up to the point where the frame can use it. Beyond that you are storing detail no one can see, and running into upload limits for nothing. The resolution ladder in the OBS assistant shows roughly where that point is.' }
+    ],
+    related: ['compress-video', 'obs-settings-assistant', 'upload-time', 'resize-video', 'convert-video', 'data-converter']
+  },
+
+  'upload-time': {
+    intro: 'The number your provider advertises is a download speed, and uploads are usually a fraction of it. That is why a file that took two minutes to download takes twenty to send back, and why "it is nearly done" is such an unreliable estimate.',
+    what: [
+      'Converts a file size and an upload speed into a realistic transfer time, handling the unit conversion that trips everyone up: <strong>file sizes are in megabytes, connection speeds are in megabits, and there are eight bits in a byte</strong>.',
+      'So a 10 Mbps upload moves at most about 1.25 MB per second — before any protocol overhead.'
+    ],
+    specs: {
+      caption: 'The arithmetic',
+      rows: [
+        ['File size', 'In megabytes (MB)'],
+        ['Upload speed', 'In megabits per second (Mbps)'],
+        ['<strong>Conversion</strong>', '<strong>Mbps ÷ 8 = MB/s</strong>'],
+        ['10 Mbps', 'About 1.25 MB/s at best'],
+        ['100 Mbps', 'About 12.5 MB/s at best'],
+        ['Real-world', 'Expect 10–20% below theoretical'],
+        ['Asymmetric lines', 'Upload is often a tenth of download'],
+        ['Wifi', 'Adds variability — use a cable for big transfers']
+      ]
+    },
+    steps: [
+      'Enter the file size in MB.',
+      'Enter your <strong>upload</strong> speed — test it rather than reading the package name.',
+      'Add 10–20% to the answer for overhead.'
+    ],
+    tip: 'Test your upload speed rather than assuming it. Consumer broadband is usually asymmetric — a 500 Mbps download often comes with a 50 Mbps upload or less — and the advertised headline figure is almost always the download. This is the single reason upload estimates come out so wrong.',
+    faqs: [
+      { q: 'Why is my upload so much slower than my download?', a: 'Most consumer connections are deliberately asymmetric, on the assumption that people consume more than they send. Cable and DSL are the worst offenders; fibre is often symmetric. Check your actual figure — it is frequently a tenth of the download speed.' },
+      { q: 'Why does the real time exceed the estimate?', a: 'Protocol overhead, encryption and the service’s own processing all take a share, and wifi adds variability. Ten to twenty percent above the theoretical figure is normal. Anything far worse suggests wifi or a congested line.' },
+      { q: 'How do I convert Mbps to MB/s?', a: 'Divide by eight. A 100 Mbps line moves at most 12.5 MB/s, so a 1 GB file takes at least 80 seconds. Providers quote bits because the number looks eight times larger.' },
+      { q: 'Can I make the upload faster?', a: 'Make the file smaller — it is the only lever you control. Compressing a video before uploading often cuts the transfer by more than any network change would.' }
+    ],
+    related: ['compress-video', 'data-converter', 'bitrate-calculator', 'obs-settings-assistant', 'compress-image', 'compress-pdf']
+  },
+
+  'stream-revenue-calculator': {
+    intro: 'Streaming income arrives from four places at four different rates, and the one people misjudge is bits — because the number of bits looks impressive and the cash value does not.',
+    what: [
+      'Adds up subscriptions, bits, donations and ad revenue into a monthly total, so you can see which source is actually carrying you.',
+      'The conversions that matter: <strong>bits are worth $0.01 each to you</strong>, and a subscription typically nets the streamer around <strong>half</strong> the sticker price — which is why the tool asks for your net per sub rather than assuming.'
+    ],
+    specs: {
+      caption: 'Conversions',
+      rows: [
+        ['Bits', '$0.01 each to the streamer'],
+        ['5000 bits', '$50'],
+        ['Subscription', 'You typically net ~50% of the price'],
+        ['Default net per sub', '$2.50 — half of a $4.99 tier'],
+        ['Donations', 'Entered directly, minus processor fees'],
+        ['Ads', 'Entered directly'],
+        ['Total', 'Sum of all four, monthly'],
+        ['Before', 'Tax, and any platform payout threshold']
+      ]
+    },
+    steps: [
+      'Enter subscriber count and what you actually net per sub — check your dashboard rather than guessing.',
+      'Add monthly bits, donations and ad revenue.',
+      'Read the total, and note which line dominates.'
+    ],
+    tip: 'This is gross income, not take-home. You are self-employed in most jurisdictions, so income tax and social contributions come out of it, payment processors take a cut of donations, and platforms hold payouts until you cross a threshold. Budget on something closer to two-thirds of the figure shown.',
+    faqs: [
+      { q: 'How much is a bit worth?', a: 'One cent to you. Viewers pay more than that — around 1.4 cents depending on the bundle they buy — and the platform keeps the difference. So 5000 bits cheered in a month is $50 of income.' },
+      { q: 'What do I actually get per subscriber?', a: 'Usually about half the sticker price, so roughly $2.50 on a $4.99 tier, though larger channels negotiate better splits and Prime subs differ. Use your real figure from the dashboard — the default here is only a common starting point.' },
+      { q: 'Is this what I will be paid?', a: 'No. It is gross. Tax, self-employment contributions, processor fees on donations and platform payout thresholds all sit between this number and your bank account.' },
+      { q: 'Which income source should I focus on?', a: 'The calculator shows which one dominates for you, which is usually more informative than any general advice. Subs are the most predictable, donations the most volatile, ads the least under your control.' }
+    ],
+    related: ['hourly-rate', 'paypal-fee-calculator', 'break-even', 'profit-margin', 'stream-schedule-planner', 'cac-ltv-calculator']
+  },
+
+  'emote-resizer': {
+    intro: 'Emotes are rejected for one reason more than any other: the wrong pixel dimensions. Platforms require exact sizes and will not scale for you, so an emote that is 100 pixels instead of 112 simply fails to upload.',
+    what: [
+      'Resizes a single image into the exact set of sizes a platform requires, in one pass — because you need all of them, not one.',
+      '<strong>Twitch requires three: 112, 56 and 28 pixels square.</strong> Discord uses 128. Missing any one of the Twitch sizes means the emote cannot be submitted.'
+    ],
+    specs: {
+      caption: 'Required sizes',
+      rows: [
+        ['Twitch', '112 × 112, 56 × 56, 28 × 28 — all three required'],
+        ['Discord', '128 × 128'],
+        ['Format', 'PNG with transparency'],
+        ['Source should be', 'Square, and at least 112 px'],
+        ['Why three sizes', 'Chat renders the smallest one'],
+        ['Scaling', 'Down only — never upscale an emote'],
+        ['Privacy', 'Processed in your browser — never uploaded']
+      ]
+    },
+    steps: [
+      'Start from a square image at least 112 px, ideally larger.',
+      'Choose the platform pack.',
+      'Download every size and upload the full set.'
+    ],
+    tip: 'Design for the 28-pixel version, because that is the one people actually see in chat. Fine detail, thin outlines and small text all disappear at that size — an emote that reads perfectly at 112 can be an unrecognisable smudge in a fast-moving chat. Check the smallest export before submitting.',
+    faqs: [
+      { q: 'Why does Twitch need three sizes?', a: 'Different contexts render at different scales — chat uses the smallest, the emote picker and hover previews use the larger ones. Twitch does not scale on your behalf, so all three must be uploaded.' },
+      { q: 'My emote was rejected for the wrong size.', a: 'The dimensions must be exact. 112 × 112 means precisely that, not 110 or 115, and the image must be square. This produces exact sizes, which is the point of using it rather than resizing by hand.' },
+      { q: 'Can I upload a small image and let this enlarge it?', a: 'You can, but do not. Upscaling invents pixels and produces a soft, blocky emote. Start at 112 or larger — ideally draw at 512 and let everything scale down.' },
+      { q: 'Does it keep transparency?', a: 'Yes, PNG transparency is preserved. That matters because emotes appear on both light and dark chat backgrounds, and one with a baked-in white square looks broken on half of them.' }
+    ],
+    related: ['stream-asset-sizer', 'resize-image', 'circle-crop', 'compress-image', 'round-corners', 'convert-image']
+  },
+
+  'stream-asset-sizer': {
+    intro: 'Every platform wants different dimensions for the same six pieces of channel art, and each publishes them in a different corner of a help centre. Getting one wrong means a banner cropped through your own face.',
+    what: [
+      'Resizes an image to the exact dimensions a specific platform slot requires — YouTube thumbnails, channel banners and avatars, Twitch banners, avatars, info panels, offline screens and emotes.',
+      'Pick the destination rather than typing numbers, so there is nothing to look up and nothing to mistype.'
+    ],
+    specs: {
+      caption: 'Supported slots',
+      rows: [
+        ['YouTube', 'Thumbnail, channel banner, profile picture'],
+        ['Twitch', 'Profile banner, profile picture, info panel'],
+        ['Twitch', 'Offline banner, emote'],
+        ['Method', 'Resize to the platform’s exact specification'],
+        ['Banners', 'Have a safe area — see the tip'],
+        ['Privacy', 'Processed in your browser — never uploaded'],
+        ['Next step', 'Compress before uploading if the file is large']
+      ]
+    },
+    steps: [
+      'Choose what you are making.',
+      'Add your image.',
+      'Resize, download, and preview on both mobile and desktop before committing.'
+    ],
+    tip: 'Channel banners are the one to be careful with. The full image only ever appears on a desktop TV layout; phones crop hard to the centre, and that is where most people will see it. Keep your name and anything essential in the middle third, and treat the outer edges as decoration that may never be seen.',
+    faqs: [
+      { q: 'Why does my banner look cropped on mobile?', a: 'Because it is. Channel banners are displayed at very different aspect ratios across TV, desktop and mobile, and the platform crops to the centre on small screens. Design for the centre and let the edges be scenery.' },
+      { q: 'Does resizing hurt quality?', a: 'Scaling down is safe and often sharpens the result. Scaling up is not — always start from an image at least as large as the target.' },
+      { q: 'Should I compress after resizing?', a: 'If the file is large, yes. Platforms enforce file size limits as well as dimensions, and a correctly sized banner can still be rejected for weight. Run it through Compress Image afterwards.' },
+      { q: 'Are these dimensions current?', a: 'They match the platforms’ published specifications, but platforms do change them occasionally. If an upload is rejected on size, check the current help page — and the tool will be updated.' }
+    ],
+    related: ['emote-resizer', 'thumbnail-maker', 'social-media-image', 'resize-image', 'compress-image', 'crop-image']
+  },
+
+  /* ============ batch 11 — streaming cluster, part 2 (completes it) ============ */
+
+  'starting-soon-screen': {
+    intro: 'The first two minutes of a stream are the ones with the most people watching and the least happening. A holding screen turns dead air into something intentional — and gives you time to check your levels before anyone judges them.',
+    what: [
+      'Generates a full-screen holding card with your text, sized for a stream canvas, ready to add as a browser or image source in OBS.',
+      'It is a static screen by design, so it costs no CPU while it is up — which matters, because the moments before going live are when you are still loading everything else.'
+    ],
+    specs: {
+      caption: 'Use and setup',
+      rows: [
+        ['Purpose', 'A holding card before the stream starts'],
+        ['Output', 'An image for an OBS source'],
+        ['CPU cost while shown', 'None — it is static'],
+        ['Typical duration', 'Two to five minutes'],
+        ['Add to OBS as', 'An image source in its own scene'],
+        ['Pair with', 'Music, so viewers know audio works'],
+        ['Privacy', 'Generated in your browser']
+      ]
+    },
+    steps: [
+      'Write the text — "Starting soon" plus what the stream is about.',
+      'Download and add it as an image source in a dedicated OBS scene.',
+      'Go live on that scene a few minutes early, then switch.'
+    ],
+    tip: 'Play music over it. A silent starting screen is indistinguishable from a broken stream, and viewers who cannot tell the difference leave rather than wait. Audible music is the clearest possible signal that everything is working and something is about to happen.',
+    faqs: [
+      { q: 'How long should I leave it up?', a: 'Two to five minutes. Long enough for the platform to notify followers and for people to arrive, short enough that early viewers do not give up. Longer than five and you are training people to show up late.' },
+      { q: 'Should I add a countdown?', a: 'Only if you will honour it. A timer that hits zero while the screen is still up is worse than no timer, because it tells viewers the stream is unreliable before it has begun.' },
+      { q: 'Does it slow my stream down?', a: 'No. A static image costs essentially nothing to encode, unlike an animated scene. That is useful precisely when you are still loading a game and the rest of your setup.' },
+      { q: 'What should it say?', a: 'What the stream is, not just that it is starting. Someone arriving from a browse page decides in seconds whether to stay, and "Starting soon" alone tells them nothing to stay for.' }
+    ],
+    related: ['brb-overlay', 'stream-overlay-creator', 'stream-alert-creator', 'stream-asset-sizer', 'stream-schedule-planner', 'obs-settings-assistant']
+  },
+
+  'brb-overlay': {
+    intro: 'Every stream needs a break, and how you take it decides whether the audience is still there afterwards. Cutting the feed loses people instantly; a BRB screen holds them because it promises you are coming back.',
+    what: [
+      'Creates a "be right back" card to switch to during a break — sized for a stream canvas and ready as an OBS source.',
+      'Keeping the stream running matters more than the design: the platform keeps you in the live directory, chat keeps talking, and returning viewers find you where they left you.'
+    ],
+    specs: {
+      caption: 'Use and setup',
+      rows: [
+        ['Purpose', 'A holding card during a break'],
+        ['Output', 'An image for an OBS source'],
+        ['Keeps you live?', 'Yes — the stream never stops'],
+        ['Add to OBS as', 'An image source in its own scene'],
+        ['Mute your mic', 'Do this before switching, not after'],
+        ['Typical duration', 'Under ten minutes'],
+        ['Privacy', 'Generated in your browser']
+      ]
+    },
+    steps: [
+      'Make the card and add it as a separate OBS scene.',
+      'Bind a hotkey to that scene so switching is one keypress.',
+      '<strong>Mute your microphone before you switch</strong>, not after.'
+    ],
+    tip: 'Mute the mic first, every time. The scene changes instantly and the microphone does not — the gap between switching and remembering is exactly long enough to broadcast something you did not intend to. Make muting the first half of the hotkey, not an afterthought.',
+    faqs: [
+      { q: 'Why not just end the stream?', a: 'Ending drops you out of the live directory, disconnects chat and loses everyone watching. A BRB screen keeps the stream up, keeps the conversation going and lets people drift back — which they will not do if there is nothing to drift back to.' },
+      { q: 'How long can I leave it?', a: 'Under ten minutes as a rule. Beyond that viewers assume you are not returning, and platforms may reduce your visibility while nothing is happening on the feed.' },
+      { q: 'Should I keep music playing?', a: 'Yes, for the same reason as the starting screen — audio proves the stream is alive. Use something licensed for streaming; a copyright claim on a break screen is a particularly annoying way to earn one.' },
+      { q: 'Will my microphone stay live?', a: 'Only if you leave it live. Switching scenes does not mute anything, and this is the single most common streaming accident. Bind mute and scene change to the same hotkey if your setup allows.' }
+    ],
+    related: ['starting-soon-screen', 'stream-overlay-creator', 'stream-alert-creator', 'mute-video', 'stream-asset-sizer', 'obs-settings-assistant']
+  },
+
+  'stream-overlay-creator': {
+    intro: 'Overlays exist to frame the content, and the commonest mistake is letting them compete with it. A viewer who is reading your webcam border instead of watching the game has been distracted by decoration.',
+    what: [
+      'Builds a stream overlay you can add as an OBS source — the frame around your content, including webcam borders and information panels.',
+      'Deliberately static rather than animated: an animated overlay re-encodes every frame it touches, which costs CPU your encoder needs.'
+    ],
+    specs: {
+      caption: 'Design and setup',
+      rows: [
+        ['Output', 'An overlay image for OBS'],
+        ['Animated?', 'No — static, to protect encoder CPU'],
+        ['Add to OBS as', 'An image source above your game/camera'],
+        ['Safe area', 'Keep the centre clear'],
+        ['Chat and alerts', 'Add separately as their own sources'],
+        ['Transparency', 'Preserved, so content shows through'],
+        ['Privacy', 'Generated in your browser']
+      ]
+    },
+    steps: [
+      'Design the frame, keeping the middle of the canvas empty.',
+      'Add it as an image source above your game and camera.',
+      'Check it against actual gameplay, not a still — moving content is where clutter shows.'
+    ],
+    tip: 'Leave the bottom third emptier than feels right. Platforms overlay their own controls, captions and chat prompts there, and on mobile the player UI covers more of it again. An overlay that looks balanced in OBS can have its lower elements completely hidden for a large share of your audience.',
+    faqs: [
+      { q: 'Will an overlay slow my stream?', a: 'A static one costs almost nothing. Animated overlays and browser sources running effects do consume CPU, and that is CPU your encoder is competing for — which shows up as dropped frames rather than as a slow overlay.' },
+      { q: 'How much of the screen should it cover?', a: 'Less than you think. The content is what people came for; the overlay is a frame. If a viewer has to look past your design to see the game, the design is too big.' },
+      { q: 'Where do alerts and chat go?', a: 'As separate sources, added on top. Keeping them independent means you can move or disable them per scene without rebuilding the overlay.' },
+      { q: 'Should it match my channel art?', a: 'Yes — consistent colour between overlay, banner and emotes is what makes a channel feel deliberate. The Stream Asset Sizer handles the other pieces at the correct dimensions.' }
+    ],
+    related: ['stream-alert-creator', 'brb-overlay', 'starting-soon-screen', 'stream-asset-sizer', 'chat-overlay-tool', 'emote-resizer']
+  },
+
+  'stream-alert-creator': {
+    intro: 'Alerts are the moment a viewer becomes visible to everyone watching, and they are the reason people subscribe on stream rather than quietly in a menu. Getting them wrong is mostly a matter of length.',
+    what: [
+      'Creates alert graphics for follows, subscriptions, donations and raids, ready to add to your alert system as an image.',
+      'The design constraint is that an alert interrupts. It has to be noticed and then get out of the way, which is a much shorter window than most people design for.'
+    ],
+    specs: {
+      caption: 'Design guidance',
+      rows: [
+        ['Covers', 'Follows, subs, donations, raids'],
+        ['Output', 'Alert graphics for your alert service'],
+        ['Recommended duration', '3 to 5 seconds'],
+        ['Position', 'Away from the centre of the action'],
+        ['Sound', 'Short, and quieter than you think'],
+        ['Transparency', 'Preserved'],
+        ['Privacy', 'Generated in your browser']
+      ]
+    },
+    steps: [
+      'Design one alert per event type so they are distinguishable at a glance.',
+      'Add them to your alert service.',
+      'Test every type before going live — a broken alert is only discovered in public.'
+    ],
+    tip: 'Three to five seconds, and quieter than feels right. An alert that lingers stops the stream dead every time it fires, and on a good night that is constant. The sound especially: what feels punchy in a quiet room at design time is startling over gameplay audio at viewer volume.',
+    faqs: [
+      { q: 'How long should an alert stay up?', a: 'Three to five seconds. Long enough to read the name, short enough that ten in a row do not derail the stream. If you are ever grateful an alert has finished, it was too long.' },
+      { q: 'Should each event type look different?', a: 'Yes. Viewers learn to recognise a sub versus a raid instantly if they look distinct, and that recognition is part of what makes alerts feel meaningful rather than noisy.' },
+      { q: 'Where should alerts appear?', a: 'Away from the centre, and away from anything you need to see to play. Upper corners are conventional because they interrupt least while still being noticed.' },
+      { q: 'Why do my alerts feel too loud?', a: 'Because you set the level in a quiet room with no game audio. Test them over actual gameplay at the volume viewers use — alert sounds are almost universally mixed too hot.' }
+    ],
+    related: ['stream-overlay-creator', 'emote-resizer', 'brb-overlay', 'starting-soon-screen', 'stream-asset-sizer', 'chat-overlay-tool']
+  },
+
+  'chat-overlay-tool': {
+    intro: 'Putting chat on screen is what makes a VOD watchable afterwards — someone catching the recording sees the reactions, not just your half of the conversation. It also lets you read chat without looking away.',
+    what: [
+      'Creates a styled chat overlay to add as a browser source in OBS, so messages appear on the stream itself.',
+      'It changes what a VOD is worth. Without it, a recording of a stream is one side of a conversation; with it, the jokes land.'
+    ],
+    specs: {
+      caption: 'Setup and considerations',
+      rows: [
+        ['Add to OBS as', 'A browser source'],
+        ['Purpose', 'Show chat on stream and in the VOD'],
+        ['Readability', 'Needs an outline or shadow over video'],
+        ['Message count', 'Fewer is better — 5 to 8 lines'],
+        ['Moderation', 'Whatever appears on screen is in the recording'],
+        ['CPU', 'A browser source costs more than a static image'],
+        ['Privacy', 'Generated in your browser']
+      ]
+    },
+    steps: [
+      'Style it for contrast — text over video needs an outline or shadow.',
+      'Add it as a browser source and position it clear of the action.',
+      'Test with real chat moving, not a static preview.'
+    ],
+    tip: 'Whatever appears in the overlay is baked into the VOD permanently. A message your moderators delete two seconds later is still in the recording, and you cannot edit it out without re-encoding the whole thing. If your chat is fast or your moderation is thin, showing fewer lines is safer than showing more.',
+    faqs: [
+      { q: 'Why is my chat overlay hard to read?', a: 'Plain text over video is unreadable whenever the background is busy or bright. Add a strong outline or drop shadow, or a semi-transparent panel behind the text — contrast matters far more than font choice.' },
+      { q: 'How many messages should I show?', a: 'Five to eight lines. More becomes a wall that nobody reads and that covers your content; fewer scrolls too fast to follow during a busy moment.' },
+      { q: 'Do deleted messages disappear from the VOD?', a: 'No. The overlay is recorded as part of the video, so anything that appeared is permanent. That is worth weighing before showing chat on a channel with heavy traffic.' },
+      { q: 'Does a browser source hurt performance?', a: 'It costs more than a static image, since it is effectively a small web page rendering continuously. On a CPU-constrained machine that competes with your encoder — one more reason to keep the overlay simple.' }
+    ],
+    related: ['stream-overlay-creator', 'stream-alert-creator', 'brb-overlay', 'obs-settings-assistant', 'starting-soon-screen', 'giveaway-picker']
+  },
+
+  'giveaway-picker': {
+    intro: 'Picking a winner in front of an audience has one requirement above all others: it must be visibly fair. A name that appears without anyone seeing how invites exactly the accusation you were trying to avoid.',
+    what: [
+      'Draws a random winner from a list of entrants, on screen, so the selection happens where everyone can see it.',
+      'Runs entirely in your browser — the entrant list is never uploaded, which matters when it is full of real names.'
+    ],
+    specs: {
+      caption: 'How it works',
+      rows: [
+        ['Input', 'A list of entrants, one per line'],
+        ['Selection', 'Random draw'],
+        ['Runs', 'In your browser — nothing uploaded'],
+        ['Duplicates', 'Remove them first, or they get extra chances'],
+        ['Redraws', 'Say the rule beforehand, not afterwards'],
+        ['Record', 'Screen-record the draw if the prize is valuable'],
+        ['Privacy', 'The entrant list never leaves your device']
+      ]
+    },
+    steps: [
+      'Paste the entrant list, one name per line.',
+      'Remove duplicates unless multiple entries are intentional.',
+      'State the rules on stream before drawing — including what happens if the winner does not respond.',
+      'Draw on camera.'
+    ],
+    tip: 'Announce the redraw rule <em>before</em> you draw, not after. "If the winner does not reply within five minutes we draw again" is a fair rule stated in advance and an obvious excuse stated afterwards. This is the thing that turns a giveaway into an argument, and it costs one sentence to avoid.',
+    faqs: [
+      { q: 'Is the draw genuinely random?', a: 'It uses the browser’s random number generator, which is more than sufficient for a giveaway. Doing it live on stream is what makes it credible to viewers — the mechanism matters less than the visibility.' },
+      { q: 'What if the same name appears twice?', a: 'It gets two chances. Sometimes that is deliberate — extra entries for subscribers, say — but if it is accidental, remove duplicates first or someone will notice and object.' },
+      { q: 'Is my entrant list uploaded?', a: 'No. Everything happens in your browser, which is the right default for a list of real usernames and sometimes email addresses.' },
+      { q: 'Should I record the draw?', a: 'If the prize has real value, yes. A recording settles any later dispute instantly, and knowing it exists tends to prevent the dispute happening at all.' }
+    ],
+    related: ['random-picker', 'random-number-generator', 'stream-alert-creator', 'chat-overlay-tool', 'stream-revenue-calculator', 'stream-schedule-planner']
+  },
+
+  'stream-schedule-planner': {
+    intro: 'Consistency beats frequency in streaming, and it is not close. A channel that goes live at the same times every week builds an audience that plans around it; one that streams more hours at random times does not.',
+    what: [
+      'Lays out a weekly streaming schedule you can publish on your channel and social accounts, so viewers know when to show up.',
+      'The point is the commitment, not the graphic. A published schedule you keep is worth more than a longer one you miss.'
+    ],
+    specs: {
+      caption: 'Planning guidance',
+      rows: [
+        ['Output', 'A weekly schedule graphic'],
+        ['Publish on', 'Channel panels, social bios, offline banner'],
+        ['Time zones', 'State one explicitly — see the tip'],
+        ['Realistic frequency', 'Three kept slots beat five missed ones'],
+        ['Session length', 'Two to four hours is typical'],
+        ['Consistency', 'Matters more than total hours'],
+        ['Privacy', 'Generated in your browser']
+      ]
+    },
+    steps: [
+      'Choose slots you can keep on a bad week, not a good one.',
+      'Name the time zone explicitly.',
+      'Publish it on your channel panels and social profiles.',
+      'Change it deliberately rather than drifting.'
+    ],
+    tip: 'Always write the time zone, and prefer UTC alongside your local time. "8pm" is meaningless to an international audience, and daylight saving shifts on different dates in different countries — so a schedule that was correct in June is wrong in November for half your viewers. The Timezone Converter is the fastest way to check what your slot looks like elsewhere.',
+    faqs: [
+      { q: 'How many days a week should I stream?', a: 'As many as you can sustain indefinitely, which is usually fewer than you would like. Three reliable slots build a bigger habit than five that come and go, because viewers learn a schedule they can trust.' },
+      { q: 'How long should each stream be?', a: 'Two to four hours suits most channels — long enough for people to find you mid-stream, short enough to stay energetic. Discovery favours longer sessions somewhat, but not at the cost of quality.' },
+      { q: 'What about time zones?', a: 'State yours explicitly and give a UTC equivalent. Daylight saving changes on different dates in different regions, which silently breaks a schedule that was correct a month ago.' },
+      { q: 'What if I need to miss a stream?', a: 'Say so in advance on the same channels where the schedule lives. Missing quietly costs you more trust than missing with notice — viewers forgive changes, not disappearances.' }
+    ],
+    related: ['timezone-converter', 'stream-asset-sizer', 'starting-soon-screen', 'stream-revenue-calculator', 'countdown', 'giveaway-picker']
+  },
+
   /* ================= session 1 ================= */
 
   'jpg-to-pdf': {
