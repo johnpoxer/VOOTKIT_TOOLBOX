@@ -246,3 +246,18 @@ video.wcode { padding: 0; }
   .cta-account { flex-direction: column; align-items: stretch; }
   .cta-account-actions .btn { flex: 1 1 auto; text-align: center; }
 }
+
+/* --- free-tier nudge --------------------------------------------------------
+ * Appended below the workspace AFTER a successful run, never before one. It is
+ * an offer, not a gate: the work the user came for is already done and
+ * downloadable above it. Styled as an aside rather than an alert for that
+ * reason — a red warning bar for "you may keep using this freely" is a lie. */
+.usage-nudge {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s-4);
+  flex-wrap: wrap;
+  margin-top: var(--s-5); padding: var(--s-4) var(--s-5);
+  border: 1px solid var(--line); border-radius: var(--r-lg);
+  background: var(--surface-sunk);
+}
+.usage-nudge p { margin: 0; font-size: var(--t-sm); color: var(--ink-soft); flex: 1 1 20rem; }
+.usage-nudge strong { color: var(--ink); }

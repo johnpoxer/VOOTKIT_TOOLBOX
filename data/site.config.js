@@ -16,6 +16,34 @@
     /* analytics (public measurement ID — safe to ship) */
     ga4: "G-KLEWTJ8WG2",
 
+    /* AdSense.
+     *
+     * The script was shipping on every page with ZERO <ins> slots behind it, so
+     * unless Auto Ads was toggled on in the dashboard the site earned nothing no
+     * matter how much traffic arrived. These are the manual slots.
+     *
+     * PASTE THE SLOT IDS FROM YOUR ADSENSE DASHBOARD. Ad units are only rendered
+     * for slots with an id here — an empty string renders nothing at all, which
+     * is deliberate: an <ins> with a fake slot is a policy problem, and a blank
+     * reserved box is a worse user experience than no box.
+     *
+     * AdSense → Ads → By ad unit → Display ads. Create two, name them to match,
+     * and copy the data-ad-slot number (not the whole snippet).
+     *
+     * PLACEMENT IS DELIBERATELY CONSERVATIVE. Both units sit inside the article
+     * body, well below the tool itself. Nothing is placed next to the Run or
+     * Download buttons: accidental clicks on a file tool are the single fastest
+     * route to an invalid-traffic strike, and the revenue from a higher unit is
+     * not worth the account. No sticky or anchor units for the same reason. */
+    ads: {
+      enabled: true,
+      client: "ca-pub-5906583727409402",
+      slots: {
+        inContent: "",   // between the article body and the FAQ
+        footer: ""       // after the FAQ, above related tools
+      }
+    },
+
     /* Supabase — public project ref + URL are safe; the anon key is set at
        build/deploy time via the VK_SUPABASE_ANON env var, NOT hard-coded. */
     supabase: {
@@ -45,16 +73,38 @@
     },
 
     /* Free-tier usage limit.
-     * IMPORTANT: keep `enabled:false` until BOTH Stripe checkout AND Supabase auth
-     * are live — otherwise a hard block traps real users with no way to pay, and it
-     * will hurt the SEO growth strategy (bounced first-time visitors). It's also a
-     * client-side counter (tools run in-browser), so it's a nudge, not a hard wall.
-     * exemptCategories keeps the free-forever downloaders/traffic tools unmetered. */
+     *
+     * ON, but as a NUDGE — `hard:false`. Read the next paragraph before changing
+     * that, because the two flags are not independent.
+     *
+     * The original note here said to keep this off entirely until Stripe and
+     * Supabase were both live, on the grounds that a hard block traps users with
+     * no way to pay. That reasoning is right and still applies: every `price`
+     * under stripe.plans below is still an empty string. With `hard:true` the
+     * site would refuse to work AND be unable to sell — the worst of both.
+     *
+     * But `enabled:false` had its own cost: every page advertises "5 FREE A DAY"
+     * while nothing counts, so there was no upgrade moment anywhere in the
+     * product and no reason a single visitor would ever pay. A nudge resolves
+     * both. The tool always runs; after the fifth completed run the result is
+     * followed by a priced offer. Nobody is trapped, and the funnel exists.
+     *
+     * FLIP `hard` TO TRUE ONLY WHEN: the Stripe price ids below are populated,
+     * checkout has been completed end-to-end at least once, and Supabase auth is
+     * live so a paying user can actually be recognised as Pro.
+     *
+     * It is a client-side counter — tools run in the browser — so it was never
+     * enforcement, only a prompt. Treat it as merchandising, not as DRM. */
     freeLimit: {
-      enabled: false,
-      count: 5,            // free uses per day before the gate
-      hard: true,          // true = block; false = nudge but allow continue
-      exemptCategories: [] // e.g. ["pdf","images"] to keep acquisition tools free
+      enabled: true,
+      count: 5,            // free RUNS per day (completed runs, not page views)
+      hard: false,         // true = block; false = nudge but always allow
+      /* Empty on purpose. Exempting categories was tempting for the SEO landing
+         tools, but with hard:false nothing is ever withheld anywhere, so an
+         exemption would only hide the upgrade offer from the visitors most
+         likely to have found the product useful. Revisit if hard ever goes true:
+         at that point the acquisition categories genuinely should be exempt. */
+      exemptCategories: []
     },
 
     launch: {

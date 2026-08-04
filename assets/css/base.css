@@ -255,3 +255,40 @@ label { display: block; font-size: var(--t-sm); font-weight: 600; color: var(--i
 .spec-table th { font-weight: 600; color: var(--ink); width: 40%; }
 .spec-table td { color: var(--ink-soft); }
 .spec-table tr:last-child th, .spec-table tr:last-child td { border-bottom: 0; }
+
+/* --- ad slots ---------------------------------------------------------------
+ * min-height is not cosmetic. An ad that arrives late and pushes the article
+ * down is a Cumulative Layout Shift, CLS is a Core Web Vitals ranking signal,
+ * and this site lives or dies on organic search. Reserving the space means the
+ * ad costs nothing in rankings.
+ *
+ * The label exists because AdSense requires ads to be distinguishable from
+ * content, and on a tool page the risk is real: someone who has just clicked
+ * Download is primed to click the next thing that looks like a control. */
+.ad-slot {
+  display: block;
+  margin: var(--s-7) 0;
+  min-height: 280px;
+  text-align: center;
+  /* Nothing below this line may sit within a thumb-reach of a tool button —
+     see the placement note in data/site.config.js. */
+}
+.ad-slot .ad-label {
+  display: block;
+  font-size: var(--t-xs, 0.75rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint, var(--ink-soft));
+  margin-bottom: var(--s-2);
+}
+.ad-slot .adsbygoogle { display: block; min-height: 250px; }
+
+@media (max-width: 640px) {
+  /* Phones get a shorter reservation: a 280px hole above the fold on a small
+     screen pushes real content out of view, which costs more than the unit
+     earns. */
+  .ad-slot { min-height: 130px; margin: var(--s-6) 0; }
+  .ad-slot .adsbygoogle { min-height: 100px; }
+}
+
+@media print { .ad-slot { display: none; } }

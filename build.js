@@ -68,7 +68,32 @@ const CFG = require("./data/site.config.js");
 const SITE = CFG.origin;
 const SUPPORT = CFG.supportEmail;
 const GA4 = CFG.ga4;
-const PUB = "ca-pub-5906583727409402";
+const ADS = CFG.ads || { enabled: false, client: "", slots: {} };
+const PUB = ADS.client || "ca-pub-5906583727409402";
+
+/* One AdSense display unit.
+ *
+ * Returns EMPTY STRING unless ads are enabled AND that slot has a real id in
+ * site.config.js. That is the important part: the site previously shipped the
+ * AdSense loader with no <ins> elements behind it, which earns exactly nothing,
+ * and the fix must not swing to the opposite failure of emitting <ins> tags with
+ * placeholder slot ids — those either serve nothing or trip policy.
+ *
+ * The wrapper reserves height. An ad that pops in and shoves the article down
+ * is a Cumulative Layout Shift hit, and CLS is a ranking signal, so an
+ * unreserved ad unit costs organic traffic to buy ad impressions — the wrong
+ * trade for a site whose whole strategy is search. */
+function adUnit(slotKey, label) {
+  if (!ADS.enabled) return "";
+  const slot = (ADS.slots || {})[slotKey];
+  if (!slot) return "";
+  return `
+  <aside class="ad-slot" aria-label="Advertisement">
+    <span class="ad-label">Advertisement</span>
+    <ins class="adsbygoogle" style="display:block" data-ad-client="${PUB}" data-ad-slot="${slot}" data-ad-format="auto" data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </aside>`;
+}
 /* Cache-bust key derived from the CONTENT of the CSS/JS assets, so it only
  * changes when those files actually change — a rebuild with no asset changes
  * produces byte-identical pages (no more 600-file git churn every build). */
@@ -568,11 +593,17 @@ ${facts ? `
     <p>${esc(exampleFor(t, c))}</p>
   </section>`}
 
+  <!-- in-content ad: below the article body, far from the tool controls -->
+  ${adUnit("inContent")}
+
   <!-- 5. FAQ -->
   <section class="prose faq">
     <h2>Questions</h2>
     ${faqs.map((f) => `<details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join("\n    ")}
   </section>
+
+  <!-- footer ad: end of the reading flow, before the onward links -->
+  ${adUnit("footer")}
 
   <!-- 6. related tools — never a dead end -->
   ${related.length ? `<section class="section">
@@ -787,6 +818,7 @@ function blogPostPage(post) {
     ${img ? `<img class="blog-hero" src="${esc(post.thumbnail)}" alt="${esc(post.title)}" width="1200" height="630" loading="eager">` : ""}
     <div class="prose blog-body">${post.html}</div>
   </article>
+  ${adUnit("footer")}
   <div class="cta-band" style="margin-top:var(--s-7);padding:var(--s-6);border:1px solid var(--line);border-radius:var(--r-lg);text-align:center">
     <h2 style="margin:0 0 var(--s-2)">Try it yourself</h2>
     <p class="page-lede" style="margin:0 auto var(--s-4)">Every Vootkit tool runs free in your browser.</p>

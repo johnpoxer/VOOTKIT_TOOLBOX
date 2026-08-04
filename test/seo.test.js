@@ -369,3 +369,98 @@ console.log(`seo: ${pass} assertions passed`);
 }
 
 console.log(`seo + titles: ${pass} total assertions passed`);
+
+/* ---------------------------------------------------------------------------
+ * AD UNITS MUST ACTUALLY EXIST
+ *
+ * The site shipped the AdSense loader on every page with ZERO <ins> slots
+ * behind it. Unless Auto Ads happened to be toggled on in the dashboard, the
+ * site earned nothing no matter how much traffic arrived — an entire monetized
+ * platform with no ad inventory on it.
+ *
+ * The fix must not swing to the opposite failure of emitting <ins> tags with
+ * placeholder slot ids, which serve nothing and risk a policy strike. So: units
+ * render if and only if a real slot id is configured.
+ * ------------------------------------------------------------------------- */
+{
+  const fs2 = require("fs"), path2 = require("path");
+  const buildSrc = fs2.readFileSync(path2.join(__dirname, "../build.js"), "utf8");
+  const cfg2 = require("../data/site.config.js");
+
+  ok(/function adUnit\(/.test(buildSrc), "there is an ad-unit helper");
+  ok(/if \(!ADS\.enabled\) return "";/.test(buildSrc), "it respects the enabled flag");
+  ok(/if \(!slot\) return "";/.test(buildSrc),
+     "an unconfigured slot renders NOTHING — never a placeholder <ins>");
+
+  ok(cfg2.ads && typeof cfg2.ads.slots === "object", "ad slots are configurable");
+  ["inContent", "footer"].forEach((k) =>
+    ok(k in cfg2.ads.slots, "slot '" + k + "' is declared so it can be filled in"));
+
+  /* PLACEMENT. Both units belong below the article body. Nothing may sit next
+     to the tool's own controls: on a file tool, someone who has just clicked
+     Download is primed to click the next control-shaped thing, and accidental
+     clicks are the fastest route to an invalid-traffic strike. */
+  const toolTpl = buildSrc.slice(buildSrc.indexOf("<!-- 1. workspace -->"),
+                                buildSrc.indexOf("<!-- 8. trust -->"));
+  const posWorkspace = toolTpl.indexOf("<!-- 1. workspace -->");
+  const posFirstAd = toolTpl.indexOf('adUnit("inContent")');
+  const posFaq = toolTpl.indexOf("<!-- 5. FAQ -->");
+  ok(posFirstAd > posWorkspace, "no ad above the tool");
+  ok(posFirstAd < posFaq, "the in-content unit sits between the article body and the FAQ");
+  ok(toolTpl.indexOf('adUnit("footer")') > posFaq, "the footer unit sits after the FAQ");
+
+  /* Nothing sticky or anchored — those float over content and over buttons. */
+  ok(!/data-ad-format="(anchor|sticky)"/.test(buildSrc), "no anchor or sticky formats");
+
+  /* CLS. An ad that arrives late and shoves the article down is a Core Web
+     Vitals hit, and Core Web Vitals is a ranking signal — an unreserved unit
+     would cost organic traffic to buy ad impressions. */
+  const cssSrc2 = fs2.readFileSync(path2.join(__dirname, "../assets/css/base.css"), "utf8");
+  ok(/\.ad-slot\s*\{[^}]*min-height/.test(cssSrc2), "ad slots reserve their height");
+  ok(/\.ad-slot \.ad-label/.test(cssSrc2), "ads are labelled as advertisements");
+  ok(/@media \(max-width: 640px\)[\s\S]{0,400}\.ad-slot \{[^}]*min-height/.test(cssSrc2),
+     "phones get a smaller reservation, so the unit cannot push content off a small screen");
+
+  /* Ads stay off the pages where they are a policy problem. */
+  ["auth", "account", "admin"].forEach((seg) => {
+    const m = new RegExp('url = "[^"]*' + seg + '[^"]*"[\\s\\S]{0,300}ads: true');
+    ok(!m.test(buildSrc), "no ads declared on " + seg + " pages");
+  });
+
+  /* END TO END, by running the real helper rather than describing it.
+   *
+   * adUnit closes over module-level ADS/PUB and build.js runs the whole build on
+   * require, so the function is lifted out of the source and evaluated against a
+   * controlled config. That still exercises the SHIPPED body — if the emitted
+   * markup or the empty-slot guard changes, this fails. */
+  const fnSrc = buildSrc.slice(buildSrc.indexOf("function adUnit("),
+                               buildSrc.indexOf("\n}", buildSrc.indexOf("function adUnit(")) + 2);
+  function adUnitWith(slots, enabled) {
+    const ADS = { enabled: enabled !== false, client: "ca-pub-TEST", slots: slots };
+    const PUB = ADS.client;
+    return new Function("ADS", "PUB", fnSrc + "; return adUnit;")(ADS, PUB);
+  }
+
+  const configured = adUnitWith({ inContent: "1234567890" })("inContent");
+  ok(/class="adsbygoogle"/.test(configured), "a configured slot emits a real ad unit");
+  ok(configured.includes('data-ad-slot="1234567890"'), "carrying the configured slot id");
+  ok(configured.includes('data-ad-client="ca-pub-TEST"'), "and the publisher id");
+  ok(/adsbygoogle \|\| \[\]\)\.push/.test(configured), "with the push call that activates it");
+
+  eq(adUnitWith({ inContent: "" })("inContent"), "",
+     "an empty slot id emits nothing — no placeholder <ins>, no blank reserved box");
+  eq(adUnitWith({})("inContent"), "", "a missing slot emits nothing");
+  eq(adUnitWith({ inContent: "123" }, false)("inContent"), "",
+     "ads disabled emits nothing even with a slot configured");
+
+  /* The shipped config has empty slots, so a build right now must be ad-free.
+     This is what stops a half-finished setup shipping broken units. */
+  ["inContent", "footer"].forEach((k) => {
+    if (!cfg2.ads.slots[k]) {
+      eq(adUnitWith(cfg2.ads.slots)(k), "",
+         "slot '" + k + "' is unset in site.config.js, so nothing renders for it yet");
+    }
+  });
+}
+
+console.log(`seo + ad inventory: ${pass} total assertions passed`);

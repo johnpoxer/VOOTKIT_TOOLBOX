@@ -160,6 +160,12 @@
       writeTools(list);
       recordHistory(id);
 
+      /* A completed run is the only honest definition of a "use", so the
+         free-tier counter is incremented here rather than on page load. Guarded
+         because usage.js is a no-op when the limit is disabled, and because a
+         counter failure must never break the success path the user came for. */
+      try { if (root.VKUsage && root.VKUsage.countRun) root.VKUsage.countRun(); } catch (e) {}
+
       // Signed-in check is async; resolve it before deciding.
       var A = root.VKAuth;
       var whoami = (A && A.enabled && A.getUser) ? A.getUser() : Promise.resolve(null);

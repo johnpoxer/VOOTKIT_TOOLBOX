@@ -16,3 +16,81 @@ eq(d({count:9}), "block", "over limit -> block");
 eq(d({count:5, hard:false}), "nudge", "at limit, soft -> nudge");
 eq(d({count:5, pro:true}), "allow", "pro beats hard block");
 console.log(`usage: ${pass} assertions passed`);
+
+/* ---------------------------------------------------------------------------
+ * THE SHIPPED CONFIGURATION, NOT JUST THE LOGIC
+ *
+ * decide() was already correct and already tested. What was wrong was
+ * everything around it: the limit was switched off entirely, so "5 FREE A DAY"
+ * appeared on every page while nothing counted and no upgrade moment existed
+ * anywhere in the product. These assertions pin the live config, because the
+ * bug was a config value rather than a branch.
+ * ------------------------------------------------------------------------- */
+const CFG = require("../data/site.config.js");
+const ok = (c, m) => { assert.ok(c, m); pass++; };
+const F = CFG.freeLimit;
+
+ok(F.enabled, "the free limit is switched on — otherwise there is no funnel at all");
+eq(F.count, 5, "five free runs, matching the '5 FREE A DAY' badge every page renders");
+
+/* THE INTERLOCK. A hard block is only honest once someone refused by it can
+   actually pay. Every Stripe price id is still an empty string, so hard:true
+   would refuse the tool AND be unable to sell — the worst of both. */
+const pricesSet = Object.keys(CFG.stripe.plans).filter((k) => CFG.stripe.plans[k].price);
+if (!pricesSet.length) {
+  eq(F.hard, false,
+    "Stripe price ids are unset, so the limit must nudge rather than block — " +
+    "a hard gate with no working checkout traps the user");
+}
+ok(F.hard === false || pricesSet.length > 0,
+   "hard:true is only permissible once checkout works");
+
+/* With a soft limit, no count can ever produce a block. */
+[5, 6, 20, 500].forEach((n) => {
+  eq(U.decide({ enabled: true, pro: false, exempt: false, count: n, count_limit: F.count, hard: F.hard }),
+     "nudge", "a soft limit nudges at " + n + " runs and never blocks");
+});
+
+console.log(`usage + shipped config: ${pass} total assertions passed`);
+
+/* ---------------------------------------------------------------------------
+ * A USE IS A COMPLETED RUN, NOT A PAGE VIEW
+ *
+ * The counter used to bump() on DOMContentLoaded. Browsing five tool pages —
+ * precisely what the related-tools module is built to encourage — exhausted the
+ * daily allowance having processed nothing. On a site whose entire traffic
+ * strategy is organic search, that gated visitors before they saw the product
+ * work even once.
+ * ------------------------------------------------------------------------- */
+const fs = require("fs"), path = require("path");
+const usageSrc = fs.readFileSync(path.join(__dirname, "../assets/js/usage.js"), "utf8");
+const convertSrc = fs.readFileSync(path.join(__dirname, "../assets/js/convert.js"), "utf8");
+
+ok(/function countRun\(/.test(usageSrc), "there is an explicit run counter");
+ok(/root\.VKUsage = \{[^}]*countRun/.test(usageSrc), "countRun is exported for the engines to call");
+ok(/VKUsage && root\.VKUsage\.countRun/.test(convertSrc),
+   "the shared success hook calls it — this is the only definition of a 'use'");
+ok(/try \{ if \(root\.VKUsage/.test(convertSrc),
+   "and it is guarded, so a counter failure cannot break the result the user came for");
+
+/* The init path must no longer count. It may still GATE (a block has to happen
+   before the work, not after a two-minute encode), but counting there is what
+   caused the bug. */
+const initBody = usageSrc.slice(usageSrc.indexOf("async function init()"));
+ok(!/bump\(\)/.test(initBody), "page load no longer increments the counter");
+ok(/!CFG\.hard/.test(initBody), "and the load-time gate is skipped entirely when the limit is soft");
+
+/* All three engines share the hook, so all three count. */
+["filetool", "widget", "calc"].forEach((engine) => {
+  const src = fs.readFileSync(path.join(__dirname, "../assets/js/" + engine + ".js"), "utf8");
+  ok(/VKConvert\.onToolSuccess/.test(src), engine + ".js reports success through the shared hook");
+});
+
+/* The nudge has to be worth showing. The previous implementation was a
+   five-second toast that named no price and offered nothing to click. */
+ok(/function showNudge\(/.test(usageSrc), "there is a real upgrade prompt");
+ok(/pricing\.html/.test(usageSrc), "it links somewhere");
+ok(/creator_pro_monthly/.test(usageSrc), "and names the actual price from config rather than hard-coding one");
+ok(!/VKUI\.toast\('You/.test(usageSrc), "the throwaway toast is gone");
+
+console.log(`usage + run counting: ${pass} total assertions passed`);
