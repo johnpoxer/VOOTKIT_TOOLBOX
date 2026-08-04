@@ -157,6 +157,35 @@ live from earlier deploys.
 
 Next accumulation starts from batch 7.
 
+### Submitted 3 Aug 2026 — batches 3–5 (10 URLs, quota exhausted)
+
+json-formatter · base64 · uuid-generator · hash-generator · regex-tester ·
+mortgage-calculator · loan-calculator · currency-converter · unit-converter ·
+bmi-calculator
+
+**What the inspections showed, which is worth more than the submissions.**
+Checked individually: word-counter, password-generator, qr-generator and base64
+were already `URL is on Google`. json-formatter, loan-calculator,
+uuid-generator, hash-generator, regex-tester and bmi-calculator were all
+`URL is unknown to Google` — not merely unindexed, never crawled.
+
+So the split is not random. The established, externally-linked tools are in;
+the rest are invisible. That is a discovery problem on top of the thin-content
+one, and it is what internal linking and the backlink playbook are for.
+
+**The sitemap is fine — checked, so nobody re-litigates it.** Sitemap index
+submitted 1 Aug, **last read 3 Aug** (after the batch 3–6 deploy), status
+Success, **292 pages discovered** — exactly the English count. Individual
+inspections say "No referring sitemaps detected", but that is per-URL
+attribution lag, not a broken sitemap. Google has discovered all 292 and
+indexed 10. The gap is an indexing *decision*, not a discovery failure, which
+is precisely the thesis this queue is testing.
+
+**Do not guess tool URLs.** `bmi-calculator` was submitted as
+`/tools/health/bmi-calculator/` and rejected as a 404 — it lives under
+`everyday`. Read the category out of `data/catalog.js` first:
+`VK.TOOLS.find(t => t.id === id).cat`.
+
 ### The daily quota is about 10 URLs
 
 Hit on 2 Aug 2026 after ten submissions: *"Sorry, we couldn't process this
