@@ -2624,6 +2624,283 @@ module.exports = {
     related: ['timezone-converter', 'stream-asset-sizer', 'starting-soon-screen', 'stream-revenue-calculator', 'countdown', 'giveaway-picker']
   },
 
+  /* ============ batch 12 — tax & payroll cluster (complete) ============
+   * 8 pages. YMYL — same standard as the finance batch. Every one of these
+   * takes rates the USER supplies rather than knowing any country's tax law,
+   * and each page says so plainly. Defaults read from source. */
+
+  'income-tax-estimator': {
+    intro: 'Progressive tax is almost universally misunderstood in the same way: people believe crossing into a higher band taxes all their income at the higher rate. It does not, and the difference between those two beliefs has talked people out of pay rises.',
+    what: [
+      'Applies a tax-free allowance and then bands you define, so <strong>only the income inside each band is taxed at that band’s rate</strong>. Earning one pound into a 40% band costs 40p on that pound, not 40% of everything.',
+      '<strong>It does not know any country’s tax rules.</strong> You supply the allowance, the band thresholds and the rates. That is deliberate — a calculator claiming to know your jurisdiction’s current rates would be wrong somewhere, and wrong quietly.'
+    ],
+    specs: {
+      caption: 'Inputs and defaults',
+      rows: [
+        ['Taxable income', 'You enter it — default 60,000'],
+        ['Tax-free allowance', 'You set it — default 14,600'],
+        ['Band rates', 'You set them — default 12% for band 1'],
+        ['Band thresholds', 'You set them — band 1 ends at 48,475 by default'],
+        ['Method', 'Marginal — each band taxed at its own rate'],
+        ['Knows your country’s rates?', '<strong>No — you supply them</strong>'],
+        ['Covers', 'Income tax only'],
+        ['Excludes', 'Social contributions, local taxes, credits, deductions']
+      ]
+    },
+    steps: [
+      'Look up your jurisdiction’s current allowance, bands and rates.',
+      'Enter them along with your taxable income.',
+      'Read the total and the effective rate — the second is the useful number.'
+    ],
+    tip: 'The effective rate is what you actually pay; the marginal rate is what the next pound costs. Somebody "in the 40% bracket" is usually paying an effective rate in the twenties, because the allowance and the lower bands come first. Quoting the marginal rate as though it were the effective one is the source of most bad tax intuition.',
+    faqs: [
+      { q: 'Does crossing into a higher band tax all my income at that rate?', a: 'No. Only the portion above the threshold is taxed at the higher rate — everything below keeps its own rate. A pay rise that pushes you into a higher band always leaves you with more money, never less.' },
+      { q: 'Why do I have to enter the rates myself?', a: 'Because rates and thresholds differ by country, change most years, and often vary by region within a country. A tool that hard-coded them would give confidently wrong answers to most of the world. Supplying them makes the assumption visible.' },
+      { q: 'What is not included?', a: 'Social security or national insurance contributions, local and state taxes, tax credits, deductions and reliefs. This is income tax on the bands you supply, which is a component of a bill rather than the bill.' },
+      { q: 'Can I use this for a tax return?', a: 'No. It is an estimate for planning, and it cannot see the reliefs, allowances and reporting rules that a return requires. Use your tax authority’s own tool or an accountant for anything you file.' }
+    ],
+    related: ['payroll-calculator', 'self-employment-tax', 'paycheck-calculator', 'salary-converter', 'percentage-calculator', 'budget-calculator']
+  },
+
+  'self-employment-tax': {
+    intro: 'The bill that catches new freelancers is not income tax — it is the self-employment tax on top of it. Employees never see it because their employer pays half; when you work for yourself, you pay both halves.',
+    what: [
+      'Calculates self-employment tax at <strong>15.3%</strong> — which is 12.4% social security plus 2.9% Medicare, both halves — and applies the standard <strong>92.35% adjustment</strong> to net profit before the rate.',
+      'That 92.35% exists because you are allowed to exclude the employer-equivalent portion from the base. It is not a rounding; it is written into the calculation.'
+    ],
+    specs: {
+      caption: 'Rates and method',
+      rows: [
+        ['SE tax rate', '15.3% — default'],
+        ['Made up of', '12.4% social security + 2.9% Medicare'],
+        ['Applied to', '92.35% of net profit, not 100%'],
+        ['Why 92.35%', 'Excludes the employer-equivalent half from the base'],
+        ['Net profit', 'Revenue minus allowable expenses'],
+        ['Default revenue / expenses', '80,000 / 15,000'],
+        ['Income tax', 'Separate — enter your rate, default 22%'],
+        ['Knows your country’s rules?', '<strong>No</strong>']
+      ]
+    },
+    steps: [
+      'Enter revenue and allowable expenses — the tax is on profit, not turnover.',
+      'Check the SE rate against current rules.',
+      'Add your income tax rate to see the combined burden.'
+    ],
+    tip: 'Set aside a percentage of every payment as it arrives, not at year end. Between self-employment tax and income tax, 25–30% of profit is a common holding figure — and the freelancers who get into trouble are almost never the ones who earned too little, but the ones who spent money that was never theirs.',
+    faqs: [
+      { q: 'Why 92.35% and not the full profit?', a: 'Because you may exclude the employer-equivalent portion of the tax from the base it is calculated on — employees are not taxed on their employer’s half either. The 7.65% reduction is what makes the treatment comparable.' },
+      { q: 'Why is the rate 15.3% when employees pay 7.65%?', a: 'Employees pay half and their employer pays the other half. Self-employed people are both, so they pay both halves. This is the single biggest surprise in a first year of freelancing.' },
+      { q: 'Is this the same as income tax?', a: 'No, and it is in addition to it. Self-employment tax funds social security and Medicare; income tax is separate and applies to the same profit. The tool shows both so the combined figure is visible.' },
+      { q: 'Does this apply outside the US?', a: 'The 15.3% structure is US-specific. Most countries have an equivalent self-employed social contribution with different rates and thresholds. Change the rate to your own, and check with a local accountant — this knows no jurisdiction.' }
+    ],
+    related: ['income-tax-estimator', 'hourly-rate', 'paycheck-calculator', 'invoice-generator', 'profit-margin', 'budget-calculator']
+  },
+
+  'overtime-calculator': {
+    intro: 'Overtime disputes are almost always arithmetic disputes. Both sides agree on the hours; they disagree on which hours counted as overtime and what multiplier applied to them.',
+    what: [
+      'Splits total hours into normal and overtime at the threshold you set, then pays the overtime portion at your multiplier — <strong>1.5× ("time and a half") is the common statutory rate</strong>.',
+      'Defaults to a 40-hour normal week, which is the usual threshold, and a base rate of 22 per hour.'
+    ],
+    specs: {
+      caption: 'Inputs and defaults',
+      rows: [
+        ['Base hourly rate', 'Default 22'],
+        ['Normal hours', 'Default 40 a week'],
+        ['Overtime multiplier', '1.5 = time and a half; 2 = double time'],
+        ['Overtime hours', 'Anything above the normal threshold'],
+        ['Returns', 'Normal pay, overtime pay, total'],
+        ['Knows your labour law?', '<strong>No</strong>'],
+        ['Excludes', 'Tax, deductions, unsocial-hours premiums'],
+        ['Salaried staff', 'May be exempt — depends on jurisdiction']
+      ]
+    },
+    steps: [
+      'Enter your base hourly rate.',
+      'Set the normal-hours threshold — 40 in many places, but check yours.',
+      'Enter total hours worked and the multiplier.'
+    ],
+    tip: 'Check whether your overtime threshold is weekly or daily, because it changes the answer completely. Some jurisdictions pay overtime after 8 hours in a single day regardless of the weekly total — so four 10-hour days is 8 hours of overtime there and none at all under a 40-hour weekly rule.',
+    faqs: [
+      { q: 'What multiplier should I use?', a: '1.5 — time and a half — is the most common statutory minimum, with 2× for some holidays or extended hours. Your contract or local law decides, and both can be more generous than the minimum.' },
+      { q: 'Is the threshold daily or weekly?', a: 'It depends where you are, and it materially changes the result. Weekly thresholds are commonest, but several jurisdictions use a daily one, and some use both with whichever gives more overtime.' },
+      { q: 'Am I entitled to overtime at all?', a: 'That depends on your jurisdiction and classification — many places exempt certain salaried and managerial roles. This calculates the pay for hours you are entitled to; it cannot tell you whether you are entitled.' },
+      { q: 'Is this before or after tax?', a: 'Before. It is gross pay. Overtime is usually taxed the same as normal pay, though a large one-off can push a period into a higher withholding bracket even when the annual position is unchanged.' }
+    ],
+    related: ['hourly-wage', 'payroll-calculator', 'salary-converter', 'pto-accrual', 'paycheck-calculator', 'employee-cost']
+  },
+
+  'pto-accrual': {
+    intro: 'Leave balances are a common source of quiet friction, because employees and payroll often calculate them differently — one counts what has been earned so far, the other counts the full annual entitlement.',
+    what: [
+      'Works out how much paid leave you have accrued so far this year, pro-rated by months worked, and subtracts what you have already taken.',
+      'The distinction that matters: <strong>accrued</strong> is what you have earned to date; <strong>entitlement</strong> is the full year. Booking against entitlement rather than accrual is how people end up owing days back on leaving.'
+    ],
+    specs: {
+      caption: 'Inputs and defaults',
+      rows: [
+        ['Yearly entitlement', 'In days — default 25'],
+        ['Months worked', 'Default 7'],
+        ['Days already taken', 'Default 8'],
+        ['Accrual method', 'Pro-rated by months elapsed'],
+        ['Returns', 'Accrued, taken, and remaining balance'],
+        ['Knows your local minimum?', '<strong>No</strong>'],
+        ['Excludes', 'Public holidays unless in your entitlement'],
+        ['Carry-over rules', 'Vary by employer and country']
+      ]
+    },
+    steps: [
+      'Enter your annual entitlement in days.',
+      'Enter months worked so far this leave year — which may not start in January.',
+      'Enter days taken to read the true remaining balance.'
+    ],
+    tip: 'Check when your leave year actually starts. Many employers run it from your start date or from April rather than January, and calculating from the wrong month is the commonest reason an employee’s figure disagrees with payroll’s. Get that right before querying a balance.',
+    faqs: [
+      { q: 'What is the difference between accrued and entitled?', a: 'Entitlement is the full year’s allowance; accrual is the portion earned so far. Taking more than you have accrued is usually allowed but creates a debt — leave partway through the year having overtaken and it is typically deducted from your final pay.' },
+      { q: 'Do public holidays count?', a: 'It varies. Some contracts include them in the total entitlement, others grant them on top. Check which yours does, because the difference is often eight days or more.' },
+      { q: 'What happens to unused days?', a: 'Depends entirely on your employer and jurisdiction — some allow carry-over, some cap it, some forfeit it, and some require payment for untaken statutory leave on termination. This calculates the balance; your contract decides its fate.' },
+      { q: 'Does this know my country’s minimum leave?', a: 'No. Statutory minimums vary widely — from a few days to well over four weeks — and this uses whatever entitlement you enter. Check your local minimum separately; your contract cannot go below it.' }
+    ],
+    related: ['payroll-calculator', 'overtime-calculator', 'salary-converter', 'employee-cost', 'date-calculator', 'age-calculator']
+  },
+
+  'employee-cost': {
+    intro: 'The salary is the number in the offer letter and roughly two-thirds of what the hire actually costs. Employers who budget on salary alone discover the rest one payroll run at a time.',
+    what: [
+      'Adds employer-side costs on top of gross salary — payroll taxes, pension contributions and benefits — to give the real annual cost of employing someone.',
+      'Defaults to a 60,000 salary with 12% employer taxes and 5% pension, which lands the true cost near 70,000 before benefits are added at all.'
+    ],
+    specs: {
+      caption: 'Cost components',
+      rows: [
+        ['Gross salary', 'Default 60,000'],
+        ['Employer taxes', 'Default 12% — varies hugely by country'],
+        ['Employer pension', 'Default 5%'],
+        ['Benefits', 'Entered as an annual figure'],
+        ['Returns', 'Total annual cost and the uplift over salary'],
+        ['Typical uplift', '20–40% above salary in most jurisdictions'],
+        ['Excludes', 'Equipment, software, office space, recruitment'],
+        ['Knows your country’s rates?', '<strong>No</strong>']
+      ]
+    },
+    steps: [
+      'Enter the gross salary.',
+      'Enter employer tax and pension percentages for your jurisdiction.',
+      'Add benefits as an annual figure, then compare against the salary.'
+    ],
+    tip: 'Add the costs this does not model before you commit to a hire: a laptop, software licences, a desk, recruitment fees, and the time existing staff spend onboarding. A useful rule is that the first year costs meaningfully more than steady state — which is exactly the year in which a marginal hire fails.',
+    faqs: [
+      { q: 'How much more than salary does an employee cost?', a: 'Commonly 20–40% more once employer taxes, pension and benefits are counted, and the range is wide because employer contribution rates differ enormously between countries. The calculation makes your own assumptions explicit rather than assuming a figure.' },
+      { q: 'What is missing from this?', a: 'Equipment, software licences, office space, recruitment fees, training and management time. Those are real and they land disproportionately in year one.' },
+      { q: 'Does it apply to contractors?', a: 'Not directly. A contractor’s day rate typically includes their own taxes, equipment and unpaid time, so the comparison is between a total cost here and a rate there — and misclassifying an employee as a contractor carries real legal risk.' },
+      { q: 'Are the default percentages right for me?', a: 'Almost certainly not — 12% and 5% are placeholders. Employer social contributions range from close to nothing to over 30% depending on the country. Look yours up.' }
+    ],
+    related: ['payroll-calculator', 'salary-converter', 'hourly-rate', 'break-even', 'profit-margin', 'income-tax-estimator']
+  },
+
+  'salary-converter': {
+    intro: 'Job adverts quote pay in whatever unit suits the employer — hourly here, monthly there, annual somewhere else — which makes comparing two offers surprisingly hard until everything is on the same footing.',
+    what: [
+      'Converts a wage between hourly, daily, weekly, monthly and annual, so two offers quoted differently can be compared directly.',
+      'The conversion depends entirely on assumed hours and weeks. Change those and every derived figure moves — which is why comparing a contract rate to a salary is not the arithmetic it appears to be.'
+    ],
+    specs: {
+      caption: 'How the conversion works',
+      rows: [
+        ['Converts between', 'Hourly, daily, weekly, monthly, annual'],
+        ['Depends on', 'Assumed hours per week and weeks per year'],
+        ['Common assumption', '40 hours × 52 weeks = 2,080 hours a year'],
+        ['Monthly', 'Annual ÷ 12, not weekly × 4'],
+        ['4 weeks ≠ 1 month', 'A year has 52 weeks, not 48'],
+        ['Figures are', 'Gross — before tax and deductions'],
+        ['Excludes', 'Bonuses, overtime, benefits, employer pension'],
+        ['Contract vs salary', 'Not directly comparable — see the tip']
+      ]
+    },
+    steps: [
+      'Enter the figure you have and the unit it is in.',
+      'Set hours per week and weeks per year to match the role.',
+      'Read every other unit.'
+    ],
+    tip: 'A contract hourly rate is not comparable to a salary at the same rate. The contractor has no paid leave, no sick pay, no employer pension and pays their own taxes and equipment — which is why contract rates are conventionally set well above the salaried equivalent. Compare total annual value, not rate to rate.',
+    faqs: [
+      { q: 'How many working hours in a year?', a: '2,080 is the standard assumption — 40 hours across 52 weeks. It ignores holidays and public holidays, so actual worked hours are lower, but it is the figure most salary conversions use.' },
+      { q: 'Why is monthly not weekly times four?', a: 'Because a year has 52 weeks, not 48. Multiplying a weekly figure by four understates monthly pay by about 8%. Always divide the annual by twelve.' },
+      { q: 'Is this gross or net?', a: 'Gross — before any tax or deductions. Use the Payroll Calculator to estimate take-home, noting that it needs rates you supply.' },
+      { q: 'Can I compare a contract rate to a salary?', a: 'Not by rate alone. Convert the contract rate to an annual figure using the weeks you will actually bill, then subtract unpaid leave, your own pension and equipment costs. The gap is usually large enough to change which offer is better.' }
+    ],
+    related: ['hourly-wage', 'payroll-calculator', 'hourly-rate', 'employee-cost', 'overtime-calculator', 'unit-converter']
+  },
+
+  'payroll-calculator': {
+    intro: 'The gap between the salary you agreed and the amount that lands in your account is usually 25–35%, and it is composed of several deductions that arrive together and are rarely itemised in a way anyone reads.',
+    what: [
+      'Subtracts income tax and pension contributions from gross salary to estimate take-home, with the rates you supply.',
+      '<strong>It knows no country’s tax system.</strong> Defaults of 20% tax and 5% pension are placeholders, not a jurisdiction — and the page says so rather than letting you assume otherwise.'
+    ],
+    specs: {
+      caption: 'Inputs and defaults',
+      rows: [
+        ['Annual gross salary', 'Default 60,000'],
+        ['Income tax', 'Default 20% — you supply the real rate'],
+        ['Pension / retirement', 'Default 5%'],
+        ['Returns', 'Annual and monthly net'],
+        ['Knows your tax system?', '<strong>No</strong>'],
+        ['Uses flat rates', 'Not progressive bands — see the tip'],
+        ['Excludes', 'Social contributions, local taxes, student loans, credits'],
+        ['Typical real deduction', '25–35% of gross in many countries']
+      ]
+    },
+    steps: [
+      'Enter gross annual salary.',
+      'Enter your effective tax rate — not your marginal one. See the tip.',
+      'Add pension percentage and read the monthly net.'
+    ],
+    tip: 'Enter your <em>effective</em> rate, not your bracket. This applies a flat percentage, so entering 40% because you are "in the 40% bracket" will understate your take-home substantially — most of your income is taxed at lower rates. Run the Income Tax Estimator first to find the effective rate, then use that figure here.',
+    faqs: [
+      { q: 'What rate should I enter?', a: 'Your effective rate — total tax divided by gross income — rather than your top bracket. The Income Tax Estimator calculates it properly across bands; entering a marginal rate here produces a net figure that is far too low.' },
+      { q: 'Why does it not know my country’s rates?', a: 'Because they differ by country, region and year, and often by personal circumstance. A calculator with hard-coded rates would be confidently wrong for most users. Supplying them keeps the assumption visible.' },
+      { q: 'What is not deducted here?', a: 'Social security or national insurance, local and state taxes, student loan repayments, health insurance, union dues and tax credits. Real payslips carry several of these, which is why actual net is usually lower than a two-input estimate.' },
+      { q: 'Why is my real payslip different?', a: 'Almost always one of the deductions above, or a progressive band structure that a flat rate cannot represent. Use this for planning and your payslip for facts.' }
+    ],
+    related: ['income-tax-estimator', 'salary-converter', 'paycheck-calculator', 'employee-cost', 'budget-calculator', 'pto-accrual']
+  },
+
+  'hourly-wage': {
+    intro: 'Annualising an hourly wage is the arithmetic that turns an abstract rate into something you can compare against rent — and the assumption that decides the answer is how many weeks you actually get paid for.',
+    what: [
+      'Multiplies an hourly rate by hours per week and weeks per year to give weekly, monthly and annual gross pay.',
+      'Defaults to 15 per hour, 40 hours and <strong>52 weeks</strong> — a full year with no unpaid time. If your work is seasonal or you take unpaid leave, that figure is the one to change.'
+    ],
+    specs: {
+      caption: 'Inputs and defaults',
+      rows: [
+        ['Hourly rate', 'Default 15'],
+        ['Hours per week', 'Default 40'],
+        ['Weeks per year', 'Default 52 — assumes paid year-round'],
+        ['40 × 52', '2,080 hours a year'],
+        ['Returns', 'Weekly, monthly and annual gross'],
+        ['Figures are', 'Gross — before tax'],
+        ['Excludes', 'Overtime, bonuses, unpaid leave'],
+        ['Seasonal work', 'Reduce the weeks figure']
+      ]
+    },
+    steps: [
+      'Enter your hourly rate and normal hours.',
+      'Set weeks per year honestly — 52 only if you are paid through every week.',
+      'Read the annual figure, remembering it is gross.'
+    ],
+    tip: 'If any of your time off is unpaid, reduce the weeks rather than the hours. Four weeks of unpaid leave turns 52 into 48 and cuts the annual figure by nearly 8% — which is a far bigger correction than most people make when comparing an hourly job against a salaried one that includes paid holiday.',
+    faqs: [
+      { q: 'Should I use 52 weeks?', a: 'Only if you are paid for all of them, including holidays. Salaried roles usually are; hourly roles frequently are not. Unpaid leave, seasonal shutdowns and gaps between contracts all come off that number.' },
+      { q: 'What is 2,080 hours?', a: '40 hours × 52 weeks — the standard full-time year used in most salary conversions. It ignores holidays, so actual hours worked are lower even when pay is not.' },
+      { q: 'Is overtime included?', a: 'No. This annualises your normal hours at your normal rate. Use the Overtime Calculator for hours above the threshold, since they are paid at a multiplier.' },
+      { q: 'Is this take-home?', a: 'No, it is gross. Expect roughly 25–35% in deductions in many countries — the Payroll Calculator estimates it with rates you supply.' }
+    ],
+    related: ['salary-converter', 'overtime-calculator', 'payroll-calculator', 'hourly-rate', 'budget-calculator', 'employee-cost']
+  },
+
   /* ================= session 1 ================= */
 
   'jpg-to-pdf': {
