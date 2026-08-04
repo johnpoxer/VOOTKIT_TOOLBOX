@@ -32,6 +32,11 @@
     btn.addEventListener('click', async function () {
       var key = btn.getAttribute(bill === 'year' ? 'data-plan-year' : 'data-plan-month');
       var toast = window.VKUI && window.VKUI.toast;
+      /* Fired before the network call, not after. Checkout can fail — the price
+         ids are still unset — and intent to pay is worth recording even when the
+         attempt does not complete. A funnel that only counts successes cannot
+         show you that the last step is broken. */
+      try { if (window.VKTrack) window.VKTrack.beginCheckout(key); } catch (e) {}
       btn.disabled = true; var label = btn.textContent; btn.textContent = 'Redirecting…';
       try {
         var res = await fetch('/.netlify/functions/create-checkout', {

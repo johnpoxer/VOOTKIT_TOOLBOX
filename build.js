@@ -298,6 +298,7 @@ var t=document.getElementById('theme'),s=null;try{s=localStorage.getItem('vk-the
 if(s)document.documentElement.setAttribute('data-theme',s);
 t.addEventListener('click',function(){var c=document.documentElement.getAttribute('data-theme'),x=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',x);try{localStorage.setItem('vk-theme',x);}catch(e){}});})();
 </script>
+<script src="${up}assets/js/track.js${V}" defer></script>
 <script src="${up}assets/js/ui.js${V}" defer></script>
 <script src="${up}assets/js/recent.js${V}" defer></script>
 <script src="${up}assets/js/supabase-config.js${V}" defer></script>

@@ -58,6 +58,18 @@
       'Everything still works — Creator Pro is $' + amount + ' a month for unlimited runs, no ads and faster processing.</p>' +
       '<a class="btn btn-primary btn-sm" href="' + up() + 'pricing.html">See Pro</a>';
     ws.appendChild(n);
+
+    /* The two halves of this step are separately interesting: how many people
+       reach the limit at all, and what share of those act on it. Reporting only
+       the click would make a nudge nobody ever sees look identical to one
+       everybody ignores. */
+    try {
+      if (root.VKTrack) {
+        root.VKTrack.limitReached(ws.getAttribute('data-tool'), readCount());
+        var cta = n.querySelector('a');
+        if (cta) cta.addEventListener('click', function () { root.VKTrack.upgradeClick('usage_nudge'); });
+      }
+    } catch (e) {}
   }
 
   function showGate(ws, toolName) {

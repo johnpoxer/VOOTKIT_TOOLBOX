@@ -61,7 +61,12 @@
   /* ---- auth actions ---- */
   async function signUp(email, password, displayName) {
     var c = await client();
-    return c.auth.signUp({ email: email, password: password, options: { data: { display_name: displayName || '' }, emailRedirectTo: root.location.origin + '/auth/callback/' } });
+    var r = await c.auth.signUp({ email: email, password: password, options: { data: { display_name: displayName || '' }, emailRedirectTo: root.location.origin + '/auth/callback/' } });
+    /* Only on success, and carrying NO identity — not the email, not the name,
+       not the user id. The event says "an account was created"; who created it
+       is Supabase's business and nobody else's. */
+    try { if (!r.error && root.VKTrack) root.VKTrack.signUp('password'); } catch (e) {}
+    return r;
   }
   async function signIn(email, password) { var c = await client(); return c.auth.signInWithPassword({ email: email, password: password }); }
   async function signInOAuth(provider) { var c = await client(); return c.auth.signInWithOAuth({ provider: provider, options: { redirectTo: root.location.origin + '/auth/callback/' } }); }

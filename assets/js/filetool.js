@@ -297,7 +297,20 @@
         var row = el('div', { class: 'ft-actions' });
         out.downloads.forEach(function (dl) {
           row.appendChild(el('button', { class: 'btn btn-primary', type: 'button', text: dl.label,
-            onClick: function () { download(dl.blob, dl.name); } }));
+            onClick: function () {
+              download(dl.blob, dl.name);
+              /* Distinct from tool_run: a run that produced a file nobody took
+                 is a tool that technically worked and delivered nothing. The
+                 gap between the two events is the real failure signal.
+                 NOTE: dl.name is the USER'S file name — never sent. */
+              try {
+                if (root.VKTrack) {
+                  var id = host.getAttribute('data-tool');
+                  var cat = (root.VK && root.VK.find && root.VK.find(id) || {}).cat;
+                  root.VKTrack.toolDownload(id, cat);
+                }
+              } catch (e) {}
+            } }));
         });
         result.appendChild(row);
       }

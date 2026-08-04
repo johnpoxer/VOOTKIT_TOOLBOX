@@ -166,6 +166,15 @@
          counter failure must never break the success path the user came for. */
       try { if (root.VKUsage && root.VKUsage.countRun) root.VKUsage.countRun(); } catch (e) {}
 
+      /* The top of the funnel. Same hook, same reason: a run is the product
+         actually working, and until now nothing recorded that it ever had. */
+      try {
+        if (root.VKTrack) {
+          var cat = (root.VK && root.VK.find && root.VK.find(id) || {}).cat;
+          root.VKTrack.toolRun(id, cat);
+        }
+      } catch (e) {}
+
       // Signed-in check is async; resolve it before deciding.
       var A = root.VKAuth;
       var whoami = (A && A.enabled && A.getUser) ? A.getUser() : Promise.resolve(null);
