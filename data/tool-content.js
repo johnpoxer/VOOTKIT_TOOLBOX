@@ -881,6 +881,630 @@ module.exports = {
     related: ['pace-calculator', 'bmr-calculator', 'bmi-calculator', 'water-intake-calculator', 'macro-calculator', 'unit-converter']
   },
 
+  /* ============ batch 8 — PDF cluster, part 1 of 2 ============
+   * 18 near-identical PDF pages, 153 duplicate pairs. Taken whole, per the
+   * method note in CONTENT_QUEUE.md. Every figure below was read from
+   * tools-pdfedit.js / tools-pdftools.js / tools-pdfconv.js. */
+
+  'pdf-page-numbers': {
+    intro: 'Page numbers are the difference between a document someone can discuss and a stack nobody can navigate. "See the third paragraph on page 14" only works if page 14 says so — and most exported PDFs, especially merged ones, carry no numbering at all.',
+    what: [
+      'Stamps a number onto every page in the corner you choose, drawn as real text into the PDF rather than as an image, so it stays crisp at any zoom and survives printing.',
+      'The <strong>Start at</strong> control exists for documents with front matter. Set it to 0 and the first page is numbered 0, so a cover page can carry no visible number while page 1 falls on the first page of actual content.'
+    ],
+    specs: {
+      caption: 'Controls',
+      rows: [
+        ['Positions', 'Bottom centre (default), bottom right, bottom left, top centre'],
+        ['Start at', 'Any integer from 0 upward'],
+        ['Font size', '6 to 40 pt, default 11'],
+        ['Rendering', 'Real text, not a rasterised stamp'],
+        ['Pages affected', 'All pages in the document'],
+        ['Input', 'PDF'],
+        ['Output', 'PDF with numbering applied'],
+        ['Privacy', 'Processed in your browser — never uploaded']
+      ]
+    },
+    steps: [
+      'Add the PDF.',
+      'Choose a <strong>position</strong>. Bottom centre is the safest for double-sided printing, since it does not swap sides between odd and even pages.',
+      'Set <strong>Start at</strong> if the document opens with a cover or title page.',
+      'Set the <strong>font size</strong> — 11 pt suits A4 and Letter; go smaller for a dense document.'
+    ],
+    tip: 'Number after merging, never before. Merge two documents that each carry their own numbering and you get a file that runs 1–8 then 1–12, which is worse than no numbers at all. Merge first, then stamp once across the finished document.',
+    faqs: [
+      { q: 'Can I skip the cover page?', a: 'Not by excluding it, but you can work around it: set Start at to 0, and the cover carries a 0 while the first content page reads 1. If the cover must show nothing at all, split it off, number the rest, then merge the cover back on.' },
+      { q: 'Will the number cover my content?', a: 'It sits in the page margin, so on a normal document it will not. If your content runs into the margin — a full-bleed design or a scanned page with no white space — the number may overlap. Crop or add margin first.' },
+      { q: 'Can I use "Page 3 of 20" instead of just a number?', a: 'Not here; the stamp is the number alone. That format needs a word processor or a full PDF editor, since it requires knowing the total on every page.' },
+      { q: 'Do numbers restart if I merge afterwards?', a: 'No — they are burned into the pages as text, so merging afterwards leaves them exactly where they are and gives you two independently numbered sequences. Merge first.' }
+    ],
+    related: ['merge-pdf', 'split-pdf', 'pdf-watermark', 'crop-pdf', 'reorder-pdf', 'compress-pdf']
+  },
+
+  'pdf-watermark': {
+    intro: 'A document marked DRAFT that circulates without the mark is how an unapproved figure ends up quoted back at you in a meeting. A watermark is not security — it is a label, applied across every page so that no single printed sheet can be mistaken for final.',
+    what: [
+      'Draws your text diagonally across every page at an opacity you control, beneath nothing and above everything, so it reads on screen and on paper without making the underlying text unreadable.',
+      'Opacity is the whole craft here. Too faint and a photocopy loses it; too strong and the document becomes hard to actually read.'
+    ],
+    specs: {
+      caption: 'Controls',
+      rows: [
+        ['Opacity', '5% to 60%, default 20%'],
+        ['Font size', '12 to 120 pt, default 48'],
+        ['Placement', 'Diagonal, centred, every page'],
+        ['Text', 'Any short phrase you type'],
+        ['Rendering', 'Real text drawn into the page'],
+        ['Input', 'PDF'],
+        ['Output', 'PDF with the mark applied to all pages'],
+        ['Privacy', 'Processed in your browser — never uploaded']
+      ]
+    },
+    steps: [
+      'Add the PDF and type the text — DRAFT, CONFIDENTIAL, a client name, a date.',
+      'Set <strong>opacity</strong>. 20% is legible on screen and survives photocopying.',
+      'Set the <strong>font size</strong> so the phrase spans the page without running off it. Longer words need smaller type.'
+    ],
+    tip: 'Keep the phrase short. At 48 pt a diagonal watermark comfortably fits about eight to ten characters across an A4 page; "CONFIDENTIAL — DO NOT DISTRIBUTE" at that size runs off both edges. Either shorten the words or drop the size to around 24 pt.',
+    faqs: [
+      { q: 'Can the watermark be removed?', a: 'Yes, by anyone with a proper PDF editor — it is drawn as an object in the page, not fused into it. Treat it as a label that prevents honest mistakes, never as protection against someone who wants it gone.' },
+      { q: 'What opacity should I use?', a: '20% is the sensible default and survives a photocopy. Drop to 10% if the document is text-dense and the mark is getting in the way; raise toward 40% if the file is going to be screenshotted, where faint marks disappear.' },
+      { q: 'Can I watermark only some pages?', a: 'No — it applies to every page, which is usually what you want, since a partly-marked document is exactly the one that gets misread. To mark a subset, split the file, watermark that part, and merge back.' },
+      { q: 'Will it cover my text?', a: 'It sits over the page at low opacity, so text stays readable underneath. If it feels heavy, reduce opacity before reducing size — a large faint mark reads better than a small dark one.' }
+    ],
+    related: ['pdf-page-numbers', 'protect-pdf', 'merge-pdf', 'pdf-redact', 'compress-pdf', 'split-pdf']
+  },
+
+  'pdf-redact': {
+    intro: 'Drawing a black rectangle over a name in most PDF editors hides nothing — the text is still in the file, still selectable, still recoverable by anyone who copies and pastes. Redaction has to destroy the data, not cover it. This does, and the way it does that has consequences worth understanding before you use it.',
+    what: [
+      '<strong>The page is rendered to an image first, then your black boxes are painted onto that image.</strong> The original text objects are gone from the output entirely — there is nothing underneath to select, search or recover, because the output is pixels rather than text.',
+      '<strong>It exports a PNG of the page, not a PDF.</strong> You work one page at a time and download that page as an image. That is a real limitation and worth knowing before you start: to redact a ten-page document you export ten PNGs, then rebuild them into a PDF.'
+    ],
+    specs: {
+      caption: 'What it does and does not do',
+      rows: [
+        ['Method', 'Page rasterised, boxes painted onto the raster'],
+        ['Is the text recoverable?', 'No — it is not present in the output'],
+        ['Output format', '<strong>PNG, one page at a time</strong>'],
+        ['To get a PDF back', 'Export pages, then use JPG to PDF'],
+        ['Render scale', '1.3× the PDF page size'],
+        ['Side effect', 'Remaining text stops being selectable or searchable'],
+        ['Input', 'PDF'],
+        ['Privacy', 'Processed in your browser — never uploaded']
+      ]
+    },
+    steps: [
+      'Add the PDF and move to the page you need.',
+      'Drag rectangles over anything to be removed. Cover generously — near-misses at the edge of a character are still legible.',
+      'Export the page as PNG.',
+      'Repeat for each page, then rebuild a PDF with the JPG to PDF tool if you need one document.'
+    ],
+    tip: 'Check the exported PNG before you send it, and check it by trying to select text — there should be none, anywhere on the page. That is the test that distinguishes real redaction from a black rectangle, and it is the test that court filings and FOI releases have repeatedly failed in public.',
+    faqs: [
+      { q: 'Can someone recover what I covered?', a: 'No. The output is an image of the page with the boxes already painted into the pixels. There are no text objects behind them because there are no text objects at all — that is the point of rasterising first.' },
+      { q: 'Why do I get a PNG instead of a redacted PDF?', a: 'Because the safe method produces an image, and the tool hands you that image directly rather than pretending otherwise. Run the exported pages through JPG to PDF to reassemble a document.' },
+      { q: 'What is the downside of this approach?', a: 'The whole page becomes an image. The rest of the text is no longer selectable, searchable or reflowable, screen readers cannot read it, and the file is usually larger. That is the price of certainty, and for genuinely sensitive material it is worth paying.' },
+      { q: 'Can I redact several pages at once?', a: 'Not currently — it is one page at a time. For a long document that is laborious, but redaction is one of the few operations where working page by page and checking each result is the responsible way to do it.' }
+    ],
+    related: ['metadata-remover', 'protect-pdf', 'jpg-to-pdf', 'pdf-watermark', 'split-pdf', 'screenshot-redactor']
+  },
+
+  'compare-pdf': {
+    intro: 'Someone returns "the updated contract" and says a few things changed. Finding out which few, across forty pages, by reading both versions side by side, is an afternoon you do not have — and the paragraph you skim is the one that mattered.',
+    what: [
+      'Extracts the text from two PDFs and shows what differs between them, so you can see the changes rather than hunt for them.',
+      'This is a <strong>text</strong> comparison. It finds wording changes reliably. It does not compare layout, images, fonts or formatting, so a document that has been restyled but not reworded will look unchanged here — which is correct, and occasionally not what you wanted.'
+    ],
+    specs: {
+      caption: 'Scope',
+      rows: [
+        ['Compares', 'Extracted text of two PDFs'],
+        ['Detects', 'Added, removed and altered wording'],
+        ['Does not detect', 'Layout, image, font or colour changes'],
+        ['Scanned PDFs', 'Not supported — run OCR first'],
+        ['Files needed', 'Exactly two'],
+        ['Privacy', 'Both files stay in your browser'],
+        ['Output', 'A readable list of differences']
+      ]
+    },
+    steps: [
+      'Add the original as the first file and the revision as the second — the order decides what reads as an addition.',
+      'Compare.',
+      'Work through the differences, then confirm the important ones in the actual document.'
+    ],
+    tip: 'If the comparison shows every line as changed, the two files almost certainly extract text in a different order — common when one was exported from Word and the other printed from a browser. That is a formatting difference dressed up as a content one, and it means you need to read those sections manually.',
+    faqs: [
+      { q: 'Why does it say nothing changed when I can see it did?', a: 'Because the change was visual rather than textual — a new logo, different spacing, a colour. Text comparison sees the words only, and the words are the same.' },
+      { q: 'Can I compare scanned documents?', a: 'Not directly. A scan is an image and contains no extractable text. Run both through PDF OCR first, then compare the results — accepting that OCR errors will show up as false differences.' },
+      { q: 'Does it show me where on the page a change is?', a: 'It reports the differing text rather than a position. Search for the phrase in the original to find it, which is usually faster than a page reference anyway.' },
+      { q: 'Are my documents uploaded?', a: 'No. Both files are read in your browser and neither leaves your device — which matters here, since the documents people most want to compare are contracts.' }
+    ],
+    related: ['pdf-to-text', 'pdf-ocr', 'text-diff', 'merge-pdf', 'split-pdf', 'extract-pdf-pages']
+  },
+
+  'crop-pdf': {
+    intro: 'Scanners add margin, academic PDFs carry enormous white borders, and slides exported to PDF often sit in a sea of nothing. On a tablet or e-reader that wasted space is the difference between readable text and squinting, because the reader scales to the page rather than to the content.',
+    what: [
+      'Trims a fixed amount from each edge of every page, measured in <strong>points</strong> — the PDF unit, where 72 points is one inch. The default of 36 removes exactly half an inch.',
+      'This changes the page boundary rather than deleting content: anything inside the trimmed area is cut off, so measure before committing.'
+    ],
+    specs: {
+      caption: 'Trim controls',
+      rows: [
+        ['Unit', 'Points — 72 pt = 1 inch = 25.4 mm'],
+        ['Default trim', '36 pt each side (½ inch)'],
+        ['Range', '0 to 400 pt per edge'],
+        ['Edges', 'Top, bottom, left and right, set independently'],
+        ['Applies to', 'Every page'],
+        ['A4 page is', '595 × 842 pt'],
+        ['Letter page is', '612 × 792 pt'],
+        ['Privacy', 'Processed in your browser — never uploaded']
+      ]
+    },
+    steps: [
+      'Add the PDF.',
+      'Set each edge in points. Start at 36 and increase carefully.',
+      'Crop, then check the first and last pages — headers and footers are what usually get lost.'
+    ],
+    tip: 'Trim the sides more than the top and bottom. Most documents have far more horizontal margin than vertical, and it is the top and bottom that carry page numbers, headers and footnotes — the things you most regret cutting. Try 60 pt left and right against 20 pt top and bottom before going further.',
+    faqs: [
+      { q: 'How do I convert points to millimetres?', a: '72 points is one inch, so one point is about 0.353 mm. A 36 pt trim removes 12.7 mm — half an inch — from that edge. The Unit Converter handles anything more awkward.' },
+      { q: 'Does cropping make the file smaller?', a: 'Barely. Cropping changes the visible page boundary; the content is still in the file. If size is the goal, use Compress PDF, which actually reduces the data.' },
+      { q: 'Can I crop different amounts on different pages?', a: 'No — the same trim applies throughout. For a document where the first page differs, split it off, crop the two parts separately, and merge them back.' },
+      { q: 'Can I undo a crop?', a: 'Not from the cropped file, so keep your original. Cropping past your content is the common mistake; check a page with a header and a page with a footnote before you rely on the result.' }
+    ],
+    related: ['compress-pdf', 'split-pdf', 'merge-pdf', 'pdf-page-numbers', 'rotate-pdf', 'unit-converter']
+  },
+
+  'duplicate-pdf-pages': {
+    intro: 'Printing a form that needs completing twenty times, padding a booklet so the signatures fall right, building a stack of identical tickets — all of them mean the same page appearing over and over, and all of them are miserable to do by hand.',
+    what: [
+      'Repeats the pages you name, the number of extra times you choose, keeping them in place rather than appending them to the end. Duplicating page 3 twice gives you pages 1, 2, 3, 3, 3, 4 — not 1, 2, 3, 4, 3, 3.',
+      'Accepts <code>all</code>, single numbers, comma lists and ranges, so <code>2, 5-7</code> is a valid answer.'
+    ],
+    specs: {
+      caption: 'Controls',
+      rows: [
+        ['Pages to duplicate', '<code>all</code>, or numbers and ranges like <code>2, 5-7</code>'],
+        ['Extra copies of each', '1 to 20'],
+        ['Placement', 'In sequence, immediately after the original'],
+        ['Copies are', 'Identical — same text, images and form fields'],
+        ['Total pages after', 'original + (selected × extra copies)'],
+        ['Input', 'PDF'],
+        ['Output', 'PDF'],
+        ['Privacy', 'Processed in your browser — never uploaded']
+      ]
+    },
+    steps: [
+      'Add the PDF.',
+      'Enter which pages to repeat, or leave <code>all</code>.',
+      'Set <strong>extra copies</strong>. This is copies in addition to the original, so 1 gives you two of each page.'
+    ],
+    tip: 'Note that the count is <em>extra</em> copies, not total. Setting 20 on a single page gives 21 pages, not 20 — which is the difference between a tidy print run and one sheet of waste every time. If you need exactly twenty, ask for nineteen.',
+    faqs: [
+      { q: 'Does "extra copies: 1" give me one page or two?', a: 'Two — the original plus one copy. The wording is deliberate, because "copies" is ambiguous everywhere else and people get caught by it.' },
+      { q: 'Where do the copies go?', a: 'Directly after the page they came from, so the document stays in a sensible order. If you want all the copies grouped at the end instead, extract the page, duplicate it, and merge it on.' },
+      { q: 'Can I duplicate a form and fill each copy differently?', a: 'The copies are identical when created, including form fields. Whether the fields can then hold different values depends on how the original was built — many PDFs share a single value across fields with the same name.' },
+      { q: 'What does the page range accept?', a: 'Single pages, comma-separated lists, and hyphenated ranges — <code>2, 5-7</code> means pages 2, 5, 6 and 7. <code>all</code> duplicates the whole document.' }
+    ],
+    related: ['extract-pdf-pages', 'delete-pdf-pages', 'reorder-pdf', 'merge-pdf', 'split-pdf', 'pdf-page-numbers']
+  },
+
+  /* ============ batch 8 — PDF cluster, part 2 of 2 ============ */
+
+  'pdf-ocr': {
+    intro: 'A scanned page looks like text and behaves like a photograph. You cannot search it, select from it, or paste a line into an email — because as far as the file is concerned there are no words on it, only pixels arranged suggestively.',
+    what: [
+      'Runs <strong>Tesseract</strong> optical character recognition in your browser, rendering each PDF page at <strong>2× scale</strong> first because recognition accuracy depends heavily on the resolution it is given.',
+      'Six languages are available, and choosing the right one matters more than people expect — an English model reading French will mangle every accent.'
+    ],
+    specs: {
+      caption: 'Engine and languages',
+      rows: [
+        ['Engine', 'Tesseract, running locally in your browser'],
+        ['Languages', 'English, Spanish, French, German, Italian, Portuguese'],
+        ['Render scale', '2× the PDF page size, for accuracy'],
+        ['Accepts', 'PDF or image files'],
+        ['Output', 'Plain text you can copy'],
+        ['First run', 'Downloads the OCR engine, then works from cache'],
+        ['Privacy', 'The file never leaves your device'],
+        ['Handwriting', 'Not supported — printed text only']
+      ]
+    },
+    steps: [
+      'Add the scanned PDF or photograph.',
+      'Choose the <strong>language</strong> of the document, not your own.',
+      'Run it — the first run downloads the engine, which takes a moment.',
+      'Copy the text out and proofread it. OCR is never perfect.'
+    ],
+    tip: 'Scan quality decides everything and no setting compensates for a bad source. A straight, well-lit 300 DPI scan reads almost perfectly; a phone photo taken at an angle in poor light will produce nonsense whatever you do. If the result is bad, rescan rather than retry — and straighten the page first.',
+    faqs: [
+      { q: 'Why is the text full of mistakes?', a: 'Almost always the source. OCR needs sharp, straight, well-lit text; skew, shadow, low resolution and JPEG artefacts each cost accuracy, and they compound. Unusual fonts and tables also read poorly because the layout confuses line detection.' },
+      { q: 'Can it read handwriting?', a: 'No. Tesseract recognises printed characters, and handwriting recognition is a genuinely different problem. Even neat printing by hand will produce poor results.' },
+      { q: 'Is my document uploaded to an OCR service?', a: 'No — this is unusual and worth stating. The engine is downloaded to your browser and runs there, so the scan never leaves your device. That matters for the things people most often scan: contracts, medical letters, ID documents.' },
+      { q: 'Why is the first run slow?', a: 'It downloads the recognition engine and language data once. After that it is cached, and later runs start immediately.' }
+    ],
+    related: ['pdf-to-text', 'image-to-text', 'scan-to-pdf', 'compare-pdf', 'pdf-to-jpg', 'compress-pdf']
+  },
+
+  'scan-to-pdf': {
+    intro: 'The scanner is broken, the office is closed, and someone needs a signed form in ten minutes. A phone camera is a perfectly good scanner for that job — the missing piece is turning a handful of photographs into one document that looks deliberate rather than improvised.',
+    what: [
+      'Captures pages with your device camera or accepts photos you already have, then assembles them into a single PDF in the order you added them.',
+      'Everything happens on the device. Photographs of documents are exactly the kind of thing that should not be uploaded to a stranger’s server, and here they are not.'
+    ],
+    specs: {
+      caption: 'Capture and output',
+      rows: [
+        ['Sources', 'Device camera, or existing photos'],
+        ['Multiple pages', 'Yes — added in sequence'],
+        ['Page order', 'The order you add them'],
+        ['Output', 'A single PDF'],
+        ['Auto edge detection', 'No — frame the page yourself'],
+        ['Auto deskew', 'No'],
+        ['Privacy', 'Photos never leave your device'],
+        ['Best input', 'Flat page, even light, shot square on'],
+      ]
+    },
+    steps: [
+      'Lay the page flat in even light — daylight near a window is ideal, overhead light casts your own shadow.',
+      'Shoot square on rather than at an angle, filling the frame with the page.',
+      'Add each page in reading order.',
+      'Build the PDF and check the page order before sending.'
+    ],
+    tip: 'Shadow is what makes a phone scan look like a phone scan. Do not lean over the page with a light behind you — your head becomes a grey band across the text. Sit to the side of the light, or lay the page near a window and shoot with the light coming across it.',
+    faqs: [
+      { q: 'Does it straighten crooked photos?', a: 'No — there is no automatic edge detection or deskew here, so framing is up to you. Take a moment to line the page up square in the viewfinder; it is faster than fixing it afterwards.' },
+      { q: 'Can I add pages from my gallery instead of the camera?', a: 'Yes. Photos you already took work exactly the same way, and you can mix them with fresh captures in one document.' },
+      { q: 'Will the text be searchable?', a: 'No. The pages are photographs, so the PDF contains images rather than text. Run the result through PDF OCR if you need to search or copy from it.' },
+      { q: 'The file is very large. Why?', a: 'Modern phone cameras produce big images, and several of them in one PDF adds up quickly. Run it through Compress PDF before emailing — documents shot for legibility compress well.' }
+    ],
+    related: ['pdf-ocr', 'compress-pdf', 'jpg-to-pdf', 'merge-pdf', 'pdf-signature', 'rotate-pdf']
+  },
+
+  'pdf-signature': {
+    intro: 'Printing a document to sign it, then scanning it back, degrades the file and wastes twenty minutes. Drawing the signature directly onto the page keeps the PDF crisp and takes about thirty seconds.',
+    what: [
+      'Lets you draw a signature with a mouse, trackpad or finger, then places it on the page you choose. Touch input gives a far better line than a mouse — a phone or tablet produces something that actually looks like your handwriting.',
+      'The signature is drawn into the page. This is a <strong>visual</strong> signature, not a cryptographic one.'
+    ],
+    specs: {
+      caption: 'What this is',
+      rows: [
+        ['Signature type', '<strong>Visual only</strong> — not a digital certificate'],
+        ['Input', 'Mouse, trackpad or touch'],
+        ['Placement', 'Choose the page number'],
+        ['Best drawn on', 'A touchscreen'],
+        ['Legally binding?', 'Depends entirely on jurisdiction and context'],
+        ['Input file', 'PDF'],
+        ['Output', 'PDF with the signature applied'],
+        ['Privacy', 'Document and signature never leave your device']
+      ]
+    },
+    steps: [
+      'Add the PDF and pick the page to sign.',
+      'Draw your signature. On a phone or tablet, use a finger — it is much better than a mouse.',
+      'Place it, then check the position before downloading.'
+    ],
+    tip: 'Draw larger than you need. A signature drawn small and scaled up looks shaky and pixelated, while one drawn large and placed small looks smooth. If you sign documents regularly, draw it once on a touchscreen and keep the result — it will be better than anything you produce with a trackpad.',
+    faqs: [
+      { q: 'Is this legally binding?', a: 'It may be, and this tool cannot tell you. Many jurisdictions accept a drawn electronic signature for ordinary agreements, while property, wills and some financial documents demand more. A drawn image carries no cryptographic proof of who signed or when. If it matters, ask a lawyer or use a certificate-based service.' },
+      { q: 'How is this different from DocuSign?', a: 'Those services attach a verifiable digital certificate and an audit trail proving who signed and when. This draws a picture of a signature onto a page. For an internal form the difference rarely matters; for a contract it can matter a great deal.' },
+      { q: 'My signature looks terrible with a mouse.', a: 'It will — a mouse is a poor pen. Open the tool on a phone or tablet and use your finger, or sign a blank sheet, photograph it, and add it as an image instead.' },
+      { q: 'Can I sign more than one page?', a: 'Place it on a page, then repeat for each page that needs it. Documents requiring initials on every page are quicker to handle in dedicated signing software.' }
+    ],
+    related: ['pdf-form-filler', 'scan-to-pdf', 'protect-pdf', 'merge-pdf', 'pdf-watermark', 'compress-pdf']
+  },
+
+  'pdf-form-filler': {
+    intro: 'A PDF form that will not let you type is one of the more infuriating small obstacles in office life. Sometimes the fields are genuinely there and your reader will not show them; sometimes there are no fields at all and the form only looks fillable.',
+    what: [
+      'Reads the <strong>AcroForm</strong> fields inside a PDF, lists them, and writes your answers back into the file. If the document has no such fields it says so immediately rather than pretending — which tells you something useful about the file.',
+      'The result is a normal PDF with the values filled in, openable anywhere.'
+    ],
+    specs: {
+      caption: 'What it works with',
+      rows: [
+        ['Field standard', 'AcroForm — the common PDF form format'],
+        ['Detection', 'Fields are listed automatically'],
+        ['No fields found', 'Says so — the form is not interactive'],
+        ['XFA forms', 'Not supported (rare, mostly older government forms)'],
+        ['Flattening', 'No — values remain editable afterwards'],
+        ['Input', 'PDF'],
+        ['Output', 'PDF with values written in'],
+        ['Privacy', 'Processed in your browser — never uploaded']
+      ]
+    },
+    steps: [
+      'Add the PDF. Fields appear if the document has them.',
+      'Fill them in.',
+      'Download the completed file.'
+    ],
+    tip: 'If it reports no fillable fields, the form was almost certainly produced by printing or scanning a design rather than by exporting a real form. You are not doing anything wrong — there is nothing there to fill. Add your text as a signature-style overlay, or print and complete it by hand.',
+    faqs: [
+      { q: 'It says my PDF has no fillable fields.', a: 'Then it genuinely has none. Many forms that look interactive are flat documents with boxes drawn on them — common when a form was scanned, or exported from a design tool. Nothing here can create fields that were never made.' },
+      { q: 'Can the values be changed after I download?', a: 'Yes. The fields stay editable, so anyone with a PDF reader can alter them. If the completed form must be fixed, flatten it in a full PDF editor or print it to PDF.' },
+      { q: 'Is my data sent anywhere?', a: 'No. The PDF is read and written entirely in your browser, which matters given what forms usually contain — addresses, dates of birth, bank details.' },
+      { q: 'What about older government forms that ask me to open them in Adobe Reader?', a: 'Those are usually XFA forms, a different and largely abandoned standard that this does not support. They generally need the desktop Adobe Reader they ask for.' }
+    ],
+    related: ['pdf-signature', 'protect-pdf', 'pdf-ocr', 'merge-pdf', 'compress-pdf', 'scan-to-pdf']
+  },
+
+  'word-to-pdf': {
+    intro: 'Sending a .docx means trusting that the recipient has compatible software, similar fonts and the same idea of where a page break belongs. PDF removes all three variables — which is why almost every application form asks for one.',
+    what: [
+      'Converts a Word .docx document to PDF in your browser using <strong>mammoth</strong>, which reads the document’s structure — headings, paragraphs, lists, bold and italic — and renders it cleanly.',
+      'It converts <em>structure</em> rather than reproducing Word’s exact layout engine. Text documents come through faithfully; complex layouts do not.'
+    ],
+    specs: {
+      caption: 'Support',
+      rows: [
+        ['Input', '.docx (not the older .doc)'],
+        ['Converts well', 'Headings, paragraphs, lists, bold, italic, links'],
+        ['Converts poorly', 'Text boxes, columns, floating images, headers/footers'],
+        ['Not supported', 'Macros, tracked changes, comments'],
+        ['Fonts', 'Substituted — not embedded from your system'],
+        ['Output', 'PDF'],
+        ['Privacy', 'Processed in your browser — never uploaded'],
+        ['Best for', 'CVs, letters, reports, essays']
+      ]
+    },
+    steps: [
+      'Add the .docx file.',
+      'Convert.',
+      'Open the PDF and check it before sending — particularly page breaks and anything in a table.'
+    ],
+    tip: 'For a CV or anything where layout is the point, this is the wrong tool and Word’s own "Save as PDF" is the right one — it knows exactly where every element sits. Use this when you need a quick, faithful text conversion without opening Word, or when you do not have Word at all.',
+    faqs: [
+      { q: 'Why does my document look different?', a: 'Because the structure is converted rather than the layout replicated. Word positions elements with a proprietary engine; text boxes, multi-column layouts, floating images and headers depend on it and will shift or vanish.' },
+      { q: 'Can I convert an old .doc file?', a: 'No — only .docx. The older binary .doc format is a different thing entirely. Open it in Word or LibreOffice and save as .docx first.' },
+      { q: 'Are my fonts preserved?', a: 'Standard fonts are substituted with close equivalents; unusual ones will not survive, because the converter has no access to fonts installed on your machine. Anything typographically precise should be exported from Word.' },
+      { q: 'Is my document uploaded?', a: 'No. The conversion runs in your browser, which matters for exactly the documents people convert most — contracts, applications, CVs, medical letters.' }
+    ],
+    related: ['pdf-to-text', 'merge-pdf', 'compress-pdf', 'excel-to-pdf', 'markdown-to-pdf', 'text-to-pdf']
+  },
+
+  'excel-to-pdf': {
+    intro: 'Spreadsheets are built for editing, not for reading. Send one and the recipient sees your column widths, your frozen panes and whichever cell you happened to leave selected — and they can change the numbers. A PDF fixes the view and freezes the figures.',
+    what: [
+      'Reads .xlsx and .csv files with <strong>SheetJS</strong> and lays the sheet data out as a paginated PDF, breaking across pages where the content requires it.',
+      'It converts the <em>data</em>, not the workbook. Formulas arrive as their computed values, which is what a reader needs, and charts and conditional formatting do not come across at all.'
+    ],
+    specs: {
+      caption: 'Support',
+      rows: [
+        ['Input', '.xlsx, .csv'],
+        ['Converts', 'Cell values across sheets, paginated'],
+        ['Formulas', 'Rendered as their calculated result'],
+        ['Not converted', 'Charts, images, conditional formatting, colours'],
+        ['Wide sheets', 'Split across pages — narrow them first'],
+        ['Output', 'PDF'],
+        ['Privacy', 'Processed in your browser — never uploaded'],
+        ['Best for', 'Tables, invoices, reports, data extracts']
+      ]
+    },
+    steps: [
+      'Add the spreadsheet.',
+      'Convert.',
+      'Check the pagination — wide sheets are where this needs attention.'
+    ],
+    tip: 'Narrow the sheet before converting. A spreadsheet twenty columns wide has to break across pages, and a table split down the middle is nearly unreadable. Hide the columns your reader does not need, or split the sheet into two logical tables, and the PDF becomes something people can actually use.',
+    faqs: [
+      { q: 'My charts are missing.', a: 'Charts are workbook objects rather than cell data, and are not converted. Export the chart as an image from your spreadsheet application and place it separately, or screenshot it and use JPG to PDF.' },
+      { q: 'Do formulas come across?', a: 'Their results do, which is normally what you want in a document meant for reading. The formulas themselves are not shown.' },
+      { q: 'What happens to a very wide sheet?', a: 'It is split across pages. That is often hard to read, so narrowing the sheet before converting produces a much better document.' },
+      { q: 'Does it handle multiple sheets?', a: 'Sheet data is laid out into the document. For a workbook with many unrelated sheets, converting them separately usually gives a more readable result than one long file.' }
+    ],
+    related: ['csv-viewer', 'json-csv', 'word-to-pdf', 'merge-pdf', 'compress-pdf', 'csv-to-chart']
+  },
+
+  /* ============ batch 8 — PDF cluster, part 3 (completes the cluster) ============ */
+
+  'html-to-pdf': {
+    intro: 'Printing a web page to PDF from the browser drags in navigation bars, cookie banners and whatever the site decided a print stylesheet should look like. Rendering your own HTML gives you a document that contains only what you wrote.',
+    what: [
+      'Renders HTML with inline CSS into a PDF. Useful for turning a generated invoice, a report template or an email layout into a fixed document without a headless browser or a build step.',
+      '<strong>Inline CSS only.</strong> There is no network fetch for external stylesheets, and JavaScript does not run — what you paste is what gets rendered.'
+    ],
+    specs: {
+      caption: 'What renders',
+      rows: [
+        ['Input', 'HTML with inline or embedded CSS'],
+        ['External stylesheets', 'Not fetched — inline your CSS'],
+        ['JavaScript', 'Not executed'],
+        ['Images', 'Data URIs work; remote images may not load'],
+        ['Web fonts', 'Not fetched — use system font stacks'],
+        ['Page breaks', 'Automatic; <code>page-break-before</code> is respected'],
+        ['Output', 'PDF'],
+        ['Privacy', 'Rendered in your browser — never uploaded']
+      ]
+    },
+    steps: [
+      'Paste your HTML, with the CSS inside a <code>&lt;style&gt;</code> block or on the elements.',
+      'Convert.',
+      'Check pagination and adjust with <code>page-break-before</code> where a section should start fresh.'
+    ],
+    tip: 'Design in millimetres or points rather than pixels. A PDF has a physical page size, and CSS pixel widths that look right on screen produce unpredictable margins on paper. Setting a width in mm on your container gives you a document that prints the way it looked.',
+    faqs: [
+      { q: 'My stylesheet is not applying.', a: 'External stylesheets are not fetched — nothing is loaded from the network. Move the CSS into a <code>&lt;style&gt;</code> block in the HTML you paste, or onto the elements themselves.' },
+      { q: 'Can I render a live web page by URL?', a: 'No. This renders HTML you supply, not a page it goes and fetches. To capture a live page, use your browser’s own Print to PDF.' },
+      { q: 'Why are my images missing?', a: 'Remote images may not load. Embed them as data URIs and they will always render — the Image to Base64 converter produces those.' },
+      { q: 'How do I control where pages break?', a: 'Use <code>page-break-before: always</code> on the element that should start a new page. Without it, breaks fall wherever the content runs out of room.' }
+    ],
+    related: ['markdown-to-pdf', 'text-to-pdf', 'pdf-creator', 'merge-pdf', 'compress-pdf', 'base64']
+  },
+
+  'markdown-to-pdf': {
+    intro: 'Markdown is how a lot of writing actually gets done — notes, documentation, drafts — and it is exactly the wrong thing to hand to someone who just wants to read it. A PDF is the version they can open, print and annotate.',
+    what: [
+      'Converts Markdown into a formatted PDF, turning headings, lists, emphasis, links and code blocks into their typographic equivalents rather than leaving the symbols on the page.',
+      'Choose <strong>A4</strong> or <strong>Letter</strong> — worth thinking about, since a document sized for the wrong region gets rescaled or clipped when printed.'
+    ],
+    specs: {
+      caption: 'Support',
+      rows: [
+        ['Page sizes', 'A4 (210 × 297 mm) or Letter (8.5 × 11 in)'],
+        ['Headings', '# through ###### render as a heading hierarchy'],
+        ['Lists', 'Bulleted, numbered and nested'],
+        ['Emphasis', 'Bold, italic, inline code'],
+        ['Code blocks', 'Fenced blocks in a monospace face'],
+        ['Links', 'Rendered and clickable'],
+        ['Images', 'Remote images may not load — embed as data URIs'],
+        ['Privacy', 'Processed in your browser — never uploaded']
+      ]
+    },
+    steps: [
+      'Paste or type your Markdown.',
+      'Choose <strong>A4</strong> for most of the world, <strong>Letter</strong> for the US and Canada.',
+      'Convert and download.'
+    ],
+    tip: 'Get the page size right first, not last. A4 is 8 mm narrower and 18 mm taller than Letter, so a document laid out for one and printed on the other is either rescaled slightly — enough to look off — or has its edges clipped. Match the size to wherever it will actually be printed.',
+    faqs: [
+      { q: 'Which Markdown flavour does it accept?', a: 'The standard set: headings, lists, bold, italic, inline code, fenced code blocks and links. Extensions such as tables, footnotes and task lists vary by flavour and may not render as expected.' },
+      { q: 'A4 or Letter?', a: 'A4 for Europe, Asia, Africa, Australia and most of the rest of the world; Letter for the US and Canada. If the document is only ever read on screen it makes little difference — the moment it might be printed, it matters.' },
+      { q: 'Are my images included?', a: 'Local file paths will not resolve and remote images may not load. Embed images as data URIs for a reliable result.' },
+      { q: 'Can I control the fonts?', a: 'Not directly — the output uses a clean default set with monospace for code. For full typographic control, convert to HTML first and use the HTML to PDF tool with your own CSS.' }
+    ],
+    related: ['markdown-editor', 'html-to-pdf', 'text-to-pdf', 'pdf-creator', 'merge-pdf', 'compress-pdf']
+  },
+
+  'pdf-creator': {
+    intro: 'Sometimes what you need is not a converted document but an empty one — a blank PDF of a known size to print, to draw on, to use as a separator between merged sections, or to test that a workflow handles a file correctly.',
+    what: [
+      'Generates a fresh PDF with the page size and page count you choose. Nothing on the pages, exactly the right dimensions.',
+      'Its most common real use is as a spacer: merging two documents that must start on a right-hand page needs a blank inserted at the join, and that blank has to exist as a file first.'
+    ],
+    specs: {
+      caption: 'Options',
+      rows: [
+        ['Page sizes', 'A4 (210 × 297 mm) or Letter (8.5 × 11 in)'],
+        ['A4 in points', '595 × 842 pt'],
+        ['Letter in points', '612 × 792 pt'],
+        ['Page count', 'Your choice'],
+        ['Content', 'None — genuinely blank'],
+        ['File size', 'Tiny; a blank page carries almost no data'],
+        ['Output', 'PDF'],
+        ['Privacy', 'Generated in your browser — nothing is sent']
+      ]
+    },
+    steps: [
+      'Choose <strong>A4</strong> or <strong>Letter</strong>.',
+      'Set how many pages you need.',
+      'Create and download.'
+    ],
+    tip: 'For double-sided printing, blank pages are how you control which side a section starts on. A chapter that must open on the right needs the preceding section to end on an even page — insert a blank where it does not, and the whole booklet falls into place.',
+    faqs: [
+      { q: 'What would I use a blank PDF for?', a: 'Separators between merged documents, spacers that force a section to start on the correct side when printing double-sided, ruled or plain sheets to print and write on, and test files for checking that a system accepts and handles PDFs.' },
+      { q: 'Which size should I pick?', a: 'Match whatever it is going to be merged with or printed alongside. Mixing A4 and Letter in one document produces pages that do not line up, which is visible immediately when printed.' },
+      { q: 'Can I add content afterwards?', a: 'Yes — stamp page numbers or a watermark onto it, or merge it with other files. It is an ordinary PDF in every respect.' },
+      { q: 'Why is the file so small?', a: 'Because a blank page contains almost nothing: the page dimensions and structure, and no content stream to speak of. Even a hundred blank pages is a very small file.' }
+    ],
+    related: ['merge-pdf', 'pdf-page-numbers', 'split-pdf', 'pdf-watermark', 'markdown-to-pdf', 'text-to-pdf']
+  },
+
+  'pdf-repair': {
+    intro: 'A PDF that will not open is usually not destroyed — it is a structurally valid document with a broken index. Interrupted downloads, half-finished exports and email systems that mangle attachments all produce files where the content survives and the map to it does not.',
+    what: [
+      'Rebuilds the PDF’s internal structure — the cross-reference table that tells a reader where each object lives — and writes a clean file. Where the page content is intact, this is often all that is needed.',
+      'It cannot invent data that is not there. A truncated download missing its second half stays missing; what repair fixes is a file whose parts are present but unreachable.'
+    ],
+    specs: {
+      caption: 'What it can and cannot fix',
+      rows: [
+        ['Fixes', 'Broken cross-reference tables and object indexes'],
+        ['Fixes', 'Files that open with "damaged" or "cannot be repaired" errors'],
+        ['Cannot fix', 'Truncated files — missing data stays missing'],
+        ['Cannot fix', 'Encrypted files without the password'],
+        ['Cannot fix', 'Files that are not actually PDFs'],
+        ['Content', 'Preserved where it is present'],
+        ['Output', 'A rebuilt PDF'],
+        ['Privacy', 'Processed in your browser — never uploaded']
+      ]
+    },
+    steps: [
+      'Add the broken file.',
+      'Run the repair.',
+      'Open the result and check every page — a rebuilt file can open cleanly and still be missing content that was never there.'
+    ],
+    tip: 'Before repairing, try downloading the file again from its source. Interrupted transfers are the single most common cause of a corrupt PDF, and a fresh copy is a complete fix rather than a partial one. Repair is for when the original is genuinely gone.',
+    faqs: [
+      { q: 'Will this recover a file that was cut off mid-download?', a: 'Only the part that arrived. Repair rebuilds the index to whatever data is present; it cannot reconstruct bytes that were never transferred. If the file is half the size it should be, download it again.' },
+      { q: 'My PDF opens but shows blank pages.', a: 'Repair may help if the page objects exist but are not correctly referenced. If the content streams themselves are damaged, the pages will still be blank afterwards — the structure was not the problem.' },
+      { q: 'Can it remove a password?', a: 'No. That is a different operation and needs the password — see Remove PDF Password. Repair works on structure, not encryption.' },
+      { q: 'It says the file is not a PDF.', a: 'Then it probably is not. Files renamed to .pdf, or downloaded as an error page, will not open regardless. Check the real file type before assuming corruption.' }
+    ],
+    related: ['compress-pdf', 'remove-pdf-password', 'merge-pdf', 'split-pdf', 'pdf-to-text', 'protect-pdf']
+  },
+
+  'webp-to-pdf': {
+    intro: 'WebP is now the default export from a lot of design tools and the format most sites serve — and it is still the format that half the world’s software refuses to open. Wrapping the images in a PDF sidesteps the compatibility problem entirely.',
+    what: [
+      'Combines WebP images into a single PDF, one image per page, in the order you add them.',
+      'PDF is the useful destination precisely because it is universally readable: a WebP that a client cannot open becomes a PDF that opens on anything.'
+    ],
+    specs: {
+      caption: 'Limits',
+      rows: [
+        ['Input', 'WebP images'],
+        ['Maximum total', '40 MB'],
+        ['Layout', 'One image per page'],
+        ['Page order', 'The order you add the files'],
+        ['Animated WebP', 'First frame only'],
+        ['Transparency', 'Flattened — PDF pages have no alpha channel'],
+        ['Output', 'A single PDF'],
+        ['Privacy', 'Processed in your browser — never uploaded']
+      ]
+    },
+    steps: [
+      'Add your WebP images in the order you want them.',
+      'Convert.',
+      'Check the result — transparency in particular, since it is flattened.'
+    ],
+    tip: 'If your WebP files have transparent backgrounds, decide what colour you want behind them before converting rather than after. PDF pages have no alpha channel, so transparency is flattened during conversion — and a logo that looked fine on a dark website can end up as dark-on-dark in the document.',
+    faqs: [
+      { q: 'Why convert WebP to PDF at all?', a: 'Compatibility. WebP is efficient but not universally supported — older software, some email clients and plenty of corporate systems will not display it. A PDF opens everywhere, which is the whole point.' },
+      { q: 'What happens to transparent areas?', a: 'They are flattened, because PDF pages do not have an alpha channel. Check the result if transparency mattered; you may want to composite the images onto a background first.' },
+      { q: 'Can I mix WebP with JPG and PNG?', a: 'This tool takes WebP. For a mixed set, use JPG to PDF, which accepts several image formats in one document.' },
+      { q: 'What about animated WebP files?', a: 'Only the first frame is used — a PDF page is static. To keep an animation, convert it to GIF or video instead.' }
+    ],
+    related: ['jpg-to-pdf', 'png-to-pdf', 'pdf-to-webp', 'webp-to-png', 'merge-pdf', 'compress-pdf']
+  },
+
+  'pdf-to-webp': {
+    intro: 'Putting a PDF page on a web page means turning it into an image, and the format you choose decides how long the page takes to load. WebP is the reason to bother: meaningfully smaller than PNG or JPEG at the same visual quality.',
+    what: [
+      'Renders each PDF page and saves it as a WebP image — typically 25–35% smaller than an equivalent JPEG and far smaller than PNG, at quality most people cannot distinguish.',
+      'Useful for previews, thumbnails, embedding a page in a site, or posting a document somewhere that accepts images but not PDFs.'
+    ],
+    specs: {
+      caption: 'Output',
+      rows: [
+        ['Input', 'PDF'],
+        ['Output', 'One WebP image per page'],
+        ['Typical saving vs JPEG', '25–35% at similar quality'],
+        ['Typical saving vs PNG', 'Substantially more on photographic pages'],
+        ['Text', 'Becomes pixels — no longer selectable or searchable'],
+        ['Browser support', 'Every current browser'],
+        ['Older software', 'May not open WebP — use PDF to JPG instead'],
+        ['Privacy', 'Processed in your browser — never uploaded']
+      ]
+    },
+    steps: [
+      'Add the PDF.',
+      'Convert — each page becomes its own WebP.',
+      'Download the images.'
+    ],
+    tip: 'Use WebP when the destination is a web page, and JPEG when the destination is a person. Browsers all handle WebP now, but if you are emailing the image to someone who will open it in whatever their computer defaults to, PDF to JPG saves you a support conversation.',
+    faqs: [
+      { q: 'Why WebP rather than JPEG?', a: 'Size. At comparable visual quality WebP files are roughly a quarter to a third smaller, which is a real difference on a page carrying several document previews. On a website that is faster loading and better Core Web Vitals.' },
+      { q: 'Will the text still be selectable?', a: 'No. The page becomes an image, so the text is pixels. Keep the PDF as the readable version and use the images for display, or run PDF to Text if you need the words separately.' },
+      { q: 'Who cannot open WebP?', a: 'All current browsers support it, but some older desktop applications and image viewers still do not. If the recipient will open it outside a browser, PDF to JPG is the safer choice.' },
+      { q: 'Can I get one image for the whole document?', a: 'Each page is rendered separately, which is usually what you want. To combine them, stitch the images afterwards — though a long document as one tall image is rarely readable.' }
+    ],
+    related: ['pdf-to-jpg', 'pdf-to-png', 'webp-to-pdf', 'webp-to-jpg', 'compress-image', 'pdf-to-text']
+  },
+
   /* ================= session 1 ================= */
 
   'jpg-to-pdf': {

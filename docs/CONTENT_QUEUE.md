@@ -19,10 +19,10 @@ short FAQ answers, stub spec tables and dead related links all fail the build.
 
 | | Pages | Unique words |
 |---|---|---|
-| Hand-written | **96** | 269–419 |
-| Generic template | ~161 | ~96 |
+| Hand-written | **114** | 269–419 |
+| Generic template | ~143 | ~96 |
 
-Pages over 250 unique words: **96 of 257** — 37% of the catalogue.
+Pages over 250 unique words: **114 of 257** — 44% of the catalogue.
 
 **Duplication is the metric that now matters more than length.** See the
 measurement below: 714 near-duplicate page pairs across 22 clusters. Batches are
@@ -157,7 +157,35 @@ Karvonen — and states what that formula cannot see. 220-age is labelled as
 +/-10-12 bpm. ideal-weight shows three formulas precisely so their disagreement
 is visible. These compute; they never advise.*
 
-**Remaining clusters, largest first:** everyday+misc (21), pdf (18), streaming
+### Batch 8 — the PDF cluster, complete (3 Aug 2026)
+
+| | Before | After |
+|---|---|---|
+| pdf (18 pages) | 97% avg overlap, 153 pairs | **41.0% avg, 0 pairs** |
+
+pdf-page-numbers · pdf-watermark · pdf-redact · compare-pdf · crop-pdf ·
+duplicate-pdf-pages · pdf-creator · pdf-repair · markdown-to-pdf · html-to-pdf ·
+word-to-pdf · excel-to-pdf · webp-to-pdf · pdf-to-webp · pdf-ocr · scan-to-pdf ·
+pdf-signature · pdf-form-filler
+
+*Two findings came out of reading the source that the pages now state plainly,
+because both would otherwise mislead someone:*
+
+*• **pdf-redact rasterises the page before drawing the boxes**, so the text is
+genuinely destroyed rather than covered — the failure mode that has embarrassed
+courts and government departments. But it **exports a PNG per page, not a PDF**,
+which is a real limitation the page leads with rather than buries.*
+
+*• **pdf-signature is a visual signature, not a cryptographic one.** The page
+says so, says it may or may not be binding depending on jurisdiction, and points
+at certificate-based services for anything that matters.*
+
+*Elsewhere the differentiator is capability boundaries read from source: word-to-pdf
+uses mammoth and converts structure not layout; excel-to-pdf uses SheetJS and
+drops charts; html-to-pdf fetches nothing over the network; pdf-ocr runs
+Tesseract locally in six languages at 2x render scale.*
+
+**Remaining clusters, largest first:** everyday+misc (21), streaming
 (13), business (12), tax (8), images (8), privacy (8), education (8), travel (7),
 developer (7), audio (6), realestate (6), accessibility (5).
 
