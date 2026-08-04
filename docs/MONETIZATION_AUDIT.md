@@ -68,6 +68,31 @@ owner's own sessions, and only 10 pages are indexed.
 | 8 | GA4 internal traffic unfiltered | `/index.html` shows 40 views from 1 user; you are most of your own data | Admin → Data Streams → Define internal traffic |
 | 9 | Key events not marked | Events fire but do not count as conversions | Admin → Events → mark as key event |
 
+### AdSense review status — 3 Aug 2026
+
+Checked in the dashboard, not guessed:
+
+| | |
+|---|---|
+| vootkit.com | **Getting ready** (not rejected, not "needs attention") |
+| ads.txt | **Authorized** |
+
+Loading `adsbygoogle.js` with zero `<ins>` units was **not** a policy violation
+— that is how Auto Ads operates. But it did mean a reviewer saw no ads at all,
+so there was nothing to evaluate. Two real gaps did matter and are now closed:
+no Cookie Policy, no Disclaimer, no consent mechanism.
+
+**The remaining approval risk is content, not plumbing.** 82 of 257 tools have
+hand-written content; **175 are still on the generic ~96-word template**, and
+"low value content" is the most common AdSense rejection reason for tool sites.
+
+Ads were deliberately enabled on **all 257 pages** (owner's decision, 3 Aug).
+The alternative considered was gating ads to the 82 deep pages so a reviewer
+sees ads only where there is substance — at current traffic the revenue
+difference is approximately zero. **If the review stalls or comes back on
+content grounds, that gate is the first lever to pull**, and it is a one-line
+condition in `adUnit()` keyed on `TOOLCONTENT[t.id]`.
+
 ### Known gaps, deliberately deferred
 
 - **No sidebar ad placement.** Asked for in the brief. Deferred because at 590
