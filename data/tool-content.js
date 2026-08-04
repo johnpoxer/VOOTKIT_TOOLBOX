@@ -3178,6 +3178,285 @@ module.exports = {
     related: ['crop-image', 'resize-image', 'bulk-resize', 'social-media-image', 'compress-image', 'circle-crop']
   },
 
+  /* ============ batch 14 — privacy & security cluster (complete) ============
+   * 8 pages. Real cryptography read from source: AES-GCM 256 with PBKDF2 at
+   * 150,000 iterations / SHA-256; TOTP via HMAC-SHA1 on a 30s step; a 564-word
+   * passphrase list (9.14 bits per word); SHA-1/256/512 checksums. Security
+   * pages that overstate what a tool does are worse than none, so each states
+   * its limits as prominently as its strengths. */
+
+  'text-encrypt': {
+    intro: 'Sending a password or a recovery phrase through chat leaves it sitting in someone else’s message history indefinitely. Encrypting it first means the copy in that history is useless without a key you shared another way.',
+    what: [
+      'Encrypts text with <strong>AES-GCM at 256 bits</strong>, deriving the key from your passphrase with <strong>PBKDF2 at 150,000 iterations of SHA-256</strong>. That iteration count is what makes a weak passphrase expensive to attack rather than instant.',
+      'AES-GCM is <em>authenticated</em> encryption: it detects tampering as well as preventing reading, so altered ciphertext fails to decrypt rather than producing plausible nonsense.'
+    ],
+    specs: {
+      caption: 'The cryptography',
+      rows: [
+        ['Cipher', 'AES-GCM, 256-bit'],
+        ['Key derivation', 'PBKDF2, <strong>150,000 iterations</strong>, SHA-256'],
+        ['Authenticated?', 'Yes — tampering is detected, not silently accepted'],
+        ['Implementation', 'The browser’s own Web Crypto — no library'],
+        ['Runs', 'Entirely on your device'],
+        ['Passphrase recovery', '<strong>Impossible — there is no reset</strong>'],
+        ['Weak point', 'Your passphrase, always'],
+        ['Share the key', 'Through a different channel from the ciphertext']
+      ]
+    },
+    steps: [
+      'Paste the text and choose a strong passphrase.',
+      'Encrypt, and send the ciphertext.',
+      '<strong>Send the passphrase by a different route</strong> — if both travel through the same chat, you have gained nothing.'
+    ],
+    tip: 'Send the ciphertext and the passphrase through different channels. Encrypted text in an email with the password in the next paragraph is exactly as exposed as sending it in plain text — anyone who reads one reads both. Message the passphrase, or say it aloud.',
+    faqs: [
+      { q: 'What if I forget the passphrase?', a: 'The text is unrecoverable. There is no reset, no backdoor and no support route, because the key exists only in your head — that is the property that makes the encryption meaningful. Write it somewhere safe before you rely on it.' },
+      { q: 'How strong is this?', a: 'AES-256 in GCM mode is the standard used for classified government material, and 150,000 PBKDF2 iterations makes brute-forcing a passphrase slow. The cryptography is not the weak point; your passphrase is.' },
+      { q: 'Is my text sent anywhere?', a: 'No. It uses the browser’s built-in Web Crypto and runs entirely on your device. Nothing is transmitted, which is the only arrangement under which encrypting on a website makes sense.' },
+      { q: 'Can I use this for files?', a: 'It handles text. For a file, the practical route is a password-protected archive, or Protect PDF if the file is a PDF.' }
+    ],
+    related: ['password-generator', 'passphrase-generator', 'password-strength', 'protect-pdf', 'file-checksum', 'metadata-remover']
+  },
+
+  'passphrase-generator': {
+    intro: 'A random passphrase of ordinary words beats a short mangled password on both counts that matter: it is stronger, and you can actually remember it. The strength comes from the number of possible combinations, not from looking complicated.',
+    what: [
+      'Draws words at random from a <strong>564-word list</strong>, which gives <strong>9.14 bits of entropy per word</strong>. Four words is about 37 bits, five is 46, six is 55 — each extra word multiplies the search space by 564.',
+      'Selection uses the browser’s cryptographic random source with rejection sampling, so the draw is genuinely uniform rather than subtly biased toward the start of the list.'
+    ],
+    specs: {
+      caption: 'Entropy by length',
+      rows: [
+        ['Wordlist', '564 words'],
+        ['Per word', '9.14 bits'],
+        ['4 words', '≈ 37 bits'],
+        ['5 words', '≈ 46 bits'],
+        ['6 words', '≈ 55 bits'],
+        ['7 words', '≈ 64 bits'],
+        ['Randomness', 'crypto.getRandomValues, unbiased'],
+        ['Runs', 'On your device — nothing generated server-side']
+      ]
+    },
+    steps: [
+      'Choose the number of words — five or six for anything important.',
+      'Add a separator, capitalisation or a number if a site demands them.',
+      'Store it in a password manager rather than trusting memory alone.'
+    ],
+    tip: 'Use the passphrase as generated. Substituting characters — a for @, o for 0 — adds almost no real strength because every cracking tool tries those substitutions first, and it destroys the memorability that was the whole point. If you need more strength, add a word: that multiplies the difficulty by 564.',
+    faqs: [
+      { q: 'How many words do I need?', a: 'Five gives about 46 bits and is fine for most accounts; six gives 55 and suits anything valuable. Four at 37 bits is acceptable only where the account matters little. Each extra word multiplies the possibilities by 564.' },
+      { q: 'Is a passphrase really stronger than a complex password?', a: 'For the same memorability, comfortably. "Tr0ub4dor&3" is short enough to be searched despite looking complicated; five random words is a far larger space and you can recall it. Length beats character variety once the choice is genuinely random.' },
+      { q: 'Should I substitute characters?', a: 'No. Cracking software tries those substitutions as standard, so the added strength is negligible while the memorability loss is total. Add a word instead.' },
+      { q: 'Is the randomness trustworthy?', a: 'It uses the browser’s cryptographic random generator with rejection sampling to avoid modulo bias — so every word is equally likely. A naive implementation would favour the earlier words slightly, which reduces real entropy.' }
+    ],
+    related: ['password-generator', 'password-strength', 'text-encrypt', 'totp-generator', 'uuid-generator', 'hash-generator']
+  },
+
+  'password-strength': {
+    intro: 'Strength meters that praise "P@ssw0rd1!" have taught a generation of people to build weak passwords that look strong. What actually matters is how many possibilities an attacker must search, and that depends on length far more than on symbols.',
+    what: [
+      'Estimates strength from the <strong>character pool</strong> your password draws on and its length, giving the size of the search space rather than a vague verdict.',
+      'The pools are 26 lowercase, 26 uppercase, 10 digits and 25 symbols. Adding a character type widens the pool once; adding a character multiplies the space by the whole pool.'
+    ],
+    specs: {
+      caption: 'Character pools',
+      rows: [
+        ['Lowercase', '26 characters'],
+        ['Uppercase', '26'],
+        ['Digits', '10'],
+        ['Symbols', '25'],
+        ['All four', '87 possible characters per position'],
+        ['Each extra character', 'Multiplies the search space by the pool size'],
+        ['<strong>Cannot detect</strong>', '<strong>Reused or already-breached passwords</strong>'],
+        ['Runs', 'On your device — nothing is transmitted']
+      ]
+    },
+    steps: [
+      'Type or paste the password.',
+      'Read the estimate as a rough order of magnitude, not a verdict.',
+      'If it is short, add length before adding symbols.'
+    ],
+    tip: 'A strength meter cannot see the thing that actually compromises most accounts: reuse. A password that scores perfectly here and is also on a site breached three years ago offers no protection at all, because attackers try known pairs first. Uniqueness matters more than complexity, which is why a password manager beats any amount of cleverness.',
+    faqs: [
+      { q: 'Does a high score mean my password is safe?', a: 'No. It means the password is hard to guess by brute force. It says nothing about reuse, whether it has appeared in a breach, or whether you typed it into a phishing page — and those account for far more compromises than brute force does.' },
+      { q: 'Length or symbols?', a: 'Length, decisively. Adding a symbol widens the pool from 62 to 87; adding a character multiplies the entire search space by 87. Two more characters beats any amount of punctuation.' },
+      { q: 'Is my password sent anywhere?', a: 'No. It is evaluated in your browser and never transmitted — which is the only acceptable design for a tool that asks you to type a password into it.' },
+      { q: 'Why do sites demand symbols if length matters more?', a: 'Mostly inherited policy from older guidance. Current advice from bodies such as NIST favours length and uniqueness and discourages forced complexity rules, precisely because they push people toward predictable patterns.' }
+    ],
+    related: ['password-generator', 'passphrase-generator', 'text-encrypt', 'totp-generator', 'hash-generator', 'file-checksum']
+  },
+
+  'totp-generator': {
+    intro: 'Two-factor codes are the same six digits your authenticator app shows, generated from a shared secret and the current time. Understanding that is what tells you why the codes fail when a clock drifts.',
+    what: [
+      'Computes TOTP codes using <strong>HMAC-SHA1 on a 30-second step</strong>, producing <strong>6 digits</strong> — the standard every mainstream authenticator implements.',
+      '<strong>The code depends on the current time</strong>, which is why a device with a clock more than a minute out generates codes that are silently rejected.'
+    ],
+    specs: {
+      caption: 'The algorithm',
+      rows: [
+        ['Standard', 'TOTP (RFC 6238)'],
+        ['Hash', 'HMAC-SHA1'],
+        ['Time step', '30 seconds'],
+        ['Digits', '6'],
+        ['Secret format', 'Base32 — as printed under a QR code'],
+        ['Implementation', 'Browser Web Crypto — no library, no network'],
+        ['Depends on', 'Your device clock being accurate'],
+        ['<strong>Storage</strong>', '<strong>None — this is not a replacement for an authenticator app</strong>']
+      ]
+    },
+    steps: [
+      'Paste the base32 secret — the string shown under the QR code during setup.',
+      'Read the current code.',
+      'Use it before the 30-second window closes.'
+    ],
+    tip: 'This is useful for testing a TOTP setup or recovering access when your authenticator is unavailable — it is not a place to keep your secrets. It stores nothing, so you would be pasting a secret each time, and a secret that lives in your clipboard and browser history is a secret with a much larger attack surface than one inside an app.',
+    faqs: [
+      { q: 'My code is rejected as invalid.', a: 'Almost always clock drift. TOTP is computed from the current time, so a device more than about a minute off generates codes the server will not accept. Enable automatic time sync and try again.' },
+      { q: 'Why SHA-1 — is that not broken?', a: 'SHA-1 is broken for collision resistance, which HMAC does not depend on. HMAC-SHA1 remains secure for this purpose and is what RFC 6238 specifies, so every mainstream authenticator uses it. Changing it would break compatibility for no security gain.' },
+      { q: 'Should I use this instead of an authenticator app?', a: 'No. It keeps nothing, so you would paste your secret in every time — putting it in your clipboard and possibly your history. Use a real authenticator for daily use and this for testing or emergency access.' },
+      { q: 'Is my secret transmitted?', a: 'No. Codes are computed with the browser’s Web Crypto on your device, and nothing is sent anywhere.' }
+    ],
+    related: ['password-generator', 'passphrase-generator', 'hash-generator', 'password-strength', 'text-encrypt', 'qr-generator']
+  },
+
+  'file-checksum': {
+    intro: 'A checksum answers one question precisely: is this file byte-for-byte the file it should be? It is how you confirm a download was not corrupted, and how you notice if it was replaced.',
+    what: [
+      'Computes <strong>SHA-1, SHA-256 and SHA-512</strong> hashes of a file, so you can compare against the value a publisher provides.',
+      'The comparison is all-or-nothing: change one byte anywhere in the file and the entire hash changes. There is no such thing as a nearly-matching checksum.'
+    ],
+    specs: {
+      caption: 'Algorithms and use',
+      rows: [
+        ['SHA-256', 'The current default for verification'],
+        ['SHA-512', 'Longer digest, same guarantees'],
+        ['SHA-1', 'Legacy — still published, no longer collision-resistant'],
+        ['MD5', 'Deliberately not offered — broken'],
+        ['Sensitivity', 'One changed byte changes the whole hash'],
+        ['Matching', 'Exact or not at all'],
+        ['File handling', 'Read in your browser — never uploaded'],
+        ['Large files', 'Hashing is fast; reading from disk is the limit']
+      ]
+    },
+    steps: [
+      'Add the file.',
+      'Copy the hash for the algorithm the publisher used — usually SHA-256.',
+      'Compare against theirs. It matches exactly or it does not match.'
+    ],
+    tip: 'Get the expected checksum from a different place than the file. If both come from the same page, an attacker who replaced the download replaced the checksum beside it, and the verification proves nothing. Publishers often post hashes on a separate release page, a signed announcement or a mailing list for exactly this reason.',
+    faqs: [
+      { q: 'Which algorithm should I use?', a: 'SHA-256 unless the publisher specifies otherwise — it is the current default and what most projects publish. SHA-512 is equally fine. Use SHA-1 only when that is the only value provided, and treat it as a corruption check rather than a security guarantee.' },
+      { q: 'Why is MD5 not offered?', a: 'Because it is broken. Collisions can be produced deliberately, so a matching MD5 does not establish that a file is the intended one. Offering it would invite exactly the false confidence a checksum is meant to prevent.' },
+      { q: 'The checksum does not match — what now?', a: 'Do not open the file. It is either corrupted in transfer or it is not the file the publisher released. Download again from the official source; if it still differs, stop and report it.' },
+      { q: 'Is my file uploaded?', a: 'No. It is read and hashed in your browser, which matters because verifying a file usually means it is one you have not yet decided to trust.' }
+    ],
+    related: ['hash-generator', 'metadata-remover', 'text-encrypt', 'compress-pdf', 'password-strength', 'pdf-repair']
+  },
+
+  'metadata-remover': {
+    intro: 'Photographs carry more than the picture. A phone typically records the exact GPS coordinates, the date and time, the device model and its serial-adjacent identifiers — and all of it travels with the file when you post it.',
+    what: [
+      'Strips <strong>EXIF</strong> and related metadata from images, leaving the visible picture untouched.',
+      'The location data is the part that matters most: a photograph taken at home and posted publicly can carry your address to anyone who opens the file properties.'
+    ],
+    specs: {
+      caption: 'What is removed',
+      rows: [
+        ['GPS coordinates', 'Removed — the most sensitive field'],
+        ['Date and time taken', 'Removed'],
+        ['Camera make and model', 'Removed'],
+        ['Exposure settings', 'Removed'],
+        ['Editing software', 'Removed'],
+        ['The image itself', 'Unchanged'],
+        ['Social platforms', 'Often strip it too — but not all, and not always'],
+        ['Runs', 'On your device — never uploaded']
+      ]
+    },
+    steps: [
+      'Add the image.',
+      'Strip the metadata.',
+      'Download and use the cleaned copy — keep your original if the data is useful to you.'
+    ],
+    tip: 'Strip metadata before uploading anywhere, not after. Major social platforms usually remove EXIF on upload, but forums, marketplaces, messaging apps and file-sharing services frequently do not — and a photograph of something for sale, taken at home, carries your address in a field that any buyer can read.',
+    faqs: [
+      { q: 'What is actually in EXIF data?', a: 'GPS coordinates, the date and time, camera make and model, lens, exposure settings, and often the software used to edit it. On a phone the location is precise enough to identify a specific building.' },
+      { q: 'Do social networks strip this already?', a: 'The large ones usually do on upload, but you cannot rely on it — forums, marketplaces, messaging apps and cloud links frequently preserve the original file intact. Stripping first means it does not depend on their behaviour.' },
+      { q: 'Does removing it change the image?', a: 'No. The pixels are untouched; only the descriptive fields are removed. The file gets marginally smaller.' },
+      { q: 'Can I get the data back afterwards?', a: 'Not from the stripped copy. Keep the original if the date or location has value to you — that information is genuinely useful in a personal archive and genuinely dangerous in a public post.' }
+    ],
+    related: ['exif-viewer', 'screenshot-redactor', 'url-cleaner', 'compress-image', 'pdf-redact', 'file-checksum']
+  },
+
+  'url-cleaner': {
+    intro: 'The link you copied probably has a tail of tracking parameters that identify where you got it and, often, who you are. Sharing it forwards passes that identifier to everyone who clicks.',
+    what: [
+      'Removes tracking parameters — <strong>utm_*</strong>, <strong>fbclid</strong>, <strong>gclid</strong>, <strong>msclkid</strong>, <strong>igshid</strong>, <strong>mc_eid</strong> and <strong>ref</strong> — leaving the link that actually points at the content.',
+      'These serve the sender’s analytics, not the destination. Removing them almost never changes where the link goes, and it makes the URL shorter and more readable.'
+    ],
+    specs: {
+      caption: 'What gets removed',
+      rows: [
+        ['<code>utm_*</code>', 'Campaign tracking — source, medium, campaign'],
+        ['<code>fbclid</code>', 'Facebook click identifier'],
+        ['<code>gclid</code>', 'Google Ads click identifier'],
+        ['<code>msclkid</code>', 'Microsoft Ads click identifier'],
+        ['<code>igshid</code>', 'Instagram share identifier'],
+        ['<code>mc_eid</code>', '<strong>Mailchimp — identifies YOU personally</strong>'],
+        ['<code>ref</code>', 'Generic referrer'],
+        ['Runs', 'On your device — nothing is transmitted']
+      ]
+    },
+    steps: [
+      'Paste the URL.',
+      'Clean it.',
+      'Check the shortened link still works before sharing widely.'
+    ],
+    tip: '<code>mc_eid</code> is the one to care about. It is a Mailchimp subscriber identifier tied to <em>your</em> email address — so forwarding a newsletter link with it attached tells the sender that whoever clicked did so via you, and can associate those clicks with your identity. The others identify a campaign; that one identifies a person.',
+    faqs: [
+      { q: 'Will the link still work?', a: 'Almost always. These parameters are read by analytics rather than by the page itself. A rare site does use one for routing — check before sharing something critical, but the failure rate is very low.' },
+      { q: 'Why bother?', a: 'Three reasons: shorter and more readable links, no passing of a click identifier to everyone you share with, and less data handed to the tracking network. The Mailchimp identifier in particular is tied to your own subscription.' },
+      { q: 'Does this hide me from the destination site?', a: 'No, and it is important not to overclaim. The site still sees your IP address, your browser and any cookies it has already set. This removes parameters from the URL — one layer, not anonymity.' },
+      { q: 'Is the URL sent anywhere?', a: 'No. The cleaning happens in your browser, so the link you paste is never transmitted.' }
+    ],
+    related: ['metadata-remover', 'url-encoder', 'utm-builder', 'screenshot-redactor', 'slug-generator', 'qr-generator']
+  },
+
+  'screenshot-redactor': {
+    intro: 'Screenshots of dashboards, invoices and inboxes get shared constantly, and each one usually contains an email address, an account number or a name that did not need to be there. The safe way to remove it is to destroy the pixels, not cover them.',
+    what: [
+      'Lets you paint solid blocks over anything sensitive, then exports the flattened result — <strong>the covered pixels are gone from the output</strong>, not hidden beneath a shape.',
+      'That distinction is the whole point. A rectangle drawn in a document editor sits above content that still exists; this removes it.'
+    ],
+    specs: {
+      caption: 'Why it is safe',
+      rows: [
+        ['Method', 'Blocks painted into the image, then flattened'],
+        ['Recoverable?', 'No — the pixels are replaced'],
+        ['<strong>Do not use blur instead</strong>', '<strong>Blur is reversible enough to fail</strong>'],
+        ['Cover generously', 'Partial characters remain legible'],
+        ['Check before sending', 'Zoom in on every block'],
+        ['Also check', 'Tabs, notifications, taskbars, autofill dropdowns'],
+        ['Runs', 'On your device — never uploaded']
+      ]
+    },
+    steps: [
+      'Add the screenshot.',
+      'Paint over everything sensitive, covering generously past the edges.',
+      '<strong>Look at the whole image again</strong> — browser tabs and notifications leak more than the content does.',
+      'Export and check the result before sending.'
+    ],
+    tip: 'The leak is usually not in the part you were focused on. Browser tab titles, a notification banner, a taskbar, an autofill dropdown, a bookmark bar and the reflection of another window have all exposed information in screenshots that were carefully redacted in the middle. Scan the edges before you export.',
+    faqs: [
+      { q: 'Can the covered content be recovered?', a: 'No. The blocks are painted into the image and the result is flattened, so the original pixels are not present in the file. That is the difference between this and drawing a rectangle in a document, where the content underneath still exists.' },
+      { q: 'Why not just blur it?', a: 'Because blur is a reversible transformation, and blurred or pixelated text has been recovered in published research and in real leaks. A solid block removes the information; a blur obscures it, and those are not the same guarantee.' },
+      { q: 'How much should I cover?', a: 'More than the text itself. Partial characters at the edge of a block are often enough to reconstruct a word, especially for predictable formats like email addresses and account numbers.' },
+      { q: 'Is my screenshot uploaded?', a: 'No — everything happens in your browser. That matters here more than almost anywhere else on the site, since the images people redact are by definition the ones containing something they do not want seen.' }
+    ],
+    related: ['metadata-remover', 'pdf-redact', 'image-blur', 'crop-image', 'url-cleaner', 'exif-viewer']
+  },
+
   /* ================= session 1 ================= */
 
   'jpg-to-pdf': {

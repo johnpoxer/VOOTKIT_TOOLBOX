@@ -19,13 +19,13 @@ short FAQ answers, stub spec tables and dead related links all fail the build.
 
 | | Pages | Unique words |
 |---|---|---|
-| Hand-written | **162** | 269–419 |
-| Generic template | ~98 | ~96 |
+| Hand-written | **170** | 269–419 |
+| Generic template | ~90 | ~96 |
 
-Pages over 250 unique words: **162 of 260** — 62% of the catalogue.
+Pages over 250 unique words: **170 of 260** — 65% of the catalogue.
 
-**Duplicate pairs sitewide: 714 → 269** across five clusters destroyed on
-3 Aug (video, health, pdf, business, converters, streaming, tax, images).
+**Duplicate pairs sitewide: 714 → 241** across five clusters destroyed on
+3 Aug (video, health, pdf, business, converters, streaming, tax, images, privacy).
 
 **Duplication is the metric that now matters more than length.** See the
 measurement below: 714 near-duplicate page pairs across 22 clusters. Batches are
@@ -310,7 +310,34 @@ side (50% = a circle), collage cells 120–1000 px. grayscale uses Rec. 601
 weighting (0.299/0.587/0.114) rather than a flat average, which is why it does
 not look muddy.*
 
-**Remaining clusters, largest first:** privacy (8), education (8), travel (7),
+### Batch 14 — the privacy & security cluster, complete (3 Aug 2026)
+
+| | Before | After |
+|---|---|---|
+| privacy (8 pages) | 97% avg | **38.3% avg, 0 pairs** |
+
+*Real cryptography read from source, so the pages can be specific rather than
+reassuring: text-encrypt is **AES-GCM 256** with **PBKDF2 at 150,000 iterations**
+of SHA-256; totp-generator is **HMAC-SHA1 on a 30-second step**;
+passphrase-generator draws from a **564-word list = 9.14 bits per word** (5 words
+≈ 46 bits, 6 ≈ 55); file-checksum offers SHA-1/256/512 and **deliberately omits
+MD5**.*
+
+**Security pages that overstate a tool are worse than no pages**, so each states
+its limit as prominently as its strength:
+
+*• password-strength **cannot detect reuse or breach** — the thing that actually
+compromises accounts. Said in the specs table and the tip.*
+*• totp-generator **stores nothing and is not an authenticator replacement**;
+pasting a secret in each time enlarges the attack surface.*
+*• url-cleaner **does not make you anonymous** — the site still sees IP, browser
+and cookies. One layer, not a cloak.*
+*• screenshot-redactor flattens, so pixels are gone; the tip is that the leak is
+usually in the browser tabs and notifications rather than the content.*
+*• text-encrypt: **there is no passphrase recovery**, and the ciphertext and key
+must travel by different channels or nothing was gained.*
+
+**Remaining clusters, largest first:** education (8), travel (7),
 developer (7), audio (6), realestate (6), accessibility (5).
 
 ## Next up, in order
