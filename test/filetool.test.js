@@ -52,3 +52,78 @@ ids.forEach(id => {
   });
 });
 console.log(`filetool: ${pass} assertions passed`);
+
+/* ---------------------------------------------------------------------------
+ * PICKING FILES ONE AT A TIME (the "cannot select two PDFs on desktop" bug)
+ *
+ * Reported as: merge-pdf works on mobile, not on desktop. The input always had
+ * `multiple`, so it was never a missing attribute. The cause was that a desktop
+ * file dialog REPLACES its selection each time it opens, and the tool kept only
+ * the latest pick — so a two-file merge required knowing to ctrl-click both in
+ * one visit to the dialog. A phone picker uses checkboxes, which made
+ * multi-select obvious there and invisible here.
+ *
+ * These assertions pin the append behaviour, because the failure is silent: the
+ * tool looks like it is working, it just quietly forgets the first file.
+ * ------------------------------------------------------------------------- */
+{
+  const F = (name, size, lastModified) => ({ name, size, type: "application/pdf", lastModified: lastModified == null ? size : lastModified });
+  const names = (a) => a.map((f) => f.name).join(",");
+  const merge = VKFile.mergeSelection;
+  const eq = (a2, b2, m) => { assert.strictEqual(a2, b2, m); pass++; };
+
+  const a = F("a.pdf", 100), b = F("b.pdf", 200), c = F("c.pdf", 300);
+
+  /* The bug, directly. */
+  eq(names(merge([a], [b], true)), "a.pdf,b.pdf",
+     "a second pick ADDS to the first — this is the desktop fix");
+  eq(names(merge(merge([], [a], true), [b], true)), "a.pdf,b.pdf",
+     "one at a time builds the list");
+  eq(names(merge([], [a, b], true)), "a.pdf,b.pdf",
+     "ctrl-clicking both at once still works");
+  eq(names(merge([a, b], [c], true)), "a.pdf,b.pdf,c.pdf",
+     "a third file lands at the end — merge order is add order");
+
+  /* Order is the product on a merge tool: appending must never reshuffle. */
+  eq(names(merge([c, a, b], [], true)), "c.pdf,a.pdf,b.pdf",
+     "an empty pick leaves the existing order untouched");
+
+  /* Re-picking a file you already added is a mistake, not a request for two
+     copies of the same document in the merge. */
+  eq(names(merge([a, b], [a], true)), "a.pdf,b.pdf", "the same file is not added twice");
+  eq(names(merge([a], [F("a.pdf", 100)], true)), "a.pdf",
+     "identity is name + size + lastModified, not object identity");
+  eq(names(merge([a], [F("a.pdf", 999)], true)), "a.pdf,a.pdf",
+     "same name but a different file IS a different file");
+
+  /* Single-file tools must NOT accumulate: choosing another photo to resize
+     means instead of, not as well as. */
+  eq(names(merge([a], [b], false)), "b.pdf", "a single-file tool replaces");
+  eq(names(merge([a, b], [c], false)), "c.pdf", "and never keeps a backlog");
+
+  /* Defensive: the picker hands over a FileList, not an array, and callers
+     have been known to pass nothing at all. */
+  eq(names(merge(null, [a], true)), "a.pdf", "a null existing list is treated as empty");
+  eq(names(merge([a], null, true)), "a.pdf", "a null pick changes nothing");
+  eq(merge([], [], true).length, 0, "nothing in, nothing out");
+
+  /* The returned array must be a new one — mutating it (reorder, remove) must
+     not reach back into whatever the caller held. */
+  const held = [a];
+  const got = merge(held, [b], true);
+  got.push(c);
+  eq(held.length, 1, "the caller's array is not mutated");
+}
+
+/* PDF-only detection survives the extension being added to `accept`.
+ * Windows file dialogs build their filter from EXTENSIONS, so a bare
+ * 'application/pdf' can leave the user's PDFs greyed out in the dialog —
+ * which is the second half of the same bug report. */
+ok(VKFile.validate([f("ok.pdf", 2048, "application/pdf")], { accept: "application/pdf,.pdf" }) === null,
+   "a PDF passes a tool that accepts 'application/pdf,.pdf'");
+ok(/doesn’t look like a PDF/.test(VKFile.validate([f("x.png", 1000, "image/png")], { accept: "application/pdf,.pdf" })),
+   "and a PNG is still rejected there");
+ok(VKFile.validate([f("photo.png", 1000, "image/png")], { accept: "application/pdf,.pdf,image/*" }) === null,
+   "a tool that accepts PDFs AND images does not reject the images");
+
+console.log(`filetool + multi-select: ${pass} total assertions passed`);

@@ -229,7 +229,8 @@ module.exports = {
       ]
     },
     steps: [
-      'Add your PDFs <strong>in the order you want them</strong> — this is the order the merged document will follow.',
+      'Add your PDFs — pick several at once, or add them one at a time; each one joins the list rather than replacing it. Drag a batch onto the page if you prefer.',
+      'Check the numbered list. That order <strong>is</strong> the order of the merged document, and the arrows next to each file change it; Remove drops one without starting over.',
       'Check the list before you run it; reordering afterwards means merging again.',
       'Merge, then download the combined PDF.'
     ],

@@ -84,7 +84,7 @@
   var T = {
 
     'merge-pdf': {
-      accept: 'application/pdf', multiple: true, maxFiles: 20, action: 'Merge PDFs',
+      accept: 'application/pdf,.pdf', multiple: true, maxFiles: 20, action: 'Merge PDFs',
       dropLabel: 'Choose PDFs to merge (in order)', maxBytes: 100 * 1024 * 1024,
       options: [],
       process: async function (files, o, api) {
@@ -107,13 +107,13 @@
           ],
           downloads: [{ label: 'Download merged PDF', blob: pdfBlob(bytes), name: 'merged.pdf' }],
           status: 'Merged ' + files.length + ' PDFs',
-          note: 'Files were combined in the order you added them.'
+          note: 'Files were combined in the order shown in the list. Add them one at a time or several at once, and use the arrows to reorder before merging.'
         };
       }
     },
 
     'split-pdf': {
-      accept: 'application/pdf', action: 'Extract pages',
+      accept: 'application/pdf,.pdf', action: 'Extract pages',
       dropLabel: 'Choose a PDF to split',
       options: [{ k: 'ranges', label: 'Pages to keep', type: 'text', def: '1-3' }],
       process: async function (files, o, api) {
@@ -141,7 +141,7 @@
     },
 
     'rotate-pdf': {
-      accept: 'application/pdf', action: 'Rotate',
+      accept: 'application/pdf,.pdf', action: 'Rotate',
       dropLabel: 'Choose a PDF to rotate',
       options: [
         { k: 'deg', label: 'Rotate by', type: 'select', def: 90,
@@ -170,7 +170,7 @@
     },
 
     'delete-pdf-pages': {
-      accept: 'application/pdf', action: 'Delete pages',
+      accept: 'application/pdf,.pdf', action: 'Delete pages',
       dropLabel: 'Choose a PDF',
       options: [{ k: 'del', label: 'Pages to remove', type: 'text', def: '2' }],
       process: async function (files, o, api) {
@@ -196,7 +196,7 @@
     },
 
     'reorder-pdf': {
-      accept: 'application/pdf', action: 'Reorder',
+      accept: 'application/pdf,.pdf', action: 'Reorder',
       dropLabel: 'Choose a PDF',
       options: [{ k: 'order', label: 'New page order', type: 'text', def: '' }],
       process: async function (files, o, api) {
@@ -258,7 +258,7 @@
     },
 
     'pdf-page-numbers': {
-      accept: 'application/pdf', action: 'Add numbers',
+      accept: 'application/pdf,.pdf', action: 'Add numbers',
       dropLabel: 'Choose a PDF',
       options: [
         { k: 'pos', label: 'Position', type: 'select', def: 'bc',
@@ -290,7 +290,7 @@
     },
 
     'pdf-watermark': {
-      accept: 'application/pdf', action: 'Add watermark',
+      accept: 'application/pdf,.pdf', action: 'Add watermark',
       dropLabel: 'Choose a PDF',
       options: [
         { k: 'opacity', label: 'Opacity', type: 'range', min: 5, max: 60, def: 20, suffix: '%' },
@@ -321,7 +321,7 @@
     },
 
     'protect-pdf': {
-      accept: 'application/pdf', action: 'Protect',
+      accept: 'application/pdf,.pdf', action: 'Protect',
       dropLabel: 'Choose a PDF to password-protect',
       options: [],
       process: async function (files, o, api) {
@@ -347,7 +347,7 @@
     },
 
     'crop-pdf': {
-      accept: 'application/pdf', action: 'Crop',
+      accept: 'application/pdf,.pdf', action: 'Crop',
       dropLabel: 'Choose a PDF to crop',
       options: [
         { k: 'top', label: 'Trim top (pt)', def: 36, min: 0, max: 400, step: 2 },
@@ -376,7 +376,7 @@
     },
 
     'duplicate-pdf-pages': {
-      accept: 'application/pdf', action: 'Duplicate pages',
+      accept: 'application/pdf,.pdf', action: 'Duplicate pages',
       dropLabel: 'Choose a PDF',
       options: [
         { k: 'which', label: 'Pages to duplicate', type: 'text', def: 'all' },
@@ -439,7 +439,7 @@
     },
 
     'extract-pdf-pages': {
-      accept: 'application/pdf', action: 'Extract to separate PDFs',
+      accept: 'application/pdf,.pdf', action: 'Extract to separate PDFs',
       dropLabel: 'Choose a PDF',
       options: [{ k: 'which', label: 'Pages to extract', type: 'text', def: 'all' }],
       process: async function (files, o, api) {
@@ -469,7 +469,7 @@
     },
 
     'remove-pdf-password': {
-      accept: 'application/pdf', action: 'Remove restrictions',
+      accept: 'application/pdf,.pdf', action: 'Remove restrictions',
       dropLabel: 'Choose a restricted PDF',
       options: [],
       process: async function (files, o, api) {
@@ -489,7 +489,7 @@
     },
 
     'pdf-repair': {
-      accept: 'application/pdf', action: 'Repair',
+      accept: 'application/pdf,.pdf', action: 'Repair',
       dropLabel: 'Choose a PDF to repair',
       options: [],
       process: async function (files, o, api) {

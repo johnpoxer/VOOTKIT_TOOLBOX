@@ -41,18 +41,54 @@
   function validate(files, opts) {
     var max = opts.maxBytes || LIMITS.any;
     var accept = opts.accept || '';
+    /* Accept lists carry file extensions as well as MIME types — Windows file
+       dialogs build their filter from the extensions, and a bare
+       'application/pdf' can leave PDFs greyed out. So "is this a PDF-only
+       tool?" is no longer a string equality: every entry must be a PDF entry,
+       which keeps 'application/pdf,.pdf,image/*' out of this branch. */
+    var parts = accept.split(',').map(function (t) { return t.trim().toLowerCase(); }).filter(Boolean);
+    var pdfOnly = parts.length > 0 && parts.every(function (t) {
+      return t === 'application/pdf' || t === '.pdf';
+    });
     for (var i = 0; i < files.length; i++) {
       var f = files[i];
       if (f.size === 0) return '“' + f.name + '” is empty (0 bytes).';
       if (f.size > max) return '“' + f.name + '” is ' + bytes(f.size) + ' — the limit here is ' + bytes(max) + '. Browsers run out of memory above that.';
       if (accept && accept.indexOf('image/') === 0 && f.type && f.type.indexOf('image/') !== 0)
         return '“' + f.name + '” doesn’t look like an image.';
-      if (accept === 'application/pdf' && f.type && f.type !== 'application/pdf')
+      if (pdfOnly && f.type && f.type !== 'application/pdf')
         return '“' + f.name + '” doesn’t look like a PDF.';
     }
     if (opts.maxFiles && files.length > opts.maxFiles)
       return 'Up to ' + opts.maxFiles + ' files at a time — you chose ' + files.length + '.';
     return null;
+  }
+
+  /* Combine an existing selection with a newly picked one.
+   *
+   * THIS IS THE FIX FOR "I CANNOT SELECT TWO FILES ON DESKTOP".
+   * A desktop file dialog replaces its selection every time it opens, so the
+   * old behaviour — keep only the latest pick — meant a two-PDF merge worked
+   * only if you knew to ctrl-click both files in a single visit to the dialog.
+   * A phone picker shows checkboxes, which is why multi-select looked obvious
+   * there and impossible here. Appending makes every route work: several at
+   * once, one at a time, or a second batch dragged on top of the first.
+   *
+   * Single-file tools still replace, because on those the newest pick IS the
+   * intent — nobody choosing a different photo to resize means "both".
+   */
+  function sameFile(a, b) {
+    return a.name === b.name && a.size === b.size && a.lastModified === b.lastModified;
+  }
+  function mergeSelection(existing, picked, multiple) {
+    var out = multiple ? (existing || []).slice() : [];
+    var arr = [].slice.call(picked || []);
+    for (var i = 0; i < arr.length; i++) {
+      var dup = false;
+      for (var j = 0; j < out.length; j++) if (sameFile(out[j], arr[i])) { dup = true; break; }
+      if (!dup) out.push(arr[i]);
+    }
+    return out;
   }
 
   /* Decode an image file.
@@ -127,6 +163,12 @@
       el('small', { id: 'ft-help', text: 'Processed on your device — never uploaded' })
     ]);
 
+    /* On a multi-file tool the chosen files have to be VISIBLE and removable.
+       Merge order is the whole point of Merge PDFs, and until now the only
+       feedback was "3 files · 1.2 MB" — you could not see which three, in what
+       order, or drop one without starting again. */
+    var fileList = el('ol', { class: 'ft-files', hidden: 'hidden' });
+
     var err = el('p', { class: 'note err', hidden: 'hidden', role: 'alert' });
     var status = el('p', { class: 'note', role: 'status', 'aria-live': 'polite' });
     /* Progress readout. A bare bar is not enough on the video tools, where a
@@ -146,6 +188,7 @@
 
     host.appendChild(input);
     host.appendChild(drop);
+    host.appendChild(fileList);
     host.appendChild(err);
     host.appendChild(controls);
     host.appendChild(bar);
@@ -235,17 +278,70 @@
       return v;
     }
 
+    var DROP_LABEL = spec.dropLabel || 'Choose a file or drag it here';
+
+    function renderFiles() {
+      if (!spec.multiple) return;
+      fileList.innerHTML = '';
+      fileList.hidden = files.length === 0;
+      if (!files.length) return;
+      files.forEach(function (f, i) {
+        var up = el('button', {
+          class: 'ft-file-move', type: 'button', title: 'Move up',
+          'aria-label': 'Move ' + f.name + ' up', html: '&#9650;'
+        });
+        var down = el('button', {
+          class: 'ft-file-move', type: 'button', title: 'Move down',
+          'aria-label': 'Move ' + f.name + ' down', html: '&#9660;'
+        });
+        var rm = el('button', {
+          class: 'ft-file-rm', type: 'button', text: 'Remove',
+          'aria-label': 'Remove ' + f.name
+        });
+        if (i === 0) up.disabled = true;
+        if (i === files.length - 1) down.disabled = true;
+        up.addEventListener('click', function () { swap(i, i - 1); });
+        down.addEventListener('click', function () { swap(i, i + 1); });
+        rm.addEventListener('click', function () {
+          files.splice(i, 1);
+          if (!files.length) { reset(); return; }
+          afterChange();
+        });
+        fileList.appendChild(el('li', { class: 'ft-file' }, [
+          el('span', { class: 'ft-file-name', text: f.name }),
+          el('span', { class: 'ft-file-size', text: bytes(f.size) }),
+          el('span', { class: 'ft-file-btns' }, [up, down, rm])
+        ]));
+      });
+    }
+
+    function swap(a, b) {
+      if (b < 0 || b >= files.length) return;
+      var t = files[a]; files[a] = files[b]; files[b] = t;
+      afterChange();
+    }
+
+    function afterChange() {
+      controls.hidden = files.length === 0;
+      status.textContent = files.length === 1
+        ? files[0].name + ' \u00b7 ' + bytes(files[0].size)
+        : files.length + ' files \u00b7 ' + bytes(files.reduce(function (s, f) { return s + f.size; }, 0));
+      /* Once something is chosen, the drop zone's job changes from "start here"
+         to "add another" — which is the affordance that was missing. */
+      if (spec.multiple && files.length) {
+        drop.querySelector('strong').textContent = 'Add more files';
+      }
+      renderFiles();
+      result.innerHTML = '';
+    }
+
     function accept(list) {
-      var arr = [].slice.call(list);
+      var arr = mergeSelection(files, list, spec.multiple);
       var problem = validate(arr, { accept: spec.accept, maxBytes: spec.maxBytes || LIMITS.image, maxFiles: spec.maxFiles });
       if (problem) { fail(problem); return; }
       clearErr();
       files = arr;
-      controls.hidden = false;
-      status.textContent = arr.length === 1
-        ? arr[0].name + ' · ' + bytes(arr[0].size)
-        : arr.length + ' files · ' + bytes(arr.reduce(function (s, f) { return s + f.size; }, 0));
-      result.innerHTML = '';
+      afterChange();
       if (spec.autoRun) run();
     }
 
@@ -319,12 +415,20 @@
 
     function reset() {
       urls.free(); files = []; input.value = '';
+      fileList.innerHTML = ''; fileList.hidden = true;
+      drop.querySelector('strong').textContent = DROP_LABEL;
       controls.hidden = true; result.innerHTML = ''; status.textContent = ''; clearErr(); setProgress(null);
       drop.focus();
     }
 
     drop.addEventListener('click', function () { input.click(); });
-    input.addEventListener('change', function () { if (input.files.length) accept(input.files); });
+    input.addEventListener('change', function () {
+      if (input.files.length) accept(input.files);
+      /* Clear the control's own selection. Without this the browser fires no
+         change event when the same file is chosen again, so re-adding a file
+         you just removed would silently do nothing. */
+      input.value = '';
+    });
     runBtn.addEventListener('click', run);
     resetBtn.addEventListener('click', reset);
 
@@ -341,6 +445,6 @@
     window.addEventListener('pagehide', function () { urls.free(); });
   }
 
-  root.VKFile = { mount: mount, bytes: bytes, LIMITS: LIMITS, validate: validate };
+  root.VKFile = { mount: mount, bytes: bytes, LIMITS: LIMITS, validate: validate, mergeSelection: mergeSelection };
   if (typeof module === 'object' && module.exports) module.exports = root.VKFile;
 })(typeof window !== 'undefined' ? window : globalThis);

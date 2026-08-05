@@ -355,3 +355,47 @@ video.wcode { padding: 0; }
    these wrappers would silently defeat — and the symptom would be two identical
    forms on one screen. Made explicit so it cannot be overridden by accident. */
 [data-newsletter][hidden] { display: none !important; }
+
+/* --- chosen files on a multi-file tool (assets/js/filetool.js) --------------
+ * Merge order is the product on Merge PDFs, so the list is numbered and the
+ * order is editable. Before this, the only feedback was "3 files · 1.2 MB":
+ * you could not see which three, in what order, or remove one without
+ * starting over.
+ */
+.ft-files { list-style: none; margin: var(--s-3) 0 0; padding: 0; display: grid; gap: var(--s-2); }
+.ft-file {
+  display: flex; align-items: center; gap: var(--s-3);
+  padding: var(--s-2) var(--s-3);
+  border: 1px solid var(--line); border-radius: var(--r-2, 8px);
+  background: var(--surface); font-size: var(--t-sm);
+  counter-increment: ftfile;
+}
+/* The number is the merge position, so it is generated from the list order and
+   can never drift out of sync with it. */
+.ft-file::before {
+  content: counter(ftfile);
+  flex: 0 0 1.6em; height: 1.6em; line-height: 1.6em; text-align: center;
+  border-radius: 50%; background: var(--surface-2, var(--line));
+  color: var(--ink-soft); font-variant-numeric: tabular-nums; font-size: var(--t-xs);
+}
+.ft-files { counter-reset: ftfile; }
+.ft-file-name {
+  flex: 1 1 auto; min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.ft-file-size { flex: 0 0 auto; color: var(--ink-mute); font-variant-numeric: tabular-nums; }
+.ft-file-btns { flex: 0 0 auto; display: flex; gap: var(--s-1); align-items: center; }
+.ft-file-move, .ft-file-rm {
+  border: 1px solid var(--line); background: transparent; color: var(--ink-soft);
+  border-radius: var(--r-1, 6px); cursor: pointer; font-size: var(--t-xs);
+  /* 32px is below the 44px comfort target, but these are secondary controls on
+     a row that is itself only 40px tall; padding keeps the hit area usable. */
+  padding: 6px 8px; line-height: 1;
+}
+.ft-file-move:hover:not(:disabled), .ft-file-rm:hover { color: var(--ink); border-color: var(--ink-soft); }
+.ft-file-move:disabled { opacity: .35; cursor: default; }
+@media (max-width: 480px) {
+  .ft-file { flex-wrap: wrap; }
+  .ft-file-size { order: 3; }
+  .ft-file-btns { order: 4; margin-left: auto; }
+}
