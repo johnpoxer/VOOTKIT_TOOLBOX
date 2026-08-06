@@ -7777,7 +7777,7 @@ module.exports = {
       'Rewrite so the important words appear before the cut.',
       'Read the description as a sentence — does it give a reason to click?'
     ],
-    tip: 'Write the description as a promise rather than a summary. "Merge PDFs in your browser — nothing uploaded, no sign-up" gives someone a reason to click; "This page contains a tool for merging PDF files" describes the page to someone who is not reading it yet. The distinction is worth more than any keyword.',
+    tip: 'Write the description as a promise rather than a summary. "Merge PDFs in your browser — nothing uploaded, no upload wait" gives someone a reason to click; "This page contains a tool for merging PDF files" describes the page to someone who is not reading it yet. The distinction is worth more than any keyword.',
     faqs: [
       { q: 'Will my result look exactly like this?', a: 'Close, but not guaranteed. Google adjusts titles and rewrites descriptions depending on the query, and result layouts change over time. Use the preview to catch truncation and awkward phrasing, not as a pixel-perfect promise.' },
       { q: 'Should the brand name go in the title?', a: 'Usually at the end, separated by a pipe or dash, so it is the first thing truncated. The exception is a well-known brand, where leading with it can improve trust enough to be worth the space.' },

@@ -489,7 +489,7 @@ function allToolsPage() {
   return head({ depth: 1, url, ads: true, ld,
     title: `All ${VK.TOOLS.length} Tools — Vootkit`,
     ogTitle: "All Vootkit tools",
-    desc: `Browse all ${VK.TOOLS.length} Vootkit tools across ${VK.CATEGORIES.length} categories. Most run entirely in your browser — no upload, no sign-up, 5 free uses a day.` }) +
+    desc: `Browse all ${VK.TOOLS.length} Vootkit tools across ${VK.CATEGORIES.length} categories. Most run entirely in your browser — no upload, no watermark, 5 free uses a day.` }) +
 `<div class="wrap section">
   <nav class="crumb" aria-label="Breadcrumb"><a href="../">Vootkit</a> <span aria-hidden="true">›</span> <span aria-current="page">All tools</span></nav>
   <h1 class="page-h1">All tools</h1>
@@ -548,7 +548,7 @@ function categoryPage(c) {
   <nav class="crumb" aria-label="Breadcrumb"><a href="../../">Vootkit</a> <span aria-hidden="true">›</span> <a href="../">Tools</a> <span aria-hidden="true">›</span> <span aria-current="page">${esc(c.name)}</span></nav>
   <h1 class="page-h1">${esc(c.name)} tools</h1>
   <p class="page-lede">${esc(c.blurb)}</p>
-  <p class="res-cat" style="margin-bottom:var(--s-5)">${list.length} tools · no sign-up · 5 free a day</p>
+  <p class="res-cat" style="margin-bottom:var(--s-5)">${list.length} tools · no watermark · 5 free a day</p>
   <div class="grid">${list.map((t) => toolCard(t, "../../")).join("")}</div>
 
   <section class="section">
@@ -631,7 +631,7 @@ function toolPage(t) {
   let pageHead = head({ depth: 3, url, ads: true, ld, cat: t.cat, lang: "en", alts: altsForTool(t),
     title: toolTitle(t.name, c.name),
     ogTitle: t.name,
-    desc: `${t.desc} ${local ? "Runs in your browser" : "No sign-up"}, no watermark, 5 free uses a day.` });
+    desc: `${t.desc} ${local ? "Runs in your browser" : "No install needed"}, no watermark, 5 free uses a day.` });
   // under-construction ("soon") tools are thin — keep them out of the index (AdSense quality)
   if (!live) pageHead = pageHead.replace("</head>", '<meta name="robots" content="noindex,follow">\n</head>');
   return pageHead +
@@ -642,7 +642,7 @@ function toolPage(t) {
   <header class="tool-head">
     <h1 class="page-h1">${esc(t.name)}</h1>
     <p class="page-lede">${esc(t.desc)}</p>
-    <div class="trust">${badge(t)}<span class="badge">no sign-up</span><span class="badge">no watermark</span><span class="badge">5 free a day</span></div>
+    <div class="trust">${badge(t)}<span class="badge">no watermark</span><span class="badge">5 free a day</span></div>
   </header>
   ${workspace}
 
@@ -678,7 +678,7 @@ ${facts ? `
 ` : ""}
     <h2>Why use this one</h2>
     <ul>
-      <li><strong>${local ? "Nothing is uploaded." : "No account needed."}</strong> ${local ? "Your file is processed on your own device, so it never travels to a server." : "Use it immediately — no sign-up, no email."}</li>
+      <li><strong>${local ? "Nothing is uploaded." : "Ready straight away."}</strong> ${local ? "Your file is processed on your own device, so it never travels to a server." : "Open the page and start — there is nothing to install and nothing to configure."}</li>
       <li><strong>5 free uses a day.</strong> The free plan includes 5 tool runs a day — <a href="../../../pricing.html">upgrade to Pro</a> for unlimited daily use.</li>
       <li><strong>No watermark.</strong> What you get out is what you made.</li>
       <li><strong>Works on mobile.</strong> Same tool, thumb-friendly.</li>
@@ -772,7 +772,7 @@ function localizedToolPage(t, c, loc) {
   <header class="tool-head">
     <h1 class="page-h1">${esc(name)}</h1>
     <p class="page-lede">${esc(desc)}</p>
-    <div class="trust">${badgeI18n(t, C)}<span class="badge">${esc(C.badge_nosignup)}</span><span class="badge">${esc(C.badge_nowatermark)}</span><span class="badge">${esc(C.badge_free)}</span></div>
+    <div class="trust">${badgeI18n(t, C)}<span class="badge">${esc(C.badge_nowatermark)}</span><span class="badge">${esc(C.badge_free)}</span></div>
   </header>
   <div class="ws" id="workspace" data-tool="${t.id}"></div>
   <section class="prose">
@@ -991,7 +991,6 @@ function componentsPage() {
   <div class="wbtns" style="margin-bottom:var(--s-6)">
     <span class="badge badge-local">runs on your device</span>
     <span class="badge badge-net">uses an API</span>
-    <span class="badge">no sign-up</span>
   </div>
 
   <section class="prose"><h2>Fields</h2></section>
