@@ -134,7 +134,12 @@
     });
   }
 
-  function download(blob, name) {
+  /* Every download on the site goes through VKDeliver so that the gate, the
+     download event and the run log exist in exactly one place. Falls back to
+     the local implementation if deliver.js did not load — a user must never be
+     denied their file by a missing script. */
+  function download(blob, name, ctx) {
+    if (root.VKDeliver && root.VKDeliver.deliver) return root.VKDeliver.deliver(blob, name, ctx || {});
     var u = URL.createObjectURL(blob);
     var a = el('a', { href: u, download: name });
     document.body.appendChild(a); a.click();
@@ -350,6 +355,15 @@
       clearErr();
       runBtn.disabled = true;
       status.textContent = 'Working…';
+      /* Fired BEFORE the work, deliberately. tool_run only ever fires for jobs
+         that finished, so on a two-minute video encode it cannot distinguish
+         "nobody used it" from "everybody closed the tab waiting". */
+      try {
+        if (root.VKTrack && root.VKTrack.toolStart) {
+          var sid = host.getAttribute('data-tool');
+          root.VKTrack.toolStart(sid, (root.VK && root.VK.find && root.VK.find(sid) || {}).cat);
+        }
+      } catch (e) {}
       setProgress(0.1);
       try {
         var out = await spec.process(files, readOptions(), {
@@ -394,18 +408,10 @@
         out.downloads.forEach(function (dl) {
           row.appendChild(el('button', { class: 'btn btn-primary', type: 'button', text: dl.label,
             onClick: function () {
-              download(dl.blob, dl.name);
-              /* Distinct from tool_run: a run that produced a file nobody took
-                 is a tool that technically worked and delivered nothing. The
-                 gap between the two events is the real failure signal.
-                 NOTE: dl.name is the USER'S file name — never sent. */
-              try {
-                if (root.VKTrack) {
-                  var id = host.getAttribute('data-tool');
-                  var cat = (root.VK && root.VK.find && root.VK.find(id) || {}).cat;
-                  root.VKTrack.toolDownload(id, cat);
-                }
-              } catch (e) {}
+              /* tool_download is NOT sent here any more. deliver.js sends it,
+                 because a download that was gated must not be counted until it
+                 actually reaches the user. */
+              download(dl.blob, dl.name, { toolId: host.getAttribute('data-tool'), host: host });
             } }));
         });
         result.appendChild(row);

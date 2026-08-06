@@ -54,6 +54,14 @@
 
   function download(content, name, mime) {
     var blob = content instanceof Blob ? content : new Blob([content], { type: mime || 'text/plain' });
+    /* Routed through VKDeliver — see the note in filetool.js. Widget tools were
+       previously invisible to tool_download entirely. */
+    if (root.VKDeliver && root.VKDeliver.deliver) {
+      var ws = document.getElementById('workspace');
+      root.VKDeliver.deliver(blob, name, { toolId: ws && ws.getAttribute('data-tool'), host: ws });
+      noteSuccess();
+      return;
+    }
     var u = URL.createObjectURL(blob);
     var a = el('a', { href: u, download: name });
     document.body.appendChild(a); a.click();

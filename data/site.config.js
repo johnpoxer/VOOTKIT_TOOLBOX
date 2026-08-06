@@ -179,6 +179,27 @@
      *
      * It is a client-side counter — tools run in the browser — so it was never
      * enforcement, only a prompt. Treat it as merchandising, not as DRM. */
+    /* THE SIGNUP GATE.
+     *
+     * Shown at the moment a result is ready, before the file is handed over.
+     * It is a conversion device, not a security boundary: every tool that
+     * matters runs on-device, so the finished file is already in the browser
+     * before the gate can possibly appear. Anyone determined can take it from
+     * devtools. Judge this on signup rate, not on how well it holds.
+     *
+     * enabled:false ships the entire mechanism switched off, which is how it
+     * should be flipped: get a clean week of tool_run -> tool_download baseline
+     * first, then turn it on and compare. Without the before number, a drop in
+     * downloads afterwards is unattributable.
+     *
+     * exemptTools is the escape hatch for pages you would rather not risk —
+     * whichever tools turn out to be the SEO entry points that feed everything
+     * else. Tool ids, exactly as in data/catalog.js. */
+    gate: {
+      enabled: false,
+      exemptTools: []
+    },
+
     freeLimit: {
       enabled: true,
       count: 5,            // free RUNS per day (completed runs, not page views)

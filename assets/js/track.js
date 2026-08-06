@@ -40,13 +40,28 @@
     LIMIT_REACHED: 'limit_reached',
     UPGRADE_CLICK: 'upgrade_click',
     BEGIN_CHECKOUT: 'begin_checkout',
-    SIGN_UP: 'sign_up'
+    SIGN_UP: 'sign_up',
+
+    /* The funnel steps that were previously invisible.
+     *
+     * tool_start / tool_run bracket the work itself, so the gap between them is
+     * the abandonment rate on slow jobs — the video encodes people close the tab
+     * on. tool_run alone could never show that, because a run nobody waited for
+     * never fires it.
+     *
+     * signup_view / download_unlocked bracket the gate. Without both, a fall in
+     * downloads is unattributable: you cannot tell whether the gate is being
+     * shown and refused, or never shown at all. The ratio between them IS the
+     * gate's conversion rate and the number the whole strategy turns on. */
+    TOOL_START: 'tool_start',
+    SIGNUP_VIEW: 'signup_view',
+    DOWNLOAD_UNLOCKED: 'download_unlocked'
   };
 
   /* Parameter allow-list. Anything not named here is dropped before sending.
      A deny-list would let a future call site leak by omission; an allow-list
      fails closed. */
-  var ALLOWED = ['tool_id', 'tool_category', 'plan', 'source', 'runs_today', 'engine'];
+  var ALLOWED = ['tool_id', 'tool_category', 'plan', 'source', 'runs_today', 'engine', 'method'];
 
   function clean(params) {
     var out = {};
@@ -84,7 +99,14 @@
     limitReached: function (id, runs) { return send(EVENTS.LIMIT_REACHED, { tool_id: id, runs_today: runs }); },
     upgradeClick: function (source) { return send(EVENTS.UPGRADE_CLICK, { source: source }); },
     beginCheckout: function (plan) { return send(EVENTS.BEGIN_CHECKOUT, { plan: plan }); },
-    signUp: function (source) { return send(EVENTS.SIGN_UP, { source: source }); }
+    signUp: function (source, method) { return send(EVENTS.SIGN_UP, { source: source, method: method }); },
+
+    toolStart: function (id, cat) { return send(EVENTS.TOOL_START, { tool_id: id, tool_category: cat }); },
+    /* Fired when the gate is SHOWN, not when it is dismissed — a gate the user
+       never saw and a gate the user refused are different failures and must not
+       collapse into one number. */
+    signupViewed: function (id, cat) { return send(EVENTS.SIGNUP_VIEW, { tool_id: id, tool_category: cat }); },
+    downloadUnlocked: function (id, cat) { return send(EVENTS.DOWNLOAD_UNLOCKED, { tool_id: id, tool_category: cat }); }
   };
   /* Every route to pricing, caught in one place.
    *

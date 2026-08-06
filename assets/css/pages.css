@@ -399,3 +399,63 @@ video.wcode { padding: 0; }
   .ft-file-size { order: 3; }
   .ft-file-btns { order: 4; margin-left: auto; }
 }
+
+/* --- signup gate (assets/js/gate.js) ---------------------------------------
+ * Appears at the one moment the user most wants something, so it has to read
+ * as a step in the thing they are already doing rather than an interruption.
+ * The title says "Your file is ready" first and asks second, for that reason.
+ */
+.gate-backdrop {
+  position: fixed; inset: 0; z-index: 9000;
+  background: rgba(4, 8, 18, .62);
+  display: flex; align-items: center; justify-content: center;
+  padding: var(--s-4);
+  overflow-y: auto;
+}
+.gate-card {
+  background: var(--surface); color: var(--ink);
+  border: 1px solid var(--line); border-radius: var(--r-lg, 14px);
+  padding: var(--s-6); width: 100%; max-width: 420px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .35);
+  max-height: 100%; overflow-y: auto;
+}
+.gate-title { margin: 0 0 var(--s-2); font-size: var(--t-xl); }
+.gate-lede { margin: 0 0 var(--s-4); color: var(--ink-soft); font-size: var(--t-sm); }
+.gate-benefits { list-style: none; margin: 0 0 var(--s-5); padding: 0; display: grid; gap: var(--s-2); }
+.gate-benefits li {
+  font-size: var(--t-sm); color: var(--ink-soft);
+  padding-left: 1.5em; position: relative;
+}
+.gate-benefits li::before {
+  content: "✓"; position: absolute; left: 0; color: var(--ok, #16794a); font-weight: 700;
+}
+.gate-google {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: var(--s-2);
+  border: 1px solid var(--line); background: var(--surface-2, transparent);
+}
+.gate-google svg { flex: 0 0 auto; }
+/* A horizontal rule with the word sitting in the gap. */
+.gate-or {
+  margin: var(--s-4) 0; text-align: center; font-size: var(--t-xs); color: var(--ink-mute);
+  display: flex; align-items: center; gap: var(--s-3);
+}
+.gate-or::before, .gate-or::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.gate-form { display: grid; gap: var(--s-3); }
+.gate-field { display: grid; gap: var(--s-1); }
+.gate-field label { font-size: var(--t-sm); color: var(--ink-soft); }
+.gate-submit { width: 100%; }
+.gate-status { margin: 0; font-size: var(--t-sm); min-height: 1.2em; }
+.gate-status.ok { color: var(--ok, #16794a); }
+.gate-status.err { color: var(--danger, #b42318); }
+.gate-toggle, .gate-cancel { width: 100%; margin-top: var(--s-2); }
+.gate-cancel { color: var(--ink-mute); font-size: var(--t-sm); }
+
+@media (max-width: 480px) {
+  .gate-backdrop { align-items: flex-end; padding: 0; }
+  .gate-card {
+    max-width: none; border-radius: var(--r-lg, 14px) var(--r-lg, 14px) 0 0;
+    border-bottom: 0; padding: var(--s-5) var(--s-4) var(--s-6);
+  }
+}
+/* Respect a reduced-motion preference by having no motion to reduce. */
+@media print { .gate-backdrop { display: none; } }

@@ -16,8 +16,16 @@
       document.head.appendChild(s);
     });
   }
+  /* Routed through VKDeliver so the gate, the download event and the run log
+     live in one place — see the header of assets/js/deliver.js. Falls back to
+     the original implementation if that script did not load. */
   function pdfDownload(bytes, name) {
-    var url = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
+    var blob = new Blob([bytes], { type: 'application/pdf' });
+    if (root.VKDeliver && root.VKDeliver.deliver) {
+      var ws = document.getElementById('workspace');
+      return root.VKDeliver.deliver(blob, name, { toolId: ws && ws.getAttribute('data-tool'), host: ws });
+    }
+    var url = URL.createObjectURL(blob);
     var a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
     setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
   }

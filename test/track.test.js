@@ -100,9 +100,26 @@ console.log(`track safety: ${pass} total assertions passed`);
   ok(/tool_run/.test(read("convert.js")) === false,
      "call sites use the helpers, not raw event-name strings");
 
+  /* THIS CONTRACT WAS INVERTED ON PURPOSE.
+   *
+   * tool_download used to fire from filetool.js's download button, and this
+   * test enforced that. It was wrong in two ways. It counted a download at the
+   * moment the button was clicked rather than the moment the file reached the
+   * user, so a gated download would have been counted as delivered. And it only
+   * covered filetool.js — the four other harnesses that hand over files
+   * (widget.js, tools-pdfmake.js, tools-pdftools.js, the video path) fired
+   * nothing at all, so the number was quietly undercounting.
+   *
+   * It now fires from deliver.js, which is the single place every download
+   * passes through and the only place that knows whether one actually
+   * happened. The assertion below is the inverse of the old one: filetool.js
+   * must NOT send it. */
   const wired = [
     ["convert.js", /VKTrack\.toolRun/, "tool_run fires from the shared success hook"],
-    ["filetool.js", /VKTrack\.toolDownload/, "tool_download fires from the download button"],
+    ["deliver.js", /VKTrack\.toolDownload/, "tool_download fires from the one delivery point"],
+    ["deliver.js", /VKTrack\.signupViewed/, "signup_view fires when the gate is shown"],
+    ["deliver.js", /VKTrack\.downloadUnlocked/, "download_unlocked fires when the gate is passed"],
+    ["filetool.js", /VKTrack\.toolStart/, "tool_start fires before the work begins"],
     ["usage.js", /VKTrack\.limitReached/, "limit_reached fires when the nudge appears"],
     ["usage.js", /VKTrack\.upgradeClick/, "upgrade_click fires from the nudge CTA"],
     ["pricing.js", /VKTrack\.beginCheckout/, "begin_checkout fires on the plan button"],
@@ -110,8 +127,27 @@ console.log(`track safety: ${pass} total assertions passed`);
   ];
   wired.forEach(([f, re, msg]) => ok(re.test(read(f)), msg));
 
+  /* The download event must live in exactly ONE file. Two call sites means
+     double counting, and double counting a funnel step is worse than not
+     counting it — it looks like data. */
+  ok(!/VKTrack\.toolDownload/.test(read("filetool.js")),
+     "filetool.js no longer sends tool_download — deliver.js owns it");
+  ["widget.js", "tools-pdfmake.js", "tools-pdftools.js"].forEach((f) =>
+    ok(!/VKTrack\.toolDownload/.test(read(f)), f + " does not send it either"));
+
+  /* Every harness that hands a file over must go through the one door. If any
+     of these regains its own a.download, the gate has a hole in it and the
+     event count silently drops. */
+  ["filetool.js", "widget.js", "tools-pdfmake.js", "tools-pdftools.js"].forEach((f) =>
+    ok(/VKDeliver\.deliver/.test(read(f)), f + " routes downloads through VKDeliver"));
+
+  /* New events must be declared, or a call site sends a typo'd string that GA4
+     silently never counts. */
+  ["TOOL_START", "SIGNUP_VIEW", "DOWNLOAD_UNLOCKED"].forEach((k) =>
+    ok(T.EVENTS[k], "event " + k + " is defined"));
+
   /* Every call site is on a success path, so every one must be guarded. */
-  ["convert.js", "filetool.js", "usage.js", "pricing.js", "auth.js"].forEach((f) => {
+  ["convert.js", "filetool.js", "usage.js", "pricing.js", "auth.js", "deliver.js"].forEach((f) => {
     const s = read(f);
     const i = s.indexOf("VKTrack");
     const window_ = s.slice(Math.max(0, i - 200), i);

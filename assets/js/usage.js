@@ -132,7 +132,13 @@
     if (verdict === 'block') showGate(ws, toolId);
   }
 
-  root.VKUsage = { decide: decide, readCount: readCount, countRun: countRun };
+  root.VKUsage = {
+    decide: decide, readCount: readCount, countRun: countRun,
+    /* Exposed for deliver.js. showGate already existed and is already the right
+       screen — the limit is now reachable from two directions (page load, and
+       the moment a download is attempted) and both must show the same thing. */
+    showLimit: showGate, isPro: isPro
+  };
   if (typeof module === 'object' && module.exports) module.exports = { decide: decide };
   if (doc) { if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', init); else init(); }
 })(typeof window !== 'undefined' ? window : globalThis);

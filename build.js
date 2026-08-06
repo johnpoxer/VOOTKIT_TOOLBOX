@@ -363,6 +363,8 @@ t.addEventListener('click',function(){var c=document.documentElement.getAttribut
 <script src="${up}assets/js/newsletter.js${V}" defer></script>
 <script src="${up}assets/js/auth.js${V}" defer></script>
 <script src="${up}assets/js/usage.js${V}" defer></script>
+<script src="${up}assets/js/deliver.js${V}" defer></script>
+<script src="${up}assets/js/gate.js${V}" defer></script>
 ${(extraScripts||[]).map(function(x){return '<script src="'+up+x+V+'" defer></script>';}).join("\n")}
 </body>
 </html>

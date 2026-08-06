@@ -302,7 +302,14 @@
   /* ---------- UI ---------- */
   function bigInput(W, ph) { return W.el('textarea', { class: 'field wtext', rows: '12', placeholder: ph || '', spellcheck: 'false' }); }
   function sel(W, label, opts) { return W.el('select', { class: 'field', 'aria-label': label }, opts.map(function (o) { return W.el('option', { value: o[0], text: o[1] }); })); }
+  /* Routed through VKDeliver so the gate, the download event and the run log
+     live in one place — see the header of assets/js/deliver.js. Falls back to
+     the original implementation if that script did not load. */
   function download(blob, name) {
+    if (root.VKDeliver && root.VKDeliver.deliver) {
+      var ws = document.getElementById('workspace');
+      return root.VKDeliver.deliver(blob, name, { toolId: ws && ws.getAttribute('data-tool'), host: ws });
+    }
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
     setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
