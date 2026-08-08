@@ -6710,6 +6710,42 @@ module.exports = {
    * not as what the reader should do, and every figure a user might act on is
    * framed as an estimate. Keep it that way. */
 
+  'debt-to-income': {
+    intro: 'Before a lender looks at what you want to borrow, they work out what you already owe against what you earn. That single ratio decides more applications than the credit score does, and it is one of the few numbers you can calculate yourself in advance and get exactly right.',
+    what: [
+      'Divides your total monthly debt payments by your gross monthly income and reports both ratios a lender actually uses: the back-end figure covering every debt, and the front-end figure covering housing alone.',
+      'Most calculators report only the back-end number, which is how people get surprised when a mortgage application stalls on housing costs they thought were affordable. You can pass one test and fail the other.'
+    ],
+    specs: {
+      caption: 'What lenders look for',
+      rows: [
+        ['Back-end ratio', 'All monthly debt payments ÷ gross monthly income'],
+        ['Front-end ratio', 'Housing payment ÷ gross monthly income'],
+        ['Conventional comfort', 'Around 36% back-end, 28% front-end'],
+        ['Qualified Mortgage ceiling', '43% back-end for most US conforming loans'],
+        ['With compensating factors', 'Up to roughly 50%, given reserves or a strong credit history'],
+        ['Income basis', 'Gross — before tax and deductions'],
+        ['Cards', 'The minimum payment due, not the balance'],
+        ['Not counted as debt', 'Utilities, groceries, insurance, phone, subscriptions']
+      ]
+    },
+    steps: [
+      'Enter your <strong>gross</strong> monthly income — before tax. Using take-home pay makes your ratio look several points worse than the one your lender will calculate.',
+      'Add every debt payment: rent or mortgage, vehicles, student loans, card minimums, and any support payments.',
+      'Read both ratios. The housing figure is the one mortgage underwriters check first.',
+      'Use the last stat to see how much monthly payment you would need to clear, or how much more income you would need, to reach the 36% mark.'
+    ],
+    tip: 'Paying off the smallest balance is not always the best move here. What this ratio responds to is the monthly PAYMENT, not the balance, so clearing a small loan with a large monthly payment moves your DTI more than clearing a large one with a small payment. A $4,000 car loan at $350 a month improves the ratio nearly three times as much as a $9,000 student loan at $120 a month, despite being less than half the debt.',
+    faqs: [
+      { q: 'Should I use gross or take-home income?', a: 'Gross — the figure before tax, national insurance and pension deductions. Underwriters work from gross because it is verifiable from payslips and tax returns, so entering take-home pay produces a ratio several points worse than the one your lender will actually calculate and can talk you out of an application you would have passed.' },
+      { q: 'Do utilities and groceries count as debt?', a: 'No. The ratio counts contractual debt repayments only: mortgage or rent, vehicle finance, student loans, card minimums, personal loans and court-ordered support. Electricity, food, phone bills, insurance and subscriptions are living costs, and lenders assess those separately through affordability checks rather than folding them into this number.' },
+      { q: 'What DTI do I need for a mortgage?', a: 'Most conventional US lenders prefer 36% or below and 43% is the general Qualified Mortgage ceiling, though FHA loans and lenders applying compensating factors such as cash reserves or a high credit score go higher. Thresholds differ by country, lender and loan type, so treat these as the common guidance rather than a universal rule.' },
+      { q: 'Does my credit card balance or my minimum payment count?', a: 'The minimum payment. A $9,000 balance with a $180 minimum affects this ratio the same as a $900 balance with a $180 minimum, because the ratio measures monthly cash commitment rather than total debt. That is also why paying a card down without closing it improves the number as soon as the minimum drops.' },
+      { q: 'How quickly can I improve my ratio?', a: 'Faster than most people expect, because it responds to monthly payments rather than balances. Clearing one loan that is nearly finished removes its whole payment immediately, and refinancing to a longer term lowers the payment and therefore the ratio — though that costs more interest overall, which is a trade worth making knowingly.' }
+    ],
+    related: ['loan-calculator', 'mortgage-calculator', 'budget-calculator', 'credit-card-payoff', 'percentage-calculator', 'salary-converter']
+  },
+
   'loan-calculator': {
     intro: 'The monthly payment is the number lenders lead with, and it is the least useful one for comparing offers. Two loans with almost identical payments can differ by thousands once the term differs — total repaid is where that shows up.',
     what: [

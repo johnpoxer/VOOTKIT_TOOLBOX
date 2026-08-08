@@ -68,7 +68,12 @@ near(M.futureValue(500, 50, 0, 12), 500 + 600, 1e-9, "FV zero rate");
 /* ---- tool specs sanity ---- */
 const TOOLS = Object.assign({}, require("../assets/js/tools-money.js"), require("../assets/js/tools-money2.js"));
 const ids = Object.keys(TOOLS);
-eq(ids.length, 40, "40 money tools defined");
+/* Bumped 41 when debt-to-income shipped. This is a tripwire, not a target:
+   it exists so that a spec silently dropping out of the registry — a stray
+   comma, a bad merge — fails loudly instead of quietly removing a live tool
+   from the site. Update it deliberately when adding one, never to make a
+   failure go away. */
+eq(ids.length, 41, "41 money tools defined");
 
 const VK = require("../data/catalog.js");
 ids.forEach(id => {

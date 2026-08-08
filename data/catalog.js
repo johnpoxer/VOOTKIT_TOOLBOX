@@ -62,6 +62,7 @@
     t("retirement-calculator","finance","Retirement Projection","Project a pension or 401k pot at your chosen retirement age.",{tier:"money",status:"live",kw:"401k pension nest egg"}),
     t("crypto-profit","finance","Crypto Profit & DCA","Profit, loss and dollar-cost-average entry across buys.",{tier:"money",status:"live",kw:"bitcoin average cost gain"}),
     t("currency-converter","finance","Currency Converter","Live exchange rates from European Central Bank data.",{tier:"money",status:"live",processing:"network",kw:"fx exchange rate"}),
+    t("debt-to-income","finance","Debt-to-Income Calculator","Your DTI ratio the way a lender works it out, front-end and back-end.",{tier:"money",status:"live",kw:"DTI ratio mortgage affordability borrowing"}),
     t("percentage-calculator","finance","Percentage Calculator","Percent of, is-what-percent, and percentage change.",{tier:"retention",status:"live",kw:"percent increase decrease"}),
     t("tip-split","finance","Tip & Bill Split","Split a bill with tip across any number of people.",{tier:"retention",status:"live",kw:"restaurant gratuity"}),
     t("discount-calculator","finance","Discount Calculator","Final sale price and total savings, with stacked coupons and tax.",{tier:"retention",status:"live",kw:"percent off sale price coupon savings deal"}),

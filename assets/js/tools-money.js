@@ -43,6 +43,77 @@
       }
     },
 
+    /* ---------- debt-to-income ----------
+     * The number a lender computes about you before deciding anything, and one
+     * of the few you can work out yourself in advance with no guesswork.
+     *
+     * TWO RATIOS, NOT ONE. Most calculators report only the back-end figure and
+     * leave people surprised when a mortgage application stalls on housing
+     * costs alone. Lenders look at both:
+     *   front-end — housing only, over gross income
+     *   back-end  — every monthly debt payment, over gross income
+     * A borrower can pass one and fail the other, so both are shown.
+     *
+     * GROSS, NOT NET. Underwriters use income before tax. Someone entering
+     * take-home pay gets a ratio several points worse than the one their lender
+     * will calculate, so the field says so and the note repeats it.
+     */
+    'debt-to-income': {
+      fields: [
+        { k: 'income', label: 'Gross monthly income (before tax)', def: 5000, min: 0, step: 100,
+          hint: 'Before tax and deductions — this is what lenders use' },
+        { k: 'housing', label: 'Rent or mortgage payment', def: 1400, min: 0, step: 50,
+          hint: 'Include property tax, insurance and service charges if you pay them' },
+        { k: 'auto', label: 'Car or vehicle payments', def: 350, min: 0, step: 25 },
+        { k: 'student', label: 'Student loan payments', def: 0, min: 0, step: 25 },
+        { k: 'cards', label: 'Credit card minimum payments', def: 120, min: 0, step: 10,
+          hint: 'The minimum due, not the full balance' },
+        { k: 'other', label: 'Other loan or support payments', def: 0, min: 0, step: 25,
+          hint: 'Personal loans, child support, alimony' },
+        CUR
+      ],
+      compute: function (v) {
+        var debts = v.housing + v.auto + v.student + v.cards + v.other;
+        var income = v.income;
+        var back = income > 0 ? debts / income * 100 : 0;
+        var front = income > 0 ? v.housing / income * 100 : 0;
+
+        /* Bands are US conventional-lending guidance, and the note says so —
+           43% is the general Qualified Mortgage ceiling, 36% the figure most
+           conventional underwriters prefer. Presenting them as universal would
+           be wrong on a site served in ten languages. */
+        var verdict;
+        if (income <= 0) verdict = 'Enter your gross monthly income to see the ratio.';
+        else if (back <= 36) verdict = 'Comfortable — inside the 36% most conventional lenders prefer.';
+        else if (back <= 43) verdict = 'Workable — over 36%, but inside the 43% Qualified Mortgage ceiling.';
+        else if (back <= 50) verdict = 'Tight — above 43%, so you would need compensating factors such as savings or a strong credit history.';
+        else verdict = 'Very high — above 50% is difficult to borrow against on standard terms.';
+
+        /* The actionable number: what the payments would have to come down to,
+           or income go up to, in order to clear the usual threshold. */
+        var room = income * 0.36 - debts;
+
+        return {
+          headline: {
+            label: 'Debt-to-income ratio',
+            value: (income > 0 ? back.toFixed(1) : '—') + '%',
+            sub: verdict
+          },
+          stats: [
+            { label: 'Housing ratio (front-end)', value: (income > 0 ? front.toFixed(1) : '—') + '%' },
+            { label: 'Total monthly debt', value: F.money2(debts, v.cur) },
+            { label: 'Left after debt', value: F.money2(Math.max(0, income - debts), v.cur) },
+            { label: room >= 0 ? 'Room before 36%' : 'Over the 36% mark by',
+              value: F.money2(Math.abs(room), v.cur) }
+          ],
+          note: 'Lenders use gross income, before tax. Count the minimum due on cards, not the balance. ' +
+                'The 36% and 43% marks are US conventional-lending guidance — thresholds differ by country, ' +
+                'lender and loan type, and utilities, groceries and insurance are not counted as debt. ' +
+                'Nothing you type here leaves your device.'
+        };
+      }
+    },
+
     /* ---------- generic loan ---------- */
     'loan-calculator': {
       fields: [
