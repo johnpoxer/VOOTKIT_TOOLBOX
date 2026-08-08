@@ -371,6 +371,10 @@ ${(extraScripts||[]).map(function(x){return '<script src="'+up+x+V+'" defer></sc
 `;
 }
 
+/* Round down to a stable bucket, so a title only changes when the site has
+   genuinely crossed a milestone rather than every time a tool ships. */
+const floorTo = (n, step) => Math.max(step, Math.floor(n / step) * step);
+
 const badge = (t) => t.processing === "network"
   ? '<span class="badge badge-net">uses an API</span>'
   : '<span class="badge badge-local">runs on your device</span>';
@@ -489,7 +493,19 @@ function allToolsPage() {
   }).join("");
 
   return head({ depth: 1, url, ads: true, ld,
-    title: `All ${VK.TOOLS.length} Tools — Vootkit`,
+    /* A LIVE COUNT IN A <title> IS A BUG, not a feature.
+     *
+     * GA4 groups by page title, and this one changed every time a tool was
+     * added — the same page appears in the reports as "All 133 Tools",
+     * "All 149 Tools", "All 222 Tools", "All 257 Tools" and "All 261 Tools",
+     * five rows for one URL, none of which can be summed or trended. Search
+     * Console has the same problem, and Google is more likely to rewrite a
+     * title it sees churning.
+     *
+     * Rounded DOWN to the nearest fifty: keeps the number that helps
+     * click-through, loses the churn, and stays honest — "250+" is never a
+     * claim to more tools than exist. */
+    title: `All ${floorTo(VK.TOOLS.length, 50)}+ Free Online Tools — Vootkit`,
     ogTitle: "All Vootkit tools",
     desc: `Browse all ${VK.TOOLS.length} Vootkit tools across ${VK.CATEGORIES.length} categories. Most run entirely in your browser — no upload, no watermark, 5 free uses a day.` }) +
 `<div class="wrap section">
@@ -543,7 +559,10 @@ function categoryPage(c) {
     .map((x) => `<a class="chip" href="../${x.slug}/">${esc(x.name)}</a>`).join("");
 
   return head({ depth: 2, url, ads: true, ld,
-    title: `${c.name} Tools — ${list.length} Free Online Tools | Vootkit`,
+    /* Same fragmentation, plus a second problem this one had on its own: a
+       small exact count ADVERTISES SCARCITY. "AI Tools — 3 Free Online Tools"
+       tells the searcher there is almost nothing here before they click. */
+    title: `${c.name} Tools — Free & Online | Vootkit`,
     ogTitle: `${c.name} tools`,
     desc: c.blurb.slice(0, 155) }) +
 `<div class="wrap section">
@@ -1398,7 +1417,7 @@ write("disclaimer.html", legalPage({
 }));
 
 write("about.html", infoPage({
-  slug: "about.html", title: "About Vootkit", eyebrow: "About",
+  slug: "about.html", title: "About", eyebrow: "About",   // infoPage appends " — Vootkit"
   h1: "One home for every digital task.",
   desc: "Vootkit is a growing ecosystem of fast, private, browser-based tools — PDF, image, video, finance, developer and more. No installs, no accounts required.",
   lede: `Vootkit puts <strong>${VK.counts.live} tools</strong> in one place, most of them running entirely in your browser so your files never leave your device.`,
