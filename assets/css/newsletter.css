@@ -1,0 +1,175 @@
+/* newsletter.css — the email-capture component and the homepage band.
+ *
+ * WHY THIS IS ITS OWN FILE.
+ * The homepage is hand-authored and deliberately lean: it loads tokens, base
+ * and skin, and nothing else. pages.css — 10 KB gzipped of tool, blog, pricing
+ * and contact styles — is never loaded there.
+ *
+ * That mattered the moment a newsletter form went on the homepage, because
+ * every .nl rule lived in pages.css. The form was rendering completely
+ * unstyled on the one page it had just been added to, and the block committed
+ * before this had no styling at all in production. It looked right in a
+ * preview that loaded the full bundle and wrong everywhere else.
+ *
+ * The fix is not to link pages.css from the homepage — that is 10 KB of
+ * render-blocking CSS for one section — and not to copy the rules inline,
+ * which guarantees the two drift. It is this: one small file, one source of
+ * truth, loaded by the homepage directly and folded into app.css for every
+ * built page by CSS_PARTS in build.js.
+ */
+
+/* --- newsletter capture (assets/js/newsletter.js) ---------------------------
+ * Three placements, one component: site footer, end of a blog post, and the
+ * moment a tool run finishes (compact variant, no heading — the surrounding
+ * context has already earned the ask, so a headline would just shout).
+ *
+ * The consent checkbox is NOT visually de-emphasised. It is the thing that
+ * makes the address lawfully mailable, and hiding it in grey 11px type is how
+ * a list ends up unusable. It reads at body size, in body colour.
+ */
+.nl {
+  margin-top: var(--s-6);
+  padding: var(--s-5);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg, 14px);
+  background: var(--surface-2, var(--surface));
+}
+.nl-title { margin: 0 0 var(--s-2); font-size: var(--t-lg); font-weight: 600; }
+.nl-lede { margin: 0 0 var(--s-4); font-size: var(--t-sm); color: var(--ink-soft); max-width: 56ch; }
+.nl-row { display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: center; }
+/* Visible to screen readers only: the placeholder is a hint, not a label, and
+   an input with no programmatic label fails WCAG 3.3.2. */
+.nl-lab {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.nl-input { flex: 1 1 240px; min-width: 0; }
+.nl-btn { flex: 0 0 auto; }
+.nl-consent {
+  display: flex; gap: var(--s-2); align-items: flex-start;
+  margin-top: var(--s-3); font-size: var(--t-sm); color: var(--ink-soft);
+  cursor: pointer; max-width: 60ch;
+}
+.nl-consent input { margin-top: 3px; flex: 0 0 auto; }
+.nl-status { margin: var(--s-3) 0 0; font-size: var(--t-sm); min-height: 1.2em; }
+.nl-status.ok { color: var(--ok, #16794a); }
+.nl-status.err { color: var(--danger, #b42318); }
+
+/* Compact: sits inside the tool workspace after a successful run, where the
+   download button must remain the loudest element on the screen. */
+.nl-compact { margin-top: var(--s-5); padding: var(--s-4); grid-column: 1 / -1; }
+.nl-compact .nl-lede { margin-bottom: var(--s-3); font-size: var(--t-xs); }
+
+/* Footer variant: transparent, because a filled card inside an already-tinted
+   footer reads as a second footer. */
+.ftr-nl { margin-top: var(--s-6); }
+.ftr-nl .nl { background: transparent; border-color: var(--line); max-width: 620px; }
+
+@media (max-width: 560px) {
+  .nl-row { flex-direction: column; align-items: stretch; }
+  .nl-btn { width: 100%; }
+}
+/* newsletter.js hides the footer slot when an earned slot is on the page. The
+   attribute alone relies on the UA default, which any future `display` rule on
+   these wrappers would silently defeat — and the symptom would be two identical
+   forms on one screen. Made explicit so it cannot be overridden by accident. */
+[data-newsletter][hidden] { display: none !important; }
+
+/* --- homepage newsletter band ----------------------------------------------
+ *
+ * WHY A BAND AND NOT A CARD.
+ * The first version put the three photographs in a strip along the top of a
+ * white card. It was tidy and it was dead: photographs shrunk to a 220px band
+ * inside a bordered box read as clip-art, and the page still looked like a
+ * spreadsheet with pictures glued to it. Every site that does this well —
+ * and the reference the design came from — does the opposite: the photograph
+ * becomes the surface, full width, edge to edge, and the content floats on it.
+ *
+ * So the photographs are the background of the whole section. They are not
+ * decoration beside the message; they are what the message is printed on.
+ *
+ * HOW THE TEXT STAYS READABLE.
+ * Two layers, both deliberate, because white text over an unmanaged photo is
+ * the single most common way this pattern fails. First a fixed dark scrim over
+ * the photographs (.nlband::after) — not a subtle tint, a real one, because
+ * the brightest photo here is a snowfield and the scrim has to hold against
+ * that. Then the card itself is a further dark translucent plane.
+ *
+ * Worked at the worst case — pure white photo — the surface under the text
+ * lands near #292929: white type on it is about 14:1, and the softened consent
+ * line about 10:1. Both are far past AA, and they hold even if backdrop-filter
+ * is unsupported, because the blur is a refinement and the opacity is the
+ * contrast. Nothing here depends on the photograph being dark.
+ */
+.nlband {
+  position: relative;
+  isolation: isolate;                /* keeps the negative z-indexes local */
+  overflow: hidden;
+  padding: var(--s-8) var(--s-4);
+  margin: var(--s-8) 0 0;
+}
+.nlband-bg {
+  position: absolute; inset: 0; z-index: -2;
+  display: grid; grid-template-columns: repeat(3, 1fr);
+}
+.nlband-bg img {
+  display: block; width: 100%; height: 100%;
+  object-fit: cover; object-position: center 42%;
+}
+/* The scrim. Vertical gradient plus a centre pool, so the middle — where the
+   card sits — is darkest and the edges keep some of the photograph. */
+.nlband::after {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  background:
+    linear-gradient(180deg, rgb(8 12 20 / .62), rgb(8 12 20 / .78)),
+    radial-gradient(60rem 30rem at 50% 50%, rgb(8 12 20 / .55), transparent 70%);
+}
+.nlcard {
+  max-width: 40rem; margin: 0 auto; text-align: center; color: #fff;
+  background: rgb(10 15 25 / .66);
+  border: 1px solid rgb(255 255 255 / .14);
+  border-radius: var(--r-xl, 20px);
+  padding: var(--s-6) var(--s-5) var(--s-6);
+  box-shadow: 0 24px 60px rgb(4 8 16 / .45);
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+}
+.nlcard h2 { margin: var(--s-3) 0 var(--s-3); font-size: var(--t-2xl); color: #fff; }
+.nlcard > p {
+  margin: 0 auto var(--s-2); max-width: 46ch;
+  color: rgb(255 255 255 / .84);
+}
+/* The eyebrow's pale pink chip is built for a white page and looks like a
+   sticker on a dark one. Same shape, borrowed from the glass instead. */
+.nlcard .eyebrow {
+  border-color: rgb(255 255 255 / .28);
+  background: rgb(255 255 255 / .12);
+  color: #fff;
+}
+/* The form is still the one newsletter.js builds — this only re-dresses it for
+   a dark surface. No second implementation, no duplicated validation. */
+.nlcard .nl {
+  border: 0; background: transparent; padding: 0;
+  margin: var(--s-5) auto 0; max-width: 28rem; text-align: left;
+}
+.nlcard .nl-title { display: none; }   /* the h2 above already said it */
+.nlcard .nl-lede  { display: none; }   /* as did the paragraph */
+.nlcard .nl-input {
+  background: rgb(255 255 255 / .10);
+  border-color: rgb(255 255 255 / .28);
+  color: #fff;
+}
+.nlcard .nl-input::placeholder { color: rgb(255 255 255 / .60); }
+.nlcard .nl-consent { color: rgb(255 255 255 / .82); }
+.nlcard .nl-status.ok  { color: #7ee2b8; }
+.nlcard .nl-status.err { color: #ffb4ac; }
+:where(.nlcard) :focus-visible { outline-color: #fff; }
+
+@media (max-width: 720px) {
+  /* Three photographs across a phone are three slivers. One, uncropped and
+     doing its job as a backdrop, is worth more than three hints of one. */
+  .nlband { padding: var(--s-7) var(--s-3); }
+  .nlband-bg { grid-template-columns: 1fr; }
+  .nlband-bg img:first-child, .nlband-bg img:last-child { display: none; }
+  .nlcard { padding: var(--s-5) var(--s-4); }
+}

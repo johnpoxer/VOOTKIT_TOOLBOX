@@ -299,62 +299,6 @@ video.wcode { padding: 0; }
 }
 @media print { .consent-bar { display: none; } }
 
-/* --- newsletter capture (assets/js/newsletter.js) ---------------------------
- * Three placements, one component: site footer, end of a blog post, and the
- * moment a tool run finishes (compact variant, no heading — the surrounding
- * context has already earned the ask, so a headline would just shout).
- *
- * The consent checkbox is NOT visually de-emphasised. It is the thing that
- * makes the address lawfully mailable, and hiding it in grey 11px type is how
- * a list ends up unusable. It reads at body size, in body colour.
- */
-.nl {
-  margin-top: var(--s-6);
-  padding: var(--s-5);
-  border: 1px solid var(--line);
-  border-radius: var(--r-lg, 14px);
-  background: var(--surface-2, var(--surface));
-}
-.nl-title { margin: 0 0 var(--s-2); font-size: var(--t-lg); font-weight: 600; }
-.nl-lede { margin: 0 0 var(--s-4); font-size: var(--t-sm); color: var(--ink-soft); max-width: 56ch; }
-.nl-row { display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: center; }
-/* Visible to screen readers only: the placeholder is a hint, not a label, and
-   an input with no programmatic label fails WCAG 3.3.2. */
-.nl-lab {
-  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
-}
-.nl-input { flex: 1 1 240px; min-width: 0; }
-.nl-btn { flex: 0 0 auto; }
-.nl-consent {
-  display: flex; gap: var(--s-2); align-items: flex-start;
-  margin-top: var(--s-3); font-size: var(--t-sm); color: var(--ink-soft);
-  cursor: pointer; max-width: 60ch;
-}
-.nl-consent input { margin-top: 3px; flex: 0 0 auto; }
-.nl-status { margin: var(--s-3) 0 0; font-size: var(--t-sm); min-height: 1.2em; }
-.nl-status.ok { color: var(--ok, #16794a); }
-.nl-status.err { color: var(--danger, #b42318); }
-
-/* Compact: sits inside the tool workspace after a successful run, where the
-   download button must remain the loudest element on the screen. */
-.nl-compact { margin-top: var(--s-5); padding: var(--s-4); grid-column: 1 / -1; }
-.nl-compact .nl-lede { margin-bottom: var(--s-3); font-size: var(--t-xs); }
-
-/* Footer variant: transparent, because a filled card inside an already-tinted
-   footer reads as a second footer. */
-.ftr-nl { margin-top: var(--s-6); }
-.ftr-nl .nl { background: transparent; border-color: var(--line); max-width: 620px; }
-
-@media (max-width: 560px) {
-  .nl-row { flex-direction: column; align-items: stretch; }
-  .nl-btn { width: 100%; }
-}
-/* newsletter.js hides the footer slot when an earned slot is on the page. The
-   attribute alone relies on the UA default, which any future `display` rule on
-   these wrappers would silently defeat — and the symptom would be two identical
-   forms on one screen. Made explicit so it cannot be overridden by accident. */
-[data-newsletter][hidden] { display: none !important; }
 
 /* --- chosen files on a multi-file tool (assets/js/filetool.js) --------------
  * Merge order is the product on Merge PDFs, so the list is numbered and the
@@ -591,48 +535,4 @@ video.wcode { padding: 0; }
 @media (max-width: 720px) {
   /* On a phone the form is the whole point, so the image gives up height. */
   .contact-hero { max-height: 150px; margin-bottom: var(--s-5); }
-}
-
-/* --- homepage newsletter block ---------------------------------------------
- * ONE BLOCK. Photographs, heading, copy and form inside a single bounded card,
- * so the section reads as one object rather than three adjacent things. The
- * photo strip is the lid; everything else sits under it on the same surface.
- */
-.nlb {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--r-xl, 20px);
-  box-shadow: var(--shadow-md);
-  overflow: hidden;                 /* keeps the photos inside the radius */
-}
-.nlb-shots {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 2px; background: var(--line);   /* the gap IS the divider */
-}
-.nlb-shots img {
-  display: block; width: 100%; height: 220px;
-  object-fit: cover; object-position: center 40%;
-}
-.nlb-body { padding: var(--s-6) var(--s-6) var(--s-7); text-align: center; }
-.nlb-body h2 { margin: var(--s-2) 0 var(--s-3); font-size: var(--t-2xl); }
-.nlb-body > p {
-  margin: 0 auto var(--s-5); max-width: 52ch;
-  color: var(--ink-soft);
-}
-/* The form comes from newsletter.js, which styles itself. Inside this block it
-   drops its own frame — the card already provides one — and centres. */
-.nlb-body .nl {
-  border: 0; background: transparent; padding: 0;
-  margin: 0 auto; max-width: 30rem; text-align: left;
-}
-.nlb-body .nl-title { display: none; }   /* the h2 above already said it */
-.nlb-body .nl-lede  { display: none; }   /* as did the paragraph */
-
-@media (max-width: 720px) {
-  /* Three photos side by side at phone width are postage stamps. Two, taller,
-     with the third dropped rather than shrunk into meaninglessness. */
-  .nlb-shots { grid-template-columns: repeat(2, 1fr); }
-  .nlb-shots img:last-child { display: none; }
-  .nlb-shots img { height: 150px; }
-  .nlb-body { padding: var(--s-5) var(--s-4) var(--s-6); }
 }

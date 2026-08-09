@@ -23,6 +23,11 @@
 <link rel="manifest" href="site.webmanifest">
 <link rel="stylesheet" href="assets/css/tokens.css?v=20260727perf">
 <link rel="stylesheet" href="assets/css/base.css?v=20260727perf">
+<!-- The homepage does not load pages.css (10 KB gzipped of styles for pages
+     this is not). newsletter.css is the small shared part that carries the
+     capture form and the band below — same file build.js folds into app.css,
+     so the homepage and every built page style the form from one source. -->
+<link rel="stylesheet" href="assets/css/newsletter.css?v=20260727perf">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"WebSite","name":"Vootkit","url":"https://www.vootkit.com/",
 "description":"Free online tools that run in your browser.",
@@ -231,14 +236,14 @@
        The form is [data-newsletter], so assets/js/newsletter.js builds it,
        validates it and writes to Supabase exactly as it does in the footer and
        on the blog — no second implementation to drift out of step. -->
-  <section class="wrap section">
-    <div class="nlb">
-      <div class="nlb-shots" aria-hidden="true">
-        <img src="/assets/blog/nl-community.jpg" alt="" width="600" height="640" loading="lazy" decoding="async">
-        <img src="/assets/blog/nl-summit.jpg"    alt="" width="600" height="640" loading="lazy" decoding="async">
-        <img src="/assets/blog/nl-studio.jpg"    alt="" width="600" height="640" loading="lazy" decoding="async">
-      </div>
-      <div class="nlb-body">
+  <section class="nlband">
+    <div class="nlband-bg" aria-hidden="true">
+      <img src="/assets/blog/nl-community-band.jpg" alt="" width="760" height="700" loading="lazy" decoding="async">
+      <img src="/assets/blog/nl-summit-band.jpg"    alt="" width="760" height="700" loading="lazy" decoding="async">
+      <img src="/assets/blog/nl-studio-band.jpg"    alt="" width="760" height="700" loading="lazy" decoding="async">
+    </div>
+    <div class="wrap">
+      <div class="nlcard">
         <span class="eyebrow">The Vootkit newsletter</span>
         <h2>New tools, now and then.</h2>
         <p>A short email when something worth knowing about ships — a new tool, a

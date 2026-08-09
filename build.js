@@ -188,7 +188,7 @@ function adUnit(slotKey, label) {
 const V = "?v=" + (function () {
   const crypto = require("crypto");
   const h = crypto.createHash("sha1");
-  const css = ["tokens", "base", "pages", "skin"].map((n) => "assets/css/" + n + ".css");
+  const css = ["tokens", "base", "pages", "newsletter", "skin"].map((n) => "assets/css/" + n + ".css");
   let js = [];
   try { js = fs.readdirSync(path.join(ROOT, "assets/js")).filter((f) => f.endsWith(".js")).sort().map((f) => "assets/js/" + f); } catch (e) {}
   css.concat(js).forEach((rel) => { try { h.update(fs.readFileSync(path.join(ROOT, rel))); } catch (e) {} });
@@ -2138,7 +2138,7 @@ fxIds.forEach((id) => {
  * one of 1,478 pages — three extra round trips before the browser can paint,
  * which matters most on the mobile connections a chunk of our traffic uses.
  * Concatenated in the SAME order they were linked, so the cascade is identical. */
-const CSS_PARTS = ["tokens.css", "base.css", "pages.css", "skin.css"];
+const CSS_PARTS = ["tokens.css", "base.css", "pages.css", "newsletter.css", "skin.css"];
 const cssBundle = CSS_PARTS
   .map((f) => `/* ---- ${f} ---- */\n` + fs.readFileSync(path.join(ROOT, "assets", "css", f), "utf8"))
   .join("\n");
