@@ -140,12 +140,25 @@
   object-fit: cover; object-position: center 42%;
 }
 /* The scrim. Vertical gradient plus a centre pool, so the middle — where the
-   card sits — is darkest and the edges keep some of the photograph. */
+   card sits — is darkest and the top edge keeps some of the photograph.
+ *
+ * The bottom stop is the footer's own #0f1729 at near-full opacity, on
+ * purpose: this band is the last thing on the page, so it now runs straight
+ * into the footer. Left alone that meeting is a hard seam between two
+ * unrelated darks. Landing the gradient ON the footer colour turns it into a
+ * dissolve — the photograph fades out and the footer begins, and the page
+ * ends on one continuous dark base instead of two stacked slabs.
+ *
+ * It also only ever makes the text MORE readable: every stop below the card
+ * is darker than the one the contrast figures above were measured against. */
 .nlband::after {
   content: ''; position: absolute; inset: 0; z-index: -1;
   background:
-    linear-gradient(180deg, rgb(8 12 20 / .62), rgb(8 12 20 / .78)),
-    radial-gradient(60rem 30rem at 50% 50%, rgb(8 12 20 / .55), transparent 70%);
+    linear-gradient(180deg,
+      rgb(8 12 20 / .62) 0%,
+      rgb(15 23 41 / .80) 62%,
+      rgb(15 23 41 / .97) 100%),
+    radial-gradient(60rem 30rem at 50% 46%, rgb(8 12 20 / .55), transparent 70%);
 }
 .nlcard {
   max-width: 40rem; margin: 0 auto; text-align: center; color: #fff;
