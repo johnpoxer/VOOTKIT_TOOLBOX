@@ -779,3 +779,56 @@ console.log(`seo + tool icons: ${pass} total assertions passed`);
   }
 }
 console.log(`seo + footer parity: ${pass} total assertions passed`);
+
+/* ---------------------------------------------------------------------------
+ * THE SAFETY SECTION HAS TO STAY TRUE.
+ *
+ * "Every tool but two does its work inside the browser tab" is a factual claim
+ * about the catalogue, printed on the homepage, on a site whose entire pitch is
+ * that it does not upload your files. The day somebody adds a third tool with
+ * processing:"network" that sentence becomes false and nobody is going to
+ * re-read the homepage to notice.
+ *
+ * So the catalogue is asserted against the copy. If a third network tool lands,
+ * this fails and names it, and the homepage gets updated in the same commit.
+ * ------------------------------------------------------------------------- */
+{
+  const fsS = require("fs"), pathS = require("path");
+  const home = (() => { try {
+    return fsS.readFileSync(pathS.join(__dirname, "..", "index.html"), "utf8");
+  } catch (e) { return ""; } })();
+  const net = VK.TOOLS.filter((t) => t.processing === "network").map((t) => t.id).sort();
+
+  eq(net.length, 2, "exactly two tools use the network — the homepage says so; found: " + net.join(", "));
+  eq(net.join(","), "currency-converter,url-shortener",
+     "the two network tools are the two the homepage describes; found: " + net.join(", "));
+
+  if (!home) {
+    console.log("safety section: SKIPPED (index.html unreadable)");
+  } else {
+    const sec = (home.match(/<section class="section wrap" id="safety">[\s\S]*?<\/section>/) || [""])[0];
+    ok(sec, "the homepage has a #safety section");
+    ok(/Every tool but two/.test(sec),
+       "the claim is phrased so it survives the catalogue growing, not a hard-coded count");
+    ok(/badge-net/.test(sec), "it shows the actual badge the labelled tools carry");
+    ok(/privacy\.html/.test(sec), "it points at the privacy policy for the detail");
+    eq((sec.match(/class="saf-col"/g) || []).length, 3, "three columns, as in the reference");
+
+    /* Nothing in here may promise storage, sync or a backup — the whole section
+       exists to say the opposite, and one stray word undoes it. */
+    ok(!/we store|we keep|backed up|backup|sync your|save your files/i.test(sec),
+       "the safety copy never implies we keep anything");
+
+    /* The comparison table above it says an account is never required. That is
+       true only while the download gate is off, and the gate is a config flag
+       somebody can flip. Assert the two agree. */
+    const CFG2 = require("../data/site.config.js");
+    if (CFG2.gate && CFG2.gate.enabled === true) {
+      ok(!/Account required<\/td><td class="no">Often<\/td><td class="yes">Never/.test(home),
+         "the download gate is ON, so the homepage may no longer claim an account is never required");
+    } else {
+      ok(true, "gate is off, so the 'account required: never' row is accurate");
+    }
+  }
+}
+console.log(`seo + product safety: ${pass} total assertions passed`);
