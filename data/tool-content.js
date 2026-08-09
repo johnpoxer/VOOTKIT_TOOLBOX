@@ -7505,6 +7505,171 @@ module.exports = {
     related: ['pdf-ocr', 'pdf-to-text', 'qr-scanner', 'text-diff', 'word-counter', 'exif-viewer']
   },
 
+  'url-shortener': {
+    intro: 'A short link is a redirect somebody else controls. That is fine when the somebody is you, and it is the reason to be careful about every shortened link you did not create.',
+    what: [
+      'Turns a long URL into a short vootkit.com link, with an optional custom name instead of a random code.',
+      'Unlike almost everything else here, this one genuinely needs a server — a redirect has to exist somewhere permanent, so the link and its destination are stored.'
+    ],
+    specs: {
+      caption: 'What to know before shortening',
+      rows: [
+        ['Storage', 'The link and destination are stored — this tool is not on-device'],
+        ['Custom names', 'Optional; taken first-come, and case matters'],
+        ['Clicks', 'Counted, so you can see whether a link was used'],
+        ['Permanence', 'A short link is only as good as the service behind it'],
+        ['Not a secret', 'Short codes are guessable — never shorten a private URL'],
+        ['SEO', 'Redirects pass through, but a shortened link shows no domain to the reader']
+      ]
+    },
+    steps: [
+      'Paste the long URL, including the https://.',
+      'Add a custom name if you want the link to be readable. Short and lowercase travels better.',
+      'Copy the result and <strong>test it once</strong> before sending it anywhere.',
+      'Never shorten a URL that is private because it is unguessable — shortening does not make it more secret, and short codes can be enumerated.'
+    ],
+    tip: 'The reason people distrust short links is that they hide the destination, and that distrust is entirely rational — it is the same property phishing relies on. If you are sending a link to people who do not already know you, the plain URL will get clicked more often than a shortened one, because the reader can see where it goes. Shorten for print, for character-limited posts and for tracking; not by default.',
+    faqs: [
+      { q: 'Is this tool on-device like the rest of Vootkit?', a: 'No, and it cannot be. A redirect has to exist at a URL that works when you are not there, which means the link and its destination are stored on a server. It is the one category of tool here where "runs in your browser" would be a meaningless claim, so it is worth stating plainly.' },
+      { q: 'Are short links private?', a: 'No. Short codes are drawn from a small space and can be guessed or enumerated, so anything reachable at a shortened URL should be treated as public. If a document is only protected by having an unguessable address, shortening it makes it materially easier to find, not harder.' },
+      { q: 'Do short links hurt SEO?', a: 'A redirect passes authority through, so the mechanical answer is no. The practical answer is that a shortened link shows the reader no domain, which lowers click-through on anything published — people click links whose destination they recognise. For a public page, the full URL is usually the better choice.' },
+      { q: 'What happens if the shortening service disappears?', a: 'Every link breaks at once, which is the structural risk of the whole category and why several large shorteners shutting down took a great deal of the web with them. For anything meant to last — printed material, documentation, a citation — use the real URL and accept that it is long.' }
+    ],
+    related: ['qr-generator', 'qr-scanner', 'url-encoder', 'utm-builder', 'uuid-generator', 'text-diff']
+  },
+
+  'line-tools': {
+    intro: 'Half of all data cleaning is the same four operations on a list of lines, and the usual way to do them involves opening a spreadsheet, pasting a column, and fighting whatever it decides your data means.',
+    what: [
+      'Sorts, reverses, deduplicates, shuffles, numbers and trims a list of lines, one operation at a time, with the result shown alongside the input rather than replacing it.',
+      'Sorting is alphabetical, which is not the same as numerical — a detail that quietly reorders any list of numbers you throw at it, and one that has produced a great many wrong-looking reports. Shuffle has the opposite trap: it destroys an order you may have wanted, and there is no undo.'
+    ],
+    specs: {
+      caption: 'What each operation does',
+      rows: [
+        ['Sort A→Z', 'Alphabetical, locale-aware — so accented characters land sensibly'],
+        ['Numbers', 'Sorted as text: 10 comes before 9, because "1" precedes "9"'],
+        ['Deduplicate', 'Exact match only — trailing spaces make two lines different'],
+        ['Trim', 'Removes leading and trailing whitespace from every line'],
+        ['Blank lines', 'Preserved unless you remove them explicitly'],
+        ['Processing', 'In the browser; nothing is uploaded or stored']
+      ]
+    },
+    steps: [
+      'Paste your lines.',
+      '<strong>Trim first</strong> if the list came from a copy-paste — invisible trailing spaces defeat deduplication.',
+      'Apply one operation. The result appears alongside so you can compare.',
+      'Copy the output. Nothing is saved when you leave, so paste it somewhere before closing the tab.'
+    ],
+    tip: 'Trim before you deduplicate, always. "example@mail.com" and "example@mail.com " look identical on screen and are two different strings, so a list pasted out of a spreadsheet or an email client routinely keeps duplicates that appear to be duplicates. Trimming first is a two-second step that turns "this tool did not remove my duplicates" into it having worked correctly all along.',
+    faqs: [
+      { q: 'Why did sorting put 10 before 9?', a: 'Because it is an alphabetical sort, and it compares character by character: "1" comes before "9", so 10, 100 and 1000 all sort ahead of 2. This is standard text sorting rather than a bug, but it is genuinely surprising on a list of numbers — for those, pad with leading zeros first or sort them somewhere numeric.' },
+      { q: 'Why are my duplicates not being removed?', a: 'Almost always whitespace. Deduplication compares exact strings, so a trailing space, a tab or a non-breaking character makes two visually identical lines different. Run the trim operation first and the duplicates will collapse as expected.' },
+      { q: 'Does it handle very long lists?', a: 'Comfortably into the tens of thousands of lines. Everything runs in the page, so the practical limit is browser memory rather than any server rule, and you will notice sluggishness before anything fails. Nothing is uploaded regardless of size.' },
+      { q: 'Is my list stored anywhere?', a: 'No. It is processed in the page on your own machine and forgotten when you close the tab, which matters because lists like these are usually email addresses, customer names or internal identifiers — exactly the sort of thing worth not pasting into an unknown server.' }
+    ],
+    related: ['text-diff', 'word-counter', 'case-converter', 'csv-viewer', 'json-csv', 'markdown-editor']
+  },
+
+  'markdown-editor': {
+    intro: 'Markdown exists because formatting toolbars break your typing rhythm. You write asterisks around a word instead of reaching for the mouse, and the formatting appears without your hands leaving the keyboard.',
+    what: [
+      'A split editor: Markdown on one side, rendered output on the other, updating as you type.',
+      'The live preview is the part that teaches the syntax. You stop needing a cheat sheet after about ten minutes of watching it respond, which is why it beats reading a reference — and Markdown is now the input format for GitHub, Reddit, Discord, most static site generators and a great many note applications.'
+    ],
+    specs: {
+      caption: 'The syntax worth knowing',
+      rows: [
+        ['# Heading', 'One hash per level, up to six'],
+        ['**bold** and *italic*', 'Two asterisks and one'],
+        ['[text](url)', 'A link — text in square brackets, target in round'],
+        ['- item', 'A bullet list; use 1. for numbered'],
+        ['> quote', 'A blockquote'],
+        ['`code`', 'Inline code with backticks; three backticks for a block']
+      ]
+    },
+    steps: [
+      'Type in the left pane and watch the right one.',
+      'Leave a <strong>blank line</strong> between paragraphs — a single newline does not start a new one.',
+      'Use the preview to check links before you publish anywhere.',
+      'Copy the Markdown out when you are done. Nothing is saved.'
+    ],
+    tip: 'The blank line is the rule that catches everyone. Markdown treats a single line break as a continuation of the same paragraph, so two lines typed one under the other render as one run-on sentence — which is why pasted text so often collapses into a wall. Two line breaks start a new paragraph. Almost every "my formatting did not work" moment in Markdown traces back to this one behaviour.',
+    faqs: [
+      { q: 'Why did my two lines run together?', a: 'Because a single newline is treated as a continuation rather than a paragraph break — the standard makes this choice so that hard-wrapped text reflows properly. Leave a blank line between paragraphs, or end a line with two spaces if you want a line break without starting a new paragraph.' },
+      { q: 'Which flavour of Markdown is this?', a: 'The common core: headings, emphasis, links, lists, quotes and code. Extensions differ between platforms — GitHub tables, footnotes and task lists are not universal — so if something renders here and not where you paste it, the flavour is usually why rather than the syntax being wrong.' },
+      { q: 'Is my document saved?', a: 'No. It lives in the page and disappears when you close the tab, with nothing written to your device or sent anywhere. Copy your text out before you leave — that is a deliberate trade for a tool with no account and no storage, but it does mean treating the tab as a scratchpad.' },
+      { q: 'Can I paste in formatted text from a document?', a: 'You can paste it, but the formatting will not survive — you will get the plain characters, and any bold or italic from the source is lost. Converting a formatted document to Markdown properly needs a converter; this is an editor for writing Markdown rather than for importing it.' }
+    ],
+    related: ['word-counter', 'readability', 'text-diff', 'line-tools', 'case-converter', 'html-formatter']
+  },
+
+  'random-picker': {
+    intro: 'The reason to use a randomiser for a decision is rarely the randomness. It is that a visibly impartial process ends an argument that a human choice would have started.',
+    what: [
+      'Picks one or several options at random from a list you paste in, with an option to avoid repeats.',
+      'The no-repeats setting is the difference between drawing names from a hat and putting each name back before drawing again — two genuinely different things people often conflate.'
+    ],
+    specs: {
+      caption: 'How the draw works',
+      rows: [
+        ['Input', 'One option per line'],
+        ['Unique picks', 'Each option can be drawn once — like a hat you do not refill'],
+        ['Repeats allowed', 'Each pick is independent; the same name can come up twice'],
+        ['Randomness', 'The browser’s generator — fine for draws, not for cryptography'],
+        ['Blank lines', 'Ignored, so a trailing newline does not become an entry'],
+        ['Processing', 'In the browser; the list is not stored or sent anywhere']
+      ]
+    },
+    steps: [
+      'Paste your options, one per line. Blank lines are ignored, so a stray newline at the end will not become an entry.',
+      'Set how many to pick. Drawing several at once is not the same as drawing one repeatedly — see the repeats setting below.',
+      'Decide on repeats. <strong>For a prize draw you almost always want unique</strong>.',
+      'Draw. Each run is independent — re-running until you like the answer defeats the purpose.'
+    ],
+    tip: 'If the draw needs to be credible to other people, run it once with them watching, or record the screen. A result produced privately and announced afterwards carries no more weight than simply choosing, because nobody can tell how many times it was run. The value of a randomiser in any contested decision is entirely in the visibility of the process, not in the quality of the randomness.',
+    faqs: [
+      { q: 'Should I allow repeats?', a: 'For a prize draw, no — a name drawn once should come out of the hat, which is what unique picks do. Allow repeats when each pick is genuinely independent, like choosing a task at random each day, where yesterday having come up should not exclude it today.' },
+      { q: 'Is it actually random?', a: 'It uses the browser’s built-in generator, which is pseudorandom: statistically well distributed and entirely fine for draws, teams, seating and decisions. It is not cryptographically secure, so it should not be used to generate anything an adversary has an incentive to predict, such as tokens or passwords.' },
+      { q: 'Can I use it for a public prize draw?', a: 'The mechanism is fair, but fairness that cannot be observed does not settle anything. Draw live, or record it, so entrants can see it was a single run. Many jurisdictions also have specific rules about prize promotions, which are about process and record-keeping rather than the randomiser you used.' },
+      { q: 'Is my list saved?', a: 'No. It is read in the page, used for the draw and forgotten when you close the tab — nothing is written to your device or sent to a server. That matters when the list is real names, which for most uses of this tool it is.' }
+    ],
+    related: ['random-number-generator', 'password-generator', 'uuid-generator', 'line-tools', 'countdown', 'trip-cost-splitter']
+  },
+
+  'random-number-generator': {
+    intro: 'There are two kinds of random number, and using the wrong one is the difference between a fair raffle and a security incident.',
+    what: [
+      'Generates numbers in a range you set, one or many, with an option to make every result unique.',
+      'It uses the browser’s general-purpose generator — the right tool for draws, sampling, testing and games, and the wrong one for anything an attacker would want to guess.'
+    ],
+    specs: {
+      caption: 'Choosing the right generator',
+      rows: [
+        ['This tool', 'Pseudorandom — deterministic algorithm, well distributed'],
+        ['Good for', 'Draws, teams, dice, test data, sampling, tie-breaks'],
+        ['Not for', 'Passwords, tokens, keys, session ids, anything secret'],
+        ['Range', 'Inclusive at both ends'],
+        ['Unique option', 'Requires the range to be at least as large as the count'],
+        ['Negative numbers', 'Allowed — the minimum can be below zero']
+      ]
+    },
+    steps: [
+      'Set the minimum and maximum. <strong>Both ends are included.</strong>',
+      'Choose how many numbers you want. Asking for several at once gives you a single draw rather than several separate ones.',
+      'Turn on unique if you are drawing positions or lottery numbers rather than rolling a die repeatedly, since a die can and should repeat.',
+      'For anything security-related, use the <strong>password generator</strong> instead — it draws from a cryptographic source.'
+    ],
+    tip: 'Pseudorandom means the sequence is produced by an algorithm from a starting value, and anyone who learns that value can reproduce every number that follows. For a raffle nobody cares. For a password reset token, a promo code or a session identifier, it is the whole attack — and the mistake is common enough that it has caused real breaches. If a number needs to be unguessable rather than merely unpredictable to you, it needs a cryptographic generator.',
+    faqs: [
+      { q: 'What does pseudorandom actually mean?', a: 'The numbers come from a deterministic algorithm seeded with a starting value, rather than from physical noise. The output passes statistical tests for randomness, which is what matters for draws and simulations, but it is reproducible in principle — so it should never protect anything.' },
+      { q: 'Can I use this to generate a password?', a: 'No. Use the password generator, which draws from the browser’s cryptographic source. The distinction sounds academic and is not: predictable generators used for tokens and reset codes have caused real, documented breaches, and the failure is invisible until somebody exploits it.' },
+      { q: 'Are the minimum and maximum included?', a: 'Yes, both ends are in range, so 1 to 6 can produce a 1 and a 6 as you would expect from a die. Off-by-one at the boundary is a classic source of quiet bias in home-made randomisers, which is why it is worth stating rather than leaving you to test it.' },
+      { q: 'Why can I not get unique numbers?', a: 'The range has to be at least as large as the count — you cannot draw ten unique numbers between 1 and 5, because there are only five to draw. Widen the range or reduce the count, or allow repeats if the picks are genuinely independent.' }
+    ],
+    related: ['password-generator', 'random-picker', 'uuid-generator', 'hash-generator', 'password-strength', 'line-tools']
+  },
+
   'loan-calculator': {
     intro: 'The monthly payment is the number lenders lead with, and it is the least useful one for comparing offers. Two loans with almost identical payments can differ by thousands once the term differs — total repaid is where that shows up.',
     what: [
