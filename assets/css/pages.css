@@ -592,3 +592,47 @@ video.wcode { padding: 0; }
   /* On a phone the form is the whole point, so the image gives up height. */
   .contact-hero { max-height: 150px; margin-bottom: var(--s-5); }
 }
+
+/* --- homepage newsletter block ---------------------------------------------
+ * ONE BLOCK. Photographs, heading, copy and form inside a single bounded card,
+ * so the section reads as one object rather than three adjacent things. The
+ * photo strip is the lid; everything else sits under it on the same surface.
+ */
+.nlb {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-xl, 20px);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;                 /* keeps the photos inside the radius */
+}
+.nlb-shots {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 2px; background: var(--line);   /* the gap IS the divider */
+}
+.nlb-shots img {
+  display: block; width: 100%; height: 220px;
+  object-fit: cover; object-position: center 40%;
+}
+.nlb-body { padding: var(--s-6) var(--s-6) var(--s-7); text-align: center; }
+.nlb-body h2 { margin: var(--s-2) 0 var(--s-3); font-size: var(--t-2xl); }
+.nlb-body > p {
+  margin: 0 auto var(--s-5); max-width: 52ch;
+  color: var(--ink-soft);
+}
+/* The form comes from newsletter.js, which styles itself. Inside this block it
+   drops its own frame — the card already provides one — and centres. */
+.nlb-body .nl {
+  border: 0; background: transparent; padding: 0;
+  margin: 0 auto; max-width: 30rem; text-align: left;
+}
+.nlb-body .nl-title { display: none; }   /* the h2 above already said it */
+.nlb-body .nl-lede  { display: none; }   /* as did the paragraph */
+
+@media (max-width: 720px) {
+  /* Three photos side by side at phone width are postage stamps. Two, taller,
+     with the third dropped rather than shrunk into meaninglessness. */
+  .nlb-shots { grid-template-columns: repeat(2, 1fr); }
+  .nlb-shots img:last-child { display: none; }
+  .nlb-shots img { height: 150px; }
+  .nlb-body { padding: var(--s-5) var(--s-4) var(--s-6); }
+}

@@ -222,6 +222,33 @@
     </p>
   </section>
 
+  <!-- NEWSLETTER — ONE BLOCK.
+       Photographs, heading, copy and the form all live inside a single bounded
+       card rather than a full-bleed band, so it reads as one object on the page
+       instead of three separate things that happen to be adjacent.
+       Placed BELOW the tools deliberately: someone arriving from a search for
+       "merge pdf" gets what they came for first and the ask second.
+       The form is [data-newsletter], so assets/js/newsletter.js builds it,
+       validates it and writes to Supabase exactly as it does in the footer and
+       on the blog — no second implementation to drift out of step. -->
+  <section class="wrap section">
+    <div class="nlb">
+      <div class="nlb-shots" aria-hidden="true">
+        <img src="/assets/blog/nl-community.jpg" alt="" width="600" height="640" loading="lazy" decoding="async">
+        <img src="/assets/blog/nl-summit.jpg"    alt="" width="600" height="640" loading="lazy" decoding="async">
+        <img src="/assets/blog/nl-studio.jpg"    alt="" width="600" height="640" loading="lazy" decoding="async">
+      </div>
+      <div class="nlb-body">
+        <span class="eyebrow">The Vootkit newsletter</span>
+        <h2>New tools, now and then.</h2>
+        <p>A short email when something worth knowing about ships — a new tool, a
+        faster engine, or a guide that saves you an hour. No more than monthly,
+        and one click gets you out.</p>
+        <div data-newsletter="homepage"></div>
+      </div>
+    </div>
+  </section>
+
   <section class="section wrap" style="text-align:center">
     <h2 style="font-size:var(--t-2xl);margin-bottom:var(--s-3)">Start with the thing you came for.</h2>
     <p style="color:var(--ink-soft);margin-bottom:var(--s-5)">Nothing uploaded. No watermark. Just fast tools.</p>
