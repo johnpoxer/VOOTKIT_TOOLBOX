@@ -438,12 +438,11 @@ video.wcode { padding: 0; }
   font-size: var(--t-lg); color: var(--ink-soft);
   max-width: 46ch; margin: 0 0 var(--s-5);
 }
-/* The upgrade button is the brand blue, as in the supplied design — the one
-   place on the site where the pink accent deliberately steps aside. */
+/* No colour override: .btn-primary is already this blue now that the site
+   accent is. The three rules that used to live here were written when the
+   accent was rose and the Pro design was not, and they would now only be a
+   second place to change the same colour. */
 .pro-cta { font-size: var(--t-md); padding: 0.85em 1.6em; }
-.pro-cta.btn-primary { background: var(--brand); border-color: transparent; color: #fff; }
-.pro-cta.btn-primary:hover { background: #1d4ed8; }
-.pro-cta.btn-primary:active { background: #1e40af; }
 .pro-note { margin: var(--s-3) 0 0; font-size: var(--t-sm); color: var(--ink-mute); }
 
 /* THE EDGES ARE MASKED, NOT CROPPED.

@@ -203,7 +203,7 @@ label { display: block; font-size: var(--t-sm); font-weight: 600; color: var(--i
   font-family: var(--font-display); font-size: var(--t-lg); font-weight: 700;
   color: #fff; margin-bottom: var(--s-3);
 }
-.ftr-mark svg { width: 30px; height: 30px; color: #f472b6; }
+.ftr-mark svg { width: 30px; height: 30px; color: #7dabf8; }
 .ftr-trust { display: flex; gap: var(--s-2); align-items: flex-start; margin: 0; }
 .ftr-trust svg {
   flex: 0 0 auto; width: 17px; height: 17px; margin-top: 2px;

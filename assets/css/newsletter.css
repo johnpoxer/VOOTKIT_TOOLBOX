@@ -182,8 +182,10 @@
   background-size: 19px 19px;
 }
 .nlcard .nl-input::placeholder { color: rgb(255 255 255 / .60); }
+/* Follows --accent rather than a literal, now that the accent is this blue.
+   One place to change it, and it can never drift from the rest of the site. */
 .nlcard .nl-btn {
-  background: #2563eb; border-color: transparent; color: #fff;
+  background: var(--accent); border-color: transparent; color: var(--accent-on);
   border-radius: var(--r-md);
   text-transform: uppercase; letter-spacing: .04em;
   padding-inline: var(--s-5);
@@ -192,8 +194,8 @@
   content: ''; width: 15px; height: 15px; flex: 0 0 auto;
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffffff'%3E%3Cpath d='M13.2 2 4 14h5.9l-1.1 8L19 10h-6z'/%3E%3C/svg%3E") center / contain no-repeat;
 }
-.nlcard .nl-btn:hover { background: #1d4ed8; }
-.nlcard .nl-btn:active { background: #1e40af; }
+.nlcard .nl-btn:hover { background: var(--accent-hover); }
+.nlcard .nl-btn:active { background: var(--accent-active); }
 /* Consent, centred under the row where the reference puts its privacy line.
    It stays a real required checkbox — that is what makes the address lawfully
    mailable, and test/newsletter.test.js fails if it is ever removed or

@@ -21,11 +21,11 @@
    *
    * #f4f6fb lands at 1.081, keeps our slightly cooler cast, and costs almost
    * nothing in text contrast (--ink 17.98 -> 17.07, still far past AA). */
-  --n-25: #f5f5fa;   /* page canvas — measured from iLovePDF, 1.087 against white cards */
-  --n-50: #ebebf3;
+  --n-25: #f4f6fb;   /* page canvas — 1.081 against white cards, a touch cooler for the blue */
+  --n-50: #eaeef7;
   --n-100:#eef1f6;
-  --n-200:#e2e7ef;
-  --n-300:#cbd3df;
+  --n-200:#e0e7f2;
+  --n-300:#c6d2e6;
   --n-400:#9aa5b5;
   /* Started at #6b7688, which measured 4.47 against the ORIGINAL canvas —
      already under the 4.5 AA threshold before any of this. Darkened twice:
@@ -43,19 +43,28 @@
   --n-800:#1f2937;
   --n-900:#0d1420;
 
-  /* ---- brand accent: premium rose-pink (per-category overrides in skin.css) ---- */
-  /* Was #d61f69, which measured 4.54 as text on the canvas — over the 4.5 AA
-     line by four hundredths, and 4.26 once the ambient wash was laid over it.
-     Thinning the wash does not rescue it: even at 2% alpha it only reaches
-     4.41, because the shortfall was there before the wash existed.
-     #cc1a62 is a barely perceptible shift of the same rose and clears AA
-     everywhere: 4.66 under the wash, 4.97 on canvas, 5.40 on white. It also
-     sits neatly between the old accent and --accent-hover below. */
-  --accent:        #cc1a62;
-  --accent-hover:  #be185d;
-  --accent-active: #a3134f;
-  --accent-weak:   #fdeef5;   /* soft pink tinted surface */
-  --accent-border: #f6c2d9;
+  /* ---- brand accent: blue (per-category overrides in skin.css) ---- */
+  /*
+   * WHY NOT #2563eb, THE OBVIOUS BLUE. It measures 4.78 as text on the canvas
+   * and 4.55 under the ambient wash — over the AA line by four hundredths.
+   * That is the exact margin the previous rose accent failed on, and it failed
+   * only once the wash was measured rather than assumed. Shipping a second
+   * accent with the same razor-thin clearance would be repeating the mistake
+   * with a different hue.
+   *
+   * #1d4ed8 is unmistakably the same blue and clears AA everywhere it is used
+   * as text: 6.20 on the canvas, 5.90 under the wash, 6.70 on a white card.
+   * The brighter #2563eb survives as a LARGE-FILL colour only — the Pro hero
+   * and the newsletter Subscribe button — where the bar is 3:1, not 4.5:1.
+   *
+   * The per-category accents in skin.css are untouched. They are what stops
+   * 258 tools reading as one undifferentiated grid, and they were never the
+   * thing that made the site look pink. */
+  --accent:        #1d4ed8;
+  --accent-hover:  #1e40af;
+  --accent-active: #1e3a8a;
+  --accent-weak:   #eaf0ff;   /* soft blue tinted surface */
+  --accent-border: #bfd0f7;
   --accent-on:     #ffffff;   /* text on accent */
 
   /* --brand is what the Pro page's hero wash, its feature icons and its
@@ -65,17 +74,11 @@
      circles lost their fill and their colour, and the SVG's gradient was
      invalid enough to drop the shape it filled. The hero rendered blank white
      from the day it shipped.
-     IT IS BLUE, NOT THE SITE ACCENT. Aliasing it to --accent was the obvious
-     move and it was wrong twice over: it put a 9% pink radial across the top of
-     the pricing page — the exact tint that had just been taken off every other
-     page — and it contradicted the supplied design, where the Pro hero, its
-     illustration and its upgrade button are all blue. Same blue as the
-     newsletter Subscribe button, so the site now reads as one accent for the
-     product and one for the premium moments, deliberately, rather than by
-     accident. */
-  --brand:      #2563eb;
-  --brand-weak: #eaf0ff;
-  --brand-line: #b9c9ee;
+     It was briefly a separate blue, because the site accent was still rose and
+     the Pro design was not. Now that the accent is blue there is nothing left
+     for a second one to mean, so it is an alias again — one accent, as the
+     header of this file has always claimed. */
+  --brand: var(--accent);
 
   /* ---- semantic only. never decorative. ---- */
   --ok:#0f7a4a;  --ok-weak:#e7f6ee;  --ok-border:#a9dcc2;
@@ -128,23 +131,23 @@
    * travel with the scroll and never repaints.
    *
    * No image, no request, no JavaScript. */
-  /* NO ACCENT IN THE WASH. The top tint used to be the pink accent at 4%,
-     which is faint on a swatch and unmistakable across a whole viewport: the
-     page read as tinted pink above the fold, which is the opposite of the calm
-     neutral canvas this was measured against. Both tints are now cool greys —
-     the depth stays, the hue does not. Colour belongs on buttons and icons,
-     where it means something, not spread under everything. */
+  /* THE TINT IS BLUE AGAIN, AND THAT IS NOT THE OLD MISTAKE REPEATED.
+     A 4% rose over a whole viewport read as pink, because pink is not what the
+     canvas was ever meant to be. A 4% blue over a cool grey canvas reads as
+     cool grey — it moves the neutral a hair further in the direction it was
+     already going instead of pulling it toward a different hue. If the page
+     ever looks tinted again, this is still the first place to look. */
   --wash:
-    radial-gradient(70rem 34rem at 50% -8rem, color-mix(in srgb, #5b6b86 4%, transparent), transparent 70%),
-    radial-gradient(58rem 30rem at 88% 16rem, color-mix(in srgb, #4f7cff 3%, transparent), transparent 72%);
+    radial-gradient(70rem 34rem at 50% -8rem, color-mix(in srgb, #2563eb 4%, transparent), transparent 70%),
+    radial-gradient(58rem 30rem at 88% 16rem, color-mix(in srgb, #64748b 3%, transparent), transparent 72%);
 
   /* Shadows carry a trace of the canvas hue rather than being neutral black.
      A shadow on a cool grey page that is pure black reads as a cut-out; one
      that leans the same way as its surroundings reads as depth. */
-  --shadow-sm: 0 1px 2px rgb(28 32 56 / .04), 0 2px 8px rgb(28 32 56 / .045);
-  --shadow-md: 0 2px 6px rgb(28 32 56 / .055), 0 10px 24px rgb(28 32 56 / .075);
-  --shadow-lg: 0 8px 20px rgb(28 32 56 / .075), 0 24px 56px rgb(28 32 56 / .105);
-  --ring: 0 0 0 4px rgb(214 31 105 / .16);   /* micro-glow focus */
+  --shadow-sm: 0 1px 2px rgb(15 23 42 / .04), 0 2px 8px rgb(15 23 42 / .05);
+  --shadow-md: 0 2px 6px rgb(15 23 42 / .06), 0 10px 24px rgb(15 23 42 / .08);
+  --shadow-lg: 0 8px 20px rgb(15 23 42 / .08), 0 24px 56px rgb(15 23 42 / .11);
+  --ring: 0 0 0 4px rgb(29 78 216 / .16);   /* micro-glow focus */
 
   /* ---- motion ---- */
   --ease: cubic-bezier(.22,.8,.3,1);
@@ -164,7 +167,7 @@
      on a dark surface — a glow, not a stain. */
   --wash:
     radial-gradient(72rem 36rem at 50% -10rem, color-mix(in srgb, var(--accent) 9%, transparent), transparent 68%),
-    radial-gradient(60rem 32rem at 86% 14rem, color-mix(in srgb, #5b8cff 7%, transparent), transparent 70%);
+    radial-gradient(60rem 32rem at 86% 14rem, color-mix(in srgb, #64748b 6%, transparent), transparent 70%);
 
   color-scheme: dark;
   --canvas:      #0b1220;
@@ -176,12 +179,15 @@
   --ink-soft:    #a9b8cc;
   --ink-mute:    #8494ab;
 
-  --accent:        #f472b6;
-  --accent-hover:  #f9a8d4;
-  --accent-active: #fbcfe8;
-  --accent-weak:   #2a1420;
-  --accent-border: #7d2d52;
-  --accent-on:     #2a0a17;
+  /* Lightened for the dark canvas: #1d4ed8 on #0b1220 is 2.2:1, unreadable.
+     #7dabf8 measures 8.07:1 on the canvas and 7.44:1 on a dark card, and takes
+     near-black text on top of it (7.92:1) rather than white. */
+  --accent:        #7dabf8;
+  --accent-hover:  #a5c6fb;
+  --accent-active: #c9dcfd;
+  --accent-weak:   #0f1e35;
+  --accent-border: #2c4a7a;
+  --accent-on:     #07142a;
 
   --ok:#5ed49b;  --ok-weak:#0f2b1f;  --ok-border:#1f5c40;
   --warn:#f0b352; --warn-weak:#2c2010; --warn-border:#6b4d17;
@@ -190,7 +196,7 @@
   --shadow-sm: 0 1px 2px rgb(0 0 0 / .3);
   --shadow-md: 0 2px 6px rgb(0 0 0 / .34), 0 10px 24px rgb(0 0 0 / .3);
   --shadow-lg: 0 8px 20px rgb(0 0 0 / .4), 0 24px 56px rgb(0 0 0 / .36);
-  --ring: 0 0 0 4px rgb(244 114 182 / .24);
+  --ring: 0 0 0 4px rgb(125 171 248 / .24);
 }
 
 /* respect OS preference when the user hasn't chosen */
@@ -202,21 +208,21 @@
      on a dark surface — a glow, not a stain. */
   --wash:
     radial-gradient(72rem 36rem at 50% -10rem, color-mix(in srgb, var(--accent) 9%, transparent), transparent 68%),
-    radial-gradient(60rem 32rem at 86% 14rem, color-mix(in srgb, #5b8cff 7%, transparent), transparent 70%);
+    radial-gradient(60rem 32rem at 86% 14rem, color-mix(in srgb, #64748b 6%, transparent), transparent 70%);
 
     color-scheme: dark;
     --canvas:#0b1220; --surface:#121b2b; --surface-sunk:#0e1727;
     --line:#24314a; --line-strong:#33425e;
     --ink:#eaf0f9; --ink-soft:#a9b8cc; --ink-mute:#8494ab;
-    --accent:#f472b6; --accent-hover:#f9a8d4; --accent-active:#fbcfe8;
-    --accent-weak:#2a1420; --accent-border:#7d2d52; --accent-on:#2a0a17;
+    --accent:#7dabf8; --accent-hover:#a5c6fb; --accent-active:#c9dcfd;
+    --accent-weak:#0f1e35; --accent-border:#2c4a7a; --accent-on:#07142a;
     --ok:#5ed49b; --ok-weak:#0f2b1f; --ok-border:#1f5c40;
     --warn:#f0b352; --warn-weak:#2c2010; --warn-border:#6b4d17;
     --err:#ff8b90; --err-weak:#2e1517; --err-border:#6d2a2d;
     --shadow-sm:0 1px 2px rgb(0 0 0 / .3);
     --shadow-md:0 2px 6px rgb(0 0 0 / .34), 0 10px 24px rgb(0 0 0 / .3);
     --shadow-lg:0 8px 20px rgb(0 0 0 / .4), 0 24px 56px rgb(0 0 0 / .36);
-    --ring:0 0 0 4px rgb(244 114 182 / .24);
+    --ring:0 0 0 4px rgb(125 171 248 / .24);
   }
 }
 
