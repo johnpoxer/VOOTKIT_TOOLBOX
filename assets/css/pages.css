@@ -575,3 +575,20 @@ video.wcode { padding: 0; }
 .tool-card.is-soon .ic-tool {
   filter: grayscale(1); opacity: .55;
 }
+
+/* --- contact page hero -----------------------------------------------------
+ * Sits above the form, deliberately short so the form itself stays in view on
+ * a laptop. Decorative only — the h1 and lede carry the meaning.
+ */
+.contact-hero {
+  display: block; width: 100%; height: auto;
+  max-height: 260px; object-fit: cover; object-position: center 30%;
+  border-radius: var(--r-lg, 16px);
+  border: 1px solid var(--line);
+  margin: 0 0 var(--s-6);
+  box-shadow: var(--shadow-sm);
+}
+@media (max-width: 720px) {
+  /* On a phone the form is the whole point, so the image gives up height. */
+  .contact-hero { max-height: 150px; margin-bottom: var(--s-5); }
+}

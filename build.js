@@ -1836,6 +1836,13 @@ write("contact.html", infoPage({
   lede: "Send us a message and we'll get back to you by email. No mail app needed — just fill in the box below.",
   scripts: ["assets/js/contact.js"],
   body: `
+  <!-- Decorative, so alt="" and aria-hidden: the heading and lede above
+       already say what this page is, and a screen reader announcing a
+       description of a stock photograph adds nothing but noise.
+       fetchpriority=high because it is the largest element above the fold and
+       is what LCP will be measured on. -->
+  <img class="contact-hero" src="/assets/blog/contact-support.jpg" alt="" aria-hidden="true"
+       width="1200" height="460" fetchpriority="high" decoding="async">
   <div class="contact-layout">
     <div class="contact-card">
       <form id="contact-form" class="contact-form" name="contact" method="POST" action="/contact-success/" data-netlify="true" netlify-honeypot="bot-field">
