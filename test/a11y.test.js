@@ -97,14 +97,43 @@ console.log(`a11y: ${pass} assertions passed${hasDom ? " (incl. DOM auditors)" :
   ok(lift <= 1.25,
      "but the canvas is not so dark it becomes a colour, ratio " + lift.toFixed(3));
 
-  /* Contrast floor. All four of these sit directly on the canvas somewhere. */
-  [["n-900", "--ink", 4.5], ["n-600", "--ink-soft", 4.5],
-   ["n-500", "--ink-mute", 4.5], ["accent", "--accent", 4.5]].forEach(([t, label, min]) => {
+  /* CONTRAST IS CHECKED UNDER THE WASH, NOT ON THE BARE CANVAS.
+   *
+   * body carries an ambient gradient over the canvas — accent at the top,
+   * cool lower down, 4% at its strongest. Text sits on that, not on the flat
+   * token, so measuring against the token alone flatters every number. This
+   * caught two real failures when it was written: --ink-mute fell to 4.38 and
+   * --accent to 4.26 once the wash was accounted for, both of which measured
+   * fine against the bare canvas. */
+  const mix = (a, b, t) => {
+    const A = rgb(a), B = rgb(b);
+    return "#" + [0, 1, 2].map((i) =>
+      Math.round(A[i] * (1 - t) + B[i] * t).toString(16).padStart(2, "0")).join("");
+  };
+  const washed = mix(canvas, tok("accent"), 0.04);   // the wash at full strength
+
+  [["n-900", "--ink"], ["n-600", "--ink-soft"],
+   ["n-500", "--ink-mute"], ["accent", "--accent"]].forEach(([t, label]) => {
     const c = tok(t);
     ok(c, label + " resolves in the built CSS");
-    const v = cr(canvas, c);
-    ok(v >= min, label + " on the canvas is " + v.toFixed(2) + ", needs " + min);
+    const bare = cr(canvas, c), under = cr(washed, c);
+    ok(bare >= 4.5, label + " on the canvas is " + bare.toFixed(2) + ", needs 4.5");
+    ok(under >= 4.5, label + " UNDER THE WASH is " + under.toFixed(2) + ", needs 4.5");
   });
+
+  /* The wash must exist, and must stay faint. Above about 6% it stops being
+     ambience and starts being a background colour, which is a different
+     decision and one that would need the contrast floors revisited. */
+  ok(/--wash:/.test(css), "the ambient wash is defined");
+  /* Scoped to the --wash declaration itself. A bare search for
+     "var(--accent) N%" across the whole sheet matches every color-mix on the
+     site and reported a 60% stop that has nothing to do with the wash. */
+  const washDecl = /--wash:\s*([^;]+);/.exec(css);
+  ok(washDecl, "the wash declaration is readable");
+  const alphas = [...washDecl[1].matchAll(/([\d.]+)%\s*,\s*transparent/g)].map((m) => parseFloat(m[1]));
+  ok(alphas.length >= 2, "the wash has its gradient stops, found " + alphas.length);
+  ok(Math.max(...alphas) <= 6,
+     "the wash stays ambient, strongest stop " + Math.max(...alphas) + "%");
 
   /* --ink-mute is used on white cards too, so it has to clear AA on both. */
   ok(cr("#ffffff", tok("n-500")) >= 4.5,

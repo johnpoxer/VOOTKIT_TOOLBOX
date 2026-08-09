@@ -21,23 +21,37 @@
    *
    * #f4f6fb lands at 1.081, keeps our slightly cooler cast, and costs almost
    * nothing in text contrast (--ink 17.98 -> 17.07, still far past AA). */
-  --n-25: #f4f6fb;   /* page canvas — deep enough that white cards lift off it */
-  --n-50: #eaeef6;
+  --n-25: #f5f5fa;   /* page canvas — measured from iLovePDF, 1.087 against white cards */
+  --n-50: #ebebf3;
   --n-100:#eef1f6;
   --n-200:#e2e7ef;
   --n-300:#cbd3df;
   --n-400:#9aa5b5;
-  /* Was #6b7688, which measured 4.47 against the old canvas — already under
-     the 4.5 AA threshold before this change, and 4.25 after it. Darkened to
-     clear AA on the canvas AND on white, since it is used on both. */
-  --n-500:#656f81;
+  /* Started at #6b7688, which measured 4.47 against the ORIGINAL canvas —
+     already under the 4.5 AA threshold before any of this. Darkened twice:
+     once for the deeper canvas, and again once the ambient wash was measured.
+     At its strongest the wash tints the canvas to #f4ecf4, where #656f81 fell
+     back to 4.38. #5f6979 clears AA everywhere it is used:
+       under the wash at full strength  4.80
+       on the plain canvas              5.11
+       on a white card                  5.55
+     Darkening the text was the right side of that trade — the alternative was
+     thinning the wash until it did nothing. */
+  --n-500:#5f6979;
   --n-600:#4d5768;
   --n-700:#354052;
   --n-800:#1f2937;
   --n-900:#0d1420;
 
   /* ---- brand accent: premium rose-pink (per-category overrides in skin.css) ---- */
-  --accent:        #d61f69;
+  /* Was #d61f69, which measured 4.54 as text on the canvas — over the 4.5 AA
+     line by four hundredths, and 4.26 once the ambient wash was laid over it.
+     Thinning the wash does not rescue it: even at 2% alpha it only reaches
+     4.41, because the shortfall was there before the wash existed.
+     #cc1a62 is a barely perceptible shift of the same rose and clears AA
+     everywhere: 4.66 under the wash, 4.97 on canvas, 5.40 on white. It also
+     sits neatly between the old accent and --accent-hover below. */
+  --accent:        #cc1a62;
   --accent-hover:  #be185d;
   --accent-active: #a3134f;
   --accent-weak:   #fdeef5;   /* soft pink tinted surface */
@@ -85,9 +99,26 @@
   --r-sm: 8px;  --r-md: 12px;  --r-lg: 16px;  --r-xl: 20px;  --r-pill: 999px;
 
   /* ---- elevation: subtle, layered ---- */
-  --shadow-sm: 0 1px 2px rgb(13 20 32 / .04), 0 2px 8px rgb(13 20 32 / .04);
-  --shadow-md: 0 2px 6px rgb(13 20 32 / .05), 0 10px 24px rgb(13 20 32 / .07);
-  --shadow-lg: 0 8px 20px rgb(13 20 32 / .07), 0 24px 56px rgb(13 20 32 / .10);
+  /* AMBIENT WASH.
+   *
+   * A flat grey canvas is correct and slightly lifeless. This lays two very
+   * wide, very faint radial tints over it — accent at the top where the header
+   * and hero sit, a cool one lower down — at 3-4% alpha, which is below the
+   * threshold most people consciously notice and above the threshold that stops
+   * the page reading as a slab. Painted on the body, fixed, so it does not
+   * travel with the scroll and never repaints.
+   *
+   * No image, no request, no JavaScript. */
+  --wash:
+    radial-gradient(70rem 34rem at 50% -8rem, color-mix(in srgb, var(--accent) 4%, transparent), transparent 70%),
+    radial-gradient(58rem 30rem at 88% 16rem, color-mix(in srgb, #4f7cff 3.5%, transparent), transparent 72%);
+
+  /* Shadows carry a trace of the canvas hue rather than being neutral black.
+     A shadow on a cool grey page that is pure black reads as a cut-out; one
+     that leans the same way as its surroundings reads as depth. */
+  --shadow-sm: 0 1px 2px rgb(28 32 56 / .04), 0 2px 8px rgb(28 32 56 / .045);
+  --shadow-md: 0 2px 6px rgb(28 32 56 / .055), 0 10px 24px rgb(28 32 56 / .075);
+  --shadow-lg: 0 8px 20px rgb(28 32 56 / .075), 0 24px 56px rgb(28 32 56 / .105);
   --ring: 0 0 0 4px rgb(214 31 105 / .16);   /* micro-glow focus */
 
   /* ---- motion ---- */
@@ -102,6 +133,14 @@
 
 /* ---------- dark: a designed palette, not an inversion ---------- */
 [data-theme="dark"] {
+  /* Dark gets its own wash. The light one is a tint ADDED to a near-white
+     surface; laid over #0b1220 the same alphas read as smudges. Here the
+     gradients are brighter but far weaker, which is how ambient light behaves
+     on a dark surface — a glow, not a stain. */
+  --wash:
+    radial-gradient(72rem 36rem at 50% -10rem, color-mix(in srgb, var(--accent) 9%, transparent), transparent 68%),
+    radial-gradient(60rem 32rem at 86% 14rem, color-mix(in srgb, #5b8cff 7%, transparent), transparent 70%);
+
   color-scheme: dark;
   --canvas:      #0b1220;
   --surface:     #121b2b;
@@ -132,6 +171,14 @@
 /* respect OS preference when the user hasn't chosen */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
+  /* Dark gets its own wash. The light one is a tint ADDED to a near-white
+     surface; laid over #0b1220 the same alphas read as smudges. Here the
+     gradients are brighter but far weaker, which is how ambient light behaves
+     on a dark surface — a glow, not a stain. */
+  --wash:
+    radial-gradient(72rem 36rem at 50% -10rem, color-mix(in srgb, var(--accent) 9%, transparent), transparent 68%),
+    radial-gradient(60rem 32rem at 86% 14rem, color-mix(in srgb, #5b8cff 7%, transparent), transparent 70%);
+
     color-scheme: dark;
     --canvas:#0b1220; --surface:#121b2b; --surface-sunk:#0e1727;
     --line:#24314a; --line-strong:#33425e;
