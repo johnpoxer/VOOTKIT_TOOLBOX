@@ -382,6 +382,191 @@ const badge = (t) => t.processing === "network"
 /* category lookup + icon set (mirrors assets/js/home.js so cards render at build time) */
 const CATBY = {};
 VK.CATEGORIES.forEach((c) => { CATBY[c.slug] = c; });
+
+/* ---------- PER-TOOL ICONS ----------
+ *
+ * THE PROBLEM THIS FIXES. Every card called icon(cat.icon), so all 33 PDF
+ * tools rendered the same grey document glyph, all 33 image tools the same
+ * picture glyph, and so on. A category page was 33 identical squares with
+ * different words under them, which is exactly what makes a large tool site
+ * look templated rather than built.
+ *
+ * THE APPROACH. A vocabulary of line glyphs keyed to the VERB a tool performs
+ * — merge, split, compress, rotate, lock, sign — plus a colour tied to that
+ * same verb family. Colour by family rather than at random, so tools that do
+ * similar things rhyme and tools that do different things contrast. Random
+ * per-tool colour produces confetti; this produces a system.
+ *
+ * Resolution is first-match-wins down an ordered list, so put specific
+ * patterns above general ones. Anything unmatched falls back to its category
+ * glyph, and iconAudit() below fails the build if that ever happens, because
+ * a silent fallback is how the original problem persisted unnoticed.
+ */
+const GLYPH = {
+  merge:    '<path d="M8 4v6a4 4 0 0 0 4 4h6"/><path d="M16 4v6a4 4 0 0 1-4 4H6"/><path d="m17 11 3 3-3 3"/>',
+  split:    '<path d="M12 4v6"/><path d="M12 10 7 15v5"/><path d="m12 10 5 5v5"/><circle cx="12" cy="4" r="1.6"/>',
+  compress: '<path d="M4 9h6V3"/><path d="M20 15h-6v6"/><path d="m10 9-6-6"/><path d="m14 15 6 6"/>',
+  expand:   '<path d="M9 3H3v6"/><path d="M15 21h6v-6"/><path d="m3 3 7 7"/><path d="m21 21-7-7"/>',
+  rotate:   '<path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/>',
+  trash:    '<path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 13h10l1-13"/><path d="M9 7V4h6v3"/>',
+  reorder:  '<path d="M4 6h10M4 12h16M4 18h7"/><path d="m18 4 3 3-3 3"/>',
+  extract:  '<path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/><path d="M12 11v6"/><path d="m9 14 3 3 3-3"/>',
+  lock:     '<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
+  unlock:   '<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 7-2.6"/>',
+  sign:     '<path d="M3 18c4 0 5-12 9-12s3 9 6 9"/><path d="M3 21h18"/>',
+  stamp:    '<path d="M6 20h12"/><path d="M9 16V9a3 3 0 1 1 6 0v7"/><rect x="5" y="16" width="14" height="4" rx="1"/>',
+  crop:     '<path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M2 6h14a2 2 0 0 1 2 2v14"/>',
+  resize:   '<rect x="3" y="3" width="12" height="12" rx="2"/><path d="M9 21h12V9"/><path d="m13 13 7 7"/>',
+  convert:  '<path d="M4 8h13l-3-3"/><path d="M20 16H7l3 3"/>',
+  image:    '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.6"/><path d="m4 18 5-5 3.5 3 3-3L20 18"/>',
+  video:    '<rect x="2.5" y="5" width="14" height="14" rx="2.5"/><path d="m17 10 5-3v10l-5-3z"/>',
+  audio:    '<path d="M4 10v4M8 6v12M12 3v18M16 7v10M20 10v4"/>',
+  mic:      '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/>',
+  text:     '<path d="M5 5h14"/><path d="M12 5v14"/><path d="M9 19h6"/>',
+  list:     '<path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.4"/><circle cx="4.5" cy="12" r="1.4"/><circle cx="4.5" cy="18" r="1.4"/>',
+  search:   '<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',
+  code:     '<path d="m8 7-5 5 5 5"/><path d="m16 7 5 5-5 5"/><path d="m13 4-2 16"/>',
+  braces:   '<path d="M8 4c-2 0-3 1-3 3v2c0 2-1 3-2 3 1 0 2 1 2 3v2c0 2 1 3 3 3"/><path d="M16 4c2 0 3 1 3 3v2c0 2 1 3 2 3-1 0-2 1-2 3v2c0 2-1 3-3 3"/>',
+  hash:     '<path d="M5 9h14M5 15h14M10 4l-2 16M16 4l-2 16"/>',
+  key:      '<circle cx="7.5" cy="12" r="4"/><path d="M11.5 12H21"/><path d="M17 12v4M20 12v3"/>',
+  shield:   '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3Z"/><path d="m9 12 2 2 4-4"/>',
+  eye:      '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
+  qr:       '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v3M14 20h7"/>',
+  barcode:  '<path d="M4 5v14M7 5v14M10.5 5v14M14 5v10M17 5v14M20 5v14"/>',
+  calc:     '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8"/><path d="M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/>',
+  percent:  '<path d="m5 19 14-14"/><circle cx="7.5" cy="7.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/>',
+  chart:    '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  money:    '<circle cx="12" cy="12" r="8"/><path d="M12 7v10"/><path d="M14.5 9.5A2.5 2.5 0 0 0 12 8.5h-.5a2 2 0 0 0 0 4h1a2 2 0 0 1 0 4H12a2.5 2.5 0 0 1-2.5-1"/>',
+  clock:    '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
+  calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  timer:    '<circle cx="12" cy="13" r="8"/><path d="M12 9v4"/><path d="M9 2h6"/><path d="m19 6 1.5-1.5"/>',
+  dice:     '<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.4"/><circle cx="15.5" cy="15.5" r="1.4"/><circle cx="12" cy="12" r="1.4"/>',
+  palette:  '<path d="M12 3a9 9 0 1 0 0 18 2 2 0 0 0 1.6-3.2 2 2 0 0 1 1.6-3.2H18a3 3 0 0 0 3-3A9 9 0 0 0 12 3Z"/><circle cx="7.5" cy="10.5" r="1.2"/><circle cx="12" cy="7.5" r="1.2"/><circle cx="16.5" cy="10.5" r="1.2"/>',
+  droplet:  '<path d="M12 3s6 6.4 6 10a6 6 0 0 1-12 0c0-3.6 6-10 6-10Z"/>',
+  contrast: '<circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18Z" fill="currentColor" stroke="none"/>',
+  ruler:    '<rect x="2" y="8" width="20" height="8" rx="2"/><path d="M7 8v3M11 8v4M15 8v3M19 8v4"/>',
+  globe:    '<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18Z"/>',
+  link:     '<path d="M10 13a4 4 0 0 0 5.7.3l3-3A4 4 0 0 0 13 4.7l-1.5 1.5"/><path d="M14 11a4 4 0 0 0-5.7-.3l-3 3A4 4 0 0 0 11 19.3L12.5 18"/>',
+  mail:     '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+  page:     '<path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/><path d="M10 12h6M10 16h4"/>',
+  layers:   '<path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/>',
+  wand:     '<path d="m4 20 11-11"/><path d="m14 4 1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2Z"/><path d="m19 11 .7 1.4 1.3.6-1.3.6-.7 1.4-.7-1.4L17 13l1.3-.6.7-1.4Z"/>',
+  heart:    '<path d="M12 20s-7-4.4-7-9.4A4.1 4.1 0 0 1 12 7a4.1 4.1 0 0 1 7 3.6c0 5-7 9.4-7 9.4Z"/>',
+  plane:    '<path d="M2 13l20-8-8 20-2.5-8L2 13Z"/>',
+  book:     '<path d="M4 4h7a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H4Z"/><path d="M20 4h-3a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5H20Z"/>',
+  home:     '<path d="m3 11 9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
+  contract: '<path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/><path d="M10 13h5"/><path d="m10 17 2-1 2 1"/>',
+  user:     '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  chat:     '<path d="M21 12a8 8 0 0 1-8 8H8l-5 3 1.4-4.2A8 8 0 1 1 21 12Z"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01"/>'
+};
+
+/* Verb -> [glyph, hue]. First match wins, so specific patterns come first.
+   Hue is a CSS hue angle; the chip is built from it at low saturation so a
+   grid of them reads as a palette rather than a paint chart. */
+const ICON_RULES = [
+  /* Specific ids first. These were surfaced by iconAudit() refusing to let the
+     build produce a silent category fallback. */
+  [/rent-vs-buy|home-afford|rental-yield|cash-on-cash|realestate|property|mortgage-afford/, 'home', 250],
+  [/quote-gen|proposal-gen|contract-gen|nda|agreement/, 'contract', 32],
+  [/resume|cv-|cover-letter/,            'user',     284],
+  [/pto|accrual|leave|holiday-entitle/,  'calendar', 340],
+  [/name-generator|slogan|brand-name/,   'wand',     284],
+  [/chat|overlay|caption/,               'chat',     340],
+  [/merge|combine|join/,                 'merge',    250],
+  [/split|extract-pages|extract-pdf/,    'split',    32],
+  [/compress|shrink|optimi/,             'compress', 152],
+  [/upscale|enlarge/,                    'expand',   152],
+  [/rotate|flip/,                        'rotate',   200],
+  [/delete|remove-pages|remove-bg|remove-background/, 'trash', 4],
+  [/reorder|organise|organize|sort/,     'reorder',  268],
+  [/extract|page-numbers/,               'extract',  32],
+  [/unlock|remove-password|decrypt/,     'unlock',   142],
+  [/protect|lock|password|encrypt|redact|checksum/, 'lock', 4],
+  [/sign|signature/,                     'sign',     284],
+  [/watermark|stamp|meme/,               'stamp',    284],
+  [/crop|circle-crop|round-corners/,     'crop',     200],
+  [/resize|scale/,                       'resize',   200],
+  [/convert|to-pdf|pdf-to|to-jpg|to-png|to-webp|format/, 'convert', 216],
+  [/video|gif|trim|mute|loop|frame/,     'video',    340],
+  [/audio|mp3|wav|volume/,               'audio',    340],
+  [/speech|transcribe|voice|tts/,        'mic',      340],
+  [/ocr|image-to-text|scan/,             'search',   216],
+  [/qr/,                                 'qr',       268],
+  [/barcode/,                            'barcode',  268],
+  /* Developer tools split by what they actually do, not by being developer
+     tools. Twelve of fifteen used to land on one glyph and one hue, which is
+     the same uniform-grid problem this whole system exists to remove. */
+  [/validator|validate|checksum-card|iban|credit-card/, 'shield', 142],
+  [/jwt|token|hash-gen|hash-generator|bcrypt/, 'key',  4],
+  [/uuid|guid|nanoid/,                   'hash',     268],
+  [/regex|pattern-test/,                 'search',   32],
+  [/base64|url-encode|url-decode|encode|decode|escape/, 'convert', 190],
+  [/cron|schedule-expr/,                 'clock',    284],
+  [/json|xml|yaml|toml/,                 'braces',   216],
+  [/formatter|minif|beautif|prettif|lint/, 'code',   216],
+  [/code|diff/,                          'code',     216],
+  [/colou?r|palette|gradient|shadow/,    'palette',  284],
+  [/contrast|a11y|accessib|alt-text|tap-target/, 'contrast', 190],
+  [/exif|metadata|viewer|preview|inspect/, 'eye',    190],
+  [/chart|graph|visuali/,                'chart',    152],
+  [/percent|ratio|discount|vat|tax|gst/, 'percent',  32],
+  [/loan|mortgage|interest|salary|invoice|budget|savings|retire|crypto|profit|margin|cac|fba|currency|money|price|cost|tip|hourly|rate|dti|debt/, 'money', 152],
+  [/calculator|solver|equation|fraction|math/, 'calc', 152],
+  [/timer|pomodoro|stopwatch|countdown/, 'timer',    340],
+  [/time|clock|timezone/,                'clock',    340],
+  [/date|age|calendar/,                  'calendar', 340],
+  [/random|picker|shuffle|dice/,         'dice',     268],
+  [/unit|convert-unit|measure|length/,   'ruler',    190],
+  [/travel|flight|trip|distance/,        'plane',    190],
+  [/health|bmi|calorie|water|sleep/,     'heart',    340],
+  [/word|character|readability|lorem|case|text|line|typing/, 'text', 216],
+  [/link|shorten|utm|redirect|slug/,     'link',     268],
+  [/email|mail|subject/,                 'mail',     268],
+  [/seo|keyword|serp|meta|sitemap|robots/, 'globe',  190],
+  [/image|photo|picture|jpg|png|webp|heic|svg|favicon|collage/, 'image', 216],
+  [/pdf|document|doc|page/,              'page',     4],
+  [/background|layer|batch|bulk/,        'layers',   250],
+  [/ai|generate|enhance|magic/,          'wand',     284],
+  [/education|study|quiz|grade|learn/,   'book',     190]
+];
+
+function toolIcon(t) {
+  const hay = (t.id + ' ' + (t.name || '') + ' ' + (t.kw || '')).toLowerCase();
+  for (const [re, g, hue] of ICON_RULES) if (re.test(hay)) return { g, hue };
+  return null;
+}
+
+function toolIconHtml(t) {
+  const m = toolIcon(t);
+  const cat = CATBY[t.cat] || {};
+  if (!m) return `<span class="ic">${icon(cat.icon)}</span>`;   // audited against below
+  return `<span class="ic ic-tool" style="--ic-h:${m.hue}">` +
+    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" ` +
+    `stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${GLYPH[m.g]}</svg></span>`;
+}
+
+/* A silent fallback is how the original problem survived unnoticed, so the
+   build refuses to produce one. Also reports glyph spread per category — a
+   category where every tool resolves to the same glyph has not been fixed,
+   it has just moved. */
+function iconAudit() {
+  const live = VK.TOOLS.filter((t) => t.status === "live");
+  const miss = live.filter((t) => !toolIcon(t));
+  if (miss.length) {
+    throw new Error("tools with no icon rule: " + miss.map((t) => t.id).join(", "));
+  }
+  const bad = [];
+  VK.CATEGORIES.forEach((c) => {
+    const inCat = live.filter((t) => t.cat === c.slug);
+    if (inCat.length < 5) return;
+    const distinct = new Set(inCat.map((t) => toolIcon(t).g)).size;
+    if (distinct < 3) bad.push(`${c.slug} (${inCat.length} tools, ${distinct} glyph)`);
+  });
+  if (bad.length) throw new Error("categories still visually uniform: " + bad.join("; "));
+  const all = new Set(live.map((t) => toolIcon(t).g));
+  console.log(`tool icons: ${all.size} distinct glyphs across ${live.length} tools`);
+}
+
 function icon(name) {
   const p = {
     file: '<path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/>',
@@ -488,7 +673,7 @@ function toolCard(t, up) {
   const isNew = !soon && NEW.has(t.id);
   const tags = (pop ? '<span class="pill pill-pop">Popular</span>' : "") + (isNew ? '<span class="pill pill-new">New</span>' : "");
   return `<a class="card tool-card${soon ? " is-soon" : ""}" data-cat="${t.cat}" href="${up}tools/${t.cat}/${t.id}/">
-    <span class="tc-top"><span class="ic">${icon(c.icon)}</span><span class="tc-tags">${tags}</span></span>
+    <span class="tc-top">${toolIconHtml(t)}<span class="tc-tags">${tags}</span></span>
     <h3>${esc(t.name)}${soon ? ' <span class="soon">soon</span>' : ""}</h3>
     <p>${esc(t.desc)}</p>
     <span class="card-foot"><span class="tc-cat">${esc(c.name || t.cat)}</span>${badge(t)}</span>
@@ -815,7 +1000,7 @@ function localizedToolPage(t, c, loc) {
   const relHtml = related.length
     ? `<section class="section"><h2 class="h-sm">${esc(fillStr(C.sec_next, M))}</h2><div class="grid">${related.map((r) => {
         const rc = CATBY[r.cat] || {}, rt = I18N.tools[code][r.id];
-        return `<a class="card tool-card" data-cat="${r.cat}" href="../${r.id}/"><span class="tc-top"><span class="ic">${icon(rc.icon)}</span></span><h3>${esc(rt.name)}</h3><p>${esc(rt.desc)}</p><span class="card-foot"><span class="tc-cat">${esc(rc.name || r.cat)}</span>${badgeI18n(r, C)}</span></a>`;
+        return `<a class="card tool-card" data-cat="${r.cat}" href="../${r.id}/"><span class="tc-top">${toolIconHtml(r)}</span><h3>${esc(rt.name)}</h3><p>${esc(rt.desc)}</p><span class="card-foot"><span class="tc-cat">${esc(rc.name || r.cat)}</span>${badgeI18n(r, C)}</span></a>`;
       }).join("")}</div></section>`
     : "";
   return pageHead +
@@ -1654,6 +1839,7 @@ let pages = 2;
 write("components/index.html", componentsPage()); pages++;
 write("tools/index.html", allToolsPage()); pages++;
 VK.CATEGORIES.forEach((c) => { write(`tools/${c.slug}/index.html`, categoryPage(c)); pages++; });
+iconAudit();
 VK.TOOLS.forEach((t) => { write(`tools/${t.cat}/${t.id}/index.html`, toolPage(t)); pages++; });
 
 /* localised tool pages — only where the tool is fully translated (chrome + name/desc) */

@@ -663,3 +663,56 @@ console.log(`seo + ezoic verification: ${pass} total assertions passed`);
   }
 }
 console.log(`seo + newsletter placement: ${pass} total assertions passed`);
+
+/* ---------------------------------------------------------------------------
+ * EVERY TOOL HAS ITS OWN ICON
+ *
+ * Cards used to render icon(category.icon), so all 33 PDF tools showed the
+ * same grey document glyph and all 33 image tools the same picture glyph. A
+ * category page was 33 identical squares with different words underneath,
+ * which is the single thing that made a 258-tool site look templated.
+ *
+ * This is easy to regress silently — one card template reverting to the
+ * category icon looks fine in isolation. So the check is on the BUILT output
+ * and it counts variety, not presence.
+ * ------------------------------------------------------------------------- */
+{
+  const fs4 = require("fs"), path4 = require("path");
+  const R4 = path4.join(__dirname, "..");
+  const read4 = (p) => { try { return fs4.readFileSync(path4.join(R4, p), "utf8"); } catch (e) { return ""; } };
+
+  const pdf = read4("tools/pdf/index.html");
+  if (!pdf) {
+    console.log("  (skipped tool-icon checks — run `node build.js` first)");
+  } else {
+    const hues = (h) => (h.match(/--ic-h:(\d+)/g) || []);
+    const glyphs = (h) => [...h.matchAll(/ic-tool"[^>]*><svg[^>]*>(.*?)<\/svg>/gs)].map((m) => m[1]);
+
+    ok(hues(pdf).length >= 30, "every PDF card carries a per-tool icon, got " + hues(pdf).length);
+    ok(new Set(hues(pdf)).size >= 6,
+       "the PDF grid uses several colours, got " + new Set(hues(pdf)).size);
+    ok(new Set(glyphs(pdf)).size >= 10,
+       "and several distinct glyphs, got " + new Set(glyphs(pdf)).size);
+
+    /* The old category glyph must not survive on a tool card anywhere — that
+       is the exact markup this replaced. */
+    ["tools/pdf/index.html", "tools/images/index.html", "tools/finance/index.html",
+     "tools/video/index.html", "tools/developer/index.html"].forEach((f) => {
+      const h = read4(f);
+      if (!h) return;
+      ok(!/class="ic">/.test(h), f + " has no card left on the shared category glyph");
+      ok(new Set(hues(h)).size >= 4, f + " is not a single-colour grid");
+    });
+
+    /* Related-tool rows on a tool page get the same treatment, or a visitor
+       sees the good grid on the category page and the old one underneath. */
+    const tool = read4("tools/pdf/merge-pdf/index.html");
+    if (tool) ok(/ic-tool/.test(tool), "related-tool cards on a tool page use per-tool icons too");
+
+    /* Decorative: the glyph must be hidden from screen readers, since the tool
+       name sits right beside it and would otherwise be announced twice. */
+    ok(/ic-tool[^>]*><svg[^>]*aria-hidden="true"/.test(pdf),
+       "tool icons are aria-hidden — the name next to them is the label");
+  }
+}
+console.log(`seo + tool icons: ${pass} total assertions passed`);
