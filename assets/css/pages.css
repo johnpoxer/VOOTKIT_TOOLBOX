@@ -490,53 +490,6 @@ video.wcode { padding: 0; }
   .pro-art { max-width: 340px; }
 }
 
-/* --- per-tool icon chips ---------------------------------------------------
- * Before this, every card in a category rendered the same grey category glyph,
- * so a 33-tool page was 33 identical squares. Each tool now carries a glyph for
- * the verb it performs and a hue for the family that verb belongs to.
- *
- * Hue comes from the markup as --ic-h and everything else is derived from it,
- * so the whole set stays consistent: a merge tool is the same indigo whether it
- * appears on the PDF page, the homepage or a related-tools row.
- */
-.ic-tool {
-  --ic-c: hsl(var(--ic-h) 62% 46%);
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 2.5rem; height: 2.5rem; flex: 0 0 auto;
-  border-radius: 12px;
-  color: var(--ic-c);
-  background: hsl(var(--ic-h) 72% 96%);
-  border: 1px solid hsl(var(--ic-h) 55% 88%);
-  transition: transform .15s ease, background-color .15s ease;
-}
-.ic-tool svg { width: 1.35rem; height: 1.35rem; }
-
-/* A little life on hover — the card is a link, and the icon is the part the
-   eye is already on. */
-.tool-card:hover .ic-tool,
-.tool-card:focus-visible .ic-tool {
-  transform: translateY(-1px) scale(1.04);
-  background: hsl(var(--ic-h) 72% 93%);
-}
-@media (prefers-reduced-motion: reduce) {
-  .ic-tool, .tool-card:hover .ic-tool { transition: none; transform: none; }
-}
-
-/* Dark theme: the pale tint becomes a dark tint, and the glyph brightens so it
-   keeps its contrast rather than sinking into the card. */
-[data-theme="dark"] .ic-tool {
-  --ic-c: hsl(var(--ic-h) 70% 68%);
-  background: hsl(var(--ic-h) 45% 15%);
-  border-color: hsl(var(--ic-h) 40% 26%);
-}
-[data-theme="dark"] .tool-card:hover .ic-tool { background: hsl(var(--ic-h) 45% 19%); }
-
-/* Coming-soon cards are deliberately drained of colour, so the grid reads
-   "these are the ones you can use" at a glance. */
-.tool-card.is-soon .ic-tool {
-  filter: grayscale(1); opacity: .55;
-}
-
 /* --- contact page hero -----------------------------------------------------
  * Sits above the form, deliberately short so the form itself stays in view on
  * a laptop. Decorative only — the h1 and lede carry the meaning.

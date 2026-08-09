@@ -109,6 +109,64 @@ a.card:hover, button.card:hover { transform: translateY(-3px); border-color: var
 .tool-card p { font-size: var(--t-sm); color: var(--ink-soft); line-height: 1.5; flex: 1; }
 .grid { display: grid; gap: var(--s-3); grid-template-columns: repeat(auto-fill, minmax(248px, 1fr)); }
 
+/* Per-tool icons live in BASE, not pages.css, because the homepage does not
+   load pages.css and renders tool cards of its own — the popular row and the
+   search results. Left where they were, those two would fall back to an
+   unstyled box while every built page looked right, which is the same trap
+   the newsletter form fell into. */
+/* --- per-tool icon chips ---------------------------------------------------
+ * Before this, every card in a category rendered the same grey category glyph,
+ * so a 33-tool page was 33 identical squares. Each tool now carries a glyph for
+ * the verb it performs and a hue for the family that verb belongs to.
+ *
+ * THE TILE IS FILLED, NOT TINTED. It was hsl(H 72% 96%) — a 96%-lightness
+ * wash with the glyph stroked in the same hue. Eleven colours on paper; a page
+ * of pale grey-blue squares on screen. Filling the tile and putting a white
+ * glyph on it is the whole difference between "there is a colour system here
+ * if you look" and seeing the colour before you read the label.
+ *
+ * The fill arrives as --ic-bg, computed per hue in build.js against the real
+ * contrast of white on the result. It is not derived here because lightness is
+ * not brightness: one hsl() lightness across eleven hues either washes out the
+ * yellows or drowns the blues. --ic-h is still passed for the things that ARE
+ * safe to derive — the hover shade and the soft glow beneath.
+ */
+.ic-tool {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2.5rem; height: 2.5rem; flex: 0 0 auto;
+  border-radius: 12px;
+  color: #fff;
+  background: var(--ic-bg, hsl(var(--ic-h) 68% 45%));
+  box-shadow: 0 2px 6px hsl(var(--ic-h) 55% 45% / .28);
+  transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+}
+.ic-tool svg { width: 1.35rem; height: 1.35rem; }
+
+/* A little life on hover — the card is a link, and the icon is the part the
+   eye is already on. Darkened with a filter rather than a second colour, so
+   there is no chance of the two drifting apart. */
+.tool-card:hover .ic-tool,
+.tool-card:focus-visible .ic-tool,
+a:hover > .ic-tool {
+  transform: translateY(-1px) scale(1.04);
+  filter: brightness(.93);
+  box-shadow: 0 4px 10px hsl(var(--ic-h) 55% 45% / .34);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ic-tool, .tool-card:hover .ic-tool { transition: none; transform: none; }
+}
+
+/* Dark theme keeps the same fills — a saturated tile reads correctly on a dark
+   card, and re-tinting it would have given the same tool two identities. Only
+   the glow is dropped, since a coloured shadow on a dark surface is mud. */
+[data-theme="dark"] .ic-tool { box-shadow: none; }
+
+/* Coming-soon cards are deliberately drained of colour, so the grid reads
+   "these are the ones you can use" at a glance. */
+.tool-card.is-soon .ic-tool {
+  filter: grayscale(1); opacity: .55;
+}
+
 /* ---------- badges ---------- */
 /* The green "runs on your device" and amber "uses an API" chips are gone. They
    were on every tool card and every tool page, which meant the site's own

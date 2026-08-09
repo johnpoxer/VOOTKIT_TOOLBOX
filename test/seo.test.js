@@ -897,3 +897,69 @@ console.log(`seo + product safety: ${pass} total assertions passed`);
   }
 }
 console.log(`seo + slot wiring: ${pass} total assertions passed`);
+
+/* ---------------------------------------------------------------------------
+ * THE ICON TILE IS FILLED, AND WHITE HAS TO SURVIVE ON IT.
+ *
+ * The tile went from a 96%-lightness tint with a coloured glyph to a saturated
+ * fill with a white one. That moves the glyph's contrast from "comfortable by
+ * construction" to "depends on a number computed at build time", which is
+ * exactly the kind of thing that quietly regresses when somebody adds a hue.
+ *
+ * So every --ic-bg the build actually emitted is re-measured here.
+ * ------------------------------------------------------------------------- */
+{
+  const fsI = require("fs"), pathI = require("path");
+  const RI = pathI.join(__dirname, "..");
+  const readI = (p) => { try { return fsI.readFileSync(pathI.join(RI, p), "utf8"); } catch (e) { return ""; } };
+  const rl = (hex) => {
+    const n = parseInt(hex.slice(1), 16);
+    const c = [(n >> 16) & 255, (n >> 8) & 255, n & 255]
+      .map((v) => { v /= 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
+    return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+  };
+
+  const pages = ["tools/pdf/index.html", "tools/images/index.html", "tools/finance/index.html",
+                 "tools/video/index.html", "tools/developer/index.html", "tools/index.html"];
+  const fills = new Set();
+  pages.forEach((f) => {
+    const h = readI(f);
+    [...h.matchAll(/--ic-bg:(#[0-9a-f]{6})/g)].forEach((m) => fills.add(m[1]));
+  });
+
+  if (!fills.size) {
+    console.log("icon fills: SKIPPED (run npm run build first)");
+  } else {
+    ok(fills.size >= 6, "the grids use several fills, got " + fills.size);
+    [...fills].forEach((hex) => {
+      const c = 1.05 / (rl(hex) + 0.05);
+      ok(c >= 4.5, "white glyph on " + hex + " is " + c.toFixed(2) + ":1, needs 4.5");
+    });
+
+    /* Filled, not tinted — a fill this light means somebody reverted to a wash
+       and the white glyph is now invisible. */
+    [...fills].forEach((hex) => ok(rl(hex) < 0.35, hex + " is a fill, not a tint"));
+
+    /* The homepage renders its own cards, so it needs the icon answers AND the
+       component's styles — neither of which it gets from pages.css. */
+    const home = readI("index.html");
+    ok(/data\/tool-icons\.js/.test(home), "the homepage loads the generated icon map");
+    ok(/\.ic-tool/.test(readI("assets/css/base.css")),
+       "the icon component lives in base.css, which the homepage does load");
+    ok(!/\.ic-tool/.test(readI("assets/css/pages.css")),
+       "and not in pages.css, which it does not");
+
+    const gen = readI("data/tool-icons.js");
+    if (gen) {
+      const D = require("../data/tool-icons.js");
+      const VKC = require("../data/catalog.js");
+      const live = VKC.TOOLS.filter((t) => t.status === "live");
+      const missing = live.filter((t) => !D.icons[t.id]);
+      eq(missing.length, 0, "every live tool has an icon in the generated map: " +
+         missing.slice(0, 5).map((t) => t.id).join(", "));
+      const noGlyph = Object.keys(D.icons).filter((id) => !D.glyphs[D.icons[id].g]);
+      eq(noGlyph.length, 0, "every referenced glyph is shipped: " + noGlyph.slice(0, 5).join(", "));
+    }
+  }
+}
+console.log(`seo + icon fills: ${pass} total assertions passed`);
