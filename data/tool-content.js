@@ -7109,6 +7109,204 @@ module.exports = {
     related: ['word-counter', 'stopwatch', 'pomodoro', 'text-diff', 'readability', 'countdown']
   },
 
+  'math-solver': {
+    intro: 'Everyone can do arithmetic. Almost nobody can do arithmetic on a long expression without losing track of the brackets, which is why the answer you get by hand and the answer the calculator gives so often disagree.',
+    what: [
+      'Evaluates a whole expression at once — brackets, powers, multiplication, division, addition and subtraction — with standard precedence.',
+      'Precedence is the entire point. 2 + 3 × 4 is 14, not 20, and a surprising number of spreadsheet errors trace back to somebody assuming otherwise.'
+    ],
+    specs: {
+      caption: 'How it reads an expression',
+      rows: [
+        ['Order', 'Brackets, then powers, then × ÷, then + −, left to right within each level'],
+        ['Power symbol', '^ — so 3 ^ 2 is nine'],
+        ['Brackets', 'Nest as deep as you like; every opening one needs a closing one'],
+        ['Implicit multiplication', 'Not assumed — write 2 × (3 + 1), not 2(3 + 1)'],
+        ['Decimals', 'Use a full stop, whatever your locale writes'],
+        ['Division by zero', 'Reported as an error rather than returned as infinity']
+      ]
+    },
+    steps: [
+      'Type the whole expression on one line.',
+      'Use brackets wherever you are unsure — <strong>they cost nothing</strong> and remove all ambiguity.',
+      'Read the result. If it surprises you, the bracket placement is usually why.',
+      'Change one number and re-evaluate to see what drives the answer.'
+    ],
+    tip: 'The single most common mistake in this kind of expression is the minus sign in front of a power. Written strictly, −3 ^ 2 evaluates as −(3 × 3) = −9, because the power binds tighter than the negation. If you meant the square of negative three, you have to write (−3) ^ 2, which gives 9. Spreadsheets differ from mathematical convention here, which is exactly why the two disagree with each other so often.',
+    faqs: [
+      { q: 'Why is 2 + 3 × 4 fourteen and not twenty?', a: 'Because multiplication binds tighter than addition, so the expression is read as 2 + (3 × 4). This is the standard convention everywhere from school algebra to programming languages, and it is why writing the brackets you mean is worth the two extra keystrokes even when you are confident.' },
+      { q: 'Can I write 2(3 + 1) without the multiplication sign?', a: 'No — implicit multiplication is not assumed, because it is genuinely ambiguous in longer expressions and different systems resolve it differently. Write 2 × (3 + 1). The strictness is deliberate: an expression that could be read two ways is worse than one that has to be typed out.' },
+      { q: 'What does the ^ symbol do?', a: 'It raises to a power, so 3 ^ 2 is nine and 2 ^ 10 is 1,024. Note that it binds more tightly than a leading minus sign, so −3 ^ 2 gives −9 rather than 9. If you want the square of a negative number, put it in brackets.' },
+      { q: 'Does it handle very large numbers exactly?', a: 'Up to a point. It uses standard double-precision floating point, which is exact for integers up to about 9 quadrillion and then starts rounding. It also inherits the familiar decimal artefacts — 0.1 + 0.2 lands just above 0.3 — which matter for money calculations and almost nowhere else.' }
+    ],
+    related: ['equation-solver', 'fraction-calculator', 'percentage-calculator', 'unit-converter', 'random-number-generator', 'csv-to-chart']
+  },
+
+  'equation-solver': {
+    intro: 'The quadratic formula is the piece of school mathematics most adults half-remember: something with a minus b, something with a square root, something divided by 2a. The half that gets forgotten is the part under the root, which decides whether there is an answer at all.',
+    what: [
+      'Solves ax² + bx + c = 0 for x, giving both roots along with the discriminant that determines what kind of roots they are.',
+      'The discriminant, b² − 4ac, is the number worth reading first. Positive means two real roots, zero means one repeated root, negative means the parabola never touches the axis and the roots are complex.'
+    ],
+    specs: {
+      caption: 'What the numbers mean',
+      rows: [
+        ['Formula', 'x = (−b ± √(b² − 4ac)) ÷ 2a'],
+        ['Discriminant > 0', 'Two distinct real roots — the curve crosses the x-axis twice'],
+        ['Discriminant = 0', 'One repeated root — the curve touches the axis and turns'],
+        ['Discriminant < 0', 'No real roots — the curve misses the axis entirely'],
+        ['a = 0', 'Not a quadratic; it collapses to the straight line bx + c = 0'],
+        ['Sum and product', 'Roots always sum to −b/a and multiply to c/a — a quick sanity check']
+      ]
+    },
+    steps: [
+      'Rearrange your equation into the form ax² + bx + c = 0 first. Everything must be on one side.',
+      'Enter a, b and c <strong>with their signs</strong> — a missing minus is the usual cause of a wrong answer.',
+      'Read the discriminant before the roots.',
+      'Check your answer: the two roots should add to −b/a.'
+    ],
+    tip: 'Always rearrange before entering anything. x² + 2x = 8 is not a = 1, b = 2, c = 8 — the eight has to move across, giving c = −8, and the sign flip changes the roots completely. This single step accounts for most wrong answers people get from a quadratic solver, because the equation as written looks close enough to the standard form to type straight in.',
+    faqs: [
+      { q: 'What does a negative discriminant mean?', a: 'That the parabola never crosses the x-axis, so there is no real value of x that satisfies the equation. The roots still exist as complex numbers involving the square root of a negative, which matters in electrical engineering and signal processing but usually means "no solution" in a practical context.' },
+      { q: 'What if a is zero?', a: 'Then it is not a quadratic at all — the x² term vanishes and you are left with the straight line bx + c = 0, which has the single solution x = −c/b. Dividing by 2a in the formula would also mean dividing by zero, which is why the equation type has to change rather than the arithmetic being pushed through.' },
+      { q: 'How do I get my equation into the right form?', a: 'Move everything to one side so the other side is zero, then collect like terms. x² + 2x = 8 becomes x² + 2x − 8 = 0, giving a = 1, b = 2, c = −8. Skipping this and typing the numbers as they appear is the most common way to get a confidently wrong pair of roots.' },
+      { q: 'Is there a quick way to check the answer?', a: 'Yes, and it is worth doing. The two roots always sum to −b/a and multiply to c/a. For x² + 2x − 8 = 0 the roots are 2 and −4: they sum to −2, which is −b/a, and multiply to −8, which is c/a. Both checks passing means the arithmetic is almost certainly right.' }
+    ],
+    related: ['math-solver', 'fraction-calculator', 'percentage-calculator', 'unit-converter', 'csv-to-chart', 'word-counter']
+  },
+
+  'fraction-calculator': {
+    intro: 'Fractions are the point where mental arithmetic quietly stops working. Most people can halve and double all day, and then meet 3/8 + 5/12 and reach for something with buttons.',
+    what: [
+      'Adds, subtracts, multiplies and divides two fractions, returning the result in lowest terms.',
+      'Reducing the answer is the part that makes it useful. 18/24 and 3/4 are the same number, but only one of them is an answer you would write down or read aloud, and only one lets you compare two results at a glance.'
+    ],
+    specs: {
+      caption: 'The rules being applied',
+      rows: [
+        ['Add and subtract', 'Requires a common denominator first — this is the step people dread'],
+        ['Multiply', 'Straight across: numerators together, denominators together'],
+        ['Divide', 'Multiply by the reciprocal — flip the second fraction and multiply'],
+        ['Reducing', 'Divides both parts by their greatest common divisor'],
+        ['Negatives', 'Allowed on the numerator; the sign travels with the fraction'],
+        ['Zero denominator', 'Rejected — the fraction is undefined, not infinite']
+      ]
+    },
+    steps: [
+      'Enter the first fraction as a numerator and denominator.',
+      'Choose the operation.',
+      'Enter the second fraction.',
+      'For a <strong>mixed number</strong> like 2¾, convert first: multiply the whole number by the denominator and add the numerator, so 2 × 4 + 3 = 11, giving 11/4. The same trick runs backwards on the answer: 11/4 is 2 remainder 3, which is 2¾ again.'
+    ],
+    tip: 'Dividing by a fraction gives a larger answer, and it feels wrong every time. 1/2 ÷ 1/4 is 2, not 1/8 — because the question is "how many quarters fit into a half", and the answer is two. Whenever a division result looks too big, translate it back into that phrasing and it usually turns out to be right. This is the single most useful sentence about fractions that school tends to skip.',
+    faqs: [
+      { q: 'Why does dividing by a fraction make the number bigger?', a: 'Because you are asking how many of the second fraction fit inside the first. 1/2 ÷ 1/4 asks how many quarters fit into a half, and two do. Dividing only makes numbers smaller when you divide by something greater than one, which is such a common case that the opposite feels like an error.' },
+      { q: 'How do I enter a mixed number like 2¾?', a: 'Convert it to an improper fraction first. Multiply the whole number by the denominator and add the numerator: 2 × 4 + 3 = 11, so 2¾ is 11/4. Everything else follows normally, and if the answer comes back improper you can convert it back the same way in reverse.' },
+      { q: 'Why is the answer shown in lowest terms?', a: 'Because 18/24 and 3/4 are the same value and only one of them is readable. Reducing divides both parts by their greatest common divisor, which is the conventional way to present a fraction and makes it far easier to compare two results at a glance.' },
+      { q: 'Can I use negative fractions?', a: 'Yes — put the minus on the numerator and it carries through the arithmetic correctly. Be careful with subtraction of a negative, which is the classic sign trap: subtracting −1/3 is the same as adding 1/3, and the result gets larger rather than smaller.' }
+    ],
+    related: ['math-solver', 'equation-solver', 'percentage-calculator', 'unit-converter', 'discount-calculator']
+  },
+
+  'csv-viewer': {
+    intro: 'Opening a CSV in a spreadsheet to look at it is a slow, slightly dangerous habit. Excel will helpfully turn your product codes into dates, drop leading zeros from postcodes and offer to save changes you never made.',
+    what: [
+      'Renders a CSV or TSV as a readable table with a live row filter, so you can inspect a file without opening anything that might alter it.',
+      'Nothing is modified and nothing is uploaded — the file is parsed in the browser tab and forgotten when you close it.'
+    ],
+    specs: {
+      caption: 'What it handles',
+      rows: [
+        ['Formats', 'CSV and TSV, from a file or pasted in'],
+        ['Quoted fields', 'Handled — commas inside quotes do not split a column'],
+        ['Header row', 'Treated as the first row and used for the column names'],
+        ['Filter', 'Matches across all columns, live as you type'],
+        ['Leading zeros', 'Preserved — nothing is coerced to a number or a date'],
+        ['Processing', 'In the browser; the file is never uploaded']
+      ]
+    },
+    steps: [
+      'Choose a file, or paste the rows straight in.',
+      'Scan the header row first — a shifted column is easier to spot there than anywhere else.',
+      'Use the filter to find rows rather than scrolling.',
+      'Nothing is saved. <strong>The file on disk is untouched.</strong>'
+    ],
+    tip: 'This is the safest way to look at an export before it goes anywhere near a spreadsheet. Excel silently reformats on open — 007 becomes 7, 3-4 becomes 3 April, and a long product code becomes scientific notation — and the damage is invisible until someone downstream asks why the postcodes are wrong. Viewing first tells you what is actually in the file, as opposed to what a spreadsheet decided it meant.',
+    faqs: [
+      { q: 'Why not just open it in Excel?', a: 'Because Excel changes things on the way in. Leading zeros are stripped, anything resembling a date is converted to one, long numeric codes become scientific notation, and none of it is announced. If you then save, the altered version is what persists — which is why viewing a file and editing a file are worth keeping separate.' },
+      { q: 'Does it handle commas inside a field?', a: 'Yes, provided the field is quoted, which is the standard CSV convention. "Smith, John" stays as one cell rather than splitting into two. If a file was generated without quoting its commas it is genuinely ambiguous, and no parser can reliably recover it.' },
+      { q: 'Is my file uploaded anywhere?', a: 'No. It is read and parsed inside the browser tab on your own machine, which is why there is no upload wait and why it works with the network disconnected. Nothing is stored and nothing is transmitted, so it is safe for exports containing customer or financial data.' },
+      { q: 'How large a file can it handle?', a: 'It renders the whole table into the page, so very large exports — hundreds of thousands of rows — will make the browser sluggish before anything breaks. For files at that scale, filtering or splitting the export before viewing is more comfortable than asking a page to draw a million cells.' }
+    ],
+    related: ['csv-to-chart', 'json-csv', 'text-diff', 'word-counter', 'line-tools', 'markdown-editor']
+  },
+
+  'csv-to-chart': {
+    intro: 'The gap between having numbers and understanding them is usually one chart, and the effort of building that chart is usually just high enough that nobody bothers.',
+    what: [
+      'Turns two columns of a CSV — one for labels, one for values — into a chart you can read immediately.',
+      'It asks which columns to use rather than guessing, because guessing is how you end up plotting an ID column and wondering why the line goes up forever.'
+    ],
+    specs: {
+      caption: 'What it expects',
+      rows: [
+        ['Header row', 'Required — the column names populate the pickers'],
+        ['Label column', 'Any text: months, categories, names'],
+        ['Value column', 'Numeric; non-numeric rows are skipped rather than plotted as zero'],
+        ['Input', 'A file or pasted rows'],
+        ['Order', 'Rows are plotted in file order — sort before pasting if that matters'],
+        ['Processing', 'In the browser; nothing is uploaded']
+      ]
+    },
+    steps: [
+      'Paste the rows or choose a file. The first row must be the header.',
+      'Pick the label column and the value column.',
+      'Check the axis. <strong>A chart that does not start at zero exaggerates every difference on it</strong>.',
+      'Sort the rows before pasting if you want them plotted in a particular order.'
+    ],
+    tip: 'Look at the value column before you look at the chart. One text value, one stray currency symbol or one thousands separator in an otherwise numeric column is enough to change what gets plotted, and a chart is very good at making that look deliberate. Charts are persuasive whether or not they are correct, which is exactly why the five seconds spent checking the source column is worth more here than on any other kind of output.',
+    faqs: [
+      { q: 'Why is my chart missing rows?', a: 'Almost always a value that is not purely numeric — a currency symbol, a thousands separator, a footnote marker, or an empty cell. Those rows are skipped rather than plotted as zero, because a false zero in a chart is far more misleading than a gap. Clean the column and they will appear.' },
+      { q: 'Which chart type should I use?', a: 'Bars for comparing separate categories, lines for something changing over time. The distinction matters more than it sounds: a line implies the values between your points mean something, so using one for unrelated categories invites a reader to see a trend that does not exist.' },
+      { q: 'Does the axis have to start at zero?', a: 'For bar charts, yes — a truncated axis makes a 3% difference look like a doubling, and it is the single most common way charts mislead. For line charts showing change over time it is more defensible to zoom in, provided the axis is clearly labelled so nobody reads the slope as bigger than it is.' },
+      { q: 'Can I download the chart?', a: 'You can screenshot it, which is what most people want it for. The tool is built for looking at data quickly rather than producing a finished graphic — if the chart is going into a document, it is usually worth rebuilding it in whatever will hold the final formatting anyway.' }
+    ],
+    related: ['csv-viewer', 'json-csv', 'percentage-calculator', 'text-diff', 'line-tools', 'word-counter']
+  },
+
+  'json-csv': {
+    intro: 'JSON and CSV describe the same data in two shapes: one nested and typed, the other flat and stringly. Most of the friction in moving between them comes from the fact that the first can express things the second simply cannot.',
+    what: [
+      'Converts a JSON array of objects into CSV rows, and CSV back into JSON, in either direction.',
+      'The direction matters for what survives. Going to CSV flattens everything and loses types; coming back from CSV, every value arrives as a string unless you convert it yourself.'
+    ],
+    specs: {
+      caption: 'What survives the round trip',
+      rows: [
+        ['JSON to CSV', 'Array of objects; keys become the header row'],
+        ['Nested objects', 'Flattened or stringified — CSV has no concept of nesting'],
+        ['Arrays inside a field', 'Collapsed into one cell; the structure is not recoverable'],
+        ['Types', 'Lost on the way to CSV — numbers, booleans and nulls all become text'],
+        ['CSV to JSON', 'Every value arrives as a string unless you cast it'],
+        ['Commas and quotes', 'Escaped correctly on the way out']
+      ]
+    },
+    steps: [
+      'Paste JSON, or paste CSV.',
+      'Convert in whichever direction you need.',
+      'Check the header row of the output against the keys you expected.',
+      'If a row is missing a key, <strong>that column will be empty rather than shifted</strong> — which is the behaviour you want.'
+    ],
+    tip: 'A JSON to CSV conversion is lossy and the loss is silent. Nested objects, arrays inside fields and every type distinction are gone the moment it becomes a table, and converting back does not restore them — you get strings where you had numbers and text where you had structure. If the JSON is the source of truth, keep it. Treat the CSV as a view of the data for a spreadsheet, not as a copy of it.',
+    faqs: [
+      { q: 'Why did my nested data come out as one long cell?', a: 'Because CSV is a flat format with no way to express nesting. An object or array inside a field has to be flattened or stringified to fit in a single cell, and the structure cannot be recovered from that on the way back. If nesting matters, CSV is the wrong destination for that field.' },
+      { q: 'Why are my numbers strings after converting back?', a: 'CSV stores no type information — everything in the file is text, and there is no marker distinguishing the number 42 from the string "42". A converter can guess, but guessing turns postcodes into integers and version numbers into decimals, so values come back as strings and you cast the ones you need.' },
+      { q: 'What if some objects have keys that others do not?', a: 'The header row covers every key that appears, and objects missing a key get an empty cell in that column rather than a shifted row. That is the behaviour you want — a shifted row silently corrupts every column after it, and empty cells are visible.' },
+      { q: 'Does it handle commas inside values?', a: 'Yes. Values containing commas, quotes or line breaks are quoted and escaped according to the standard CSV convention on the way out, so they survive being reopened by a spreadsheet or another parser without splitting into extra columns.' }
+    ],
+    related: ['csv-viewer', 'csv-to-chart', 'json-formatter', 'text-diff', 'line-tools', 'base64']
+  },
+
   'loan-calculator': {
     intro: 'The monthly payment is the number lenders lead with, and it is the least useful one for comparing offers. Two loans with almost identical payments can differ by thousands once the term differs — total repaid is where that shows up.',
     what: [
