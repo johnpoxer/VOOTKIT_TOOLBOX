@@ -155,11 +155,79 @@ label { display: block; font-size: var(--t-sm); font-weight: 600; color: var(--i
 .note.err { color: var(--err); }
 
 /* ---------- footer ---------- */
-.ftr { border-top: 1px solid var(--line); padding-block: var(--s-6) var(--s-7); color: var(--ink-soft); font-size: var(--t-base); }
-.ftr-grid { display: grid; gap: var(--s-5); grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
-.ftr h4 { font-size: var(--t-sm); font-weight: 700; color: var(--ink); margin-bottom: var(--s-2); }
-.ftr a { display: block; padding: 5px 0; color: var(--ink-soft); }
-.ftr a:hover { color: var(--accent); }
+/* ---------- footer ----------
+ * A dark band, fixed in both themes. Not a lighter shade of the page: the
+ * footer's job is to end the page, and a hairline rule over the same canvas
+ * does not read as an ending, which is why the old one looked like the content
+ * simply stopped. It is also the only place on the site that can hold this
+ * many links without the page feeling like a directory.
+ *
+ * The colours are literal rather than tokens on purpose. Every token here
+ * flips with the theme, and a footer that is dark in light mode and lighter in
+ * dark mode is two designs to maintain and neither is the one that was drawn.
+ */
+.ftr {
+  background: #0f1729; color: rgb(255 255 255 / .68);
+  padding-block: var(--s-7) var(--s-5);
+  font-size: var(--t-base);
+}
+.ftr-top {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
+  gap: var(--s-7); align-items: start;
+}
+.ftr-cols { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-5); }
+.ftr h4 {
+  font-family: var(--font-mono); font-size: var(--t-xs); font-weight: 600;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: #fff; margin-bottom: var(--s-3);
+}
+.ftr a { display: block; padding: 6px 0; color: rgb(255 255 255 / .68); }
+.ftr a:hover { color: #fff; }
+.ftr :focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+/* Brand block — the slot the reference gives to app-store badges. */
+.ftr-brand p { margin: 0 0 var(--s-3); font-size: var(--t-sm); line-height: 1.6; }
+.ftr-mark {
+  display: inline-flex; align-items: center; gap: var(--s-2);
+  font-family: var(--font-display); font-size: var(--t-lg); font-weight: 700;
+  color: #fff; margin-bottom: var(--s-3);
+}
+.ftr-mark svg { width: 30px; height: 30px; color: #f472b6; }
+.ftr-trust { display: flex; gap: var(--s-2); align-items: flex-start; margin: 0; }
+.ftr-trust svg {
+  flex: 0 0 auto; width: 17px; height: 17px; margin-top: 2px;
+  fill: none; stroke: #22d3ee; stroke-width: 1.8;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+
+/* Bottom bar. */
+.ftr-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--s-4); flex-wrap: wrap;
+  margin-top: var(--s-6); padding-top: var(--s-4);
+  border-top: 1px solid rgb(255 255 255 / .10);
+}
+.ftr-copy { margin: 0; font-size: var(--t-sm); }
+.ftr-socials { display: flex; gap: var(--s-2); }
+.ftr-soc {
+  display: grid; place-items: center; width: 38px; height: 38px; padding: 0;
+  border: 1px solid rgb(255 255 255 / .16); border-radius: 50%;
+  transition: background var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+}
+.ftr-soc:hover { background: rgb(255 255 255 / .10); border-color: rgb(255 255 255 / .34); }
+.ftr-soc svg {
+  width: 18px; height: 18px; fill: none; stroke: currentColor;
+  stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+}
+
+@media (max-width: 900px) {
+  .ftr-top { grid-template-columns: 1fr; gap: var(--s-6); }
+  .ftr-brand { order: -1; max-width: 34rem; }   /* who this is, before the index of it */
+}
+@media (max-width: 560px) {
+  .ftr-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-5) var(--s-4); }
+  .ftr-bar { justify-content: center; text-align: center; }
+}
 
 /* ============ Component library (ui.js) ============ */
 /* Toasts */

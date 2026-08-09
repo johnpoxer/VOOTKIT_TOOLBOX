@@ -262,23 +262,46 @@
 
 </main>
 
+<!-- Mirrors foot() in build.js. The homepage is hand-authored, so these two
+     have to be kept in step by hand; test/seo.test.js asserts that every link
+     in one appears in the other, because a footer that differs between the
+     home page and every other page is the kind of drift nobody spots. -->
 <footer class="ftr">
   <div class="wrap">
-    <div class="ftr-grid">
-      <div>
-        <h4>Popular</h4>
-        <a href="tools/pdf/">PDF tools</a><a href="tools/images/">Image tools</a><a href="tools/video/">Video &amp; streaming</a><a href="tools/finance/">Finance</a>
+    <div class="ftr-top">
+      <div class="ftr-cols">
+        <div class="ftr-col">
+          <h4>Tools</h4>
+          <a href="tools/pdf/">PDF</a><a href="tools/images/">Images</a><a href="tools/video/">Video</a><a href="tools/audio/">Audio</a><a href="tools/text/">Text</a><a href="tools/finance/">Finance</a>
+        </div>
+        <div class="ftr-col">
+          <h4>More tools</h4>
+          <a href="tools/seo/">SEO</a><a href="tools/developer/">Developer</a><a href="tools/design/">Design</a><a href="tools/privacy/">Privacy</a><a href="tools/data/">Data</a><a href="tools/">All 21 categories</a>
+        </div>
+        <div class="ftr-col">
+          <h4>Vootkit</h4>
+          <a href="tools/">All tools</a><a href="pricing.html">Pricing</a><a href="about.html">About</a><a href="blog/">Blog</a><a href="contact.html">Contact &amp; support</a>
+        </div>
+        <div class="ftr-col">
+          <h4>Legal</h4>
+          <a href="privacy.html">Privacy policy</a><a href="cookies.html">Cookie policy</a><a href="terms.html">Terms</a><a href="disclaimer.html">Disclaimer</a>
+        </div>
       </div>
-      <div>
-        <h4>More</h4>
-        <a href="tools/seo/">SEO</a><a href="tools/accessibility/">Accessibility</a><a href="tools/privacy/">Privacy</a><a href="tools/developer/">Developer</a>
-      </div>
-      <div>
-        <h4>Vootkit</h4>
-        <a href="tools/">All tools</a><a href="privacy.html">Privacy policy</a><a href="terms.html">Terms</a>
+      <div class="ftr-brand">
+        <span class="ftr-mark">
+          <svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="17.5" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-width="1.3" stroke-dasharray="17 7"/><path d="M12.5 14.5 21.5 30 31.5 13.5" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="33.5" cy="10.5" r="2.7" fill="#22d3ee"/></svg>
+          vootkit
+        </span>
+        <p>250+ free tools for PDF, images, video, finance and more.</p>
+        <p class="ftr-trust">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4.5 6.2v5.4c0 4.6 3.2 8.9 7.5 10.2 4.3-1.3 7.5-5.6 7.5-10.2V6.2z"/><path d="m9 12 2.2 2.2L15.4 10"/></svg>
+          Most tools run on your device. Your files are never uploaded.
+        </p>
       </div>
     </div>
-    <p style="margin-top:var(--s-6);font-size:var(--t-sm)">&copy; <span id="yr"></span> Vootkit — every digital task, done in your browser.</p>
+    <div class="ftr-bar">
+      <p class="ftr-copy">&copy; <span id="yr"></span> Vootkit — every digital task, done in your browser.</p>
+    </div>
   </div>
 </footer>
 

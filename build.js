@@ -325,21 +325,89 @@ ${o.ads ? adLoader() : "<!-- no ads inside an active tool workspace -->"}
  * opts.noNewsletter suppresses it where asking would be absurd — the unsubscribe
  * page above all, where a signup form next to "you have been removed" reads as
  * either a bug or a dark pattern. */
+/* ---------- SOCIAL ICONS ----------
+ * Line glyphs rather than the usual solid brand marks, so the row sits in the
+ * same visual language as the 66 tool icons instead of looking like a strip
+ * pasted in from somewhere else.
+ *
+ * An entry with an empty URL in site.config.js renders NOTHING — and if all of
+ * them are empty, socialRow() returns "" and the footer bar closes up around
+ * the gap. The site can never ship an icon pointing at a profile that is not
+ * there yet. */
+const SOCIAL_GLYPH = {
+  x:        '<path d="M4.5 4.5 19.5 19.5M19.5 4.5 4.5 19.5"/>',
+  facebook: '<path d="M15 3h-2.5A4.5 4.5 0 0 0 8 7.5V10H5.5v3.5H8V21h3.5v-7.5H14L14.7 10H11.5V7.5a1 1 0 0 1 1-1H15z"/>',
+  instagram:'<rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r="1.1"/>'
+};
+const SOCIAL_LABEL = { x: "X", facebook: "Facebook", instagram: "Instagram" };
+
+function socialRow() {
+  const s = CFG.social || {};
+  const items = Object.keys(SOCIAL_GLYPH)
+    .filter((k) => typeof s[k] === "string" && s[k].trim() !== "")
+    .map((k) => `<a href="${esc(s[k].trim())}" class="ftr-soc" rel="me noopener" target="_blank" aria-label="Vootkit on ${SOCIAL_LABEL[k]}">`
+      + `<svg viewBox="0 0 24 24" aria-hidden="true">${SOCIAL_GLYPH[k]}</svg></a>`);
+  return items.length ? `<div class="ftr-socials">${items.join("")}</div>` : "";
+}
+
+/* The footer columns. Kept in one place because foot() and the hand-authored
+   homepage have to agree — a link that exists in one footer and not the other
+   is the sort of drift nobody notices for months. */
+function footCols(up) {
+  const cat = (slug, label) => `<a href="${up}tools/${slug}/">${esc(label)}</a>`;
+  return `
+      <div class="ftr-col">
+        <h4>Tools</h4>
+        ${cat("pdf", "PDF")}${cat("images", "Images")}${cat("video", "Video")}${cat("audio", "Audio")}${cat("text", "Text")}${cat("finance", "Finance")}
+      </div>
+      <div class="ftr-col">
+        <h4>More tools</h4>
+        ${cat("seo", "SEO")}${cat("developer", "Developer")}${cat("design", "Design")}${cat("privacy", "Privacy")}${cat("data", "Data")}<a href="${up}tools/">All ${VK.CATEGORIES.length} categories</a>
+      </div>
+      <div class="ftr-col">
+        <h4>Vootkit</h4>
+        <a href="${up}tools/">All tools</a><a href="${up}pricing.html">Pricing</a><a href="${up}about.html">About</a><a href="${up}blog/">Blog</a><a href="${up}contact.html">Contact &amp; support</a>
+      </div>
+      <div class="ftr-col">
+        <h4>Legal</h4>
+        <a href="${up}privacy.html">Privacy policy</a><a href="${up}cookies.html">Cookie policy</a><a href="${up}terms.html">Terms</a><a href="${up}disclaimer.html">Disclaimer</a>
+      </div>`;
+}
+
+/* The brand block that fills the slot the reference design gives to App Store
+   badges. Vootkit has no apps, and a badge for a store listing that does not
+   exist is not a design decision, it is a lie in the footer of every page. So
+   the space says the truest thing the site has to say instead. */
+function footBrand() {
+  return `
+      <div class="ftr-brand">
+        <span class="ftr-mark">
+          <svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="17.5" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-width="1.3" stroke-dasharray="17 7"/><path d="M12.5 14.5 21.5 30 31.5 13.5" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="33.5" cy="10.5" r="2.7" fill="#22d3ee"/></svg>
+          vootkit
+        </span>
+        <p>${floorTo(VK.counts.live, 50)}+ free tools for PDF, images, video, finance and more.</p>
+        <p class="ftr-trust">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4.5 6.2v5.4c0 4.6 3.2 8.9 7.5 10.2 4.3-1.3 7.5-5.6 7.5-10.2V6.2z"/><path d="m9 12 2.2 2.2L15.4 10"/></svg>
+          Most tools run on your device. Your files are never uploaded.
+        </p>
+      </div>`;
+}
+
 function foot(depth, extraScripts, opts) {
   const up = "../".repeat(depth) || "./";
   const o = opts || {};
-  const cats = VK.CATEGORIES.slice(0, 8)
-    .map((c) => `<a href="${up}tools/${c.slug}/">${esc(c.name)}</a>`).join("");
   return `</main>
 <footer class="ftr">
   <div class="wrap">
-    <div class="ftr-grid">
-      <div><h4>Categories</h4>${cats}</div>
-      <div><h4>Vootkit</h4><a href="${up}tools/">All tools</a><a href="${up}pricing.html">Pricing</a><a href="${up}about.html">About</a><a href="${up}privacy.html">Privacy</a><a href="${up}cookies.html">Cookies</a><a href="${up}terms.html">Terms</a><a href="${up}disclaimer.html">Disclaimer</a><a href="${up}contact.html">Contact &amp; support</a></div>
-      <div><h4>How it works</h4><p style="font-size:var(--t-sm);color:var(--ink-soft)">Most tools run entirely in your browser, so your files aren't uploaded and there's no queue. The free plan includes 5 tool runs a day.</p></div>
+    <div class="ftr-top">
+      <div class="ftr-cols">${footCols(up)}
+      </div>${footBrand()}
     </div>
     ${o.noNewsletter ? "" : '<div class="ftr-nl" data-newsletter="footer"></div>'}
-    <p style="margin-top:var(--s-6);font-size:var(--t-sm)">&copy; <span id="yr"></span> Vootkit — every digital task, done in your browser.</p>
+    <div class="ftr-bar">
+      ${socialRow()}
+      <p class="ftr-copy">&copy; <span id="yr"></span> Vootkit — every digital task, done in your browser.</p>
+    </div>
   </div>
 </footer>
 <script src="${up}data/site.config.js${V}"></script>

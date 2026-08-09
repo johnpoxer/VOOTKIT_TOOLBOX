@@ -60,10 +60,33 @@
 .nl-compact { margin-top: var(--s-5); padding: var(--s-4); grid-column: 1 / -1; }
 .nl-compact .nl-lede { margin-bottom: var(--s-3); font-size: var(--t-xs); }
 
-/* Footer variant: transparent, because a filled card inside an already-tinted
-   footer reads as a second footer. */
+/* Footer variant.
+ *
+ * The footer is a fixed dark band in both themes, so this form cannot inherit
+ * the light-surface treatment — an ink-coloured label and a white field on
+ * #0f1729 is unreadable, and it inherits silently, which is the worst kind.
+ * Same dark dressing as the homepage band, same single implementation
+ * underneath: only colours change here.
+ *
+ * Contrast on #0f1729, measured: title 16.21:1, typed value 12.81:1, lede and
+ * consent 8.54:1, placeholder 5.06:1. */
 .ftr-nl { margin-top: var(--s-6); }
-.ftr-nl .nl { background: transparent; border-color: var(--line); max-width: 620px; }
+.ftr-nl .nl {
+  background: rgb(255 255 255 / .04);
+  border-color: rgb(255 255 255 / .14);
+  max-width: 620px;
+}
+.ftr-nl .nl-title { color: #fff; }
+.ftr-nl .nl-lede,
+.ftr-nl .nl-consent { color: rgb(255 255 255 / .70); }
+.ftr-nl .nl-input {
+  background: rgb(255 255 255 / .08);
+  border-color: rgb(255 255 255 / .26);
+  color: #fff;
+}
+.ftr-nl .nl-input::placeholder { color: rgb(255 255 255 / .55); }
+.ftr-nl .nl-status.ok  { color: #7ee2b8; }
+.ftr-nl .nl-status.err { color: #ffb4ac; }
 
 @media (max-width: 560px) {
   .nl-row { flex-direction: column; align-items: stretch; }

@@ -716,3 +716,66 @@ console.log(`seo + newsletter placement: ${pass} total assertions passed`);
   }
 }
 console.log(`seo + tool icons: ${pass} total assertions passed`);
+
+/* ---------------------------------------------------------------------------
+ * FOOTER PARITY.
+ *
+ * The footer exists twice: foot() in build.js renders it on 1,478 pages, and
+ * index.html carries a hand-written copy because the homepage is not built.
+ * Two copies of the same thing drift, and footer drift is invisible — nobody
+ * scrolls to the bottom of the homepage and the bottom of a tool page in the
+ * same minute to compare. So the drift gets asserted instead of trusted.
+ *
+ * Compared on destination, not on markup: the homepage uses relative paths
+ * ("tools/pdf/") and built pages walk up ("../tools/pdf/"), so both sides are
+ * normalised to the path they actually resolve to.
+ * ------------------------------------------------------------------------- */
+{
+  const fsF = require("fs"), pathF = require("path");
+  const RF = pathF.join(__dirname, "..");
+  const readF = (p) => { try { return fsF.readFileSync(pathF.join(RF, p), "utf8"); } catch (e) { return ""; } };
+  const home = readF("index.html");
+  const built = readF("tools/index.html");
+  if (!home || !built) {
+    console.log("footer parity: SKIPPED (run npm run build first)");
+  } else {
+    const foot = (h) => (h.match(/<footer class="ftr">[\s\S]*?<\/footer>/) || [""])[0];
+    const links = (h, strip) => new Set(
+      [...foot(h).matchAll(/href="([^"]+)"/g)]
+        .map((m) => m[1].replace(strip, "").replace(/^\.\//, ""))
+        .filter((u) => !/^https?:|^mailto:|^#/.test(u))
+    );
+    const H = links(home, /^/);            // already relative to root
+    const B = links(built, /^(\.\.\/)+/);  // walk-up prefix removed
+
+    ok(H.size >= 18, "the homepage footer carries the full link set, got " + H.size);
+    [...B].forEach((u) => ok(H.has(u), "homepage footer is missing built-page link: " + u));
+    [...H].forEach((u) => ok(B.has(u), "built-page footer is missing homepage link: " + u));
+
+    /* The structure has to match too, or the two look different even when they
+       point at the same places. */
+    ["ftr-top", "ftr-cols", "ftr-brand", "ftr-mark", "ftr-trust", "ftr-bar", "ftr-copy"]
+      .forEach((c) => {
+        ok(foot(home).includes(c), "homepage footer has ." + c);
+        ok(foot(built).includes(c), "built footer has ." + c);
+      });
+
+    /* Four named columns on both sides. */
+    eq((foot(home).match(/class="ftr-col"/g) || []).length, 4, "homepage footer has 4 columns");
+    eq((foot(built).match(/class="ftr-col"/g) || []).length, 4, "built footer has 4 columns");
+
+    /* NO DEAD SOCIAL ICONS. site.config.js ships empty URLs until the real
+       profiles are pasted in; an icon rendered before then is a link to
+       nowhere in the footer of every page on the site. */
+    const CFG = require("../data/site.config.js");
+    const set = Object.keys(CFG.social || {}).filter((k) => (CFG.social[k] || "").trim() !== "");
+    const icons = (foot(built).match(/class="ftr-soc"/g) || []).length;
+    eq(icons, set.length,
+       "one social icon per configured profile — " + set.length + " set, " + icons + " rendered");
+    set.forEach((k) => ok(/^https:\/\//.test(CFG.social[k].trim()),
+       "social." + k + " is a full https URL"));
+    if (!set.length) ok(!/ftr-socials/.test(foot(built)),
+       "with no profiles configured the social row is absent entirely, not empty");
+  }
+}
+console.log(`seo + footer parity: ${pass} total assertions passed`);

@@ -16,6 +16,24 @@
     /* analytics (public measurement ID — safe to ship) */
     ga4: "G-KLEWTJ8WG2",
 
+    /* Social profiles, shown as icons in the footer bar.
+     *
+     * PASTE THE PROFILE URL FOR EACH ONE YOU ACTUALLY HAVE. Same rule as the
+     * ad slots below: an empty string renders NOTHING — no icon, no dead link,
+     * no gap. If all three are empty the whole row disappears and the footer
+     * closes up around it, so the site never ships an icon that goes nowhere.
+     *
+     * That matters more than usual right now. A footer icon linking to a
+     * profile that 404s is exactly the kind of unfinished edge a reviewer
+     * notices, and the AdSense re-review has already been failed once.
+     *
+     * Full URLs including https://. */
+    social: {
+      x:         "",   /* e.g. https://x.com/vootkit            */
+      facebook:  "",   /* e.g. https://www.facebook.com/vootkit */
+      instagram: ""    /* e.g. https://www.instagram.com/vootkit */
+    },
+
     /* Cookie consent + Google Consent Mode v2.
      *
      * Google requires a consent solution for EEA and UK traffic. Without one,
