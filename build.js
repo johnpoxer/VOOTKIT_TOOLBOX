@@ -457,13 +457,75 @@ const GLYPH = {
   home:     '<path d="m3 11 9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
   contract: '<path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/><path d="M10 13h5"/><path d="m10 17 2-1 2 1"/>',
   user:     '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
-  chat:     '<path d="M21 12a8 8 0 0 1-8 8H8l-5 3 1.4-4.2A8 8 0 1 1 21 12Z"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01"/>'
+  chat:     '<path d="M21 12a8 8 0 0 1-8 8H8l-5 3 1.4-4.2A8 8 0 1 1 21 12Z"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01"/>',
+  car:      '<path d="M5 17h14"/><path d="M4 17v-4l2-5h12l2 5v4"/><circle cx="7.5" cy="17" r="1.8"/><circle cx="16.5" cy="17" r="1.8"/>',
+  piggy:    '<path d="M4 12a6 6 0 0 1 6-6h3a6 6 0 0 1 6 6v3h-2l-1 3h-3l-.5-2h-3l-.5 2H6l-1-3H4Z"/><circle cx="16" cy="11" r="1"/><path d="M9 6V4"/>',
+  umbrella: '<path d="M12 3a9 9 0 0 1 9 9H3a9 9 0 0 1 9-9Z"/><path d="M12 12v6a2.5 2.5 0 0 0 5 0"/>',
+  wallet:   '<rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 9h13a2 2 0 0 1 0 5H3"/><circle cx="17" cy="11.5" r="1.1"/>',
+  thermo:   '<path d="M14 14V5a2 2 0 1 0-4 0v9a4 4 0 1 0 4 0Z"/><path d="M12 9v6"/>',
+  gauge:    '<path d="M4 17a8 8 0 1 1 16 0"/><path d="m12 15 4-4"/><circle cx="12" cy="17" r="1.4"/>',
+  cube:     '<path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/>',
+  database: '<ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>',
+  scales:   '<path d="M12 4v16M7 20h10"/><path d="M12 7 4 9l3 5 3-5Z"/><path d="m12 7 8 2-3 5-3-5Z"/>',
+  scissors: '<circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><path d="M8 8l12 10M20 6 8 16"/>',
+  camera:   '<rect x="3" y="7" width="18" height="13" rx="2.5"/><circle cx="12" cy="13.5" r="3.5"/><path d="M9 7l1.5-3h3L15 7"/>',
+  mute:     '<path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="m16 9 5 6M21 9l-5 6"/>',
+  repeat:   '<path d="M4 9V8a3 3 0 0 1 3-3h10l-3-3"/><path d="M20 15v1a3 3 0 0 1-3 3H7l3 3"/>',
+  speaker:  '<path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 9.5a4 4 0 0 1 0 5M18 7a7.5 7.5 0 0 1 0 10"/>',
+  square:   '<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M10 4v16"/>',
+  trending: '<path d="m3 17 6-6 4 4 8-8"/><path d="M15 7h6v6"/>'
 };
 
 /* Verb -> [glyph, hue]. First match wins, so specific patterns come first.
    Hue is a CSS hue angle; the chip is built from it at low saturation so a
    grid of them reads as a palette rather than a paint chart. */
 const ICON_RULES = [
+  /* Two more caught by spot-checking the resolver output rather than trusting
+     it: time-calculator was landing on 'percent' and json-formatter on
+     'convert', both via keyword text rather than anything about the tool. */
+  [/time-calculator|duration|hours-minutes/, 'clock', 340],
+  [/^json|json-formatter|xml-formatter|yaml/, 'braces', 216],
+
+  /* --- breaking the big collisions -------------------------------------
+     Written after dumping the actual per-tool assignments and finding nine
+     finance tools on one 'money' glyph, nine everyday converters on one
+     'convert' glyph, and five realestate tools on one 'home'. A rule that
+     matches nine things is a category icon wearing a disguise. */
+  [/mortgage/,                           'home',     250],
+  [/auto-loan|car-loan|vehicle-finance/, 'car',      216],
+  [/refinance/,                          'repeat',   200],
+  [/compound|savings-goal|savings/,      'piggy',    152],
+  [/retirement|pension/,                 'umbrella', 190],
+  [/overtime|time-and-a-half/,           'timer',    32],
+  [/salary-conv|wage-conv/,              'convert',  152],
+  [/budget|paycheck|payroll|wage|employee-cost/, 'wallet', 152],
+  [/roas|stripe-fee|paypal-fee|etsy-fee|late-fee/, 'percent', 32],
+  [/inventory|stock-level/,              'cube',     268],
+  [/swot|brainstorm/,                    'layers',   284],
+  [/break-even|profit-margin|cap-rate|rental-yield|roi/, 'trending', 152],
+  [/rent-vs-buy|affordab/,               'scales',   250],
+  [/life-insurance|life-cover/,          'heart',    340],
+  [/auto-insurance|car-insurance/,       'car',      216],
+  [/deductible|excess/,                  'scales',   32],
+  [/income-protection|disability-cover/, 'shield',   152],
+  [/insurance|premium|policy/,           'umbrella', 190],
+
+  [/temperature|celsius|fahrenheit/,     'thermo',   340],
+  [/speed-conv|pace|velocity/,           'gauge',    190],
+  [/volume-conv|area-conv/,              'cube',     190],
+  [/data-conv|storage-conv|bytes/,       'database', 216],
+  [/weight-conv|mass-conv|ideal-weight/, 'scales',   190],
+  [/length-conv|unit-conv|distance/,     'ruler',    190],
+  [/timezone/,                           'globe',    190],
+
+  [/trim-video|cut-video|clip/,          'scissors', 340],
+  [/frame-grab|screenshot|thumbnail|passport-photo/, 'camera', 216],
+  [/mute-video|\bmute\b/,                'mute',     340],
+  [/loop-video|\bloop\b/,                'repeat',   340],
+  [/volume|loudness/,                    'speaker',  340],
+  [/gradient/,                           'square',   284],
+  [/blur|sharpen|filter-studio/,         'droplet',  216],
+
   /* Specific ids first. These were surfaced by iconAudit() refusing to let the
      build produce a silent category fallback. */
   [/rent-vs-buy|home-afford|rental-yield|cash-on-cash|realestate|property|mortgage-afford/, 'home', 250],
@@ -485,7 +547,7 @@ const ICON_RULES = [
   [/sign|signature/,                     'sign',     284],
   [/watermark|stamp|meme/,               'stamp',    284],
   [/crop|circle-crop|round-corners/,     'crop',     200],
-  [/resize|scale/,                       'resize',   200],
+  [/resize|\bscale\b|\brescale\b/,        'resize',   200],
   [/convert|to-pdf|pdf-to|to-jpg|to-png|to-webp|format/, 'convert', 216],
   [/video|gif|trim|mute|loop|frame/,     'video',    340],
   [/audio|mp3|wav|volume/,               'audio',    340],
@@ -504,17 +566,20 @@ const ICON_RULES = [
   [/cron|schedule-expr/,                 'clock',    284],
   [/json|xml|yaml|toml/,                 'braces',   216],
   [/formatter|minif|beautif|prettif|lint/, 'code',   216],
-  [/code|diff/,                          'code',     216],
+  [/\bcode\b|text-diff|\bdiff\b/,          'code',     216],
   [/colou?r|palette|gradient|shadow/,    'palette',  284],
   [/contrast|a11y|accessib|alt-text|tap-target/, 'contrast', 190],
   [/exif|metadata|viewer|preview|inspect/, 'eye',    190],
   [/chart|graph|visuali/,                'chart',    152],
   [/percent|ratio|discount|vat|tax|gst/, 'percent',  32],
   [/loan|mortgage|interest|salary|invoice|budget|savings|retire|crypto|profit|margin|cac|fba|currency|money|price|cost|tip|hourly|rate|dti|debt/, 'money', 152],
-  [/calculator|solver|equation|fraction|math/, 'calc', 152],
+  /* Dates and times BEFORE the generic calculator rule — 'date-calculator'
+     otherwise resolves on the word 'calculator' before anything notices
+     what it calculates. */
   [/timer|pomodoro|stopwatch|countdown/, 'timer',    340],
-  [/time|clock|timezone/,                'clock',    340],
-  [/date|age|calendar/,                  'calendar', 340],
+  [/\bdate\b|\bage\b|calendar|birthday/,  'calendar', 340],
+  [/time-calc|\btime\b|clock|timezone/,   'clock',    340],
+  [/calculator|solver|equation|fraction|math/, 'calc', 152],
   [/random|picker|shuffle|dice/,         'dice',     268],
   [/unit|convert-unit|measure|length/,   'ruler',    190],
   [/travel|flight|trip|distance/,        'plane',    190],
@@ -558,9 +623,22 @@ function iconAudit() {
   const bad = [];
   VK.CATEGORIES.forEach((c) => {
     const inCat = live.filter((t) => t.cat === c.slug);
-    if (inCat.length < 5) return;
     const distinct = new Set(inCat.map((t) => toolIcon(t).g)).size;
-    if (distinct < 3) bad.push(`${c.slug} (${inCat.length} tools, ${distinct} glyph)`);
+    /* Caught insurance: four tools, all on 'umbrella', invisible to the old
+       five-tool floor. A category of any size where every tool shares one
+       glyph is exactly the problem this system exists to remove. */
+    if (inCat.length >= 3 && distinct === 1) {
+      bad.push(`${c.slug} (${inCat.length} tools, all on one glyph)`);
+      return;
+    }
+    if (inCat.length < 5) return;
+    /* Roughly one glyph per three tools. The old floor was "at least 3
+       glyphs", which passed a 17-tool category sitting on 3 icons — thin
+       enough to still read as a template. */
+    const need = Math.max(3, Math.ceil(inCat.length / 3));
+    if (distinct < need) {
+      bad.push(`${c.slug} (${inCat.length} tools, ${distinct} glyphs, needs ${need})`);
+    }
   });
   if (bad.length) throw new Error("categories still visually uniform: " + bad.join("; "));
   const all = new Set(live.map((t) => toolIcon(t).g));
