@@ -7,13 +7,30 @@
 
   /* ---- neutrals (do ~95% of the work) ---- */
   --n-0:  #ffffff;
-  --n-25: #fbfcfe;   /* soft canvas — calm, not clinical pure white */
-  --n-50: #f5f7fa;
+  /* CANVAS DEPTH IS WHAT MAKES CARDS READ AS CARDS.
+   *
+   * This was #fbfcfe — four points below white on red, three on green, one on
+   * blue. White cards on it had a contrast ratio of 1.027, which is to say
+   * almost none: the grid read as a flat sheet with hairlines drawn on it, and
+   * the "card" impression depended entirely on the 1px border.
+   *
+   * Measured iLovePDF's for comparison, since that is the reference: #f5f5fa,
+   * about ten points below white, giving 1.087 against their white cards. Not
+   * a different hue — a different DEPTH. That gap is why their tool grid looks
+   * like objects sitting on a surface and ours looked printed onto one.
+   *
+   * #f4f6fb lands at 1.081, keeps our slightly cooler cast, and costs almost
+   * nothing in text contrast (--ink 17.98 -> 17.07, still far past AA). */
+  --n-25: #f4f6fb;   /* page canvas — deep enough that white cards lift off it */
+  --n-50: #eaeef6;
   --n-100:#eef1f6;
   --n-200:#e2e7ef;
   --n-300:#cbd3df;
   --n-400:#9aa5b5;
-  --n-500:#6b7688;
+  /* Was #6b7688, which measured 4.47 against the old canvas — already under
+     the 4.5 AA threshold before this change, and 4.25 after it. Darkened to
+     clear AA on the canvas AND on white, since it is used on both. */
+  --n-500:#656f81;
   --n-600:#4d5768;
   --n-700:#354052;
   --n-800:#1f2937;
