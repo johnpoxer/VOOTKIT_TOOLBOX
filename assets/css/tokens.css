@@ -58,6 +58,25 @@
   --accent-border: #f6c2d9;
   --accent-on:     #ffffff;   /* text on accent */
 
+  /* --brand is what the Pro page's hero wash, its feature icons and its
+     illustration were all written against — and it was never defined. An
+     undefined custom property with no fallback makes the whole declaration
+     invalid at computed-value time, so the wash painted nothing, the icon
+     circles lost their fill and their colour, and the SVG's gradient was
+     invalid enough to drop the shape it filled. The hero rendered blank white
+     from the day it shipped.
+     IT IS BLUE, NOT THE SITE ACCENT. Aliasing it to --accent was the obvious
+     move and it was wrong twice over: it put a 9% pink radial across the top of
+     the pricing page — the exact tint that had just been taken off every other
+     page — and it contradicted the supplied design, where the Pro hero, its
+     illustration and its upgrade button are all blue. Same blue as the
+     newsletter Subscribe button, so the site now reads as one accent for the
+     product and one for the premium moments, deliberately, rather than by
+     accident. */
+  --brand:      #2563eb;
+  --brand-weak: #eaf0ff;
+  --brand-line: #b9c9ee;
+
   /* ---- semantic only. never decorative. ---- */
   --ok:#0f7a4a;  --ok-weak:#e7f6ee;  --ok-border:#a9dcc2;
   --warn:#a45c06; --warn-weak:#fdf3e3; --warn-border:#f0cf95;

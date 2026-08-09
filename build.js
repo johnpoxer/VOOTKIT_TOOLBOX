@@ -1513,12 +1513,18 @@ function accountPage() {
  */
 function proIllustration() {
   /* Inline SVG rather than an image: it scales, it themes with the site, and
-     it costs no extra request on the page people land on to spend money. */
+     it costs no extra request on the page people land on to spend money.
+   *
+   * THE FACES ARE LITERAL BLUES, NOT TOKENS. They were var(--surface) over
+   * var(--line) — white cards with hairline borders, on a white hero. Even
+   * with every token resolving, the drawing was very nearly invisible; the
+   * undefined --brand just finished the job. An illustration cannot be built
+   * out of the same colour as the thing it sits on. */
   const card = (x, y, label, delay) =>
     `<g class="pro-card" style="--d:${delay}s">
-       <path d="M${x} ${y} l58 -33 58 33 -58 33Z" fill="var(--surface)" stroke="var(--line)"/>
-       <path d="M${x} ${y} l58 33 0 13 -58 -33Z" fill="var(--surface-2,#eef2f7)" stroke="var(--line)"/>
-       <path d="M${x + 116} ${y} l-58 33 0 13 58 -33Z" fill="var(--surface-2,#e4e9f0)" stroke="var(--line)"/>
+       <path d="M${x} ${y} l58 -33 58 33 -58 33Z" fill="#f2f6ff" stroke="#b9c9ee"/>
+       <path d="M${x} ${y} l58 33 0 13 -58 -33Z" fill="#dbe5fa" stroke="#b9c9ee"/>
+       <path d="M${x + 116} ${y} l-58 33 0 13 58 -33Z" fill="#c8d7f6" stroke="#b9c9ee"/>
        <text x="${x + 58}" y="${y + 2}" text-anchor="middle" class="pro-card-t">${esc(label)}</text>
      </g>`;
   return `<svg class="pro-art" viewBox="0 0 460 380" role="img" aria-label="Vootkit tools stacked as an isometric diagram">
@@ -1533,11 +1539,11 @@ function proIllustration() {
     ${card(150, 150, "JSON Formatter", .24)}
     ${card(60, 100, "Loan Calculator", .32)}
     <g class="pro-phone">
-      <rect x="330" y="120" width="92" height="176" rx="14" fill="var(--surface)" stroke="var(--line)" stroke-width="2"/>
-      <rect x="340" y="136" width="72" height="9" rx="4.5" fill="var(--line)"/>
-      <rect x="340" y="154" width="52" height="9" rx="4.5" fill="var(--line)"/>
-      <rect x="340" y="176" width="72" height="30" rx="6" fill="var(--surface-2,#eef2f7)" stroke="var(--line)"/>
-      <rect x="340" y="214" width="72" height="30" rx="6" fill="var(--surface-2,#eef2f7)" stroke="var(--line)"/>
+      <rect x="330" y="120" width="92" height="176" rx="14" fill="var(--surface)" stroke="#b9c9ee" stroke-width="2"/>
+      <rect x="340" y="136" width="72" height="9" rx="4.5" fill="#cbd9f7"/>
+      <rect x="340" y="154" width="52" height="9" rx="4.5" fill="#dbe5fa"/>
+      <rect x="340" y="176" width="72" height="30" rx="6" fill="#f2f6ff" stroke="#b9c9ee"/>
+      <rect x="340" y="214" width="72" height="30" rx="6" fill="#f2f6ff" stroke="#b9c9ee"/>
       <rect x="340" y="256" width="46" height="12" rx="6" fill="var(--brand)"/>
     </g>
   </svg>`;

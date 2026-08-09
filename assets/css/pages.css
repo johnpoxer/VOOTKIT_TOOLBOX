@@ -411,8 +411,8 @@ video.wcode { padding: 0; }
 .pro-hero {
   padding: var(--s-7) 0 var(--s-6);
   background:
-    radial-gradient(60rem 32rem at 78% 18%, color-mix(in srgb, var(--brand) 9%, transparent), transparent 70%),
-    var(--surface-2, transparent);
+    radial-gradient(60rem 32rem at 78% 18%, color-mix(in srgb, var(--brand) 7%, transparent), transparent 70%),
+    var(--surface);
   border-bottom: 1px solid var(--line);
 }
 .pro-hero-grid {
@@ -430,14 +430,19 @@ video.wcode { padding: 0; }
   font-size: var(--t-lg); color: var(--ink-soft);
   max-width: 46ch; margin: 0 0 var(--s-5);
 }
+/* The upgrade button is the brand blue, as in the supplied design — the one
+   place on the site where the pink accent deliberately steps aside. */
 .pro-cta { font-size: var(--t-md); padding: 0.85em 1.6em; }
+.pro-cta.btn-primary { background: var(--brand); border-color: transparent; color: #fff; }
+.pro-cta.btn-primary:hover { background: #1d4ed8; }
+.pro-cta.btn-primary:active { background: #1e40af; }
 .pro-note { margin: var(--s-3) 0 0; font-size: var(--t-sm); color: var(--ink-mute); }
 
 .pro-hero-art { display: flex; justify-content: center; }
 .pro-art { width: 100%; max-width: 460px; height: auto; }
 .pro-card path { stroke-width: 1.2; }
 .pro-card-t {
-  font-size: 11px; font-weight: 600; fill: var(--ink-soft);
+  font-size: 11px; font-weight: 600; fill: #3b4a63;
   font-family: inherit;
 }
 /* The cards rise into place on load. Motion is decorative here, so it is
