@@ -6977,6 +6977,138 @@ module.exports = {
     related: ['break-even', 'profit-margin', 'percentage-calculator', 'budget-calculator', 'invoice-generator']
   },
 
+  'countdown': {
+    intro: 'A countdown does one thing a calendar cannot: it converts a date into a quantity. "14 March" is information. "37 days, 4 hours" is pressure, and pressure is usually what the person setting it actually wanted.',
+    what: [
+      'Counts down to any date and time you pick, updating every second, in days, hours, minutes and seconds.',
+      'It runs off your device clock and your local time zone, which is the right behaviour for a personal deadline and the wrong one for coordinating across countries — see the note below.'
+    ],
+    specs: {
+      caption: 'Behaviour worth knowing',
+      rows: [
+        ['Time zone', 'Your device’s local zone — the target is read as local time'],
+        ['Accuracy', 'Ticks every second against the system clock'],
+        ['Past dates', 'Counts upward instead, so it doubles as a "time since" counter'],
+        ['Daylight saving', 'Handled by the browser; a target across a DST boundary stays on the wall clock'],
+        ['Runs', 'Entirely on your device — nothing is scheduled on a server'],
+        ['If you close the tab', 'It stops. This is a display, not a reminder']
+      ]
+    },
+    steps: [
+      'Pick the target date and time.',
+      'Leave the tab open, or reopen it whenever you want the current figure.',
+      'For a date in the past, set it anyway — <strong>it counts up</strong>, which is how long since something happened.',
+      'Coordinating with people elsewhere? Convert to their zone first.'
+    ],
+    tip: 'A countdown is a display, not an alarm. It will not notify you, it does not survive the tab being closed, and it has no idea whether you are looking at it. If something must actually interrupt you at a specific moment, set a real alarm on a phone and use this for the psychological effect of watching the number fall — which is genuinely useful, and completely different from being reminded.',
+    faqs: [
+      { q: 'Which time zone does the target use?', a: 'Your device’s. If you enter 09:00 the countdown targets 09:00 where you are sitting, so a colleague in another country running the same target will see a different number. For anything shared, agree the moment in one zone and have everyone convert to their own before entering it.' },
+      { q: 'Will it notify me when it reaches zero?', a: 'No. It is a display that updates while the page is open, with no notification permission and nothing scheduled anywhere. Closing the tab ends it entirely. For anything that must interrupt you, use a device alarm and treat this as the visible reminder that sits alongside it.' },
+      { q: 'Can I count down to something years away?', a: 'Yes — the arithmetic is the same whether the target is tomorrow or a decade out, and it will show the full day count. Very distant targets tend to be more motivating expressed in weeks or months, which is a mental conversion rather than a limitation of the tool.' },
+      { q: 'What happens if I pick a date that has already passed?', a: 'It counts upward from that moment instead of down, which turns it into an elapsed-time counter. That is deliberately useful: anniversaries, sobriety dates, days since a project started, or how long a problem has been outstanding all read naturally that way.' }
+    ],
+    related: ['timezone-converter', 'age-calculator', 'date-calculator', 'pomodoro', 'stopwatch', 'time-calculator']
+  },
+
+  'pomodoro': {
+    intro: 'The technique is named after a tomato-shaped kitchen timer, and its actual mechanism is not the twenty-five minutes. It is that the interval is fixed before you start, so the decision to stop working has already been made by someone who was not tired.',
+    what: [
+      'Runs alternating work and break intervals with the lengths you set, defaulting to the classic 25 and 5.',
+      'The default is a starting point, not doctrine. Francesco Cirillo picked 25 minutes because it was the timer he had; the useful length is the one you can complete without checking the clock.'
+    ],
+    specs: {
+      caption: 'The method, and what the numbers are for',
+      rows: [
+        ['Classic interval', '25 minutes work, 5 minutes break'],
+        ['Long break', 'Traditionally 15-30 minutes after four intervals'],
+        ['Deep work variants', '50/10 or 90/20 suit tasks with a long warm-up'],
+        ['The rule that matters', 'If you are interrupted, the interval is void — restart it'],
+        ['Break behaviour', 'Leave the screen. A break spent scrolling does not restore attention'],
+        ['Runs', 'On your device; nothing is recorded or sent anywhere']
+      ]
+    },
+    steps: [
+      'Set work and break lengths, or leave the 25/5 default.',
+      'Decide <strong>before you start</strong> what the single task for this interval is.',
+      'Start it. If something interrupts you, restart rather than pausing — that is the point of the method.',
+      'Actually take the break, away from the screen.'
+    ],
+    tip: 'The break is not a reward, it is part of the mechanism. Most people who abandon the technique do so because they kept working through the breaks, felt fine for a day, and then found that focus collapsed by mid-afternoon. Twenty-five minutes of work followed by twenty-five more is just fifty minutes of work; what makes the interval different is the enforced stop at the end of it.',
+    faqs: [
+      { q: 'Why 25 minutes specifically?', a: 'There is nothing magic about it — Cirillo used a 25-minute kitchen timer in the late 1980s and the number stuck. What matters is that the interval is short enough that starting feels easy and long enough to reach useful depth. Plenty of people work better at 50 minutes, and the right answer is whichever length you can finish without looking at the clock.' },
+      { q: 'What do I do if I am interrupted mid-interval?', a: 'The method says the interval is void and you restart it, which sounds harsh and is the whole design. Knowing that an interruption costs the entire block makes you far more willing to defend the time, and it surfaces how often you are actually being interrupted rather than letting it blur into a generally unproductive day.' },
+      { q: 'Should I take a break if I am in flow?', a: 'Opinions differ and the honest answer is that it depends on the work. Cirillo’s position is to stop anyway, because reliable rhythm beats occasional brilliance over a week. In practice many people finish the thought and then break — the failure mode to avoid is not one skipped break, it is the day where you skip all of them.' },
+      { q: 'Does closing the tab lose my timer?', a: 'Yes. It runs entirely in the page with nothing stored or scheduled elsewhere, so navigating away ends the interval. That is a reasonable trade for a tool that requires no account and no permissions, but it does mean the timer should live in a tab you are not about to close.' }
+    ],
+    related: ['stopwatch', 'countdown', 'time-calculator', 'typing-test', 'timezone-converter', 'date-calculator']
+  },
+
+  'stopwatch': {
+    intro: 'Every phone has one, which raises a fair question about why this exists. The answer is that the thing you are timing is usually already on the screen in front of you, and reaching for a phone is the moment the measurement goes wrong.',
+    what: [
+      'Times elapsed duration to a hundredth of a second, with lap splits recorded as you go.',
+      'It reads the system clock rather than counting its own ticks, so it stays accurate even when the browser throttles a background tab — which is exactly when a naive timer drifts.'
+    ],
+    specs: {
+      caption: 'Accuracy and behaviour',
+      rows: [
+        ['Resolution', 'Hundredths of a second in the display'],
+        ['Method', 'Elapsed against the system clock, not accumulated intervals'],
+        ['Background tabs', 'Stays correct — browsers throttle timers, not the clock'],
+        ['Laps', 'Recorded on demand and kept until reset'],
+        ['Realistic precision', 'Human reaction time is 200-250ms — the hundredths are for splits, not records'],
+        ['Runs', 'On your device; nothing is stored between visits']
+      ]
+    },
+    steps: [
+      'Start it.',
+      'Hit lap at each split you want recorded. Laps stay on screen and keep numbering until you reset.',
+      'Stop when you are done. Reset clears both the time and the laps.',
+      'Copy the numbers out before you close the tab — <strong>nothing is saved</strong>.'
+    ],
+    tip: 'Do not read too much into the hundredths when a human is starting and stopping it. Reaction time alone is 200-250 milliseconds at each end, so a hand-timed result carries roughly a quarter-second of uncertainty in each direction regardless of what the display shows. The precision is genuinely useful for comparing laps within one session, where the same reaction delay applies to every split and cancels out.',
+    faqs: [
+      { q: 'Does it keep running if I switch tabs?', a: 'The time stays correct. Browsers throttle background timers to save power, which is why some web stopwatches drift badly when hidden, but this one measures against the system clock rather than counting its own ticks — so the elapsed figure is right when you come back even if the display was not updating.' },
+      { q: 'How accurate is it really?', a: 'The measurement is as accurate as your system clock, which is far better than you need. The limiting factor is you: human reaction time adds roughly 200-250ms at the start and again at the stop. Treat the hundredths as meaningful for comparing splits in the same session, and not for anything that would count as a record.' },
+      { q: 'Are my laps saved?', a: 'Only while the page is open. Nothing is written to your device or sent anywhere, so closing the tab discards the session entirely. If the numbers matter, copy them out before you leave — there is no history to come back to.' },
+      { q: 'Why use this instead of my phone?', a: 'Because whatever you are timing is usually already on the screen, and picking up a phone is the moment you look away and start late. If your hands are already on the keyboard, a timer in a tab is measurably closer to hand than one in a pocket.' }
+    ],
+    related: ['pomodoro', 'countdown', 'time-calculator', 'typing-test', 'date-calculator', 'unit-converter']
+  },
+
+  'typing-test': {
+    intro: 'Typing speed is one of the few skills where most people plateau early, stay there for decades, and never find out — because nothing they do gives them a number.',
+    what: [
+      'Times you against a sample passage and reports words per minute alongside accuracy.',
+      'Both figures matter, and the relationship between them is the point. WPM alone is easy to inflate by typing fast and wrong; the accuracy figure is what stops the number being meaningless.'
+    ],
+    specs: {
+      caption: 'How the numbers work',
+      rows: [
+        ['A "word"', 'Standardised as five characters, including spaces — so WPM is comparable'],
+        ['Average adult', 'Around 40 WPM'],
+        ['Competent office typing', '55-70 WPM'],
+        ['Professional transcription', '80-100+ WPM'],
+        ['Accuracy target', 'Above 97% — below that, corrections cost more time than the speed gained'],
+        ['Runs', 'On your device; no result is uploaded or ranked anywhere']
+      ]
+    },
+    steps: [
+      'Start typing the passage. The timer begins on your first keystroke, not on page load.',
+      'Type it as you normally would — <strong>do not slow down to be neat</strong>, or the number describes a way of typing you never use.',
+      'Read accuracy before speed.',
+      'Repeat on another day. One run is a mood; three runs across a week is a baseline.'
+    ],
+    tip: 'If accuracy is under about 95%, speed is the wrong thing to work on. Every error costs a backspace, a retype and a break in rhythm, which is far more time than the keystrokes you saved rushing — most people get measurably faster overall by deliberately slowing down until accuracy is consistent, then letting speed return on its own. The fastest typists are not racing; they are simply not correcting.',
+    faqs: [
+      { q: 'What counts as a word?', a: 'Five characters including spaces, which is the standard convention across typing tests. It exists so that "supercalifragilistic" and "cat cat cat cat" score comparably, and it is why your WPM here should be roughly consistent with any other test that follows the same rule rather than counting actual words.' },
+      { q: 'Is my score good?', a: 'Around 40 WPM is typical for an adult, 55-70 is comfortable office proficiency, and 80 or above is genuinely quick. But context matters more than the ranking: 60 WPM at 99% accuracy beats 75 WPM at 92%, because the second typist spends the difference correcting and loses their place doing it.' },
+      { q: 'Why did my speed drop when I tried to be accurate?', a: 'It usually does at first, and then it comes back higher. Accuracy is a motor habit — once the corrections stop, rhythm improves and speed follows without you pushing for it. Chasing raw WPM tends to lock in an error rate that caps how fast you can ever get.' },
+      { q: 'Does the test store my results?', a: 'No. It runs entirely in the page, nothing is sent anywhere and nothing is kept between visits, so there is no history or leaderboard. If you want to track progress, write the numbers down — three runs across a week tells you far more than any single result.' }
+    ],
+    related: ['word-counter', 'stopwatch', 'pomodoro', 'text-diff', 'readability', 'countdown']
+  },
+
   'loan-calculator': {
     intro: 'The monthly payment is the number lenders lead with, and it is the least useful one for comparing offers. Two loans with almost identical payments can differ by thousands once the term differs — total repaid is where that shows up.',
     what: [
