@@ -439,20 +439,22 @@ video.wcode { padding: 0; }
 .pro-note { margin: var(--s-3) 0 0; font-size: var(--t-sm); color: var(--ink-mute); }
 
 .pro-hero-art { display: flex; justify-content: center; }
-.pro-art { width: 100%; max-width: 460px; height: auto; }
-.pro-card path { stroke-width: 1.2; }
-.pro-card-t {
-  font-size: 11px; font-weight: 600; fill: #3b4a63;
-  font-family: inherit;
+/* THE EDGES ARE MASKED, NOT CROPPED.
+ * The illustration has a soft grey vignette background; the hero is white
+ * under a faint blue wash. Placed flat, those two greys meet along a visible
+ * rectangle and the picture reads as pasted on. Fading the outer edge to
+ * nothing dissolves it into the page instead — and it keeps working if the
+ * hero tint changes, which a matched background colour would not. */
+.pro-art {
+  display: block; width: 100%; max-width: 560px; height: auto;
+  -webkit-mask-image: radial-gradient(115% 105% at 50% 48%, #000 58%, transparent 92%);
+          mask-image: radial-gradient(115% 105% at 50% 48%, #000 58%, transparent 92%);
+  animation: proRise .7s .05s both ease-out;
 }
-/* The cards rise into place on load. Motion is decorative here, so it is
-   removed entirely rather than reduced for anyone who has asked for that. */
-.pro-card { animation: proRise .6s var(--d, 0s) both ease-out; }
-.pro-phone { animation: proRise .6s .4s both ease-out; }
+.pro-art img { display: block; width: 100%; height: auto; }
 @keyframes proRise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-@media (prefers-reduced-motion: reduce) {
-  .pro-card, .pro-phone { animation: none; }
-}
+/* Motion here is decoration, so it is removed rather than reduced. */
+@media (prefers-reduced-motion: reduce) { .pro-art { animation: none; } }
 
 .pro-feats {
   display: grid; gap: var(--s-5);

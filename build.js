@@ -1511,42 +1511,31 @@ function accountPage() {
  * is the first thing a reviewer would open. On a pricing page an upgrade
  * pitch is exactly what anyone expects to find.
  */
-function proIllustration() {
-  /* Inline SVG rather than an image: it scales, it themes with the site, and
-     it costs no extra request on the page people land on to spend money.
+function proIllustration(up) {
+  /* A real illustration now, generated to a brief and cropped to its content.
    *
-   * THE FACES ARE LITERAL BLUES, NOT TOKENS. They were var(--surface) over
-   * var(--line) — white cards with hairline borders, on a white hero. Even
-   * with every token resolving, the drawing was very nearly invisible; the
-   * undefined --brand just finished the job. An illustration cannot be built
-   * out of the same colour as the thing it sits on. */
-  const card = (x, y, label, delay) =>
-    `<g class="pro-card" style="--d:${delay}s">
-       <path d="M${x} ${y} l58 -33 58 33 -58 33Z" fill="#f2f6ff" stroke="#b9c9ee"/>
-       <path d="M${x} ${y} l58 33 0 13 -58 -33Z" fill="#dbe5fa" stroke="#b9c9ee"/>
-       <path d="M${x + 116} ${y} l-58 33 0 13 58 -33Z" fill="#c8d7f6" stroke="#b9c9ee"/>
-       <text x="${x + 58}" y="${y + 2}" text-anchor="middle" class="pro-card-t">${esc(label)}</text>
-     </g>`;
-  return `<svg class="pro-art" viewBox="0 0 460 380" role="img" aria-label="Vootkit tools stacked as an isometric diagram">
-    <defs><linearGradient id="pg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="var(--brand)" stop-opacity=".14"/>
-      <stop offset="1" stop-color="var(--brand)" stop-opacity="0"/>
-    </linearGradient></defs>
-    <ellipse cx="230" cy="250" rx="215" ry="120" fill="url(#pg)"/>
-    ${card(60, 300, "Merge PDFs", 0)}
-    ${card(150, 250, "Compress Image", .08)}
-    ${card(60, 200, "Convert Video", .16)}
-    ${card(150, 150, "JSON Formatter", .24)}
-    ${card(60, 100, "Loan Calculator", .32)}
-    <g class="pro-phone">
-      <rect x="330" y="120" width="92" height="176" rx="14" fill="var(--surface)" stroke="#b9c9ee" stroke-width="2"/>
-      <rect x="340" y="136" width="72" height="9" rx="4.5" fill="#cbd9f7"/>
-      <rect x="340" y="154" width="52" height="9" rx="4.5" fill="#dbe5fa"/>
-      <rect x="340" y="176" width="72" height="30" rx="6" fill="#f2f6ff" stroke="#b9c9ee"/>
-      <rect x="340" y="214" width="72" height="30" rx="6" fill="#f2f6ff" stroke="#b9c9ee"/>
-      <rect x="340" y="256" width="46" height="12" rx="6" fill="var(--brand)"/>
-    </g>
-  </svg>`;
+   * WHY THIS REPLACED THE INLINE SVG. The SVG was a stand-in that never worked:
+   * it was drawn in var(--surface) over var(--line) — white cards with hairline
+   * borders — sitting on a white hero, so even with every token resolving it
+   * was very nearly invisible. You cannot build a picture out of the same
+   * colour as the thing it sits on.
+   *
+   * WHY IT IS MASKED RATHER THAN FRAMED. The source has a soft grey vignette
+   * background, and the hero has a faint blue wash over white. Dropped in flat,
+   * the two greys meet along a visible rectangle. A radial mask fades the outer
+   * edge to nothing, so the picture dissolves into the page instead of being
+   * pasted onto it — and it keeps working if the hero tint ever changes.
+   *
+   * 14 KB as WebP, 42 KB as the JPEG fallback, on the page people arrive at to
+   * spend money. It is also NOT lazy-loaded: it is above the fold here, and a
+   * lazy hero image is a blank space during the first paint that matters most.
+   */
+  const b = (up || "") + "assets/pro-hero";
+  return `<picture class="pro-art">
+    <source srcset="${b}.webp" type="image/webp">
+    <img src="${b}.jpg" width="1160" height="725" decoding="async"
+         alt="Translucent glass panels stacked in a diagonal column beside a phone, lit from below in blue.">
+  </picture>`;
 }
 
 function proFeature(icon, title, body) {
@@ -1572,7 +1561,7 @@ function proHero() {
       <a class="btn btn-primary pro-cta" href="#plans" data-vk-track="upgrade_click">Upgrade to Vootkit Pro</a>
       <p class="pro-note">Cancel any time. The free plan keeps working either way.</p>
     </div>
-    <div class="pro-hero-art">${proIllustration()}</div>
+    <div class="pro-hero-art">${proIllustration("./")}</div>
   </div>
   <div class="wrap pro-feats">
     ${proFeature(ICO.infinity, "Unlimited daily runs",
