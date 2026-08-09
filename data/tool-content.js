@@ -7307,6 +7307,204 @@ module.exports = {
     related: ['csv-viewer', 'csv-to-chart', 'json-formatter', 'text-diff', 'line-tools', 'base64']
   },
 
+  'electricity-cost': {
+    intro: 'Almost every guess people make about what an appliance costs to run is wrong, and wrong in a consistent direction: the things that feel expensive are cheap, and the boring ones nobody thinks about are where the money goes.',
+    what: [
+      'Multiplies watts by hours by days, converts to kilowatt-hours and multiplies by your tariff, giving the cost of running one appliance over a period.',
+      'The unit that matters is the kilowatt-hour, and the conversion trips people constantly: 100 watts for 10 hours is one kWh, not 100.'
+    ],
+    specs: {
+      caption: 'Typical draws, for comparison',
+      rows: [
+        ['LED bulb', '8-10 W'],
+        ['Laptop', '30-65 W'],
+        ['Desktop PC and monitor', '150-400 W under load'],
+        ['Fridge-freezer', '100-200 W, but cycling — daily kWh is the useful figure'],
+        ['Electric kettle', '2,000-3,000 W, for two minutes'],
+        ['Electric heater', '1,500-3,000 W, for hours — this is where bills are made']
+      ]
+    },
+    steps: [
+      'Find the wattage on the appliance label or its rating plate.',
+      'Enter realistic hours per day, not maximum possible hours.',
+      'Enter your <strong>actual price per kWh</strong> from a bill — not the number you half-remember.',
+      'Compare two appliances rather than reading one in isolation. The comparison is what changes behaviour.'
+    ],
+    tip: 'Wattage on a label is usually the maximum draw, not the average. A fridge rated at 150 W does not use 150 W continuously — the compressor cycles, so real consumption might be a third of that. A kettle, by contrast, genuinely pulls its full 3,000 W for the whole two minutes. For anything that cycles or has a thermostat, the label overstates the cost, and a plug-in energy monitor is the only way to get the real figure.',
+    faqs: [
+      { q: 'Where do I find the wattage?', a: 'On the rating plate — usually a small label on the back or underneath, sometimes moulded into the plug. If it lists volts and amps instead, multiply them: 230 V at 2 A is 460 W. Laptop and phone chargers state the output on the brick itself, which is closer to actual consumption than most appliance labels.' },
+      { q: 'Why is my bill higher than these numbers suggest?', a: 'Because a bill includes a standing charge that applies whatever you use, and often a higher rate for the first block of units each day. This tool works out the marginal cost of running one thing, which is the right number for deciding whether to leave something on, and a smaller number than the bill it contributes to.' },
+      { q: 'Do standby modes matter?', a: 'Less than they used to but not nothing. Modern devices draw around 0.5 W on standby, so a device left on all year costs roughly 4 kWh — pennies. Older equipment, set-top boxes and anything with a transformer can pull 10-20 W continuously, which over a year genuinely adds up.' },
+      { q: 'What is a kilowatt-hour?', a: 'One thousand watts drawn for one hour, and it is the unit your supplier bills in. A 100 W bulb for ten hours is one kWh; a 2,000 W heater for half an hour is also one kWh. Getting comfortable with that conversion is most of what makes energy costs intuitive rather than mysterious.' }
+    ],
+    related: ['unit-converter', 'percentage-calculator', 'budget-calculator', 'currency-converter', 'time-calculator', 'date-calculator']
+  },
+
+  'date-calculator': {
+    intro: 'Date arithmetic looks trivial and is not. Months have different lengths, years occasionally have an extra day, and the rules for what counts as a working day change the moment you cross a border.',
+    what: [
+      'Finds the number of days between two dates, and adds or subtracts a period from a date to give the resulting one.',
+      'It counts calendar days rather than working days, which is the right basis for contracts and notice periods and the wrong one for project schedules.'
+    ],
+    specs: {
+      caption: 'Rules being applied',
+      rows: [
+        ['Leap years', 'Divisible by 4, except centuries, unless divisible by 400 — 2000 was, 1900 was not'],
+        ['Days counted', 'Calendar days, including weekends and holidays'],
+        ['Inclusive or exclusive', 'The difference excludes the start date and includes the end'],
+        ['Month arithmetic', '31 January plus one month clamps to the end of February'],
+        ['Time zones', 'Not applied — dates are treated as plain calendar dates'],
+        ['Range', 'Any dates the browser can represent, well beyond any practical need']
+      ]
+    },
+    steps: [
+      'Pick your two dates, or a start date and a period to add.',
+      'Decide whether your deadline counts the start day. <strong>"Within 30 days" usually does not.</strong>',
+      'Read the result in days, then convert to weeks or months if that reads better.',
+      'For anything contractual, check whether the agreement means calendar or business days.'
+    ],
+    tip: 'The inclusive-versus-exclusive question causes more real disputes than leap years ever will. "Within 14 days of receipt" almost always means the day after receipt is day one, so an item received on the 1st is due on the 15th — but "14 days including today" makes it the 14th. On a notice period, a rent deadline or a returns window, that single day is the difference between being on time and being late, and it is worth reading the exact wording rather than assuming.',
+    faqs: [
+      { q: 'Does the count include both the start and end dates?', a: 'The difference excludes the start date and includes the end one, which is the standard convention — from the 1st to the 8th is seven days. If your contract counts differently, and some do, add or subtract one accordingly. The wording to look for is "clear days", which usually means excluding both ends.' },
+      { q: 'How are leap years handled?', a: 'Correctly, including the century rule that catches most manual calculations: a year divisible by 4 is a leap year unless it is divisible by 100, unless it is also divisible by 400. So 2000 had a 29 February and 1900 did not — a distinction that broke a great deal of software written in the 1990s.' },
+      { q: 'What happens when I add a month to 31 January?', a: 'It clamps to the last day of February, so 28 or 29 depending on the year, because 31 February does not exist. This is the standard behaviour and it is worth knowing that it is not reversible: adding a month and subtracting one again does not always return you to the date you started from.' },
+      { q: 'Can it count only working days?', a: 'No — it counts calendar days, which is what contracts, notice periods and statutory deadlines almost always mean. Working-day counts depend on which public holidays apply where you are, and a tool that guessed at that would be confidently wrong for most of the people using it.' }
+    ],
+    related: ['age-calculator', 'time-calculator', 'countdown', 'timezone-converter', 'unit-converter', 'electricity-cost']
+  },
+
+  'time-calculator': {
+    intro: 'Time is the one everyday quantity that is not base ten, and it catches people out constantly — because 1.5 hours and 1 hour 50 minutes look similar written down and are twenty minutes apart.',
+    what: [
+      'Adds and subtracts durations in hours, minutes and seconds, carrying correctly at sixty rather than a hundred.',
+      'That carry is the whole reason to use it. Adding 45 minutes to 2:30 in your head is easy; adding six such entries from a timesheet without a slip is not.'
+    ],
+    specs: {
+      caption: 'Where the confusion comes from',
+      rows: [
+        ['Base', 'Sixty seconds to a minute, sixty minutes to an hour — not a hundred'],
+        ['1.5 hours', '1 hour 30 minutes'],
+        ['1.50 on a timesheet', 'Usually also 1 hour 30, but check the system'],
+        ['1 hour 50 minutes', '1.83 hours in decimal, not 1.50'],
+        ['Payroll', 'Most systems want decimal hours, so 7 h 45 m is entered as 7.75'],
+        ['Negative results', 'Shown as negative rather than wrapping around midnight']
+      ]
+    },
+    steps: [
+      'Enter each duration as hours, minutes and seconds.',
+      'Choose whether to add or subtract.',
+      'For payroll, convert to decimal: <strong>minutes divided by 60</strong>, so 45 minutes is 0.75.',
+      'Check the total against a rough mental estimate — a misplaced field is easier to catch that way than by re-reading.'
+    ],
+    tip: 'The decimal conversion is where timesheet money actually goes missing. 7 hours 30 minutes is 7.5, but 7 hours 15 minutes is 7.25, not 7.15 — and entering 7.15 costs you six minutes every time you do it. Over a year of daily entries that is several hours of unpaid work, lost to a conversion nobody checks. Divide the minutes by sixty; never write them after the decimal point.',
+    faqs: [
+      { q: 'How do I convert minutes to decimal hours?', a: 'Divide by sixty. 15 minutes is 0.25, 20 is 0.33, 45 is 0.75. The error to avoid is writing the minutes straight after the decimal point — 7 hours 15 minutes entered as 7.15 rather than 7.25 quietly loses six minutes, and on a timesheet it does so every single day.' },
+      { q: 'Why not just use a normal calculator?', a: 'Because a normal calculator works in base ten and time does not. Adding 2:45 and 1:30 as 2.45 + 1.30 gives 3.75, which is neither 4 hours 15 minutes nor anything else meaningful. You would have to convert to decimal, add, then convert back — which is exactly the step this removes.' },
+      { q: 'Can it handle a result that goes past 24 hours?', a: 'Yes. It reports total elapsed duration rather than a clock time, so 20 hours plus 10 hours gives 30 hours rather than wrapping around to 6. That is the right behaviour for timesheets, project totals and anything cumulative, though it is not what you want if you are calculating an arrival time.' },
+      { q: 'What if subtracting gives a negative result?', a: 'It shows as negative rather than wrapping, which is deliberate — a negative duration usually means the inputs are the wrong way round, and silently converting it to a positive number would hide that. If you are calculating a shift that crosses midnight, add 24 hours to the finish time before subtracting.' }
+    ],
+    related: ['date-calculator', 'age-calculator', 'stopwatch', 'timezone-converter', 'unit-converter', 'salary-converter']
+  },
+
+  'qr-scanner': {
+    intro: 'A QR code is a link you cannot read, which is the entire security problem with them. Scanning one on a phone takes you somewhere before you have any chance to see where that is.',
+    what: [
+      'Decodes a QR code from an image file or your camera and shows you the raw contents as text.',
+      'Seeing the text before following it is the point. A code on a parking meter, a menu or a letter can encode any URL at all, and the sticker over it can encode a different one.'
+    ],
+    specs: {
+      caption: 'What a QR code can contain',
+      rows: [
+        ['URL', 'The common case — and the one worth reading before opening'],
+        ['Plain text', 'Any string'],
+        ['Wi-Fi credentials', 'Network name and password, in the clear'],
+        ['Contact card', 'vCard details'],
+        ['Payment details', 'Bank or wallet addresses — verify these especially carefully'],
+        ['Error correction', 'Up to 30% of a code can be damaged and still decode']
+      ]
+    },
+    steps: [
+      'Upload a photo or screenshot of the code, or use the camera.',
+      'Read the decoded text <strong>before</strong> doing anything with it.',
+      'For a URL, check the domain carefully — not just the beginning of it.',
+      'If it is a payment address, verify it through a second channel before sending anything.'
+    ],
+    tip: 'Quishing — a phishing sticker placed over a legitimate QR code — works precisely because nobody can tell the two apart by looking. Parking meters, restaurant tables, charging points and posters have all been targeted. If a physical code looks like a sticker on top of something else, treat it as hostile: decode it here first and read the domain properly, including the part just before the first single slash, which is where lookalike domains hide.',
+    faqs: [
+      { q: 'Why decode a code instead of just scanning it with my phone?', a: 'Because your phone camera opens the destination, often before you have read it. Decoding to text first lets you see the actual URL, spot a lookalike domain, and decide. For anything encountered in public — a parking meter, a table, a leaflet — that ordering is the whole defence.' },
+      { q: 'What should I look for in a decoded URL?', a: 'The domain immediately before the first single slash, since everything after it is controlled by whoever owns that domain. vootkit.com.example.net is not Vootkit. Also watch for URL shorteners, which hide the real destination entirely, and for characters that look like others in your font.' },
+      { q: 'Can a QR code contain something harmful by itself?', a: 'Not directly — it is just encoded text, and reading it here cannot execute anything. The risk is entirely in what you do with the contents: opening a phishing page, joining a hostile Wi-Fi network, or sending a payment to an address you did not verify. The code is the delivery mechanism, not the payload.' },
+      { q: 'Why will my code not decode?', a: 'Usually the image: too blurred, too low-contrast, cropped so the corner squares are missing, or photographed at a steep angle. QR codes tolerate up to about 30% damage thanks to error correction, but they need all three position markers. A straighter, sharper photo almost always fixes it.' }
+    ],
+    related: ['qr-generator', 'barcode-generator', 'image-to-text', 'url-shortener', 'password-strength', 'exif-viewer']
+  },
+
+  'barcode-generator': {
+    intro: 'Barcode formats are not interchangeable, and picking the wrong one produces something that scans perfectly on your screen and is rejected the moment it reaches a real till.',
+    what: [
+      'Generates a scannable barcode in CODE128, EAN-13, UPC-A or CODE39 from whatever value you enter.',
+      'The format choice is the decision that matters. Retail formats validate their contents and calculate a check digit; general-purpose ones accept anything you give them.'
+    ],
+    specs: {
+      caption: 'Which format to use',
+      rows: [
+        ['CODE128', 'Any text or numbers — the default for internal use, shipping and asset tags'],
+        ['EAN-13', 'Retail outside North America; 12 digits plus a calculated check digit'],
+        ['UPC-A', 'Retail in North America; 12 digits including its check digit'],
+        ['CODE39', 'Older, bulkier, uppercase and digits — still common in defence and automotive'],
+        ['Check digit', 'Calculated for you on EAN and UPC — it is not part of what you type'],
+        ['Quiet zone', 'The white margin either side is required, not decoration']
+      ]
+    },
+    steps: [
+      'Pick the format for where the code will actually be scanned.',
+      'Enter the value. For EAN-13 and UPC-A that is <strong>digits only</strong>, and the length must match.',
+      'Print at a sensible size — too small and the bars merge under a scanner, and a laser printer beats an inkjet for edge sharpness.',
+      'Keep the white margin either side. Cropping to the bars breaks it.'
+    ],
+    tip: 'Generating your own EAN-13 does not give you a retail barcode. Codes that appear on products sold through shops are issued by GS1, and the leading digits identify the company that registered them — inventing a number that passes the check-digit test will scan, but it may already belong to somebody else and no retailer will accept it. For internal stock, asset tags and shipping labels, none of that applies and CODE128 is the sensible choice.',
+    faqs: [
+      { q: 'Which format should I choose?', a: 'CODE128 for anything internal — stock, assets, shipping, warehouse locations — because it encodes any text and is compact. EAN-13 or UPC-A only if the item is genuinely going to be sold through retail, in which case the number needs to be issued to you rather than invented.' },
+      { q: 'Can I make my own retail barcode?', a: 'Not legitimately. Retail numbers are allocated by GS1 and the leading digits identify the registering company, so a self-generated number may collide with a real product. It will scan, and it will fail the moment a retailer checks it against the global registry. For internal use there is no such constraint.' },
+      { q: 'What is the check digit?', a: 'A final digit calculated from the others, so a scanner can detect a misread rather than silently returning the wrong product. On EAN-13 you provide twelve digits and the thirteenth is computed; UPC-A works the same way. You do not type it, and typing it produces a length error.' },
+      { q: 'Why will my printed barcode not scan?', a: 'Most often it is size or margin. Printed too small, the bars blur together at scanner resolution; cropped tight to the bars, the quiet zone either side is gone and the scanner cannot find the edges. Low-contrast printing and glossy laminate reflections account for most of the rest.' }
+    ],
+    related: ['qr-generator', 'qr-scanner', 'image-to-text', 'invoice-generator', 'uuid-generator', 'hash-generator']
+  },
+
+  'image-to-text': {
+    intro: 'The most annoying document is the one you can see perfectly and cannot copy from: a screenshot of a table, a photographed page, a scan someone emailed instead of the file.',
+    what: [
+      'Runs optical character recognition on an image and returns the text as something you can select, copy and edit.',
+      'Recognition quality depends almost entirely on the input. The same engine that reads a flat scan near-perfectly will struggle with a photograph taken at an angle in poor light.'
+    ],
+    specs: {
+      caption: 'What affects accuracy',
+      rows: [
+        ['Resolution', '300 DPI equivalent is the comfortable target for body text'],
+        ['Contrast', 'Dark text on a plain light background reads best'],
+        ['Angle', 'Straight on. Perspective distortion costs more accuracy than low resolution'],
+        ['Languages', 'English, Spanish, French, German, Italian, Portuguese'],
+        ['Handwriting', 'Not supported — this reads printed characters'],
+        ['Layout', 'Columns and tables lose their structure; you get the text, not the grid']
+      ]
+    },
+    steps: [
+      'Choose the image. A screenshot beats a photograph of a screen every time.',
+      'Set the language <strong>before</strong> running it — the wrong language mangles accented characters.',
+      'Run it, then proofread. Check digits and proper nouns first.',
+      'For a multi-page PDF rather than an image, use PDF & Image OCR instead.'
+    ],
+    tip: 'Proofread the numbers before anything else. OCR errors cluster in predictable pairs — 0 and O, 1 and l and I, 5 and S, 8 and B — and in ordinary prose your eye repairs them without noticing. In a reference number, a price, a serial or a date there is no context to repair them with, which is exactly where an undetected error does damage. Read the digits; skim the words.',
+    faqs: [
+      { q: 'Why is the accuracy poor on my photo?', a: 'Photographs of paper are much harder than scans: uneven lighting, a curved page, perspective from holding the camera at an angle, and shadows from your own hand. Flattening the page, shooting straight down and getting even light will usually do more for accuracy than any setting available here.' },
+      { q: 'Can it read handwriting?', a: 'No. This recognises printed characters, and handwriting needs a fundamentally different class of model trained on cursive and individual writing styles. Even the specialist services that attempt it produce results that need heavy correction, so it is rarely faster than typing the text out.' },
+      { q: 'Does my image get uploaded?', a: 'No — the recognition runs in your browser on your own machine, which is why there is no upload wait and why it works offline once the page has loaded. That matters for the sort of thing people usually OCR: letters, invoices, medical documents and ID pages.' },
+      { q: 'Why did my table come out as a jumble?', a: 'Because OCR extracts characters, not layout. Columns get read across rather than down, and cell boundaries disappear entirely. For tabular data the practical approach is to OCR one column at a time by cropping, or to accept that you will be rebuilding the structure by hand.' }
+    ],
+    related: ['pdf-ocr', 'pdf-to-text', 'qr-scanner', 'text-diff', 'word-counter', 'exif-viewer']
+  },
+
   'loan-calculator': {
     intro: 'The monthly payment is the number lenders lead with, and it is the least useful one for comparing offers. Two loans with almost identical payments can differ by thousands once the term differs — total repaid is where that shows up.',
     what: [
