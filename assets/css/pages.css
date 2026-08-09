@@ -459,3 +459,72 @@ video.wcode { padding: 0; }
 }
 /* Respect a reduced-motion preference by having no motion to reduce. */
 @media print { .gate-backdrop { display: none; } }
+
+/* --- Pro hero (pricing page) -----------------------------------------------
+ * Built from the supplied design: large headline left, isometric card stack
+ * right, three feature columns beneath. The illustration is inline SVG rather
+ * than an exported image so it themes with the site, stays sharp at any size,
+ * and costs no extra request on the page people arrive at to spend money.
+ */
+.pro-hero {
+  padding: var(--s-7) 0 var(--s-6);
+  background:
+    radial-gradient(60rem 32rem at 78% 18%, color-mix(in srgb, var(--brand) 9%, transparent), transparent 70%),
+    var(--surface-2, transparent);
+  border-bottom: 1px solid var(--line);
+}
+.pro-hero-grid {
+  display: grid; gap: var(--s-6);
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  align-items: center;
+}
+.pro-hero-copy h1 {
+  font-size: clamp(2.1rem, 4.6vw, 3.4rem);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  margin: 0 0 var(--s-4);
+}
+.pro-lede {
+  font-size: var(--t-lg); color: var(--ink-soft);
+  max-width: 46ch; margin: 0 0 var(--s-5);
+}
+.pro-cta { font-size: var(--t-md); padding: 0.85em 1.6em; }
+.pro-note { margin: var(--s-3) 0 0; font-size: var(--t-sm); color: var(--ink-mute); }
+
+.pro-hero-art { display: flex; justify-content: center; }
+.pro-art { width: 100%; max-width: 460px; height: auto; }
+.pro-card path { stroke-width: 1.2; }
+.pro-card-t {
+  font-size: 11px; font-weight: 600; fill: var(--ink-soft);
+  font-family: inherit;
+}
+/* The cards rise into place on load. Motion is decorative here, so it is
+   removed entirely rather than reduced for anyone who has asked for that. */
+.pro-card { animation: proRise .6s var(--d, 0s) both ease-out; }
+.pro-phone { animation: proRise .6s .4s both ease-out; }
+@keyframes proRise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .pro-card, .pro-phone { animation: none; }
+}
+
+.pro-feats {
+  display: grid; gap: var(--s-5);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  margin-top: var(--s-7);
+}
+.pro-ico {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2.6rem; height: 2.6rem; margin-bottom: var(--s-3);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--brand) 12%, transparent);
+  color: var(--brand);
+}
+.pro-ico svg { width: 1.4rem; height: 1.4rem; }
+.pro-feat h3 { margin: 0 0 var(--s-2); font-size: var(--t-md); }
+.pro-feat p { margin: 0; color: var(--ink-soft); font-size: var(--t-sm); max-width: 38ch; }
+
+@media (max-width: 860px) {
+  .pro-hero-grid { grid-template-columns: 1fr; }
+  .pro-hero-art { order: -1; }              /* picture first on a phone */
+  .pro-art { max-width: 340px; }
+}

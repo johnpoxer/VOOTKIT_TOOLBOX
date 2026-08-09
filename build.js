@@ -1176,6 +1176,93 @@ function accountPage() {
 }
 
 /* ---------- pricing (static, Stripe-ready) ---------- */
+/* ---------- Pro hero (pricing page) ----------
+ *
+ * Built from the design brief. Two things were changed from the mockup, both
+ * deliberately:
+ *
+ * THE FEATURE COPY. The drawing promised workflow automation, chained
+ * utilities, saved configurations, local dev tooling, bulk operations, no
+ * throttling and end-to-end encryption. Checked against data/catalog.js: none
+ * of those exist. This is the page that takes a card payment, so the three
+ * columns now describe what Pro genuinely delivers today. The privacy line is
+ * the interesting one — "files never leave your device" is a stronger claim
+ * than "encrypted", because there is nothing in transit to encrypt.
+ *
+ * THE PLACEMENT. This is the pricing page rather than the homepage. AdSense
+ * rejected the site on 8 Aug and a re-review is days away; a homepage whose
+ * only call to action is Upgrade, and which sells "zero ads" as a feature,
+ * is the first thing a reviewer would open. On a pricing page an upgrade
+ * pitch is exactly what anyone expects to find.
+ */
+function proIllustration() {
+  /* Inline SVG rather than an image: it scales, it themes with the site, and
+     it costs no extra request on the page people land on to spend money. */
+  const card = (x, y, label, delay) =>
+    `<g class="pro-card" style="--d:${delay}s">
+       <path d="M${x} ${y} l58 -33 58 33 -58 33Z" fill="var(--surface)" stroke="var(--line)"/>
+       <path d="M${x} ${y} l58 33 0 13 -58 -33Z" fill="var(--surface-2,#eef2f7)" stroke="var(--line)"/>
+       <path d="M${x + 116} ${y} l-58 33 0 13 58 -33Z" fill="var(--surface-2,#e4e9f0)" stroke="var(--line)"/>
+       <text x="${x + 58}" y="${y + 2}" text-anchor="middle" class="pro-card-t">${esc(label)}</text>
+     </g>`;
+  return `<svg class="pro-art" viewBox="0 0 460 380" role="img" aria-label="Vootkit tools stacked as an isometric diagram">
+    <defs><linearGradient id="pg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="var(--brand)" stop-opacity=".14"/>
+      <stop offset="1" stop-color="var(--brand)" stop-opacity="0"/>
+    </linearGradient></defs>
+    <ellipse cx="230" cy="250" rx="215" ry="120" fill="url(#pg)"/>
+    ${card(60, 300, "Merge PDFs", 0)}
+    ${card(150, 250, "Compress Image", .08)}
+    ${card(60, 200, "Convert Video", .16)}
+    ${card(150, 150, "JSON Formatter", .24)}
+    ${card(60, 100, "Loan Calculator", .32)}
+    <g class="pro-phone">
+      <rect x="330" y="120" width="92" height="176" rx="14" fill="var(--surface)" stroke="var(--line)" stroke-width="2"/>
+      <rect x="340" y="136" width="72" height="9" rx="4.5" fill="var(--line)"/>
+      <rect x="340" y="154" width="52" height="9" rx="4.5" fill="var(--line)"/>
+      <rect x="340" y="176" width="72" height="30" rx="6" fill="var(--surface-2,#eef2f7)" stroke="var(--line)"/>
+      <rect x="340" y="214" width="72" height="30" rx="6" fill="var(--surface-2,#eef2f7)" stroke="var(--line)"/>
+      <rect x="340" y="256" width="46" height="12" rx="6" fill="var(--brand)"/>
+    </g>
+  </svg>`;
+}
+
+function proFeature(icon, title, body) {
+  return `<div class="pro-feat">
+    <span class="pro-ico" aria-hidden="true">${icon}</span>
+    <h3>${title}</h3>
+    <p>${body}</p>
+  </div>`;
+}
+
+function proHero() {
+  const ICO = {
+    infinity: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M6.5 9a3 3 0 1 0 0 6c2.5 0 3.5-3 5.5-3s3 3 5.5 3a3 3 0 1 0 0-6c-2.5 0-3.5 3-5.5 3S9 9 6.5 9Z"/></svg>',
+    bolt: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></svg>',
+    shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3Z"/><path d="M9 12l2 2 4-4"/></svg>'
+  };
+  return `<section class="pro-hero">
+  <div class="wrap pro-hero-grid">
+    <div class="pro-hero-copy">
+      <h1>Unlock the full Vootkit toolkit</h1>
+      <p class="pro-lede">Every one of the ${floorTo(VK.counts.live, 50)}+ tools, without the daily cap and without ads.
+      The same browser-based processing, running as fast as your machine will go.</p>
+      <a class="btn btn-primary pro-cta" href="#plans" data-vk-track="upgrade_click">Upgrade to Vootkit Pro</a>
+      <p class="pro-note">Cancel any time. The free plan keeps working either way.</p>
+    </div>
+    <div class="pro-hero-art">${proIllustration()}</div>
+  </div>
+  <div class="wrap pro-feats">
+    ${proFeature(ICO.infinity, "Unlimited daily runs",
+      "The free plan includes " + CFG.freeLimit.count + " tool runs a day. Pro removes the cap entirely — no counter, no waiting until tomorrow, across every tool on the site.")}
+    ${proFeature(ICO.bolt, "Priority processing",
+      "Longer video encodes and larger batches, with the size ceilings raised. Everything still runs on your own machine, so the only limit left is the machine.")}
+    ${proFeature(ICO.shield, "Ad-free, and private by design",
+      "No ads anywhere in the workspace. Your files are processed in the browser tab and never uploaded — there is nothing on a server to leak, sell or subpoena.")}
+  </div>
+</section>`;
+}
+
 function pricingPage() {
   const url = SITE + "/pricing.html";
   const P = CFG.stripe.plans;
@@ -1189,10 +1276,14 @@ function pricingPage() {
   const feat = (on, txt) => `<li class="${on ? "yes" : "no"}"><svg viewBox="0 0 24 24" aria-hidden="true">${on ? '<path d="M20 6 9 17l-5-5"/>' : '<path d="M6 6l12 12M18 6 6 18"/>'}</svg>${txt}</li>`;
   const yn = (v) => v === true ? '<span class="cmp-yes" aria-label="Included">✓</span>' : v === false ? '<span class="cmp-no" aria-label="Not included">—</span>' : v;
   return head({ depth: 0, url, ads: true, ld, title: "Pricing — Vootkit", ogTitle: "Vootkit Pricing", desc: "Start free with 5 tool runs a day and unlimited core tools. Upgrade to Creator Pro or Teams for unlimited usage, faster processing, premium tools and priority support." }) +
-`<div class="wrap section">
+proHero() +
+`<div class="wrap section" id="plans">
   <header class="sec-head" style="margin-top:var(--s-4)">
     <span class="eyebrow">Pricing</span>
-    <h1 class="page-h1">Simple pricing that scales with you.</h1>
+    <!-- h2, not h1: the Pro hero above now carries the page's only h1. Two of
+         them costs the outline for a screen reader and muddles which heading
+         Google treats as the page subject. -->
+    <h2 class="page-h1">Simple pricing that scales with you.</h2>
     <p class="page-lede">Start free — 5 tool runs a day, with core tools and downloaders always unlimited. Upgrade when you want unlimited usage, faster processing and premium tools.</p>
   </header>
 
