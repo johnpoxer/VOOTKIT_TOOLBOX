@@ -6746,6 +6746,237 @@ module.exports = {
     related: ['loan-calculator', 'mortgage-calculator', 'budget-calculator', 'credit-card-payoff', 'percentage-calculator', 'salary-converter']
   },
 
+  'retirement-calculator': {
+    intro: 'The number that decides a retirement is not the pot. It is the gap between the age you start and the age you stop, because that gap sits in an exponent while everything else is a plain multiplier.',
+    what: [
+      'Projects the pot at your retirement age from what you have saved, what you add monthly and the return you assume, then converts it into a yearly income using a withdrawal rate.',
+      'The withdrawal rate is the part people skip. A pot is not an income — 4% of £600,000 is £24,000 a year, and whether that is enough is a completely different question from whether £600,000 sounds like a lot.'
+    ],
+    specs: {
+      caption: 'What the projection assumes',
+      rows: [
+        ['Growth', 'Compounded monthly on the balance, including new contributions'],
+        ['Return', 'Constant — real markets are not, see the note below'],
+        ['Withdrawal rate', '4% is the common starting point, from the Trinity study on US data'],
+        ['Inflation', 'Not modelled — the pot is in today’s pounds or dollars, not future ones'],
+        ['Contributions', 'Flat monthly amount, not increasing with salary'],
+        ['Tax and fees', 'Excluded — platform charges of 0.5% a year are a real drag over decades']
+      ]
+    },
+    steps: [
+      'Enter your age now and the age you plan to stop.',
+      'Add what is already saved and what you put in each month.',
+      'Use a <strong>return you would defend</strong> — 5-7% is the usual range for a diversified portfolio before fees, not the 12% a bull market makes feel normal.',
+      'Read the yearly income, not the pot. That is the number you actually live on.'
+    ],
+    tip: 'Run it twice, changing only the retirement age by five years. On a mid-career profile that single change moves the pot more than doubling your monthly contribution does, because the extra years compound on the whole balance rather than adding to the edge of it. If the projection disappoints, working slightly longer is usually the cheapest lever available — and the one most people consider last.',
+    faqs: [
+      { q: 'What return should I assume?', a: 'Something you would still defend after a bad year. Long-run equity returns have historically run around 7% nominal before fees, and a mixed portfolio less. Assuming 10% because recent years delivered it produces a projection that looks reassuring and plans for a world that has not existed for long.' },
+      { q: 'Why does the pot look so large compared to the income?', a: 'Because a sustainable withdrawal is a small slice of the total. At 4%, every £1,000 of yearly income needs £25,000 of pot. That ratio is the single most useful thing to internalise about retirement saving, and it is why the pot figures involved feel unreasonable at first.' },
+      { q: 'Is this in today’s money or future money?', a: 'Today’s. Inflation is not modelled, so treat the result as buying power at current prices. If you would rather think in future pounds, subtract your inflation assumption from the return — a 7% return with 3% inflation behaves like 4% in real terms.' },
+      { q: 'Does it account for the state pension or employer contributions?', a: 'No. Add employer contributions into your monthly figure if you want them included, since they compound identically. State or social security income is separate and arrives on its own schedule, so it is usually clearer to work out the private pot first and treat public provision as a floor underneath it.' }
+    ],
+    related: ['compound-interest', 'savings-goal', 'simple-interest', 'salary-converter', 'budget-calculator', 'loan-calculator']
+  },
+
+  'crypto-profit': {
+    intro: 'Most crypto positions are worked out wrong in the same way: people remember the price they wish they had paid rather than the average of everything they actually bought, and the fees never make it into the sum at all.',
+    what: [
+      'Takes the total you have invested, the units you hold and the current price, and returns profit or loss with the average entry and the break-even price.',
+      'Break-even is the number worth keeping. It is what the price must reach for you to be level after fees — not what you paid, which is a different figure the moment you buy twice.'
+    ],
+    specs: {
+      caption: 'How the figures are derived',
+      rows: [
+        ['Average entry', 'Total invested ÷ units held'],
+        ['Break-even price', '(Total invested + fees) ÷ units held'],
+        ['Profit', 'Units × current price − total invested − fees'],
+        ['Fees included', 'Whatever you enter — exchange, network and spread'],
+        ['Tax', 'Not modelled; disposals are taxable in most countries'],
+        ['Units', 'Fractional accepted — 0.00184 is a normal holding']
+      ]
+    },
+    steps: [
+      'Enter everything you have put in, in total, across every purchase.',
+      'Enter the units you actually hold now.',
+      'Add fees. <strong>Include the spread</strong> — a "commission-free" app usually charges through the price rather than as a line item.',
+      'Compare the break-even price with today’s price. That gap is the honest state of the position.'
+    ],
+    tip: 'The spread is the fee people forget, because it never appears as a charge. If an exchange quotes you a buy price 1.4% above the mid-market rate and a sell price 1.4% below it, you are down 2.8% the instant the trade settles, and the position has to gain that much before you are level. Enter it as a fee or your break-even price will be optimistic by more than most trading gains.',
+    faqs: [
+      { q: 'Why is my break-even higher than my average entry?', a: 'Fees. Average entry is what you paid for the units; break-even also has to recover the cost of buying them, and of selling them later if you enter that too. On small positions traded frequently the gap between the two can be larger than any price move you are hoping for.' },
+      { q: 'How do I handle several purchases at different prices?', a: 'Add them together and enter the total invested and the total units — the tool derives the weighted average for you. That average is the only entry price that means anything once you have bought more than once, which is why exchanges show it rather than your first purchase.' },
+      { q: 'Does this calculate my tax?', a: 'No. In most countries a disposal is a taxable event and the rules differ sharply on how gains are pooled, what counts as a disposal, and whether crypto-to-crypto trades trigger one. Treat the profit figure here as the starting point for that conversation, not the end of it.' },
+      { q: 'What about staking rewards or airdrops?', a: 'Add the units to your holding, but leave the total invested alone — you did not pay for them, so they lower your average entry. Note that many jurisdictions treat rewards as income at the point of receipt, valued on that day, which is a separate calculation from the gain when you eventually sell.' }
+    ],
+    related: ['percentage-calculator', 'currency-converter', 'compound-interest', 'simple-interest', 'profit-margin', 'break-even']
+  },
+
+  'tip-split': {
+    intro: 'Splitting a bill is arithmetic anyone can do and almost nobody wants to do at the table, in poor light, after a drink, while seven people wait and one of them insists they only had a starter.',
+    what: [
+      'Works out the tip, the total and what each person owes, with an option to round each share up so the collected amount actually covers the bill.',
+      'The rounding option exists because of a real failure: four people each paying a rounded-down share leaves the table short, and someone quietly covers it.'
+    ],
+    specs: {
+      caption: 'Conventions worth knowing',
+      rows: [
+        ['United States', '18-20% is standard for table service; 15% now reads as poor'],
+        ['Canada', '15-20%, often calculated before tax'],
+        ['United Kingdom', '10-12.5%, and frequently already added as a service charge'],
+        ['Most of Europe', 'Rounding up, or 5-10%; service is usually included'],
+        ['Japan', 'Not customary and can cause confusion'],
+        ['On tax', 'Tipping on the pre-tax amount is normal in the US and slightly cheaper']
+      ]
+    },
+    steps: [
+      'Enter the bill total as printed.',
+      'Set the tip percentage.',
+      '<strong>Check for a service charge first.</strong> If one is already on the bill, adding a full tip on top is tipping twice.',
+      'Set the number of people, and turn on rounding if you want the collected total to cover it.'
+    ],
+    tip: 'Look at the bottom of the receipt before you calculate anything. Service charges of 12.5% are added automatically by most UK restaurants for groups, many US venues add 18-20% for parties above six, and both are easy to miss under the subtotal. Tipping on top of an included service charge is the single most common way people overpay a restaurant bill, and it happens most often in exactly the situation where nobody is checking.',
+    faqs: [
+      { q: 'Should I tip on the amount before or after tax?', a: 'Before, if you want to be precise — the tax is not part of the service. In the US the difference on a $100 bill with 8% tax and a 20% tip is about $1.60, so it rarely matters much in practice, but on a large group bill the gap becomes real money and rounding up on the pre-tax figure is a reasonable compromise.' },
+      { q: 'What does the round-up option actually do?', a: 'It rounds each individual share upward, so the amount the table collects is equal to or slightly above the bill. Without it, four shares rounded to the nearest sensible note can add up to less than the total, and the person who paid the card ends up covering the shortfall without mentioning it.' },
+      { q: 'Is it rude to tip less than the usual percentage?', a: 'It depends entirely on where you are. In the United States, tipped staff are often paid a sub-minimum base wage on the assumption that tips make up the difference, so a low tip has a direct effect on someone’s income. In much of Europe and Japan, staff are paid a full wage and the same gesture carries no such weight.' },
+      { q: 'How do I split unevenly when people ordered differently?', a: 'This tool splits evenly, which is what most tables actually want. For genuinely uneven bills, total each person’s items first, then apply the tip percentage to each subtotal — the tip should follow what each person spent, otherwise the person who had a salad subsidises the person who had the steak.' }
+    ],
+    related: ['percentage-calculator', 'currency-converter', 'vat-gst', 'discount-calculator', 'unit-converter', 'trip-cost-splitter']
+  },
+
+  'simple-interest': {
+    intro: 'Simple interest is the version most people picture when they imagine interest, and the version almost no modern product actually uses. Knowing the difference is worth more than the calculation itself.',
+    what: [
+      'Calculates interest charged or earned on the original principal only, at a flat rate, over a set term — no compounding.',
+      'That matters because the gap between simple and compound widens with time. Over one year they are close; over twenty they are not remotely the same number.'
+    ],
+    specs: {
+      caption: 'Where simple interest actually appears',
+      rows: [
+        ['Formula', 'Interest = principal × rate × time'],
+        ['Common uses', 'Short-term personal loans between individuals, some car finance, bond coupons'],
+        ['Not used by', 'Savings accounts, credit cards, mortgages — all compound'],
+        ['Over 1 year at 10%', 'Simple and compound differ by nothing on a single payment'],
+        ['Over 20 years at 10%', 'Simple triples your money; compound multiplies it by about 6.7'],
+        ['Watch for', '"Flat rate" car finance, which quotes simple interest on the original balance']
+      ]
+    },
+    steps: [
+      'Enter the principal — the original amount, not the current balance.',
+      'Enter the annual rate.',
+      'Enter the term in years. Fractions are fine: nine months is 0.75, and eighteen months is 1.5.',
+      'If the product actually compounds, use the <strong>compound interest</strong> calculator instead — the answer here will be too low.'
+    ],
+    tip: 'Watch for "flat rate" car and personal finance. A flat rate charges interest on the ORIGINAL balance for the whole term, even though you are paying the balance down every month — so a 5% flat rate over four years costs roughly what a 9% reducing-balance rate would. The APR must be disclosed and will reveal it, but the flat rate is the number on the poster, and it is the one people compare.',
+    faqs: [
+      { q: 'When is interest ever actually simple?', a: 'Short-term borrowing where nothing is added back to the balance: a loan between family members, some bond coupon payments, certain car finance agreements. Almost every retail savings and borrowing product compounds, which is why the simple figure usually understates what you will pay and overstates what you will earn.' },
+      { q: 'How much does compounding really change things?', a: 'Over short periods, very little. Over long ones, everything. £10,000 at 10% simple interest for twenty years earns £20,000. The same money compounding annually earns about £57,275. The formula difference looks trivial written down and produces nearly three times the result.' },
+      { q: 'My loan says 5% flat rate — is that good?', a: 'It is worse than it sounds. A flat rate is charged on the original amount for the full term while your actual balance falls every month, so the effective rate is close to double. Ask for the APR, which is required to reflect the reducing balance, and compare that instead.' },
+      { q: 'Can I use this for a savings account?', a: 'You can, but it will understate what you earn, because savings accounts pay interest on interest. Use the compound interest calculator for anything where the interest stays in the account — the simple figure is only correct if you withdraw every payment as it arrives.' }
+    ],
+    related: ['compound-interest', 'loan-calculator', 'savings-goal', 'percentage-calculator', 'mortgage-calculator', 'retirement-calculator']
+  },
+
+  'hourly-rate': {
+    intro: 'The mistake that ends most freelance careers is arithmetic, not talent: dividing a target salary by 2,080 hours and quoting the result. That number assumes every working hour is paid, and roughly half of them are not.',
+    what: [
+      'Works backwards from the income you want to the rate you must charge, after business costs, tax set-aside, and the fact that only some of your week is billable.',
+      'Billable hours is the field that changes the answer most. Twenty-five billable hours in a forty-hour week is normal, not lazy — the rest is admin, pitching, invoicing and unpaid revisions.'
+    ],
+    specs: {
+      caption: 'What the calculation accounts for',
+      rows: [
+        ['Working weeks', '46 by default — leaves six weeks for holiday, illness and quiet spells'],
+        ['Billable ratio', '25 hours of 40 is typical for solo freelancers; agencies target 60-70%'],
+        ['Tax set-aside', 'Self-employment tax and income tax, held back rather than spent'],
+        ['Business costs', 'Software, hardware, insurance, accountant, workspace, pension'],
+        ['Not included', 'Sick pay, paid holiday, employer pension — you now fund these yourself'],
+        ['Rule of thumb', 'A freelance rate near double the equivalent salaried hourly rate is normal, not greedy']
+      ]
+    },
+    steps: [
+      'Enter the income you want to take home before tax.',
+      'Add your annual business costs — all of them, including the ones you pay monthly and forget.',
+      'Set a <strong>realistic billable hours figure</strong>. Track a week honestly before guessing.',
+      'Compare the result with what you currently charge. The gap is usually the answer to why the year felt hard.'
+    ],
+    tip: 'The six weeks of non-working time in the default is not generosity, it is the holiday and sick leave an employer used to pay for. If you set working weeks to 52 you have quietly decided never to be ill and never to take a break, and the rate you calculate will be the rate that makes both of those mandatory. Every week you take off after that comes directly out of the income figure you started from.',
+    faqs: [
+      { q: 'Why is my rate so much higher than what I earned as an employee?', a: 'Because an employee’s salary is only part of what they cost. On top of it sat employer pension contributions, payroll taxes, paid holiday, sick pay, equipment, software and a desk. As a freelancer you fund all of it from your rate, which is why roughly double the equivalent salaried hourly figure is a normal starting point rather than an aggressive one.' },
+      { q: 'How many billable hours should I assume?', a: 'Track it for two weeks before deciding. Most solo freelancers land between 20 and 28 billable hours in a nominal 40-hour week once admin, sales, invoicing, emails and unpaid revisions are removed. Assuming 40 is the single fastest way to set a rate that cannot produce the income you planned around.' },
+      { q: 'What tax percentage should I set aside?', a: 'It depends entirely on your country, your structure and your income band, and it usually catches people out in year one when a full bill arrives at once. A common approach is to hold back 25-30% into a separate account the moment each invoice is paid, then reconcile with an accountant rather than discovering the number in January.' },
+      { q: 'Should I charge hourly at all?', a: 'Often not — hourly billing penalises you for getting faster, which is the opposite of what experience should do. But you still need the hourly figure, because it is what tells you whether a fixed-price project is worth taking. Estimate the hours, multiply, and compare to the quote before agreeing to it.' }
+    ],
+    related: ['salary-converter', 'invoice-generator', 'vat-gst', 'break-even', 'percentage-calculator', 'budget-calculator']
+  },
+
+  'amazon-fba-calculator': {
+    intro: 'The number that kills FBA businesses is not the product cost. It is the stack of fees between the sale price and what actually lands in your account, most of which are charged whether or not the unit sells.',
+    what: [
+      'Takes your selling price and subtracts the referral fee, FBA fulfilment fee, unit cost, inbound shipping and any advertising or prep costs, to give net profit and margin per unit.',
+      'Margin is the figure to watch rather than profit. Two pounds of profit on a nine-pound item is a different business from two pounds on a forty-pound item, and only one of them survives an advertising cost increase.'
+    ],
+    specs: {
+      caption: 'The fees in the stack',
+      rows: [
+        ['Referral fee', 'Usually 15% of the sale price; 8-17% depending on category'],
+        ['FBA fulfilment', 'By size and weight tier — small changes in packaging can move the tier'],
+        ['Storage', 'Monthly, and much higher October to December'],
+        ['Long-term storage', 'Charged on units held beyond 365 days'],
+        ['Returns', 'The referral fee is largely refunded; the fulfilment fee often is not'],
+        ['Advertising', 'Not a fee, but for most categories it is now a cost of being visible']
+      ]
+    },
+    steps: [
+      'Enter your selling price and landed unit cost.',
+      'Set the referral percentage for <strong>your</strong> category — it is not 15% everywhere.',
+      'Add the FBA fee from the size tier your packaging actually falls into.',
+      'Put a realistic advertising figure into other costs. Zero is a fiction on almost every competitive listing.'
+    ],
+    tip: 'Check the dimensional weight tier before you finalise packaging. Fulfilment fees step up in bands, not smoothly, so a product a few millimetres over a boundary pays the next tier’s fee on every single unit for the life of the listing. Shaving the box down to drop a tier is often worth more per unit than a supplier renegotiation, and it is a one-off change rather than an annual argument.',
+    faqs: [
+      { q: 'What margin should I aim for?', a: 'Most sellers treat 25-30% net as the floor for a product worth scaling, because anything thinner cannot absorb an advertising cost rise, a fee increase or a run of returns. Under 15% you are effectively working for Amazon and your supplier, and a single bad quarter removes the year’s profit.' },
+      { q: 'Why is my actual payout lower than this figure?', a: 'Storage fees, returns, removal orders and advertising are charged separately from the per-unit fees and do not appear in a unit calculation. Reconcile against a real settlement report monthly — the gap between per-unit maths and the settlement figure is where most of the surprises in this business live.' },
+      { q: 'Should advertising go in the cost?', a: 'Yes, in any category where organic ranking is contested — which is most of them. Take your total ad spend for a period, divide by units sold in that period, and enter that. A listing that is profitable before advertising and unprofitable after it is unprofitable, however the spreadsheet is arranged.' },
+      { q: 'How do returns affect the numbers?', a: 'Amazon refunds most of the referral fee when a unit is returned, but the fulfilment fee is generally not recovered, and the unit may come back unsellable. In categories with double-digit return rates — clothing especially — you should model the return rate explicitly rather than treating each sale as final.' }
+    ],
+    related: ['break-even', 'profit-margin', 'vat-gst', 'percentage-calculator', 'invoice-generator']
+  },
+
+  'cac-ltv-calculator': {
+    intro: 'Two numbers decide whether a business can afford to grow: what a customer costs to acquire, and what they are worth once acquired. The ratio between them is the closest thing marketing has to a vital sign.',
+    what: [
+      'Divides total sales and marketing spend by customers acquired to get CAC, builds LTV from order value, frequency, lifespan and gross margin, and reports the ratio and payback period.',
+      'LTV is computed on gross margin, not revenue. A customer who spends £1,000 a year on goods that cost you £900 is not a £1,000 customer, and the version of this calculation that ignores margin has bankrupted a lot of companies.'
+    ],
+    specs: {
+      caption: 'How the numbers are read',
+      rows: [
+        ['CAC', 'All sales and marketing spend ÷ new customers, not just ad spend'],
+        ['LTV', 'Order value × purchases a year × lifespan × gross margin'],
+        ['3:1', 'The conventional healthy ratio'],
+        ['Below 1:1', 'You lose money on every customer; growth accelerates the loss'],
+        ['Above 5:1', 'Usually underinvesting in growth rather than excelling at it'],
+        ['Payback', 'Under 12 months is comfortable for most subscription businesses']
+      ]
+    },
+    steps: [
+      'Enter <strong>all</strong> acquisition spend — ad budget plus salaries, tools, agencies and commissions.',
+      'Enter customers acquired in the same period.',
+      'Set order value, purchase frequency and expected lifespan.',
+      'Use your real gross margin. This is where optimism does the most damage.'
+    ],
+    tip: 'Payback period matters more than the ratio when cash is tight. A 4:1 ratio with an eighteen-month payback will run you out of money faster than a 2.5:1 ratio that pays back in four, because you fund the acquisition today and collect the lifetime value slowly. Ratio tells you whether the business model works; payback tells you whether you can survive long enough to find out.',
+    faqs: [
+      { q: 'What goes into CAC besides ad spend?', a: 'Everything spent to acquire customers: salaries for sales and marketing staff, agency retainers, software, content production, commissions and discounts given to close deals. Counting only media spend produces a flattering CAC that no investor will accept and that will not predict your actual cash burn.' },
+      { q: 'Why does gross margin matter to LTV?', a: 'Because revenue is not money you keep. A customer generating £2,000 of revenue on 20% margins contributes £400 toward covering their acquisition cost. Building LTV on revenue rather than margin is the most common error in this calculation and it makes unprofitable acquisition look like a growth engine.' },
+      { q: 'Is a very high ratio good?', a: 'Not necessarily. A ratio above 5:1 usually means you could profitably spend more on acquisition and are not, which is leaving growth on the table — the ratio is a constraint, not a score. It can also mean lifespan is being estimated generously, which is worth checking before celebrating.' },
+      { q: 'How do I estimate customer lifespan?', a: 'From your own churn rate: average lifespan is roughly 1 divided by monthly churn, expressed in months. At 4% monthly churn that is about 25 months. Guessing a lifespan without a churn figure to back it up is how LTV becomes a number that justifies whatever spend was already planned.' }
+    ],
+    related: ['break-even', 'profit-margin', 'percentage-calculator', 'budget-calculator', 'invoice-generator']
+  },
+
   'loan-calculator': {
     intro: 'The monthly payment is the number lenders lead with, and it is the least useful one for comparing offers. Two loans with almost identical payments can differ by thousands once the term differs — total repaid is where that shows up.',
     what: [
