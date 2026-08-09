@@ -856,3 +856,44 @@ console.log(`seo + footer parity: ${pass} total assertions passed`);
   }
 }
 console.log(`seo + product safety: ${pass} total assertions passed`);
+
+/* ---------------------------------------------------------------------------
+ * A SLOT WITHOUT ITS SCRIPT IS AN EMPTY BOX.
+ *
+ * [data-newsletter] is an empty div that newsletter.js fills in. index.html
+ * carried the slot and never loaded the script, so the homepage newsletter
+ * band shipped as a blank rectangle — and every preview I built hid it,
+ * because I was injecting the form by hand instead of letting the page load
+ * what it actually links.
+ *
+ * The same trap exists for any page that gains a slot later. So: if a page has
+ * the slot, it must load the script. Asserted across the built site, not just
+ * the homepage.
+ * ------------------------------------------------------------------------- */
+{
+  const fsN = require("fs"), pathN = require("path");
+  const RN = pathN.join(__dirname, "..");
+  const readN = (p) => { try { return fsN.readFileSync(pathN.join(RN, p), "utf8"); } catch (e) { return ""; } };
+
+  ["index.html", "tools/index.html", "tools/pdf/index.html",
+   "tools/pdf/merge-pdf/index.html", "pricing.html", "about.html",
+   "blog/index.html", "contact.html"].forEach((f) => {
+    const h = readN(f);
+    if (!h) return;
+    const hasSlot = /data-newsletter=/.test(h);
+    const hasScript = /assets\/js\/newsletter\.js/.test(h.replace(/<!--[\s\S]*?-->/g, ""));
+    if (hasSlot) ok(hasScript, f + " has a [data-newsletter] slot, so it must load newsletter.js");
+    else ok(true, f + " has no slot");
+  });
+
+  /* The dependency order matters as much as the presence: newsletter.js needs
+     supabase-config.js to have run before a submit can reach the database. */
+  const home = readN("index.html").replace(/<!--[\s\S]*?-->/g, "");
+  if (home) {
+    const iCfg = home.indexOf("assets/js/supabase-config.js");
+    const iNl  = home.indexOf("assets/js/newsletter.js");
+    ok(iCfg > -1 && iNl > iCfg,
+       "newsletter.js loads after supabase-config.js on the homepage");
+  }
+}
+console.log(`seo + slot wiring: ${pass} total assertions passed`);

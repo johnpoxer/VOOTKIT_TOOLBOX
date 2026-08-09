@@ -381,6 +381,11 @@
 <script src="assets/js/home.js?v=20260727perf" defer></script>
 <script src="assets/js/ui.js?v=20260727perf" defer></script>
 <script src="assets/js/supabase-config.js?v=20260727perf" defer></script>
+<!-- Builds every [data-newsletter] slot on the page. The homepage carries one
+     and this tag was missing, so the band rendered as an empty box — the form
+     had never appeared in production. Must come after supabase-config.js,
+     which it needs to submit. -->
+<script src="assets/js/newsletter.js?v=20260727perf" defer></script>
 <script src="assets/js/usage.js?v=20260727perf" defer></script>
 <script src="assets/js/auth.js?v=20260727perf" defer></script>
 <script>
