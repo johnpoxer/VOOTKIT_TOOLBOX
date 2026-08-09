@@ -35,8 +35,6 @@
 .tool-head { margin-bottom: var(--s-5); }
 .trust { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-4); }
 .trust .badge { background: var(--surface-sunk); color: var(--ink-soft); border: 1px solid var(--line); }
-.trust .badge-local { background: var(--ok-weak); color: var(--ok); border-color: var(--ok-border); }
-.trust .badge-net { background: var(--warn-weak); color: var(--warn); border-color: var(--warn-border); }
 
 .ws { border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); box-shadow: var(--shadow-sm); padding: var(--s-6); min-height: 220px; display: grid; place-items: center; }
 .ws-soon { text-align: center; gap: var(--s-3); }

@@ -110,9 +110,20 @@ a.card:hover, button.card:hover { transform: translateY(-3px); border-color: var
 .grid { display: grid; gap: var(--s-3); grid-template-columns: repeat(auto-fill, minmax(248px, 1fr)); }
 
 /* ---------- badges ---------- */
-.badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px var(--s-2); border-radius: var(--r-pill); font-size: var(--t-xs); font-weight: 600; }
-.badge-local { background: var(--ok-weak); color: var(--ok); border: 1px solid var(--ok-border); }
-.badge-net { background: var(--warn-weak); color: var(--warn); border: 1px solid var(--warn-border); }
+/* The green "runs on your device" and amber "uses an API" chips are gone. They
+   were on every tool card and every tool page, which meant the site's own
+   colour palette was decided by a status pill repeated 258 times — and a green
+   badge that says nothing new on 256 of them is noise, not reassurance. What
+   they said is now said once, properly, in the safety section on the homepage
+   and on the two pages it actually applies to.
+   This leaves one neutral chip, used for "no watermark" and "5 free a day". */
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px var(--s-2); border-radius: var(--r-pill);
+  font-size: var(--t-xs); font-weight: 600;
+  background: var(--surface-sunk); color: var(--ink-soft);
+  border: 1px solid var(--line);
+}
 .eyebrow { display: inline-flex; align-items: center; gap: var(--s-2); font-size: var(--t-xs); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
 
 /* ---------- form controls ---------- */

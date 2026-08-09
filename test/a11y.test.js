@@ -99,18 +99,33 @@ console.log(`a11y: ${pass} assertions passed${hasDom ? " (incl. DOM auditors)" :
 
   /* CONTRAST IS CHECKED UNDER THE WASH, NOT ON THE BARE CANVAS.
    *
-   * body carries an ambient gradient over the canvas — accent at the top,
-   * cool lower down, 4% at its strongest. Text sits on that, not on the flat
-   * token, so measuring against the token alone flatters every number. This
-   * caught two real failures when it was written: --ink-mute fell to 4.38 and
-   * --accent to 4.26 once the wash was accounted for, both of which measured
-   * fine against the bare canvas. */
+   * body carries an ambient gradient over the canvas — two cool greys, 4% at
+   * their strongest. Text sits on that, not on the flat token, so measuring
+   * against the token alone flatters every number. This caught two real
+   * failures when it was written: --ink-mute fell to 4.38 and --accent to 4.26
+   * once the wash was accounted for, both of which measured fine against the
+   * bare canvas.
+   *
+   * The wash colour is READ FROM THE SHEET rather than assumed. It used to be
+   * the accent at 4%, and this test hard-coded that; when the tint went neutral
+   * the assertion silently started measuring a colour the site no longer
+   * paints. Parsing it keeps the test honest through the next change too.
+   *
+   * THE WASH MAY NOT USE THE ACCENT. A 4% swatch of a saturated pink looks
+   * like nothing on its own and unmistakable across a whole viewport — the
+   * page reads as tinted rather than neutral. Asserted, because it was already
+   * shipped once. */
   const mix = (a, b, t) => {
     const A = rgb(a), B = rgb(b);
     return "#" + [0, 1, 2].map((i) =>
       Math.round(A[i] * (1 - t) + B[i] * t).toString(16).padStart(2, "0")).join("");
   };
-  const washed = mix(canvas, tok("accent"), 0.04);   // the wash at full strength
+  const washTint = (/--wash:[\s\S]*?color-mix\(in srgb,\s*(#[0-9a-f]{3,8}|var\(--accent\))\s+([\d.]+)%/i.exec(css) || [])
+    .slice(1);
+  ok(washTint.length === 2, "the wash's strongest tint is readable from the sheet");
+  ok(washTint[0] !== "var(--accent)",
+     "the ambient wash does not use the accent — a 4% pink over the whole page reads as a tint");
+  const washed = mix(canvas, washTint[0] || canvas, parseFloat(washTint[1] || 0) / 100);
 
   [["n-900", "--ink"], ["n-600", "--ink-soft"],
    ["n-500", "--ink-mute"], ["accent", "--accent"]].forEach(([t, label]) => {

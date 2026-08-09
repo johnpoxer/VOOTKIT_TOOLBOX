@@ -810,9 +810,33 @@ console.log(`seo + footer parity: ${pass} total assertions passed`);
     ok(sec, "the homepage has a #safety section");
     ok(/Every tool but two/.test(sec),
        "the claim is phrased so it survives the catalogue growing, not a hard-coded count");
-    ok(/badge-net/.test(sec), "it shows the actual badge the labelled tools carry");
     ok(/privacy\.html/.test(sec), "it points at the privacy policy for the detail");
-    eq((sec.match(/class="saf-col"/g) || []).length, 3, "three columns, as in the reference");
+    eq((sec.match(/class="saf-box"/g) || []).length, 3, "three boxes, as in the reference");
+
+    /* Every box is a link, and every link goes somewhere real. A reassurance
+       card that looks clickable and is not is worse than a paragraph. */
+    const hrefs = [...sec.matchAll(/<a class="saf-box" href="([^"]+)"/g)].map((m) => m[1]);
+    eq(hrefs.length, 3, "all three boxes are links");
+    hrefs.forEach((h) => {
+      const target = pathS.join(__dirname, "..", h.replace(/\/$/, "/index.html"));
+      ok(fsS.existsSync(target), "safety box target exists: " + h);
+    });
+
+    /* THE BADGES ARE GONE, EVERYWHERE. They were on 258 tool cards and 258 tool
+       pages; a stale one left behind reads as a bug on the exact pages this
+       section is reassuring people about. */
+    ["index.html", "tools/index.html", "tools/pdf/index.html",
+     "tools/pdf/merge-pdf/index.html", "privacy.html", "about.html"].forEach((f) => {
+      const h = (() => { try { return fsS.readFileSync(pathS.join(__dirname, "..", f), "utf8"); }
+                         catch (e) { return ""; } })();
+      if (!h) return;
+      ok(!/badge-net|badge-local/.test(h), f + " carries no processing badge");
+      /* Scoped to the chip text, not the phrase. "Runs on your device" is also
+         a hero bullet and a footer line, and both of those are messaging the
+         site should keep saying — it is the pill repeated 258 times that went. */
+      ok(!/class="badge[^"]*">(uses an API|runs on your device|on your device)</.test(h),
+         f + " has no leftover badge chip");
+    });
 
     /* Nothing in here may promise storage, sync or a backup — the whole section
        exists to say the opposite, and one stray word undoes it. */

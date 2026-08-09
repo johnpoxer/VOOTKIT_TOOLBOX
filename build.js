@@ -443,10 +443,6 @@ ${(extraScripts||[]).map(function(x){return '<script src="'+up+x+V+'" defer></sc
    genuinely crossed a milestone rather than every time a tool ships. */
 const floorTo = (n, step) => Math.max(step, Math.floor(n / step) * step);
 
-const badge = (t) => t.processing === "network"
-  ? '<span class="badge badge-net">uses an API</span>'
-  : '<span class="badge badge-local">runs on your device</span>';
-
 /* category lookup + icon set (mirrors assets/js/home.js so cards render at build time) */
 const CATBY = {};
 VK.CATEGORIES.forEach((c) => { CATBY[c.slug] = c; });
@@ -822,7 +818,7 @@ function toolCard(t, up) {
     <span class="tc-top">${toolIconHtml(t)}<span class="tc-tags">${tags}</span></span>
     <h3>${esc(t.name)}${soon ? ' <span class="soon">soon</span>' : ""}</h3>
     <p>${esc(t.desc)}</p>
-    <span class="card-foot"><span class="tc-cat">${esc(c.name || t.cat)}</span>${badge(t)}</span>
+    <span class="card-foot"><span class="tc-cat">${esc(c.name || t.cat)}</span></span>
   </a>`;
 }
 
@@ -1022,7 +1018,7 @@ function toolPage(t) {
   <header class="tool-head">
     <h1 class="page-h1">${esc(t.name)}</h1>
     <p class="page-lede">${esc(t.desc)}</p>
-    <div class="trust">${badge(t)}<span class="badge">no watermark</span><span class="badge">5 free a day</span></div>
+    <div class="trust"><span class="badge">no watermark</span><span class="badge">5 free a day</span></div>
   </header>
   ${workspace}
 
@@ -1113,11 +1109,6 @@ ${facts ? `
 
 /* ---------- localised tool page (one per translated locale) ---------- */
 function fillStr(s, m) { return String(s == null ? "" : s).replace(/\{(\w+)\}/g, function (_, k) { return m[k] != null ? m[k] : ""; }); }
-function badgeI18n(t, C) {
-  return t.processing === "network"
-    ? `<span class="badge badge-net">${esc(C.badge_net)}</span>`
-    : `<span class="badge badge-local">${esc(C.badge_local)}</span>`;
-}
 function localizedToolPage(t, c, loc) {
   const code = loc.code, C = I18N.chrome[code], TT = I18N.tools[code][t.id];
   const local = t.processing !== "network";
@@ -1146,7 +1137,7 @@ function localizedToolPage(t, c, loc) {
   const relHtml = related.length
     ? `<section class="section"><h2 class="h-sm">${esc(fillStr(C.sec_next, M))}</h2><div class="grid">${related.map((r) => {
         const rc = CATBY[r.cat] || {}, rt = I18N.tools[code][r.id];
-        return `<a class="card tool-card" data-cat="${r.cat}" href="../${r.id}/"><span class="tc-top">${toolIconHtml(r)}</span><h3>${esc(rt.name)}</h3><p>${esc(rt.desc)}</p><span class="card-foot"><span class="tc-cat">${esc(rc.name || r.cat)}</span>${badgeI18n(r, C)}</span></a>`;
+        return `<a class="card tool-card" data-cat="${r.cat}" href="../${r.id}/"><span class="tc-top">${toolIconHtml(r)}</span><h3>${esc(rt.name)}</h3><p>${esc(rt.desc)}</p><span class="card-foot"><span class="tc-cat">${esc(rc.name || r.cat)}</span></span></a>`;
       }).join("")}</div></section>`
     : "";
   return pageHead +
@@ -1155,7 +1146,7 @@ function localizedToolPage(t, c, loc) {
   <header class="tool-head">
     <h1 class="page-h1">${esc(name)}</h1>
     <p class="page-lede">${esc(desc)}</p>
-    <div class="trust">${badgeI18n(t, C)}<span class="badge">${esc(C.badge_nowatermark)}</span><span class="badge">${esc(C.badge_free)}</span></div>
+    <div class="trust"><span class="badge">${esc(C.badge_nowatermark)}</span><span class="badge">${esc(C.badge_free)}</span></div>
   </header>
   <div class="ws" id="workspace" data-tool="${t.id}"></div>
   <section class="prose">
@@ -1368,12 +1359,6 @@ function componentsPage() {
     <button class="btn btn-primary" type="button">Primary</button>
     <button class="btn" type="button">Secondary</button>
     <button class="icon-btn" type="button" aria-label="Icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg></button>
-  </div>
-
-  <section class="prose"><h2>Badges</h2></section>
-  <div class="wbtns" style="margin-bottom:var(--s-6)">
-    <span class="badge badge-local">runs on your device</span>
-    <span class="badge badge-net">uses an API</span>
   </div>
 
   <section class="prose"><h2>Fields</h2></section>
@@ -1726,7 +1711,7 @@ write("privacy.html", legalPage({
   body: `
     <h2>The short version</h2>
     <p><strong>Most Vootkit tools never send your files anywhere.</strong> They run inside your browser using your own device's processing power. When a tool is local, your file is not uploaded, not stored, and not seen by us — there is nothing for us to keep or delete.</p>
-    <p>Tools that <em>do</em> need the internet are labelled <span class="badge badge-net">uses an API</span> on their page and in search results. We do not hide this.</p>
+    <p>Two tools genuinely need the internet and cannot work without it: the <strong>Currency Converter</strong>, which fetches live exchange rates, and the <strong>URL Shortener</strong>, which has to register the short link somewhere. Both say so on their own pages. Every other tool works without sending anything to us.</p>
 
     <h2>What we collect</h2>
     <ul>
@@ -1881,7 +1866,7 @@ write("about.html", infoPage({
 
     <h2>What we believe</h2>
     <ul>
-      <li><strong>Privacy by default.</strong> Most tools process your files locally in the browser. If a tool needs the internet, we label it <span class="badge badge-net">uses an API</span> — we never hide it.</li>
+      <li><strong>Privacy by default.</strong> Nearly every tool processes your files locally in the browser. Only two need the internet at all — the Currency Converter and the URL Shortener — and each says so on its own page.</li>
       <li><strong>Fast and frictionless.</strong> No installs, and no account required to use the tools. Open a tool and go.</li>
       <li><strong>A generous free core.</strong> The essential tools stay free, and downloaders are always unlimited. Pro simply adds convenience for people who live in these tools.</li>
       <li><strong>Built to grow.</strong> New tools ship constantly, each with its own identity inside the Vootkit ecosystem.</li>

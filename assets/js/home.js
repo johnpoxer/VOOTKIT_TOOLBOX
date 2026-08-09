@@ -32,11 +32,6 @@
     };
     return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (p[name] || p.file) + '</svg>';
   }
-  function badge(t) {
-    return t.processing === 'network'
-      ? '<span class="badge badge-net">uses an API</span>'
-      : '<span class="badge badge-local">on your device</span>';
-  }
 
   /* ---- search ---- */
   var input = document.getElementById('q');
@@ -62,7 +57,7 @@
         '<span class="res-ic">' + icon(cat.icon) + '</span>' +
         '<span class="res-main"><strong>' + esc(t.name) + (soon ? ' <em class="soon">soon</em>' : '') + '</strong>' +
         '<span class="res-desc">' + esc(t.desc) + '</span></span>' +
-        '<span class="res-meta">' + badge(t) + '<span class="res-cat">' + esc(cat.name) + '</span></span></a>';
+        '<span class="res-meta"><span class="res-cat">' + esc(cat.name) + '</span></span></a>';
     }).join('');
   }
   function paintActive() {
