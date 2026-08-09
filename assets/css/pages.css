@@ -415,11 +415,19 @@ video.wcode { padding: 0; }
     var(--surface);
   border-bottom: 1px solid var(--line);
 }
+/* THE COLUMNS OVERLAP ON PURPOSE.
+ * Two columns side by side with a gutter between them is a layout; the copy
+ * running slightly over the edge of the picture is a composition. It works
+ * here only because the illustration's edges are masked to nothing — the text
+ * lands on fade, never on a hard edge — so the gutter is negative rather than
+ * positive and the art is pulled back underneath the copy.
+ * The copy is raised above it so the overlap can never eat a word. */
 .pro-hero-grid {
-  display: grid; gap: var(--s-6);
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  display: grid; gap: 0;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.18fr);
   align-items: center;
 }
+.pro-hero-copy { position: relative; z-index: 1; }
 .pro-hero-copy h1 {
   font-size: clamp(2.1rem, 4.6vw, 3.4rem);
   line-height: 1.08;
@@ -438,15 +446,18 @@ video.wcode { padding: 0; }
 .pro-cta.btn-primary:active { background: #1e40af; }
 .pro-note { margin: var(--s-3) 0 0; font-size: var(--t-sm); color: var(--ink-mute); }
 
-.pro-hero-art { display: flex; justify-content: center; }
 /* THE EDGES ARE MASKED, NOT CROPPED.
  * The illustration has a soft grey vignette background; the hero is white
  * under a faint blue wash. Placed flat, those two greys meet along a visible
  * rectangle and the picture reads as pasted on. Fading the outer edge to
  * nothing dissolves it into the page instead — and it keeps working if the
  * hero tint changes, which a matched background colour would not. */
+.pro-hero-art {
+  display: flex; justify-content: center;
+  margin-left: clamp(-7rem, -6vw, -2.5rem);   /* the negative gutter */
+}
 .pro-art {
-  display: block; width: 100%; max-width: 560px; height: auto;
+  display: block; width: 100%; max-width: 680px; height: auto;
   -webkit-mask-image: radial-gradient(115% 105% at 50% 48%, #000 58%, transparent 92%);
           mask-image: radial-gradient(115% 105% at 50% 48%, #000 58%, transparent 92%);
   animation: proRise .7s .05s both ease-out;
@@ -473,8 +484,10 @@ video.wcode { padding: 0; }
 .pro-feat p { margin: 0; color: var(--ink-soft); font-size: var(--t-sm); max-width: 38ch; }
 
 @media (max-width: 860px) {
-  .pro-hero-grid { grid-template-columns: 1fr; }
-  .pro-hero-art { order: -1; }              /* picture first on a phone */
+  .pro-hero-grid { grid-template-columns: 1fr; gap: var(--s-5); }
+  /* Stacked, there is nothing to overlap into — the negative gutter would just
+     hang the picture off the left edge of the screen. */
+  .pro-hero-art { order: -1; margin-left: 0; }   /* picture first on a phone */
   .pro-art { max-width: 340px; }
 }
 
