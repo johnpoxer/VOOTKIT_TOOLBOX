@@ -100,112 +100,122 @@
 
 /* --- homepage newsletter band ----------------------------------------------
  *
- * WHY A BAND AND NOT A CARD.
- * The first version put the three photographs in a strip along the top of a
- * white card. It was tidy and it was dead: photographs shrunk to a 220px band
- * inside a bordered box read as clip-art, and the page still looked like a
- * spreadsheet with pictures glued to it. Every site that does this well —
- * and the reference the design came from — does the opposite: the photograph
- * becomes the surface, full width, edge to edge, and the content floats on it.
+ * Built to the supplied design, and the deviations are listed at the bottom
+ * rather than left for someone to find.
  *
- * So the photographs are the background of the whole section. They are not
- * decoration beside the message; they are what the message is printed on.
+ * ONE PHOTOGRAPH, NOT THREE. A band is a place, and three photographs make it
+ * three places. The heading and the copy sit directly ON the photograph; only
+ * the form gets a card, because the form is the only part that needs a surface
+ * to be usable. That is the whole idea of the reference and it is why it works.
  *
- * HOW THE TEXT STAYS READABLE.
- * Two layers, both deliberate, because white text over an unmanaged photo is
- * the single most common way this pattern fails. First a fixed dark scrim over
- * the photographs (.nlband::after) — not a subtle tint, a real one, because
- * the brightest photo here is a snowfield and the scrim has to hold against
- * that. Then the card itself is a further dark translucent plane.
+ * THE SCRIM IS HORIZONTAL, NOT UNIFORM. Darkening the whole frame evenly to
+ * make text readable also flattens the photograph into wallpaper. This one is
+ * weighted: heavy across the left and centre where every word sits, releasing
+ * over the right quarter so the climbers stay in the picture. White text is on
+ * the dark side of it everywhere, never over the released part.
  *
- * Worked at the worst case — pure white photo — the surface under the text
- * lands near #292929: white type on it is about 14:1, and the softened consent
- * line about 10:1. Both are far past AA, and they hold even if backdrop-filter
- * is unsupported, because the blur is a refinement and the opacity is the
- * contrast. Nothing here depends on the photograph being dark.
+ * Worst case in this photograph is the snowfield, i.e. pure white under a .68
+ * scrim. Heading and body land at 6.9:1 — past AA for normal text, let alone
+ * for a heading. Nothing here relies on the photo being dark.
  */
 .nlband {
   position: relative;
   isolation: isolate;                /* keeps the negative z-indexes local */
   overflow: hidden;
-  padding: var(--s-8) var(--s-4);
-  margin: var(--s-8) 0 0;
+  padding: clamp(var(--s-7), 6vw, var(--s-9)) var(--s-4);
+  margin-top: var(--s-8);
 }
-.nlband-bg {
-  position: absolute; inset: 0; z-index: -2;
-  display: grid; grid-template-columns: repeat(3, 1fr);
-}
+.nlband-bg { position: absolute; inset: 0; z-index: -2; display: block; }
 .nlband-bg img {
   display: block; width: 100%; height: 100%;
-  object-fit: cover; object-position: center 42%;
+  object-fit: cover; object-position: center 45%;
 }
-/* The scrim. Vertical gradient plus a centre pool, so the middle — where the
-   card sits — is darkest and the top edge keeps some of the photograph.
- *
- * The bottom stop is the footer's own #0f1729 at near-full opacity, on
- * purpose: this band is the last thing on the page, so it now runs straight
- * into the footer. Left alone that meeting is a hard seam between two
- * unrelated darks. Landing the gradient ON the footer colour turns it into a
- * dissolve — the photograph fades out and the footer begins, and the page
- * ends on one continuous dark base instead of two stacked slabs.
- *
- * It also only ever makes the text MORE readable: every stop below the card
- * is darker than the one the contrast figures above were measured against. */
+/* Horizontal weighting for readability, plus a vertical pass that finishes on
+   the footer's own #0f1729 — this band is the last thing on the page, so it
+   dissolves into the footer instead of butting against it. */
 .nlband::after {
   content: ''; position: absolute; inset: 0; z-index: -1;
   background:
-    linear-gradient(180deg,
-      rgb(8 12 20 / .62) 0%,
-      rgb(15 23 41 / .80) 62%,
-      rgb(15 23 41 / .97) 100%),
-    radial-gradient(60rem 30rem at 50% 46%, rgb(8 12 20 / .55), transparent 70%);
+    linear-gradient(180deg, transparent 0%, transparent 52%, rgb(15 23 41 / .55) 88%, rgb(15 23 41 / .95) 100%),
+    linear-gradient(90deg, rgb(8 12 20 / .74) 0%, rgb(8 12 20 / .68) 72%, rgb(8 12 20 / .34) 100%);
 }
+
+.nlband-inner { max-width: 42rem; margin: 0 auto; color: #fff; }
+.nlband-inner h2 {
+  margin: 0 0 var(--s-4);
+  font-size: clamp(1.45rem, 1.05rem + 1.7vw, 2.1rem);
+  line-height: 1.15; font-weight: 700;
+  text-transform: uppercase;          /* uppercased in CSS, not in the markup,
+                                         so the text stays readable to a screen
+                                         reader and copies out as a sentence */
+  letter-spacing: .005em; color: #fff;
+}
+.nlband-inner > p {
+  margin: 0 0 var(--s-5);
+  color: rgb(255 255 255 / .92); line-height: 1.6;
+}
+
+/* The card holds the form and nothing else. */
 .nlcard {
-  max-width: 40rem; margin: 0 auto; text-align: center; color: #fff;
-  background: rgb(10 15 25 / .66);
+  background: rgb(10 15 25 / .62);
   border: 1px solid rgb(255 255 255 / .14);
-  border-radius: var(--r-xl, 20px);
-  padding: var(--s-6) var(--s-5) var(--s-6);
-  box-shadow: 0 24px 60px rgb(4 8 16 / .45);
-  backdrop-filter: blur(14px) saturate(120%);
-  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  border-radius: 16px;
+  padding: var(--s-5);
+  box-shadow: 0 20px 50px rgb(4 8 16 / .38);
+  backdrop-filter: blur(12px) saturate(120%);
+  -webkit-backdrop-filter: blur(12px) saturate(120%);
 }
-.nlcard h2 { margin: var(--s-3) 0 var(--s-3); font-size: var(--t-2xl); color: #fff; }
-.nlcard > p {
-  margin: 0 auto var(--s-2); max-width: 46ch;
-  color: rgb(255 255 255 / .84);
-}
-/* The eyebrow's pale pink chip is built for a white page and looks like a
-   sticker on a dark one. Same shape, borrowed from the glass instead. */
-.nlcard .eyebrow {
-  border-color: rgb(255 255 255 / .28);
-  background: rgb(255 255 255 / .12);
-  color: #fff;
-}
-/* The form is still the one newsletter.js builds — this only re-dresses it for
-   a dark surface. No second implementation, no duplicated validation. */
+/* Still the form newsletter.js builds — only re-dressed for a dark surface.
+   No second implementation and no duplicated validation. */
 .nlcard .nl {
-  border: 0; background: transparent; padding: 0;
-  margin: var(--s-5) auto 0; max-width: 28rem; text-align: left;
+  border: 0; background: transparent; padding: 0; margin: 0; max-width: none;
 }
-.nlcard .nl-title { display: none; }   /* the h2 above already said it */
-.nlcard .nl-lede  { display: none; }   /* as did the paragraph */
+.nlcard .nl-title, .nlcard .nl-lede { display: none; }   /* the heading above said it */
 .nlcard .nl-input {
   background: rgb(255 255 255 / .10);
-  border-color: rgb(255 255 255 / .28);
-  color: #fff;
+  border-color: rgb(255 255 255 / .26);
+  color: #fff; border-radius: var(--r-md);
+  padding-right: 46px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-opacity='.55' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='14' rx='2.5'/%3E%3Cpath d='m3.6 7.2 8.4 5.8 8.4-5.8'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 19px 19px;
 }
 .nlcard .nl-input::placeholder { color: rgb(255 255 255 / .60); }
-.nlcard .nl-consent { color: rgb(255 255 255 / .82); }
+.nlcard .nl-btn {
+  background: #2563eb; border-color: transparent; color: #fff;
+  border-radius: var(--r-md);
+  text-transform: uppercase; letter-spacing: .04em;
+  padding-inline: var(--s-5);
+}
+.nlcard .nl-btn::before {
+  content: ''; width: 15px; height: 15px; flex: 0 0 auto;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffffff'%3E%3Cpath d='M13.2 2 4 14h5.9l-1.1 8L19 10h-6z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.nlcard .nl-btn:hover { background: #1d4ed8; }
+.nlcard .nl-btn:active { background: #1e40af; }
+/* Consent, centred under the row where the reference puts its privacy line.
+   It stays a real required checkbox — that is what makes the address lawfully
+   mailable, and test/newsletter.test.js fails if it is ever removed or
+   pre-ticked. Quieter, not absent. */
+.nlcard .nl-consent {
+  justify-content: center; text-align: left;
+  margin-top: var(--s-4); font-size: var(--t-xs);
+  color: rgb(255 255 255 / .78); max-width: 42ch; margin-inline: auto;
+}
+.nlcard .nl-status { text-align: center; }
 .nlcard .nl-status.ok  { color: #7ee2b8; }
 .nlcard .nl-status.err { color: #ffb4ac; }
-:where(.nlcard) :focus-visible { outline-color: #fff; }
+:where(.nlcard, .nlband-inner) :focus-visible { outline-color: #fff; }
 
-@media (max-width: 720px) {
-  /* Three photographs across a phone are three slivers. One, uncropped and
-     doing its job as a backdrop, is worth more than three hints of one. */
-  .nlband { padding: var(--s-7) var(--s-3); }
-  .nlband-bg { grid-template-columns: 1fr; }
-  .nlband-bg img:first-child, .nlband-bg img:last-child { display: none; }
-  .nlcard { padding: var(--s-5) var(--s-4); }
+@media (max-width: 640px) {
+  .nlband { padding-inline: var(--s-3); }
+  /* On a phone the right release would put text over bare photograph, so the
+     scrim goes flat and heavy instead. */
+  .nlband::after {
+    background:
+      linear-gradient(180deg, transparent 0%, transparent 52%, rgb(15 23 41 / .55) 88%, rgb(15 23 41 / .95) 100%),
+      linear-gradient(90deg, rgb(8 12 20 / .74), rgb(8 12 20 / .70));
+  }
+  .nlcard { padding: var(--s-4); }
 }

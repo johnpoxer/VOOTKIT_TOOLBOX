@@ -237,19 +237,18 @@
        validates it and writes to Supabase exactly as it does in the footer and
        on the blog — no second implementation to drift out of step. -->
   <section class="nlband">
-    <div class="nlband-bg" aria-hidden="true">
-      <img src="/assets/blog/nl-community-band.jpg" alt="" width="760" height="700" loading="lazy" decoding="async">
-      <img src="/assets/blog/nl-summit-band.jpg"    alt="" width="760" height="700" loading="lazy" decoding="async">
-      <img src="/assets/blog/nl-studio-band.jpg"    alt="" width="760" height="700" loading="lazy" decoding="async">
-    </div>
+    <picture class="nlband-bg">
+      <source srcset="/assets/blog/nl-band.webp" type="image/webp">
+      <img src="/assets/blog/nl-band.jpg" alt="" width="1920" height="1048" loading="lazy" decoding="async">
+    </picture>
     <div class="wrap">
-      <div class="nlcard">
-        <span class="eyebrow">The Vootkit newsletter</span>
-        <h2>New tools, now and then.</h2>
-        <p>A short email when something worth knowing about ships — a new tool, a
-        faster engine, or a guide that saves you an hour. No more than monthly,
-        and one click gets you out.</p>
-        <div data-newsletter="homepage"></div>
+      <div class="nlband-inner">
+        <h2>Stay connected: join the Vootkit newsletter</h2>
+        <p>Be the first to know when a new tool ships, when an existing one gets
+        faster, and when we publish a guide worth your time. One short email,
+        no more than monthly, written by the people who build the tools — and
+        one click gets you out for good.</p>
+        <div class="nlcard"><div data-newsletter="homepage"></div></div>
       </div>
     </div>
   </section>
