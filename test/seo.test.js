@@ -169,16 +169,39 @@ console.log(`seo: ${pass} assertions passed`);
   ok(locs.every(u => u.startsWith("https://www.vootkit.com/")), "every entry is absolute and on the canonical host");
   eq(locs.length, new Set(locs).size, "no duplicate entries");
 
-  /* The pages themselves must still exist and still declare their alternates,
-     or this stops being a prioritisation change and becomes a deletion. */
+  /* THIS CONTRACT WAS INVERTED ON 8 AUG 2026, DELIBERATELY.
+   *
+   * It used to assert that localised pages stayed indexable and kept their
+   * hreflang — the sitemap change was only meant to deprioritise them. Then
+   * AdSense rejected the site for "Low value content", and measuring the built
+   * output showed why: the localised pages are the generic template with a tool
+   * name swapped in, at 68-72% median pair overlap within each language against
+   * 21% on the English side. 1,192 of 1,478 pages, all indexable, all linked by
+   * hreflang from the English originals.
+   *
+   * Deprioritising was not enough. They are now noindex,follow and the English
+   * pages no longer advertise them. See LOCALISED_INDEXABLE in build.js — this
+   * whole block flips back with that one boolean, on the day those pages carry
+   * content of their own. */
   const sample = path.join(root, "es/tools/developer/json-formatter/index.html");
   if (fs.existsSync(sample)) {
     const html = fs.readFileSync(sample, "utf8");
-    ok(/hreflang="es"/.test(html) && /hreflang="en"/.test(html),
-       "localised pages keep their hreflang alternates");
+    ok(/<meta name="robots" content="noindex,follow">/.test(html),
+       "localised pages are noindexed while they carry only the generic template");
+    ok(/follow/.test(html) && !/nofollow/.test(html),
+       "and follow, so they pass a visitor through to the English original rather than dead-ending");
+    ok(!/hreflang=/.test(html), "they no longer claim to be alternates of anything");
     ok(/rel="canonical" href="https:\/\/www\.vootkit\.com\/es\//.test(html),
-       "a localised page still self-canonicalises rather than pointing at English");
-    ok(!/noindex/i.test(html), "localised pages are not noindexed — they stay indexable, just not prioritised");
+       "they still self-canonicalise — noindex plus a foreign canonical is a contradictory signal");
+  }
+
+  /* The English pages must NOT have been caught by the same change. If this
+     ever fails, the site has just deindexed itself. */
+  const enSample = path.join(root, "tools/developer/json-formatter/index.html");
+  if (fs.existsSync(enSample)) {
+    const en = fs.readFileSync(enSample, "utf8");
+    ok(!/noindex/i.test(en), "English tool pages remain indexable");
+    ok(!/hreflang=/.test(en), "and no longer advertise the templated translations");
   }
 
   /* robots.txt must keep pointing at the sitemap, and must not have started

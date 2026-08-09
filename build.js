@@ -445,10 +445,38 @@ function localesForTool(id) {
     return I18N.chrome[l.code] && I18N.tools[l.code] && I18N.tools[l.code][id];
   });
 }
+/* LOCALISED PAGES ARE OUT OF THE INDEX UNTIL THEY CARRY REAL CONTENT.
+ *
+ * AdSense rejected vootkit.com on 8 Aug 2026 for "Low value content". Measured
+ * duplicate overlap on the built site, same Jaccard method used to break the
+ * English clusters:
+ *
+ *   English   262 pages   median pair overlap 21.0%   pairs >=90% identical:  0 / 780
+ *   Spanish   145 pages   median pair overlap 68.6%   pairs >=90% identical: 59 / 780
+ *   German    145 pages   median pair overlap 72.3%   pairs >=90% identical: 59 / 780
+ *
+ * The English side is genuinely fixed. The localised side never received the
+ * deep content — every page is the generic template with a tool name swapped
+ * in, which is why merge-pdf, compress-pdf, loan-calculator and resize-image
+ * all come out within 40 words of each other in Spanish.
+ *
+ * That is 1,192 of 1,478 pages: 81% of the site, machine-translated,
+ * indexable, and linked from every English page by hreflang. A reviewer opening
+ * Vootkit saw roughly four pages of templated filler for every real one.
+ *
+ * So: noindex,follow on the localised pages, and English pages stop advertising
+ * them through hreflang and the language switcher. Nothing is deleted and the
+ * URLs still resolve — this is one boolean, and it flips back the day those
+ * pages have something of their own to say. */
+const LOCALISED_INDEXABLE = false;
+
 /* hreflang alternates for a tool: English + any fully-translated locales */
 function altsForTool(t) {
   const base = "/tools/" + t.cat + "/" + t.id + "/";
   const arr = [{ code: "en", href: SITE + base }];
+  /* One return point for both hreflang and the language switcher, so the two
+     can never disagree about which translations the site is claiming. */
+  if (!LOCALISED_INDEXABLE) return arr;
   localesForTool(t.id).forEach((l) => arr.push({ code: l.code, href: SITE + "/" + l.code + base }));
   return arr;
 }
@@ -780,7 +808,10 @@ function localizedToolPage(t, c, loc) {
     { "@context": "https://schema.org", "@type": "SoftwareApplication", name: name, applicationCategory: "UtilitiesApplication", operatingSystem: "Any (web browser)", offers: { "@type": "Offer", price: "0", priceCurrency: "USD" }, description: desc, url, inLanguage: code },
     { "@context": "https://schema.org", "@type": "FAQPage", inLanguage: code, mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) }
   ];
-  const pageHead = head({ depth: 4, url, ads: true, ld, cat: t.cat, lang: code, dir: loc.dir, alts: altsForTool(t), title: title, ogTitle: name, desc: metaDesc });
+  let pageHead = head({ depth: 4, url, ads: true, ld, cat: t.cat, lang: code, dir: loc.dir, alts: altsForTool(t), title: title, ogTitle: name, desc: metaDesc });
+  /* follow, not nofollow: the page should still pass a visitor and any crawl
+     equity through to the English original rather than being a dead end. */
+  if (!LOCALISED_INDEXABLE) pageHead = pageHead.replace("</head>", '<meta name="robots" content="noindex,follow">\n</head>');
   const relHtml = related.length
     ? `<section class="section"><h2 class="h-sm">${esc(fillStr(C.sec_next, M))}</h2><div class="grid">${related.map((r) => {
         const rc = CATBY[r.cat] || {}, rt = I18N.tools[code][r.id];
