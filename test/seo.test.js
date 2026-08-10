@@ -944,10 +944,14 @@ console.log(`seo + slot wiring: ${pass} total assertions passed`);
        component's styles — neither of which it gets from pages.css. */
     const home = readI("index.html");
     ok(/data\/tool-icons\.js/.test(home), "the homepage loads the generated icon map");
-    ok(/\.ic-tool/.test(readI("assets/css/base.css")),
-       "the icon component lives in base.css, which the homepage does load");
-    ok(!/\.ic-tool/.test(readI("assets/css/pages.css")),
-       "and not in pages.css, which it does not");
+    /* The DEFINITION has to be in base.css — the homepage loads that and not
+       pages.css. Contextual size tweaks in pages.css are fine: they only apply
+       on pages that load the full bundle anyway. What must never come back is
+       the base rule living where the homepage cannot see it. */
+    ok(/^\.ic-tool \{/m.test(readI("assets/css/base.css")),
+       "the icon component is defined in base.css, which the homepage does load");
+    ok(!/^\.ic-tool \{/m.test(readI("assets/css/pages.css")),
+       "and not defined in pages.css, which the homepage does not load");
 
     const gen = readI("data/tool-icons.js");
     if (gen) {

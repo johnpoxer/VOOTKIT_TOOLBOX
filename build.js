@@ -432,6 +432,13 @@ t.addEventListener('click',function(){var c=document.documentElement.getAttribut
 <script src="${up}assets/js/auth.js${V}" defer></script>
 <script src="${up}assets/js/usage.js${V}" defer></script>
 <script src="${up}assets/js/deliver.js${V}" defer></script>
+<!-- Tool chaining. tool-flow.js says what each tool accepts, tool-icons.js
+     gives the next-step buttons the same per-tool icons as everywhere else,
+     and handoff.js parks the finished file on the device between the two
+     pages. All three are optional: without them a tool simply downloads. -->
+<script src="${up}data/tool-flow.js${V}" defer></script>
+<script src="${up}data/tool-icons.js${V}" defer></script>
+<script src="${up}assets/js/handoff.js${V}" defer></script>
 <script src="${up}assets/js/gate.js${V}" defer></script>
 ${(extraScripts||[]).map(function(x){return '<script src="'+up+x+V+'" defer></script>';}).join("\n")}
 </body>
@@ -2234,6 +2241,132 @@ const CSS_PARTS = ["tokens.css", "base.css", "pages.css", "newsletter.css", "ski
 const cssBundle = CSS_PARTS
   .map((f) => `/* ---- ${f} ---- */\n` + fs.readFileSync(path.join(ROOT, "assets", "css", f), "utf8"))
   .join("\n");
+
+/* ---------- data/tool-flow.js ----------
+ *
+ * What every file tool ACCEPTS, taken from the tools themselves rather than
+ * inferred. tools-pdf.js and friends already export their specs keyed by tool
+ * id, and those specs carry the real `accept` string that filetool.js hands to
+ * the file input. Requiring them here means the chaining rules can never
+ * disagree with what a tool will actually take — the alternative was a second
+ * table of "pdf tools accept PDFs", which is true until the day it is not
+ * (jpg-to-pdf accepts images, and lives in the PDF set).
+ *
+ * Only `accept` and `multiple` travel. The run functions stay in Node.
+ */
+{
+  const flow = {};
+  const specModules = ["tools-pdf", "tools-image", "tools-image2", "tools-videofx"];
+
+  /* The widget-shaped tools — compress-pdf, the converters, the audio set —
+   * declare their accept inside a mount function rather than on an exportable
+   * spec object, so they cannot simply be required. Leaving them out would
+   * have quietly dropped the single most useful next step after a PDF tool
+   * (Compress PDF) from every chain, so their sources are scanned instead:
+   * find the tool-id key, take the first accept string inside its block.
+   *
+   * A scrape is only safe if it is checked. Every id it produces must exist in
+   * the catalogue and every accept must parse as a non-empty list, or the
+   * build stops — which is why this is allowed to be a regex at all. */
+  const scanModules = ["tools-pdfedit", "tools-pdfconv", "tools-pdftools", "tools-pdfview",
+                       "tools-audio", "tools-imaging", "tools-a11y", "tools-codes",
+                       "tools-data", "tools-privacy2"];
+  /* Some modules put their file input behind one shared helper — tools-pdfedit
+   * builds every tool's picker with fileInput(W, cb), and the accept string
+   * lives in there rather than beside the tool. That is why Compress PDF, the
+   * most useful next step after any PDF tool, was missing from the first pass.
+   * If a module declares exactly ONE accept, every tool key in it inherits it;
+   * more than one and the module is ambiguous and is left to the scan below. */
+  scanModules.forEach((m) => {
+    const src = fs.readFileSync(path.join(ROOT, "assets", "js", m + ".js"), "utf8");
+    /* `accept: accept || 'application/pdf,.pdf'` is the shape these helpers use,
+       so the literal is what matters, not the parameter name in front of it. */
+    const accepts = [...src.matchAll(/accept:\s*(?:[a-z]+\s*\|\|\s*)?['"]([^'"]+)['"]/g)].map((x) => x[1]);
+    const uniq = [...new Set(accepts)];
+    if (uniq.length !== 1) return;
+    [...src.matchAll(/['"]([a-z0-9][a-z0-9-]{2,})['"]\s*:\s*function\s*\(\s*host/g)].forEach((k) => {
+      const id = k[1];
+      if (!VK.find(id) || flow[id]) return;
+      flow[id] = { a: uniq[0], m: /multiple:\s*true/.test(src) ? 1 : 0, s: 1 };
+    });
+  });
+
+  scanModules.forEach((m) => {
+    const src = fs.readFileSync(path.join(ROOT, "assets", "js", m + ".js"), "utf8");
+    const re = /['"]([a-z0-9][a-z0-9-]{2,})['"]\s*:\s*function[\s\S]{0,2600}?accept:\s*['"]([^'"]+)['"]/g;
+    let mm;
+    while ((mm = re.exec(src))) {
+      const id = mm[1], acc = mm[2];
+      if (!VK.find(id)) continue;                 // a key that is not a tool id
+      if (flow[id]) continue;                     // a real spec already won
+      const multi = /multiple:\s*true/.test(src.slice(mm.index, mm.index + 2600));
+      flow[id] = { a: acc, m: multi ? 1 : 0, s: 1 };
+    }
+  });
+  const g = global;
+  const hadWindow = "window" in g, hadSelf = "self" in g;
+  if (!hadWindow) g.window = g;
+  if (!hadSelf) g.self = g;
+  specModules.forEach((m) => {
+    const p = "./assets/js/" + m + ".js";
+    let T;
+    try { delete require.cache[require.resolve(p)]; T = require(p); }
+    catch (e) { throw new Error("tool-flow: could not load " + p + " — " + e.message); }
+    Object.keys(T).forEach((id) => {
+      const spec = T[id];
+      if (!spec || typeof spec.accept !== "string" || !spec.accept) return;
+      flow[id] = { a: spec.accept, m: spec.multiple ? 1 : 0 };
+    });
+  });
+  if (!hadWindow) delete g.window;
+  if (!hadSelf) delete g.self;
+
+  /* A file tool that never made it into the map cannot be chained TO, and that
+     is a silent hole rather than a crash — so it is reported at build time. */
+  const fileTools = VK.TOOLS.filter((t) => t.status === "live" &&
+    (IMAGE[t.id] || IMAGE2[t.id] || PDF[t.id] || VIDEOFX[t.id]));
+  const gaps = fileTools.filter((t) => !flow[t.id]).map((t) => t.id);
+  if (gaps.length) throw new Error("tool-flow: file tools with no accept spec: " + gaps.join(", "));
+
+  /* WHAT COMES NEXT IS A JUDGEMENT, NOT AN ALPHABET.
+   * Sorted by name, the row after Merge PDFs opened with "Add Page Numbers,
+   * Compare PDFs, Crop PDF" — every one a real option and not one of them the
+   * thing anybody does next. These are the steps that actually follow, in the
+   * order they actually follow them. Everything else keeps working; it just
+   * sorts after, alphabetically, so the list stays complete without the
+   * useful entries being buried under the letter A. */
+  const CHAIN_FIRST = [
+    "compress-pdf", "merge-pdf", "split-pdf", "protect-pdf", "pdf-to-jpg",
+    "pdf-watermark", "extract-pdf-pages", "pdf-ocr", "rotate-pdf",
+    "compress-image", "resize-image", "convert-image", "crop-image",
+    "remove-background", "jpg-to-pdf", "image-to-text",
+    "compress-video", "trim-video", "video-to-gif", "extract-audio",
+    "audio-compressor", "audio-converter"
+  ];
+  const names = {};
+  Object.keys(flow).forEach((id) => {
+    const t = VK.find(id);
+    if (t) { names[id] = t.name; flow[id].c = t.cat; }
+    const r = CHAIN_FIRST.indexOf(id);
+    if (r > -1) flow[id].p = r + 1;
+  });
+  /* A typo here would silently demote a tool it was meant to promote, so the
+     build refuses ids that are not tools at all. Naming a REAL tool that
+     happens not to be chainable is only a preference that cannot apply — it is
+     reported, not fatal, because which tools are chainable changes as the
+     scrape above learns new module shapes. */
+  const typos = CHAIN_FIRST.filter((id) => !VK.find(id));
+  if (typos.length) throw new Error("tool-flow: CHAIN_FIRST has ids that are not tools: " + typos.join(", "));
+  const inert = CHAIN_FIRST.filter((id) => !flow[id]);
+  if (inert.length) console.log(`tool-flow: CHAIN_FIRST lists ${inert.length} tool(s) nothing can chain into yet — ${inert.join(", ")}`);
+  const js = "/* GENERATED by build.js — do not edit. What each file tool accepts,\n"
+    + "   read from the tools' own specs. Source of truth: assets/js/tools-*.js */\n"
+    + "(function(r){var D={flow:" + JSON.stringify(flow) + ",names:" + JSON.stringify(names) + "};\n"
+    + "if(typeof module===\"object\"&&module.exports)module.exports=D;else r.VK_FLOW=D;})"
+    + "(typeof self!==\"undefined\"?self:this);\n";
+  fs.writeFileSync(path.join(ROOT, "data", "tool-flow.js"), js);
+  console.log(`tool-flow.js: ${Object.keys(flow).length} chainable tools -> ${(js.length / 1024).toFixed(1)} KB`);
+}
 
 /* ---------- data/tool-icons.js ----------
  *

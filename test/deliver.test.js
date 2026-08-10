@@ -139,3 +139,37 @@ ok(!G.pendingIsFresh(null, NOW), "no record, nothing to deliver");
 ok(!G.pendingIsFresh({}, NOW), "a record with no timestamp is not trusted");
 
 console.log(`deliver + gate: ${pass} assertions passed`);
+
+/* ---------------------------------------------------------------------------
+ * THE CHAIN IS ONLY OFFERED WHEN THE FILE ACTUALLY ARRIVED.
+ *
+ * "Keep going with this file" under a download that the gate or the daily
+ * limit withheld would be offering to continue with something the user has not
+ * been given. deliver() calls offerChain() from exactly two places, both of
+ * them after handover() returned true; this pins that down against the source
+ * so a future edit cannot quietly add a third.
+ * ------------------------------------------------------------------------- */
+{
+  const fsC = require("fs"), pathC = require("path");
+  const src = fsC.readFileSync(pathC.join(__dirname, "..", "assets/js/deliver.js"), "utf8");
+
+  const calls = (src.match(/offerChain\(/g) || []).length;
+  ok(calls === 3, "offerChain is defined once and called twice, found " + calls + " mentions");
+
+  /* The gate path: the call must sit AFTER the handover guard that returns
+     false, so a failed handover can never reach it. */
+  const gateBlock = src.slice(src.indexOf("onUnlocked:"), src.indexOf("return false;\n    }"));
+  ok(/if \(!handover\(blob, name\)\) return false;/.test(gateBlock),
+     "the gate path still bails when handover fails");
+  ok(gateBlock.indexOf("offerChain(") > gateBlock.indexOf("if (!handover(blob, name)) return false;"),
+     "and only offers the chain after that guard");
+
+  /* Neither withheld path may mention it at all. */
+  const limitBlock = src.slice(src.indexOf("if (verdict === 'limit')"), src.indexOf("handover(blob, name);\n    try"));
+  ok(!/offerChain/.test(limitBlock), "the daily-limit path never offers a chain");
+
+  /* And it must be impossible for a missing module to break a download. */
+  ok(/function offerChain[\s\S]{0,400}try \{[\s\S]{0,200}catch \(e\) \{\}/.test(src),
+     "offerChain swallows everything — a broken suggestion must not cost a file");
+}
+console.log(`deliver + chain: ${pass} total assertions passed`);

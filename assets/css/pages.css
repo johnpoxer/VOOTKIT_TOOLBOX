@@ -506,3 +506,50 @@ video.wcode { padding: 0; }
   /* On a phone the form is the whole point, so the image gives up height. */
   .contact-hero { max-height: 150px; margin-bottom: var(--s-5); }
 }
+
+/* --- tool chaining (assets/js/handoff.js) ----------------------------------
+ * The row that appears under a finished download offering to send the same
+ * file into the next tool.
+ *
+ * It sits BELOW the download, quieter than it, and looks like navigation
+ * rather than an action — because it is a suggestion about what to do next,
+ * not the thing the user came here to do. If it competed with the download
+ * button it would be a dark pattern in a very small hat.
+ */
+.vk-next {
+  margin-top: var(--s-5); padding-top: var(--s-5);
+  border-top: 1px solid var(--line);
+}
+.vk-next-t {
+  margin: 0 0 var(--s-3); font-size: var(--t-sm); font-weight: 600;
+  color: var(--ink-soft);
+}
+.vk-next-row { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+.vk-next-btn {
+  display: inline-flex; align-items: center; gap: var(--s-2);
+  padding: var(--s-2) var(--s-3) var(--s-2) var(--s-2);
+  border: 1px solid var(--line); border-radius: var(--r-pill);
+  background: var(--surface); color: var(--ink);
+  font-size: var(--t-sm); font-weight: 600; min-height: var(--tap);
+  transition: border-color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+}
+.vk-next-btn:hover { border-color: var(--accent-border); transform: translateY(-1px); }
+/* The icon is the tool's own, at the size it appears in a search result, so a
+   chain button and the tool it points at are recognisably the same thing. */
+.vk-next-btn > .ic-tool { width: 28px; height: 28px; border-radius: 8px; }
+.vk-next-btn > .ic-tool svg { width: 16px; height: 16px; }
+.vk-next-note {
+  margin: var(--s-3) 0 0; font-size: var(--t-xs); color: var(--ink-mute);
+  max-width: 60ch;
+}
+@media (prefers-reduced-motion: reduce) { .vk-next-btn:hover { transform: none; } }
+
+/* The note at the top of a tool that received a file from another one. It is
+   role="status", so it is announced — arriving at a tool that is mysteriously
+   already loaded is disorienting if nothing says why. */
+.vk-from {
+  margin: 0 0 var(--s-4); padding: var(--s-3) var(--s-4);
+  border: 1px solid var(--accent-border); border-radius: var(--r-md);
+  background: var(--accent-weak); color: var(--ink);
+  font-size: var(--t-sm); font-weight: 500;
+}

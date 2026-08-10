@@ -181,6 +181,22 @@
     } catch (e) { /* never surface: a missed analytics row is not the user's problem */ }
   }
 
+  /* Offer to send the finished file on to the next tool.
+   *
+   * DELIBERATELY ONLY ON THE PATHS WHERE THE FILE ACTUALLY ARRIVED. A "keep
+   * going with this file" row under a download that was withheld by the gate
+   * or the daily limit would be offering to continue with something the user
+   * has not been given — which reads as a bug at best and a taunt at worst.
+   * The two call sites below are the two places handover() succeeded.
+   *
+   * Wrapped, because a missing or broken handoff module must cost the user
+   * nothing: they already have their file. */
+  function offerChain(host, blob, name, toolId) {
+    try {
+      if (root.VKHandoff && root.VKHandoff.offer) root.VKHandoff.offer(host, blob, name, toolId);
+    } catch (e) {}
+  }
+
   /* ---------- entry point ---------- */
 
   /* deliver(blob, name, ctx)
@@ -227,6 +243,7 @@
           try { if (root.VKTrack) root.VKTrack.downloadUnlocked(toolId, cat); } catch (e) {}
           try { if (root.VKTrack) root.VKTrack.toolDownload(toolId, cat); } catch (e) {}
           logRun(toolId);
+          offerChain(o.host, blob, name, toolId);
           return true;
         }
       });
@@ -242,6 +259,7 @@
     handover(blob, name);
     try { if (root.VKTrack) root.VKTrack.toolDownload(toolId, cat); } catch (e) {}
     logRun(toolId);
+    offerChain(o.host, blob, name, toolId);
     return true;
   }
 

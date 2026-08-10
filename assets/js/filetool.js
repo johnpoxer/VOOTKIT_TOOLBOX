@@ -448,9 +448,28 @@
       e.preventDefault(); drop.classList.remove('is-over');
       if (e.dataTransfer && e.dataTransfer.files.length) accept(e.dataTransfer.files);
     });
+
+    /* Published last, so it only ever points at a fully built tool. */
+    root.VKFile.__accept = accept;
     window.addEventListener('pagehide', function () { urls.free(); });
   }
 
-  root.VKFile = { mount: mount, bytes: bytes, LIMITS: LIMITS, validate: validate, mergeSelection: mergeSelection };
+  /* THE RECEIVING END OF A CHAIN.
+   *
+   * handoff.js needs to put a file into whatever tool the page mounted, and it
+   * has no reference to the closure that owns the selection. mount() publishes
+   * its own accept() here as it finishes, so there is exactly one path a file
+   * can enter a tool by — the same validation, the same limits, the same
+   * "doesn't look like a PDF" message. A second entry point that skipped
+   * validate() would be a way to hand a tool something it cannot open.
+   *
+   * Returns false rather than throwing when no tool is mounted, because the
+   * caller uses it to decide whether to say anything to the user. */
+  function ingest(files) {
+    if (typeof root.VKFile.__accept !== 'function' || !files || !files.length) return false;
+    try { root.VKFile.__accept(files); return true; } catch (e) { return false; }
+  }
+
+  root.VKFile = { mount: mount, bytes: bytes, LIMITS: LIMITS, validate: validate, mergeSelection: mergeSelection, ingest: ingest };
   if (typeof module === 'object' && module.exports) module.exports = root.VKFile;
 })(typeof window !== 'undefined' ? window : globalThis);
