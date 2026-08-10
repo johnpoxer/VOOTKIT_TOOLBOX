@@ -167,6 +167,69 @@
     return false;
   }
 
+  /* ---------- templates ----------
+   *
+   * The empty state of an editor is where most people decide it is not for
+   * them. A blank canvas asks you to already know what Vootkit can do; a
+   * template shows you, and is editable the moment it lands, so it teaches
+   * rather than hides.
+   *
+   * Each one is a real job somebody actually has, not a demonstration of the
+   * feature. Steps are ids only — settings come from each tool's own defaults,
+   * so a template cannot drift out of date with the tool it names.
+   */
+  var TEMPLATES = [
+    { id: 'web-images', name: 'Optimise images for a website', kind: 'image',
+      why: 'Resize to a sane width, compress, then convert to WebP.',
+      steps: ['resize-image', 'compress-image', 'convert-image'] },
+    { id: 'doc-pack', name: 'Prepare documents to send', kind: 'pdf',
+      why: 'Shrink a scan, stamp it, and lock it before it leaves your hands.',
+      steps: ['rotate-pdf', 'pdf-watermark', 'protect-pdf'] },
+    { id: 'pdf-extract', name: 'Pull pages out and tidy them', kind: 'pdf',
+      why: 'Take the pages you need, drop the rest, number what is left.',
+      steps: ['extract-pdf-pages', 'pdf-page-numbers'] },
+    { id: 'social-clip', name: 'Cut a clip for social', kind: 'video',
+      why: 'Trim it, then make a looping GIF of the good bit.',
+      steps: ['trim-video', 'video-to-gif'] },
+    { id: 'photo-set', name: 'Clean up a batch of photos', kind: 'image',
+      why: 'Crop them all to the same shape, then compress for sharing.',
+      steps: ['crop-image', 'compress-image'] }
+  ];
+
+  /* A template is only worth showing if every step in it still exists and can
+     still run. One retired tool would otherwise produce a template that fails
+     the moment it is used. */
+  function templatesFor(D, kind) {
+    var flow = (D || {}).flow || {};
+    return TEMPLATES.filter(function (t) {
+      if (kind && t.kind !== kind) return false;
+      return t.steps.every(function (id) { return flow[id] && flow[id].w; });
+    });
+  }
+
+  /* ---------- who may run one ----------
+   *
+   * Workflows are a Pro feature. Building one is free and always will be —
+   * you cannot judge whether a thing is worth paying for from a description of
+   * it, and a canvas you may not touch converts nobody. The gate is on RUN,
+   * which is the moment the value is obvious and the cost is real.
+   *
+   * Fails OPEN. If the plan lookup errors, Supabase is down, or auth has not
+   * loaded, the run proceeds. Refusing a paying customer because a network
+   * call failed is worse than an occasional free run. */
+  async function isPro(root2) {
+    try {
+      var A = (root2 || root).VKAuth;
+      if (!A || !A.enabled || !A.getUser) return true;
+      var user = await A.getUser();
+      if (!user) return false;
+      var c = await A.client();
+      var r = await c.from('profiles').select('plan').eq('id', user.id).single();
+      var plan = r && r.data && r.data.plan;
+      return plan === 'creator_pro' || plan === 'creator_teams';
+    } catch (e) { return true; }
+  }
+
   /* ---------- saved workflows (this device, no account needed) ---------- */
 
   function load() {
@@ -289,6 +352,27 @@
     var sel = null;            // selected uid
     var view = { x: 30, y: 30, k: 1 };
     var uidN = 0;
+    var past = [], future = [];   // undo/redo stacks
+
+    /* A snapshot is the whole graph, because partial undo of a graph is a
+       source of bugs nobody can reason about. The graphs are tiny — a dozen
+       nodes of JSON — so copying is cheaper than tracking deltas. */
+    function snap() {
+      return JSON.stringify({ nodes: nodes, links: links, uidN: uidN });
+    }
+    function pushHistory() {
+      past.push(snap());
+      if (past.length > 50) past.shift();
+      future.length = 0;          // a new action forks the timeline
+    }
+    function restore(json) {
+      var st = JSON.parse(json);
+      nodes = st.nodes; links = st.links; uidN = st.uidN;
+      if (sel && !byUid(sel)) sel = null;
+      draw();
+    }
+    function undo() { if (!past.length) return; future.push(snap()); restore(past.pop()); }
+    function redo() { if (!future.length) return; past.push(snap()); restore(future.pop()); }
     var NODE_W = 172, NODE_H = 76;
 
     var IN_X = 20, IN_Y = 120;
@@ -424,6 +508,7 @@
        what you meant nine times out of ten — and is undone by dragging the
        link away, rather than being a rule you cannot escape. */
     function addNode(id, x, y) {
+      pushHistory();
       var uid = 'n' + (++uidN);
       var n = { uid: uid, id: id, opts: {}, x: x == null ? 240 + nodes.length * 40 : x, y: y == null ? IN_Y + nodes.length * 20 : y };
       nodes.push(n);
@@ -464,6 +549,7 @@
         '<path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>' + parts.join('');
       [].forEach.call(edges.querySelectorAll('.wfc-edge:not(.is-temp)'), function (pth) {
         pth.addEventListener('click', function () {
+          pushHistory();
           links.splice(+pth.getAttribute('data-i'), 1);
           draw();
         });
@@ -501,6 +587,7 @@
         var toU = target && target.getAttribute('data-uid');
         linking = null;
         if (toU && toU !== fromU && !wouldCycle(links, fromU, toU)) {
+          pushHistory();
           links = links.filter(function (l) { return l.to !== toU; });   // one input per node
           links.push({ from: fromU, to: toU });
         }
@@ -529,6 +616,36 @@
       el2.addEventListener('pointerup', stop);
       el2.addEventListener('pointercancel', stop);
     }
+
+    /* A template lands as a normal, fully editable graph — not a locked
+       preset. It is a starting point somebody can immediately disagree with. */
+    function applyTemplate(t) {
+      pushHistory();
+      nodes = []; links = []; uidN = 0;
+      var prev = 'in';
+      t.steps.forEach(function (id, i) {
+        var uid = 'n' + (++uidN);
+        nodes.push({ uid: uid, id: id, opts: {}, x: 250 + i * 210, y: IN_Y });
+        links.push({ from: prev, to: uid });
+        prev = uid;
+      });
+      sel = null;
+      draw(); fit();
+    }
+
+    canvas.addEventListener('keydown', function (e) {
+      var mod = e.ctrlKey || e.metaKey;
+      if (mod && e.key.toLowerCase() === 'z') { e.preventDefault(); if (e.shiftKey) redo(); else undo(); }
+      else if (mod && e.key.toLowerCase() === 'y') { e.preventDefault(); redo(); }
+      else if (mod && e.key.toLowerCase() === 'd' && sel && byUid(sel)) {
+        e.preventDefault();
+        var src = byUid(sel);
+        pushHistory();
+        var uid = 'n' + (++uidN);
+        nodes.push({ uid: uid, id: src.id, opts: Object.assign({}, src.opts), x: src.x + 30, y: src.y + 50 });
+        sel = uid; draw();
+      }
+    });
 
     function draw() {
       [].slice.call(pan.querySelectorAll('.wfc-node')).forEach(function (n) { n.remove(); });
@@ -583,6 +700,7 @@
     }
 
     function removeNode(uid) {
+      pushHistory();
       nodes = nodes.filter(function (n) { return n.uid !== uid; });
       links = links.filter(function (l) { return l.from !== uid && l.to !== uid; });
       if (sel === uid) sel = null;
@@ -625,14 +743,31 @@
       panel.innerHTML = '';
       var n = sel && byUid(sel);
       if (!n || sel === 'in') {
-        panel.appendChild(h('h3', { class: 'wfc-h', text: 'How this works' }));
+        /* Templates first, help second. Somebody who has just landed wants to
+           see what this is FOR before they are told how to operate it. */
+        var temps = templatesFor(D, startKind());
+        if (temps.length) {
+          panel.appendChild(h('h3', { class: 'wfc-h', text: nodes.length ? 'Start over from a template' : 'Start from a template' }));
+          var tl = h('div', { class: 'wfc-temps' });
+          temps.forEach(function (t) {
+            var b2 = h('button', { class: 'wfc-temp', type: 'button' }, [
+              h('strong', { text: t.name }),
+              h('span', { text: t.why }),
+              h('em', { text: t.steps.map(function (id) { return (D.names && D.names[id]) || id; }).join('  →  ') })
+            ]);
+            b2.addEventListener('click', function () { applyTemplate(t); });
+            tl.appendChild(b2);
+          });
+          panel.appendChild(tl);
+        }
+        panel.appendChild(h('h3', { class: 'wfc-h', text: 'Or build your own' }));
         panel.appendChild(h('ol', { class: 'wfc-steps-help' }, [
           h('li', { text: 'Choose your files.' }),
           h('li', { text: 'Drag a tool from the left onto the canvas.' }),
           h('li', { text: 'Drag from a node’s right-hand dot to another node to connect them.' }),
           h('li', { text: 'Click a node to change its settings, then run.' })
         ]));
-        panel.appendChild(h('p', { class: 'note', text: 'Click a connection to delete it. Select a node and press Delete to remove it.' }));
+        panel.appendChild(h('p', { class: 'note', text: 'Click a connection to delete it. Select a node and press Delete to remove it. Ctrl+Z undoes.' }));
         return;
       }
       var spec = specFor(n.id);
@@ -729,6 +864,19 @@
     });
 
     runBtn.addEventListener('click', async function () {
+      /* THE GATE IS ON RUN, NOT ON THE EDITOR. You cannot judge whether a
+         thing is worth paying for from a description of it, so building is
+         free forever and this is the moment the value is obvious. Fails open:
+         a plan lookup that errors lets the run through. */
+      var allowed = await isPro(root);
+      if (!allowed) {
+        log.innerHTML = '';
+        log.appendChild(h('p', { class: 'note', text: 'Running a workflow is part of Vootkit Pro. Your workflow is saved on this device — upgrade and press run again.' }));
+        var up = h('a', { class: 'btn btn-primary btn-sm', href: '../pricing.html', text: 'See Vootkit Pro' });
+        log.appendChild(up);
+        try { if (root.VKTrack && root.VKTrack.event) root.VKTrack.event('workflow_gated', { nodes: nodes.length }); } catch (e) {}
+        return;
+      }
       var paths = pathsFrom(nodes, links, 'in');
       if (!paths.length) { log.innerHTML = ''; log.appendChild(h('p', { class: 'note err', text: 'Nothing is connected to your files yet — drag from the input node to a step.' })); return; }
       var bad = null;
@@ -805,6 +953,9 @@
 
   root.VKWorkflow = {
     mount: mount,
+    TEMPLATES: TEMPLATES,
+    templatesFor: templatesFor,
+    isPro: isPro,
     pathsFrom: pathsFrom,
     wouldCycle: wouldCycle,
     describe: describe,

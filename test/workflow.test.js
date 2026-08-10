@@ -137,3 +137,65 @@ console.log(`workflow: ${pass} assertions passed`);
   eq(W.describe(D2, []), "", "an empty chain describes as nothing");
 }
 console.log(`workflow + settings: ${pass} total assertions passed`);
+
+/* ---------------------------------------------------------------------------
+ * TEMPLATES AND THE PRO GATE.
+ *
+ * A template that names a retired tool is worse than no template: it fails the
+ * moment somebody trusts it. And a gate that fails CLOSED would refuse a
+ * paying customer whenever a network call hiccups, which is the one failure
+ * mode a paid feature cannot have.
+ * ------------------------------------------------------------------------- */
+{
+  ok(W.TEMPLATES.length >= 4, "there are templates to start from, got " + W.TEMPLATES.length);
+
+  /* Every step of every template must still exist AND still be runnable. */
+  W.TEMPLATES.forEach(function (t) {
+    t.steps.forEach(function (id) {
+      ok(D.flow[id], t.id + " names a tool that is in the flow map: " + id);
+      ok(D.flow[id] && D.flow[id].w, t.id + " names a tool that can actually run: " + id);
+      ok((VK.find(id) || {}).status === "live", t.id + " names a live tool: " + id);
+    });
+    /* And the chain has to typecheck against its own declared starting kind,
+       or the template hands the user a workflow that will not validate. */
+    const v = W.validate(D, t.steps, t.kind);
+    ok(v.ok, t.id + " is a chain that validates end to end: " + (v.why || ""));
+    ok(t.why && t.why.length > 20, t.id + " explains itself in a sentence");
+  });
+
+  /* Offered templates are filtered by what the user actually has. */
+  const forPdf = W.templatesFor(D, "pdf");
+  ok(forPdf.length >= 1, "a PDF gets PDF templates");
+  ok(forPdf.every((t) => t.kind === "pdf"), "and nothing else is offered for it");
+  ok(W.templatesFor(D, "video").every((t) => t.kind === "video"), "same for video");
+  eq(W.templatesFor(D, "nonsense").length, 0, "an unknown kind is offered nothing");
+  ok(W.templatesFor(D).length >= 4, "with no kind, everything runnable is offered");
+
+  /* A template naming a broken tool must disappear rather than be shown. */
+  const brokenD = { flow: Object.assign({}, D.flow), names: D.names };
+  delete brokenD.flow[W.TEMPLATES[0].steps[0]];
+  ok(W.templatesFor(brokenD).length < W.templatesFor(D).length,
+     "a template whose tool has gone is withheld, not shown and then failed");
+}
+
+/* The gate's failure direction, which is the whole design of it. */
+{
+  const mkAuth = (plan) => ({
+    enabled: true,
+    getUser: async () => ({ id: "u1" }),
+    client: async () => ({ from: () => ({ select: () => ({ eq: () => ({ single: async () => ({ data: { plan } }) }) }) }) })
+  });
+  const run = async () => {
+    ok(await W.isPro({}), "no auth module at all — fails OPEN");
+    ok(await W.isPro({ VKAuth: { enabled: false } }), "auth disabled — fails OPEN");
+    ok(!(await W.isPro({ VKAuth: mkAuth("free") })), "a free account is gated");
+    ok(await W.isPro({ VKAuth: mkAuth("creator_pro") }), "creator_pro may run");
+    ok(await W.isPro({ VKAuth: mkAuth("creator_teams") }), "creator_teams may run");
+    ok(await W.isPro({ VKAuth: { enabled: true, getUser: async () => { throw new Error("net"); } } }),
+       "a lookup that throws lets the run through — never refuse a payer over a network blip");
+    ok(!(await W.isPro({ VKAuth: { enabled: true, getUser: async () => null } })),
+       "signed out is gated, since there is no plan to check");
+    console.log(`workflow + templates + gate: ${pass} total assertions passed`);
+  };
+  run();
+}

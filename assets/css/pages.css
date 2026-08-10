@@ -751,3 +751,16 @@ video.wcode { padding: 0; }
   .wfc-canvas { height: 360px; }
   .wfc-panel { border-left: 0; border-top: 1px solid #1e293b; max-height: 320px; }
 }
+
+/* Templates: the empty state that shows what this is for rather than
+   explaining how to operate it. */
+.wfc-temps { display: flex; flex-direction: column; gap: 6px; }
+.wfc-temp {
+  display: flex; flex-direction: column; gap: 3px; width: 100%; text-align: left;
+  padding: 10px; border-radius: 10px; cursor: pointer;
+  background: #16233c; border: 1px solid #24314a; color: #dbe7fb; font: inherit;
+}
+.wfc-temp:hover { border-color: #7dabf8; background: #1c2b48; }
+.wfc-temp strong { font-size: var(--t-sm); }
+.wfc-temp span { font-size: var(--t-xs); color: #93a7c6; line-height: 1.4; }
+.wfc-temp em { font-size: var(--t-xs); color: #6d84a8; font-style: normal; }
