@@ -764,3 +764,5 @@ video.wcode { padding: 0; }
 .wfc-temp strong { font-size: var(--t-sm); }
 .wfc-temp span { font-size: var(--t-xs); color: #93a7c6; line-height: 1.4; }
 .wfc-temp em { font-size: var(--t-xs); color: #6d84a8; font-style: normal; }
+.wfc-cancel { border-color: var(--err-border); color: var(--err); }
+.wfc-cancel[disabled] { opacity: .6; }

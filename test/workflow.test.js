@@ -199,3 +199,59 @@ console.log(`workflow + settings: ${pass} total assertions passed`);
   };
   run();
 }
+
+/* ---------------------------------------------------------------------------
+ * CANCELLATION AND RETRY.
+ *
+ * Two ways to get this wrong, both of which cost trust rather than data:
+ *   1. Offering "retry" for a failure that cannot succeed on a second attempt.
+ *      The button teaches the user it is decorative.
+ *   2. Retrying from the top. A four-minute encode repeated because step four
+ *      had a bad setting is the reason people stop using a tool.
+ * ------------------------------------------------------------------------- */
+{
+  /* Classification defaults to PERMANENT. An unrecognised failure is far more
+     likely to be a bad file than a blip, and a wrong "retry" costs more than a
+     missing one. */
+  eq(W.classifyError("Failed to fetch"), "retryable", "a network failure may clear");
+  eq(W.classifyError("request timed out"), "retryable", "a timeout may clear");
+  eq(W.classifyError("could not load the engine"), "retryable", "an engine download may clear");
+  eq(W.classifyError("Out of memory"), "resource", "memory is its own case — advice differs");
+  eq(W.classifyError("Choose at least two PDFs to merge"), "permanent", "a usage error will not clear");
+  eq(W.classifyError("The PDF is password protected"), "permanent", "a locked file will not clear");
+  eq(W.classifyError("something nobody has seen before"), "permanent", "unknown defaults to permanent");
+  eq(W.classifyError(""), "permanent", "so does an empty message");
+  eq(W.classifyError(null), "permanent", "and a missing one");
+
+  /* The advice names the step and says what to do next. "Error 500" is the
+     thing this exists to prevent. */
+  const net = W.failureAdvice("Rotate PDF", "Failed to fetch");
+  ok(net.retry, "a retryable failure offers the button");
+  ok(/Rotate PDF/.test(net.text), "and names the step");
+
+  const perm = W.failureAdvice("Merge PDFs", "Choose at least two PDFs to merge");
+  ok(!perm.retry, "a permanent failure does NOT offer the button");
+  ok(/Merge PDFs/.test(perm.text), "but still names the step");
+  ok(/Retrying will not help/.test(perm.text), "and says plainly why there is no button");
+  ok(/Choose at least two PDFs/.test(perm.text),
+     "the tool's own words survive — they are more useful than any paraphrase");
+
+  const mem = W.failureAdvice("Compress Video", "Out of memory");
+  ok(mem.retry, "running out of memory is worth another go");
+  ok(/fewer files|Close some tabs/.test(mem.text), "with advice that could actually change the outcome");
+
+  /* run() must honour a cancel flag and a resume point. Checked against the
+     source, since exercising it needs real tool modules and a DOM. */
+  const src = require("fs").readFileSync(
+    require("path").join(__dirname, "..", "assets/js/workflow.js"), "utf8");
+  ok(/if \(c\.cancelled\) return \{ ok: false, at: i, file: produced, cancelled: true \};/.test(src),
+     "a cancelled run stops before starting the next step and says so");
+  ok(/var from = c\.from \|\| 0;/.test(src), "run() accepts a resume point");
+  ok(/for \(var i = from; i < steps\.length; i\+\+\)/.test(src),
+     "and starts there rather than at zero");
+  ok(/c\.checkpoint = \{ file: current, next: i \+ 1 \};/.test(src),
+     "every successful step records a checkpoint to resume from");
+  ok(/cancelBtn\.textContent = 'Cancelling…'/.test(src),
+     "cancelling says Cancelling, not Cancelled — the running step cannot be interrupted");
+}
+console.log(`workflow + cancel + retry: ${pass} total assertions passed`);

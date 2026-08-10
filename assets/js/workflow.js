@@ -230,6 +230,43 @@
     } catch (e) { return true; }
   }
 
+  /* ---------- what kind of failure was that ----------
+   *
+   * Retrying is only kind when the thing might work next time. A file the tool
+   * cannot read will not become readable on the second attempt, and offering
+   * "try again" for it wastes the user's time and teaches them the button is
+   * decorative.
+   *
+   * Classification is on the tool's OWN message, because that is the only
+   * signal there is — these run in-process, so there are no status codes. The
+   * default is PERMANENT: an unrecognised failure is more likely to be a bad
+   * file than a blip, and a wrong "retry" costs more trust than a missing one.
+   */
+  function classifyError(msg) {
+    var m = String(msg || '').toLowerCase();
+    if (/network|fetch|load|timeout|timed out|temporarily|try again|aborted/.test(m)) {
+      return 'retryable';
+    }
+    if (/memory|out of memory|allocation/.test(m)) return 'resource';
+    return 'permanent';
+  }
+
+  /* What to say, and whether to offer the button. Written so the message names
+     the step and suggests the next move — "Error 500" tells nobody anything. */
+  function failureAdvice(stepName, msg) {
+    var kind = classifyError(msg);
+    if (kind === 'retryable') {
+      return { kind: kind, retry: true,
+        text: stepName + ' could not finish — that usually clears on a second attempt.' };
+    }
+    if (kind === 'resource') {
+      return { kind: kind, retry: true,
+        text: stepName + ' ran out of memory. Close some tabs, or run fewer files at once, then retry.' };
+    }
+    return { kind: kind, retry: false,
+      text: stepName + ': ' + (msg || 'that step failed.') + ' Retrying will not help — change the setting or the file.' };
+  }
+
   /* ---------- saved workflows (this device, no account needed) ---------- */
 
   function load() {
@@ -259,10 +296,12 @@
 
   /* Run the chain. `onStep(i, state, detail)` is called as each step starts,
      succeeds or fails, so the caller owns all the presentation. */
-  async function run(file, steps, onStep) {
+  async function run(file, steps, onStep, ctl) {
     var current = file;
     var produced = null;
-    for (var i = 0; i < steps.length; i++) {
+    var c = ctl || {};
+    var from = c.from || 0;          // resume point, so a retry does not redo good work
+    for (var i = from; i < steps.length; i++) {
       /* A step is {id, opts} now. Plain ids are still accepted so a saved
          workflow from before settings existed still runs, on defaults. */
       var st = steps[i];
@@ -271,8 +310,13 @@
       var spec = specFor(id);
       if (!spec) {
         onStep(i, 'fail', 'That tool is not loaded on this page.');
-        return { ok: false, at: i, file: produced };
+        return { ok: false, at: i, file: produced, error: 'not loaded' };
       }
+      /* Checked BETWEEN steps, not inside one. A tool's process() has no way to
+         be interrupted mid-encode, so cancellation is honest about its
+         granularity: it stops the next step from starting rather than
+         pretending to abort the current one. */
+      if (c.cancelled) return { ok: false, at: i, file: produced, cancelled: true };
       onStep(i, 'run', '');
       try {
         var opts = Object.assign(defaults(spec), chosen || {});
@@ -297,12 +341,17 @@
         }
         produced = { blob: dl.blob, name: dl.name || 'output' };
         current = new File([dl.blob], produced.name, { type: dl.blob.type || '' });
+        /* The checkpoint. A retry starts from here rather than from the top,
+           so a four-minute encode is never repeated because step four had a
+           bad setting. */
+        c.checkpoint = { file: current, next: i + 1 };
         onStep(i, 'done', out.status || '');
       } catch (e) {
         /* The message is the tool's own — "Choose at least two PDFs to merge"
            is far more useful than "step 2 failed". */
-        onStep(i, 'fail', (e && e.message) || 'That step failed.');
-        return { ok: false, at: i, file: produced };
+        var msg = (e && e.message) || 'That step failed.';
+        onStep(i, 'fail', msg);
+        return { ok: false, at: i, file: produced, error: msg };
       }
     }
     return { ok: true, file: produced };
@@ -404,8 +453,9 @@
     var fileNote = h('span', { class: 'wfc-files', id: 'wf-file-note', text: 'No files yet' });
     var runBtn = h('button', { class: 'btn btn-primary', type: 'button', text: 'Run workflow', disabled: 'disabled' });
     var saveBtn = h('button', { class: 'btn', type: 'button', text: 'Save', disabled: 'disabled' });
+    var cancelBtn = h('button', { class: 'btn wfc-cancel', type: 'button', text: 'Cancel', hidden: 'hidden' });
     var savedSel = h('select', { class: 'field wfc-load', 'aria-label': 'Load a saved workflow' });
-    var bar = h('div', { class: 'wfc-bar' }, [fileBtn, input, fileNote, h('span', { class: 'wfc-spacer' }), savedSel, saveBtn, runBtn]);
+    var bar = h('div', { class: 'wfc-bar' }, [fileBtn, input, fileNote, h('span', { class: 'wfc-spacer' }), savedSel, saveBtn, cancelBtn, runBtn]);
     var log = h('div', { class: 'wfc-log', 'aria-live': 'polite' });
 
     /* --- helpers ---------------------------------------------------------- */
@@ -886,18 +936,40 @@
       });
       if (bad) { log.innerHTML = ''; log.appendChild(h('p', { class: 'note err', text: bad })); return; }
 
+      await execute(paths, null);
+    });
+
+    /* Pulled out of the click handler so a retry can call it again with a
+       checkpoint instead of duplicating the whole run loop. */
+    async function execute(paths, resume) {
       runBtn.disabled = true; saveBtn.disabled = true;
+      cancelBtn.hidden = false; cancelBtn.disabled = false; cancelBtn.textContent = 'Cancel';
       log.innerHTML = '';
       [].forEach.call(pan.querySelectorAll('.wfc-node.is-step'), function (n) { n.classList.remove('is-run', 'is-done', 'is-fail'); });
       var results = [];
+      var ctl = { cancelled: false };
+      cancelBtn.onclick = function () {
+        ctl.cancelled = true;
+        cancelBtn.disabled = true;
+        cancelBtn.textContent = 'Cancelling…';
+        /* Honest about granularity: the step already running cannot be
+           interrupted, so this stops the NEXT one starting. Saying "cancelled"
+           the instant it is clicked would be a lie for as long as an encode
+           takes. */
+        log.appendChild(h('p', { class: 'wfc-line', text: 'Cancelling — the step already running will finish first.' }));
+      };
 
       for (var pi = 0; pi < paths.length; pi++) {
+        if (ctl.cancelled) break;
         var path = paths[pi];
         for (var fi = 0; fi < files.length; fi++) {
+          if (ctl.cancelled) break;
           var line = h('p', { class: 'wfc-line', text: files[fi].name + (paths.length > 1 ? ' · route ' + (pi + 1) : '') + ' — starting' });
           log.appendChild(line);
           /* eslint-disable no-loop-func */
-          var res = await run(files[fi], path, (function (ln, pth) {
+          var startFile = (resume && resume.pi === pi && resume.fi === fi) ? resume.file : files[fi];
+          ctl.from = (resume && resume.pi === pi && resume.fi === fi) ? resume.next : 0;
+          var res = await run(startFile, path, (function (ln, pth) {
             return function (i, state, detail) {
               var el3 = pan.querySelector('.wfc-node[data-uid="' + pth[i].uid + '"]');
               var nm = (D.names && D.names[pth[i].id]) || pth[i].id;
@@ -910,15 +982,37 @@
             };
           })(line, path));
           /* eslint-enable no-loop-func */
-          if (res.file) {
+          var head2 = line.textContent.split(' — ')[0];
+          if (res.cancelled) { line.textContent = head2 + ' — cancelled'; }
+          else if (res.file) {
             results.push(res.file);
-            var head2 = line.textContent.split(' — ')[0];
             line.textContent = head2 + (res.ok ? ' — done' : ' — stopped at step ' + (res.at + 1) + ', partial result kept');
+          }
+          /* A failure that is worth retrying gets a button that resumes from
+             the step that failed, using the last good output — not a rerun. */
+          if (!res.ok && !res.cancelled) {
+            var stepName = (D.names && D.names[path[res.at].id]) || path[res.at].id;
+            var adv = failureAdvice(stepName, res.error);
+            var msg = h('p', { class: 'wfc-line is-err', text: adv.text });
+            log.appendChild(msg);
+            if (adv.retry && res.file) {
+              var rb = h('button', { class: 'btn btn-sm', type: 'button', text: 'Retry from ' + stepName });
+              (function (pi2, fi2, at, f) {
+                rb.addEventListener('click', function () {
+                  execute(paths, { pi: pi2, fi: fi2, next: at, file: new File([f.blob], f.name, { type: f.blob.type || '' }) });
+                });
+              })(pi, fi, res.at, res.file);
+              log.appendChild(rb);
+            }
           }
         }
       }
 
       runBtn.disabled = false; saveBtn.disabled = false;
+      cancelBtn.hidden = true;
+      if (ctl.cancelled) {
+        log.appendChild(h('p', { class: 'note', text: 'Cancelled. Anything already finished is below; your originals are untouched.' }));
+      }
       if (!results.length) { log.appendChild(h('p', { class: 'note err', text: 'Nothing came out. Your originals are untouched and nothing was uploaded.' })); return; }
       log.appendChild(h('p', { class: 'note', text: results.length + ' file(s) produced from ' + files.length + ' input(s) over ' + paths.length + ' route(s).' }));
       results.forEach(function (r, i) {
@@ -933,7 +1027,7 @@
         });
         log.appendChild(b);
       });
-    });
+    }
 
     host.appendChild(bar);
     host.appendChild(stage);
@@ -953,6 +1047,8 @@
 
   root.VKWorkflow = {
     mount: mount,
+    classifyError: classifyError,
+    failureAdvice: failureAdvice,
     TEMPLATES: TEMPLATES,
     templatesFor: templatesFor,
     isPro: isPro,
