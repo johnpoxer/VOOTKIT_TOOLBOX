@@ -116,6 +116,57 @@
     return { ok: true, endKind: kind };
   }
 
+  /* ---------- the graph ----------
+   *
+   * A workflow is nodes and LINKS the user drew, not an implied sequence. That
+   * distinction is the whole difference between a form and an editor: the
+   * order comes from what is connected to what, so a node can be dragged
+   * anywhere, left unconnected while you think, or given two outputs to send
+   * one file down two different paths.
+   *
+   * Merges are deliberately not a thing. Two PDFs arriving at one node has no
+   * meaning for a file pipeline — which one is "the" file? — so a node takes
+   * one input and may feed several. Every route from the input to a dead end
+   * is a path, and each path runs independently and produces its own file.
+   */
+  function pathsFrom(nodes, links, startId) {
+    var out = [];
+    var byFrom = {};
+    (links || []).forEach(function (l) { (byFrom[l.from] = byFrom[l.from] || []).push(l.to); });
+
+    function walk(id, acc, seen) {
+      var next = byFrom[id] || [];
+      var live = next.filter(function (n) { return seen.indexOf(n) === -1; });
+      if (!live.length) { if (acc.length) out.push(acc.slice()); return; }
+      live.forEach(function (n) {
+        var node = nodes.filter(function (x) { return x.uid === n; })[0];
+        if (!node) { if (acc.length) out.push(acc.slice()); return; }
+        acc.push(node);
+        walk(n, acc, seen.concat([n]));
+        acc.pop();
+      });
+    }
+    walk(startId, [], [startId]);
+    return out;
+  }
+
+  /* Would this link create a cycle? A file cannot flow into its own source,
+     and without this check the run enumerator would never terminate. */
+  function wouldCycle(links, from, to) {
+    if (from === to) return true;
+    var byFrom = {};
+    links.forEach(function (l) { (byFrom[l.from] = byFrom[l.from] || []).push(l.to); });
+    var stack = [to], seen = {};
+    while (stack.length) {
+      var n = stack.pop();
+      if (n === from) return true;
+      if (seen[n]) continue;
+      seen[n] = 1;
+      (byFrom[n] || []).forEach(function (x) { stack.push(x); });
+    }
+    return false;
+  }
+
   /* ---------- saved workflows (this device, no account needed) ---------- */
 
   function load() {
@@ -211,17 +262,21 @@
 
   /* ---------- the canvas editor ----------
    *
-   * A node graph, not a list. The list version was legible and it was also
-   * wrong for the job: a workflow is a THING WITH A SHAPE, and the shape is
-   * what you are reasoning about while you build it — what feeds what, where
-   * it changes type, where it will stop. A vertical list of names hides all of
-   * that behind reading order.
+   * A node editor you build by DRAGGING. A palette of tools down the left; drag
+   * one onto the canvas and it lands where you dropped it; drag from a node's
+   * output dot to another node's input dot to connect them. The order a
+   * workflow runs in is the order you drew, not the order you clicked.
    *
-   * Everything is HTML nodes over one SVG edge layer, inside a single panned
-   * and scaled wrapper. No canvas element and no library: the nodes have to be
-   * real focusable elements or the whole thing is unusable by keyboard and
-   * invisible to a screen reader, which is where most graph editors on the web
-   * give up.
+   * That is the difference between an editor and a form with extra steps. A
+   * form can only express a straight line. Here a node can sit unconnected
+   * while you think, be rewired without being deleted, or feed two different
+   * paths from one file.
+   *
+   * Everything is real HTML over one SVG edge layer — no <canvas> element and
+   * no library. A canvas-drawn graph cannot be tabbed to, cannot be read by a
+   * screen reader and cannot inherit a design token, which is where most web
+   * graph editors give up. Every node here is a focusable button, and there is
+   * a keyboard route to every action that dragging performs.
    */
   function mount(host) {
     if (!host) return;
@@ -229,98 +284,84 @@
     if (!D) { host.textContent = 'Workflows are unavailable right now.'; return; }
 
     var files = [];
-    var steps = [];              // [{id, opts, x, y}]
-    var sel = -1;                // selected step index, -1 = none
-    var view = { x: 40, y: 40, k: 1 };
-    var NODE_W = 168, NODE_H = 84, GAP_X = 210;
+    var nodes = [];            // [{uid, id, opts, x, y}]
+    var links = [];            // [{from, to}]  ids are uid | 'in'
+    var sel = null;            // selected uid
+    var view = { x: 30, y: 30, k: 1 };
+    var uidN = 0;
+    var NODE_W = 172, NODE_H = 76;
+
+    var IN_X = 20, IN_Y = 120;
 
     /* --- shell ------------------------------------------------------------ */
     var edges = doc.createElementNS('http://www.w3.org/2000/svg', 'svg');
     edges.setAttribute('class', 'wfc-edges');
     var pan = h('div', { class: 'wfc-pan' }, [edges]);
     var canvas = h('div', { class: 'wfc-canvas', tabindex: '0', role: 'application',
-      'aria-label': 'Workflow canvas. Use the panel on the right to change a step.' }, [pan]);
-    var zoom = h('div', { class: 'wfc-zoom' }, [
-      h('button', { class: 'icon-btn', type: 'button', text: '−', 'aria-label': 'Zoom out',
-        onclick: function () { setZoom(view.k / 1.2); } }),
-      h('button', { class: 'icon-btn', type: 'button', text: '+', 'aria-label': 'Zoom in',
-        onclick: function () { setZoom(view.k * 1.2); } }),
-      h('button', { class: 'icon-btn', type: 'button', text: '□', 'aria-label': 'Fit to view',
-        onclick: fit })
+      'aria-label': 'Workflow canvas. Drag tools from the palette, then drag between the dots to connect them.' }, [pan]);
+    var hint = h('p', { class: 'wfc-hint', text: 'Drag a tool from the left onto the canvas' });
+    canvas.appendChild(hint);
+
+    var search = h('input', { type: 'search', class: 'field wfc-search', placeholder: 'Search tools', 'aria-label': 'Search tools' });
+    var palList = h('div', { class: 'wfc-pal-list' });
+    var palette = h('aside', { class: 'wfc-pal', 'aria-label': 'Tool palette' }, [
+      h('h3', { class: 'wfc-h', text: 'Tools' }), search, palList
     ]);
-    var panel = h('aside', { class: 'wfc-panel', 'aria-label': 'Step settings' });
-    var stage = h('div', { class: 'wfc' }, [canvas, zoom, panel]);
+    var zoom = h('div', { class: 'wfc-zoom' }, [
+      h('button', { class: 'icon-btn', type: 'button', text: '−', 'aria-label': 'Zoom out', onclick: function () { setZoom(view.k / 1.2); } }),
+      h('button', { class: 'icon-btn', type: 'button', text: '+', 'aria-label': 'Zoom in', onclick: function () { setZoom(view.k * 1.2); } }),
+      h('button', { class: 'icon-btn', type: 'button', text: '□', 'aria-label': 'Fit to view', onclick: fit })
+    ]);
+    var panel = h('aside', { class: 'wfc-panel', 'aria-label': 'Node settings' });
+    var stage = h('div', { class: 'wfc' }, [palette, canvas, zoom, panel]);
 
     var input = h('input', { type: 'file', multiple: 'multiple', class: 'sr-only', id: 'wf-file' });
-    var fileBtn = h('button', { class: 'btn', type: 'button', text: 'Choose files',
-      onclick: function () { input.click(); } });
+    var fileBtn = h('button', { class: 'btn', type: 'button', text: 'Choose files', onclick: function () { input.click(); } });
     var fileNote = h('span', { class: 'wfc-files', id: 'wf-file-note', text: 'No files yet' });
     var runBtn = h('button', { class: 'btn btn-primary', type: 'button', text: 'Run workflow', disabled: 'disabled' });
     var saveBtn = h('button', { class: 'btn', type: 'button', text: 'Save', disabled: 'disabled' });
     var savedSel = h('select', { class: 'field wfc-load', 'aria-label': 'Load a saved workflow' });
-    var bar = h('div', { class: 'wfc-bar' }, [fileBtn, input, fileNote,
-      h('span', { class: 'wfc-spacer' }), savedSel, saveBtn, runBtn]);
+    var bar = h('div', { class: 'wfc-bar' }, [fileBtn, input, fileNote, h('span', { class: 'wfc-spacer' }), savedSel, saveBtn, runBtn]);
     var log = h('div', { class: 'wfc-log', 'aria-live': 'polite' });
 
-    /* --- geometry --------------------------------------------------------- */
+    /* --- helpers ---------------------------------------------------------- */
     function startKind() { return files.length ? kindOfFile(files[0].name, files[0].type) : ''; }
-    function layout() {
-      steps.forEach(function (st, i) {
-        if (st.x == null) { st.x = (i + 1) * GAP_X; st.y = 0; }
+    function byUid(u) { return u === 'in' ? { uid: 'in', x: IN_X, y: IN_Y } : nodes.filter(function (n) { return n.uid === u; })[0]; }
+    function parentOf(u) { var l = links.filter(function (x) { return x.to === u; })[0]; return l ? l.from : null; }
+
+    /* The kind of file arriving at a node, by walking back up the links it is
+       actually connected by — not by its position in an array. */
+    function kindAt(u) {
+      var chainUp = [], cur = u, guard = 0;
+      while (cur && cur !== 'in' && guard++ < 50) { chainUp.unshift(cur); cur = parentOf(cur); }
+      if (cur !== 'in') return '';                       // not wired to the input
+      var kind = startKind();
+      chainUp.slice(0, -1).forEach(function (id) {
+        var n = byUid(id); if (n) kind = outputOf(D.flow, n.id, kind);
       });
+      return kind;
     }
+
     function setZoom(k) {
       view.k = Math.max(0.4, Math.min(1.6, k));
       pan.style.transform = 'translate(' + view.x + 'px,' + view.y + 'px) scale(' + view.k + ')';
     }
     function fit() {
-      var xs = [0].concat(steps.map(function (s2) { return s2.x || 0; })).concat([(steps.length + 1) * GAP_X]);
-      var ys = [0].concat(steps.map(function (s2) { return s2.y || 0; }));
-      var w = Math.max.apply(null, xs) + NODE_W + 40;
-      var hgt = Math.max.apply(null, ys) - Math.min.apply(null, ys) + NODE_H + 40;
-      var k = Math.min(canvas.clientWidth / w, canvas.clientHeight / hgt, 1.2);
+      if (!nodes.length) { view.x = 30; view.y = 30; setZoom(1); return; }
+      var xs = nodes.map(function (n) { return n.x; }).concat([IN_X]);
+      var ys = nodes.map(function (n) { return n.y; }).concat([IN_Y]);
+      var w = Math.max.apply(null, xs) - Math.min.apply(null, xs) + NODE_W + 60;
+      var hh = Math.max.apply(null, ys) - Math.min.apply(null, ys) + NODE_H + 60;
+      var k = Math.min((canvas.clientWidth || 600) / w, (canvas.clientHeight || 400) / hh, 1.2);
       view.k = Math.max(0.4, k || 1);
-      view.x = 30; view.y = (canvas.clientHeight - hgt * view.k) / 2 - Math.min.apply(null, ys) * view.k;
+      view.x = 30 - Math.min.apply(null, xs) * view.k;
+      view.y = 30 - Math.min.apply(null, ys) * view.k;
       setZoom(view.k);
     }
-
-    /* --- drawing ---------------------------------------------------------- */
-    function nodeEl(cls, x, y, iconHtml, title, sub, onClick, i) {
-      var n = h('div', { class: 'wfc-node ' + cls, style: 'left:' + x + 'px;top:' + y + 'px',
-        tabindex: onClick ? '0' : null, role: onClick ? 'button' : null,
-        'aria-label': onClick ? title + (sub ? ', ' + sub : '') + '. Open settings.' : title });
-      n.appendChild(h('div', { class: 'wfc-ic', html: iconHtml }));
-      n.appendChild(h('div', { class: 'wfc-tx' }, [
-        h('strong', { text: title }),
-        sub ? h('span', { text: sub }) : null
-      ]));
-      if (onClick) {
-        n.addEventListener('click', function (e) { if (!n.dataset.dragged) onClick(e); delete n.dataset.dragged; });
-        n.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(e); } });
-        makeDraggable(n, i);
-      }
-      return n;
+    function toCanvas(clientX, clientY) {
+      var r = canvas.getBoundingClientRect();
+      return { x: (clientX - r.left - view.x) / view.k, y: (clientY - r.top - view.y) / view.k };
     }
-
-    function makeDraggable(el2, i) {
-      var sx, sy, ox, oy, moving = false;
-      el2.addEventListener('pointerdown', function (e) {
-        if (e.button) return;
-        moving = true; sx = e.clientX; sy = e.clientY; ox = steps[i].x; oy = steps[i].y;
-        el2.setPointerCapture(e.pointerId); el2.classList.add('is-drag');
-      });
-      el2.addEventListener('pointermove', function (e) {
-        if (!moving) return;
-        var dx = (e.clientX - sx) / view.k, dy = (e.clientY - sy) / view.k;
-        if (Math.abs(dx) + Math.abs(dy) > 3) el2.dataset.dragged = '1';
-        steps[i].x = ox + dx; steps[i].y = oy + dy;
-        el2.style.left = steps[i].x + 'px'; el2.style.top = steps[i].y + 'px';
-        drawEdges();
-      });
-      el2.addEventListener('pointerup', function () { moving = false; el2.classList.remove('is-drag'); });
-      el2.addEventListener('pointercancel', function () { moving = false; el2.classList.remove('is-drag'); });
-    }
-
     function toolIcon(id) {
       var I = root.VK_ICONS, e = I && I.icons && I.icons[id];
       if (!e || !I.glyphs[e.g]) return '<span class="ic"></span>';
@@ -328,112 +369,227 @@
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" ' +
         'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + I.glyphs[e.g] + '</svg></span>';
     }
-
-    /* A curve, not a straight line: with nodes at different heights a straight
-       edge crosses the node boxes, and the eye loses which end is which. */
-    function drawEdges() {
-      var pts = [{ x: 0, y: 0 }].concat(steps.map(function (s2) { return { x: s2.x, y: s2.y }; }))
-        .concat([{ x: (steps.length + 1) * GAP_X, y: 0 }]);
-      var d = '';
-      for (var i = 0; i < pts.length - 1; i++) {
-        var x1 = pts[i].x + NODE_W, y1 = pts[i].y + NODE_H / 2;
-        var x2 = pts[i + 1].x, y2 = pts[i + 1].y + NODE_H / 2;
-        var mx = (x1 + x2) / 2;
-        d += 'M' + x1 + ',' + y1 + ' C' + mx + ',' + y1 + ' ' + mx + ',' + y2 + ' ' + x2 + ',' + y2 + ' ';
-      }
-      var maxX = (steps.length + 1) * GAP_X + NODE_W + 60;
-      var ys = pts.map(function (p) { return p.y; });
-      var minY = Math.min.apply(null, ys) - 60, maxY = Math.max.apply(null, ys) + NODE_H + 60;
-      edges.setAttribute('viewBox', '0 ' + minY + ' ' + maxX + ' ' + (maxY - minY));
-      edges.setAttribute('width', maxX); edges.setAttribute('height', maxY - minY);
-      edges.style.top = minY + 'px';
-      edges.innerHTML =
-        '<defs><marker id="wfa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">' +
-        '<path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>' +
-        '<path d="' + d + '" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#wfa)"/>';
-    }
-
-    function summarise(st) {
-      var spec = specFor(st.id);
-      var o = (spec && spec.options) || [];
+    function summarise(n) {
+      var spec = specFor(n.id), o = (spec && spec.options) || [];
       if (!o.length) return '';
-      var k = o[0];
-      var v = st.opts[k.k];
+      var k = o[0], v = n.opts[k.k];
       return (k.label || k.k) + ': ' + (v == null ? k.def : v) + (k.suffix || '');
     }
 
-    function draw() {
-      layout();
-      [].slice.call(pan.querySelectorAll('.wfc-node, .wfc-add')).forEach(function (n) { n.remove(); });
-
-      pan.appendChild(nodeEl('is-start', 0, 0,
-        '<span class="ic ic-tool" style="--ic-bg:#1d4ed8;--ic-h:220"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V5m0 0L8 9m4-4 4 4M5 14v5h14v-5"/></svg></span>',
-        files.length ? (files.length === 1 ? files[0].name : files.length + ' files') : 'Your files',
-        files.length ? startKind() : 'nothing chosen yet', null));
-
-      steps.forEach(function (st, i) {
-        var nm = (D.names && D.names[st.id]) || st.id;
-        var kindHere = startKind();
-        for (var j = 0; j < i; j++) kindHere = outputOf(D.flow, steps[j].id, kindHere);
-        var bad = files.length && !kindAccepted((D.flow[st.id] || {}).a, kindHere);
-        pan.appendChild(nodeEl(
-          'is-step' + (bad ? ' is-bad' : '') + (sel === i ? ' is-sel' : ''),
-          st.x, st.y, toolIcon(st.id), nm, bad ? 'cannot take this file' : summarise(st),
-          function () { sel = i; draw(); }, i));
+    /* --- the palette (drag source) ---------------------------------------- */
+    function drawPalette() {
+      palList.innerHTML = '';
+      var q = (search.value || '').trim().toLowerCase();
+      var all = Object.keys(D.flow).filter(function (id) { return D.flow[id].w; });
+      var items = all.map(function (id) {
+        return { id: id, name: (D.names && D.names[id]) || id, rank: D.flow[id].p || 999 };
+      }).filter(function (it) { return !q || it.name.toLowerCase().indexOf(q) > -1; });
+      items.sort(function (a, b) { return a.rank - b.rank || a.name.localeCompare(b.name); });
+      if (!items.length) { palList.appendChild(h('p', { class: 'note', text: 'Nothing matches.' })); return; }
+      items.forEach(function (it) {
+        var b = h('button', { class: 'wfc-palitem', type: 'button', draggable: 'true',
+          'aria-label': 'Add ' + it.name + ' to the canvas' }, [
+          h('span', { class: 'wfc-pickic', html: toolIcon(it.id) }),
+          h('span', { class: 'wfc-picktx', text: it.name })
+        ]);
+        b.addEventListener('dragstart', function (e) {
+          e.dataTransfer.setData('text/vk-tool', it.id);
+          e.dataTransfer.effectAllowed = 'copy';
+          canvas.classList.add('is-target');
+        });
+        b.addEventListener('dragend', function () { canvas.classList.remove('is-target'); });
+        /* Click still works. Dragging is the good way; it must not be the only
+           way, or the palette is unusable by keyboard and on some phones. */
+        b.addEventListener('click', function () { addNode(it.id, null, null); });
+        palList.appendChild(b);
       });
+    }
+    search.addEventListener('input', drawPalette);
 
-      var endX = (steps.length + 1) * GAP_X;
-      pan.appendChild(nodeEl('is-end', endX, 0,
-        '<span class="ic ic-tool" style="--ic-bg:#0f7a4a;--ic-h:150"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>',
-        'Finished file', steps.length + ' step' + (steps.length === 1 ? '' : 's'), null));
+    canvas.addEventListener('dragover', function (e) {
+      if (e.dataTransfer && [].indexOf.call(e.dataTransfer.types, 'text/vk-tool') > -1) {
+        e.preventDefault(); e.dataTransfer.dropEffect = 'copy';
+      }
+    });
+    canvas.addEventListener('drop', function (e) {
+      var id = e.dataTransfer && e.dataTransfer.getData('text/vk-tool');
+      if (!id) return;
+      e.preventDefault();
+      canvas.classList.remove('is-target');
+      var p = toCanvas(e.clientX, e.clientY);
+      addNode(id, p.x - NODE_W / 2, p.y - NODE_H / 2);
+    });
 
-      var addX = endX - GAP_X + NODE_W + 18;
-      var add = h('button', { class: 'wfc-add', type: 'button', text: '+', 'aria-label': 'Add a step',
-        style: 'left:' + addX + 'px;top:' + (NODE_H / 2 - 16) + 'px', onclick: openPicker });
-      pan.appendChild(add);
+    /* A new node auto-connects to the last thing that has no output, which is
+       what you meant nine times out of ten — and is undone by dragging the
+       link away, rather than being a rule you cannot escape. */
+    function addNode(id, x, y) {
+      var uid = 'n' + (++uidN);
+      var n = { uid: uid, id: id, opts: {}, x: x == null ? 240 + nodes.length * 40 : x, y: y == null ? IN_Y + nodes.length * 20 : y };
+      nodes.push(n);
+      var taken = {}; links.forEach(function (l) { taken[l.from] = 1; });
+      var tail = nodes.slice(0, -1).filter(function (m) { return !taken[m.uid]; }).pop();
+      var from = tail ? tail.uid : (links.some(function (l) { return l.from === 'in'; }) ? null : 'in');
+      if (from) links.push({ from: from, to: uid });
+      sel = uid;
+      draw();
+    }
+
+    /* --- drawing ---------------------------------------------------------- */
+    function portPos(u, side) {
+      var n = byUid(u); if (!n) return { x: 0, y: 0 };
+      return { x: n.x + (side === 'out' ? NODE_W : 0), y: n.y + NODE_H / 2 };
+    }
+    function drawEdges(temp) {
+      var all = links.map(function (l) { return { a: portPos(l.from, 'out'), b: portPos(l.to, 'in'), l: l }; });
+      var parts = all.map(function (e, i) {
+        var mx = (e.a.x + e.b.x) / 2;
+        return '<path class="wfc-edge" data-i="' + i + '" d="M' + e.a.x + ',' + e.a.y +
+          ' C' + mx + ',' + e.a.y + ' ' + mx + ',' + e.b.y + ' ' + e.b.x + ',' + e.b.y +
+          '" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#wfa)"/>';
+      });
+      if (temp) {
+        var m2 = (temp.a.x + temp.b.x) / 2;
+        parts.push('<path class="wfc-edge is-temp" d="M' + temp.a.x + ',' + temp.a.y +
+          ' C' + m2 + ',' + temp.a.y + ' ' + m2 + ',' + temp.b.y + ' ' + temp.b.x + ',' + temp.b.y +
+          '" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="5 4"/>');
+      }
+      var xs = [IN_X + NODE_W].concat(nodes.map(function (n) { return n.x + NODE_W; }));
+      var ys = [IN_Y].concat(nodes.map(function (n) { return n.y; }));
+      var maxX = Math.max.apply(null, xs) + 120, minY = Math.min.apply(null, ys) - 80, maxY = Math.max.apply(null, ys) + NODE_H + 80;
+      edges.setAttribute('viewBox', '0 ' + minY + ' ' + maxX + ' ' + (maxY - minY));
+      edges.setAttribute('width', maxX); edges.setAttribute('height', maxY - minY);
+      edges.style.top = minY + 'px';
+      edges.innerHTML = '<defs><marker id="wfa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">' +
+        '<path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>' + parts.join('');
+      [].forEach.call(edges.querySelectorAll('.wfc-edge:not(.is-temp)'), function (pth) {
+        pth.addEventListener('click', function () {
+          links.splice(+pth.getAttribute('data-i'), 1);
+          draw();
+        });
+      });
+    }
+
+    function portEl(u, side) {
+      var dot = h('span', { class: 'wfc-port wfc-port-' + side, 'data-u': u, 'data-side': side,
+        role: 'button', tabindex: side === 'out' ? '0' : null,
+        'aria-label': side === 'out' ? 'Drag from here to connect this to another step' : 'Input' });
+      if (side === 'out') {
+        dot.addEventListener('pointerdown', function (e) {
+          e.stopPropagation();
+          startLink(u, e);
+        });
+      }
+      return dot;
+    }
+
+    var linking = null;
+    function startLink(fromU, e) {
+      linking = { from: fromU };
+      canvas.setPointerCapture(e.pointerId);
+      canvas.classList.add('is-linking');
+      var mv = function (ev) {
+        var p = toCanvas(ev.clientX, ev.clientY);
+        drawEdges({ a: portPos(fromU, 'out'), b: p });
+      };
+      var up = function (ev) {
+        canvas.removeEventListener('pointermove', mv);
+        canvas.removeEventListener('pointerup', up);
+        canvas.classList.remove('is-linking');
+        var el2 = doc.elementFromPoint(ev.clientX, ev.clientY);
+        var target = el2 && el2.closest && el2.closest('.wfc-node');
+        var toU = target && target.getAttribute('data-uid');
+        linking = null;
+        if (toU && toU !== fromU && !wouldCycle(links, fromU, toU)) {
+          links = links.filter(function (l) { return l.to !== toU; });   // one input per node
+          links.push({ from: fromU, to: toU });
+        }
+        draw();
+      };
+      canvas.addEventListener('pointermove', mv);
+      canvas.addEventListener('pointerup', up);
+    }
+
+    function makeDraggable(el2, n) {
+      var sx, sy, ox, oy, moving = false;
+      el2.addEventListener('pointerdown', function (e) {
+        if (e.button || e.target.classList.contains('wfc-port')) return;
+        moving = true; sx = e.clientX; sy = e.clientY; ox = n.x; oy = n.y;
+        el2.setPointerCapture(e.pointerId); el2.classList.add('is-drag');
+      });
+      el2.addEventListener('pointermove', function (e) {
+        if (!moving) return;
+        var dx = (e.clientX - sx) / view.k, dy = (e.clientY - sy) / view.k;
+        if (Math.abs(dx) + Math.abs(dy) > 3) el2.dataset.dragged = '1';
+        n.x = ox + dx; n.y = oy + dy;
+        el2.style.left = n.x + 'px'; el2.style.top = n.y + 'px';
+        drawEdges();
+      });
+      var stop = function () { moving = false; el2.classList.remove('is-drag'); };
+      el2.addEventListener('pointerup', stop);
+      el2.addEventListener('pointercancel', stop);
+    }
+
+    function draw() {
+      [].slice.call(pan.querySelectorAll('.wfc-node')).forEach(function (n) { n.remove(); });
+      hint.hidden = nodes.length > 0;
+
+      var inNode = h('div', { class: 'wfc-node is-start', style: 'left:' + IN_X + 'px;top:' + IN_Y + 'px', 'data-uid': 'in' }, [
+        h('div', { class: 'wfc-ic', html: '<span class="ic ic-tool" style="--ic-bg:#1d4ed8;--ic-h:220"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V5m0 0L8 9m4-4 4 4M5 14v5h14v-5"/></svg></span>' }),
+        h('div', { class: 'wfc-tx' }, [
+          h('strong', { text: files.length ? (files.length === 1 ? files[0].name : files.length + ' files') : 'Your files' }),
+          h('span', { text: files.length ? startKind() : 'nothing chosen yet' })
+        ])
+      ]);
+      inNode.appendChild(portEl('in', 'out'));
+      pan.appendChild(inNode);
+
+      nodes.forEach(function (n) {
+        var nm = (D.names && D.names[n.id]) || n.id;
+        var k = kindAt(n.uid);
+        var orphan = !k;
+        var bad = files.length && k && !kindAccepted((D.flow[n.id] || {}).a, k);
+        var el2 = h('div', {
+          class: 'wfc-node is-step' + (bad ? ' is-bad' : '') + (orphan ? ' is-orphan' : '') + (sel === n.uid ? ' is-sel' : ''),
+          style: 'left:' + n.x + 'px;top:' + n.y + 'px', 'data-uid': n.uid,
+          tabindex: '0', role: 'button', 'aria-label': nm + '. Open settings.'
+        }, [
+          h('div', { class: 'wfc-ic', html: toolIcon(n.id) }),
+          h('div', { class: 'wfc-tx' }, [
+            h('strong', { text: nm }),
+            h('span', { text: bad ? 'cannot take this file' : (orphan ? 'not connected' : summarise(n)) })
+          ])
+        ]);
+        el2.appendChild(portEl(n.uid, 'in'));
+        el2.appendChild(portEl(n.uid, 'out'));
+        el2.addEventListener('click', function () {
+          if (el2.dataset.dragged) { delete el2.dataset.dragged; return; }
+          sel = n.uid; draw();
+        });
+        el2.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); sel = n.uid; draw(); }
+          if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); removeNode(n.uid); }
+        });
+        makeDraggable(el2, n);
+        pan.appendChild(el2);
+      });
 
       drawEdges();
       drawPanel();
-      runBtn.disabled = !(files.length && steps.length);
-      saveBtn.disabled = !steps.length;
+      var paths = pathsFrom(nodes, links, 'in');
+      runBtn.disabled = !(files.length && paths.length);
+      saveBtn.disabled = !nodes.length;
       runBtn.textContent = files.length > 1 ? 'Run on ' + files.length + ' files' : 'Run workflow';
     }
 
-    /* --- the picker ------------------------------------------------------- */
-    function openPicker() {
-      var kind = startKind();
-      for (var j = 0; j < steps.length; j++) kind = outputOf(D.flow, steps[j].id, kind);
-      var choices = stepChoices(D, kind || '', steps.length ? steps[steps.length - 1].id : null);
-      panel.innerHTML = '';
-      panel.appendChild(h('h3', { class: 'wfc-h', text: 'Add a step' }));
-      if (!files.length) {
-        panel.appendChild(h('p', { class: 'note', text: 'Choose your files first — which steps are possible depends on what they are.' }));
-        return;
-      }
-      if (!choices.length) {
-        panel.appendChild(h('p', { class: 'note', text: 'Nothing further can be done to the file at this point.' }));
-        return;
-      }
-      var listEl = h('div', { class: 'wfc-pick' });
-      choices.forEach(function (c) {
-        /* The name goes in as a TEXT NODE, not as innerHTML. Tool names come
-           from the catalogue rather than a user, but building markup out of
-           any name is the habit that eventually ships an injection. */
-        var btn = h('button', { class: 'wfc-pickbtn', type: 'button' }, [
-          h('span', { class: 'wfc-pickic', html: toolIcon(c.id) }),
-          h('span', { class: 'wfc-picktx', text: c.name })
-        ]);
-        btn.addEventListener('click', function () {
-          steps.push({ id: c.id, opts: {}, x: (steps.length + 1) * GAP_X, y: 0 });
-          sel = steps.length - 1;
-          draw();
-        });
-        listEl.appendChild(btn);
-      });
-      panel.appendChild(listEl);
+    function removeNode(uid) {
+      nodes = nodes.filter(function (n) { return n.uid !== uid; });
+      links = links.filter(function (l) { return l.from !== uid && l.to !== uid; });
+      if (sel === uid) sel = null;
+      draw();
     }
 
-    /* --- the settings panel ----------------------------------------------- */
+    /* --- settings panel --------------------------------------------------- */
     function optionField(opt, val, onChange) {
       var id = 'wf-o-' + Math.random().toString(36).slice(2, 8);
       var field;
@@ -445,19 +601,15 @@
           field.appendChild(oe);
         });
         field.addEventListener('change', function () {
-          var match = (opt.options || []).filter(function (o) { return String(o.v) === field.value; })[0];
-          onChange(match ? match.v : field.value);
+          var m = (opt.options || []).filter(function (o) { return String(o.v) === field.value; })[0];
+          onChange(m ? m.v : field.value);
         });
       } else if (opt.type === 'range' || (opt.min != null && opt.max != null)) {
         field = h('input', { type: 'range', id: id, min: String(opt.min != null ? opt.min : 0),
           max: String(opt.max != null ? opt.max : 100), step: String(opt.step || 1), value: String(val) });
         var read = h('span', { class: 'wfc-val', text: String(val) + (opt.suffix || '') });
-        field.addEventListener('input', function () {
-          read.textContent = field.value + (opt.suffix || '');
-          onChange(Number(field.value));
-        });
-        return h('label', { class: 'wfc-opt', for: id }, [
-          h('span', { class: 'wfc-opt-l', text: opt.label || opt.k }), field, read]);
+        field.addEventListener('input', function () { read.textContent = field.value + (opt.suffix || ''); onChange(Number(field.value)); });
+        return h('label', { class: 'wfc-opt', for: id }, [h('span', { class: 'wfc-opt-l', text: opt.label || opt.k }), field, read]);
       } else if (opt.type === 'checkbox' || typeof opt.def === 'boolean') {
         field = h('input', { type: 'checkbox', id: id });
         field.checked = !!val;
@@ -466,56 +618,51 @@
         field = h('input', { type: 'text', class: 'field', id: id, value: String(val == null ? '' : val) });
         field.addEventListener('input', function () { onChange(field.value); });
       }
-      return h('label', { class: 'wfc-opt', for: id }, [
-        h('span', { class: 'wfc-opt-l', text: opt.label || opt.k }), field]);
-    }
-
-    function move(i, by) {
-      var j = i + by;
-      if (j < 0 || j >= steps.length) return;
-      var tx = steps[i].x, ty = steps[i].y;
-      steps[i].x = steps[j].x; steps[i].y = steps[j].y;
-      steps[j].x = tx; steps[j].y = ty;
-      var t = steps[i]; steps[i] = steps[j]; steps[j] = t;
-      sel = j; draw();
+      return h('label', { class: 'wfc-opt', for: id }, [h('span', { class: 'wfc-opt-l', text: opt.label || opt.k }), field]);
     }
 
     function drawPanel() {
-      if (sel < 0 || !steps[sel]) { if (!panel.querySelector('.wfc-pick')) openPicker(); return; }
-      var st = steps[sel];
-      var spec = specFor(st.id);
-      var nm = (D.names && D.names[st.id]) || st.id;
       panel.innerHTML = '';
-      panel.appendChild(h('h3', { class: 'wfc-h', text: nm }));
+      var n = sel && byUid(sel);
+      if (!n || sel === 'in') {
+        panel.appendChild(h('h3', { class: 'wfc-h', text: 'How this works' }));
+        panel.appendChild(h('ol', { class: 'wfc-steps-help' }, [
+          h('li', { text: 'Choose your files.' }),
+          h('li', { text: 'Drag a tool from the left onto the canvas.' }),
+          h('li', { text: 'Drag from a node’s right-hand dot to another node to connect them.' }),
+          h('li', { text: 'Click a node to change its settings, then run.' })
+        ]));
+        panel.appendChild(h('p', { class: 'note', text: 'Click a connection to delete it. Select a node and press Delete to remove it.' }));
+        return;
+      }
+      var spec = specFor(n.id);
+      panel.appendChild(h('h3', { class: 'wfc-h', text: (D.names && D.names[n.id]) || n.id }));
       panel.appendChild(h('div', { class: 'wfc-panacts' }, [
-        h('button', { class: 'btn btn-sm', type: 'button', text: 'Move earlier',
-          disabled: sel === 0 ? 'disabled' : null, onclick: function () { move(sel, -1); } }),
-        h('button', { class: 'btn btn-sm', type: 'button', text: 'Move later',
-          disabled: sel === steps.length - 1 ? 'disabled' : null, onclick: function () { move(sel, 1); } }),
-        h('button', { class: 'btn btn-sm', type: 'button', text: 'Delete',
-          onclick: function () { steps.splice(sel, 1); steps.forEach(function (s2, i2) { s2.x = (i2 + 1) * GAP_X; s2.y = 0; }); sel = -1; draw(); } })
+        h('button', { class: 'btn btn-sm', type: 'button', text: 'Disconnect',
+          onclick: function () { links = links.filter(function (l) { return l.to !== n.uid; }); draw(); } }),
+        h('button', { class: 'btn btn-sm', type: 'button', text: 'Delete node',
+          onclick: function () { removeNode(n.uid); } })
       ]));
       var opts = (spec && spec.options) || [];
-      if (!opts.length) {
-        panel.appendChild(h('p', { class: 'note', text: 'This step has no settings — it does one thing.' }));
-      } else {
+      if (!opts.length) panel.appendChild(h('p', { class: 'note', text: 'This step has no settings — it does one thing.' }));
+      else {
         var wrap = h('div', { class: 'wfc-opts' });
         opts.forEach(function (opt) {
-          if (st.opts[opt.k] === undefined) st.opts[opt.k] = opt.def;
-          wrap.appendChild(optionField(opt, st.opts[opt.k], function (v) { st.opts[opt.k] = v; draw(); }));
+          if (n.opts[opt.k] === undefined) n.opts[opt.k] = opt.def;
+          wrap.appendChild(optionField(opt, n.opts[opt.k], function (v) { n.opts[opt.k] = v; draw(); }));
         });
         panel.appendChild(wrap);
       }
-      panel.appendChild(h('button', { class: 'btn btn-sm', type: 'button', text: 'Add another step', onclick: openPicker }));
     }
 
     /* --- panning ---------------------------------------------------------- */
     (function () {
       var px, py, ox, oy, panning = false;
       canvas.addEventListener('pointerdown', function (e) {
-        if (e.target !== canvas && e.target !== pan && e.target !== edges) return;
+        if (linking) return;
+        if (e.target !== canvas && e.target !== pan && e.target !== edges && e.target !== hint) return;
         panning = true; px = e.clientX; py = e.clientY; ox = view.x; oy = view.y;
-        canvas.setPointerCapture(e.pointerId); canvas.classList.add('is-pan');
+        canvas.classList.add('is-pan');
       });
       canvas.addEventListener('pointermove', function (e) {
         if (!panning) return;
@@ -531,8 +678,7 @@
     /* --- files, saving, running ------------------------------------------- */
     input.addEventListener('change', function () {
       if (!input.files || !input.files.length) return;
-      var picked = [].slice.call(input.files);
-      var kinds = {};
+      var picked = [].slice.call(input.files), kinds = {};
       picked.forEach(function (f) { kinds[kindOfFile(f.name, f.type)] = 1; });
       var ks = Object.keys(kinds).filter(Boolean);
       if (ks.length > 1) {
@@ -550,68 +696,85 @@
       savedSel.innerHTML = '';
       savedSel.appendChild(h('option', { value: '', text: 'Saved workflows…' }));
       load().forEach(function (wf, i) {
-        savedSel.appendChild(h('option', { value: String(i), text: wf.name + ' (' + wf.steps.length + ')' }));
+        savedSel.appendChild(h('option', { value: String(i), text: wf.name + ' (' + (wf.nodes || wf.steps || []).length + ')' }));
       });
     }
     savedSel.addEventListener('change', function () {
-      var i = savedSel.value;
-      if (i === '') return;
-      var wf = load()[+i];
+      if (savedSel.value === '') return;
+      var wf = load()[+savedSel.value];
       if (!wf) return;
-      steps = wf.steps.map(function (s2, n) {
-        return { id: s2.id, opts: Object.assign({}, s2.opts), x: (n + 1) * GAP_X, y: 0 };
-      });
-      sel = -1; draw(); fit();
+      /* Saved graphs carry their links. A workflow saved before links existed
+         is a straight chain, so it is rebuilt as one rather than discarded. */
+      if (wf.nodes && wf.links) {
+        nodes = wf.nodes.map(function (n) { return { uid: n.uid, id: n.id, opts: Object.assign({}, n.opts), x: n.x, y: n.y }; });
+        links = wf.links.slice();
+        uidN = nodes.length;
+      } else {
+        nodes = (wf.steps || []).map(function (s2, i) {
+          return { uid: 'n' + (i + 1), id: s2.id, opts: Object.assign({}, s2.opts), x: 240 + i * 210, y: IN_Y };
+        });
+        links = nodes.map(function (n, i) { return { from: i === 0 ? 'in' : nodes[i - 1].uid, to: n.uid }; });
+        uidN = nodes.length;
+      }
+      sel = null; draw(); fit();
     });
     saveBtn.addEventListener('click', function () {
-      var name = (root.prompt && root.prompt('Name this workflow', describe(D, steps))) || '';
+      var name = (root.prompt && root.prompt('Name this workflow', describe(D, nodes))) || '';
       name = String(name).trim().slice(0, 60);
       if (!name) return;
       var l = load();
-      l.unshift({ name: name, steps: steps.map(function (s2) { return { id: s2.id, opts: s2.opts }; }) });
+      l.unshift({ name: name, nodes: nodes, links: links });
       if (!save(l)) { log.textContent = 'Could not save — private browsing blocks it. The workflow still runs.'; return; }
       refreshSaved();
     });
 
     runBtn.addEventListener('click', async function () {
-      var v = validate(D, steps.map(function (s2) { return s2.id; }), startKind());
-      if (!v.ok) { log.innerHTML = ''; log.appendChild(h('p', { class: 'note err', text: v.why })); return; }
+      var paths = pathsFrom(nodes, links, 'in');
+      if (!paths.length) { log.innerHTML = ''; log.appendChild(h('p', { class: 'note err', text: 'Nothing is connected to your files yet — drag from the input node to a step.' })); return; }
+      var bad = null;
+      paths.forEach(function (p) {
+        var v = validate(D, p.map(function (n) { return n.id; }), startKind());
+        if (!v.ok && !bad) bad = v.why;
+      });
+      if (bad) { log.innerHTML = ''; log.appendChild(h('p', { class: 'note err', text: bad })); return; }
+
       runBtn.disabled = true; saveBtn.disabled = true;
       log.innerHTML = '';
-      var nodes = [].slice.call(pan.querySelectorAll('.wfc-node.is-step'));
-      nodes.forEach(function (n) { n.classList.remove('is-run', 'is-done', 'is-fail'); });
+      [].forEach.call(pan.querySelectorAll('.wfc-node.is-step'), function (n) { n.classList.remove('is-run', 'is-done', 'is-fail'); });
       var results = [];
 
-      for (var fi = 0; fi < files.length; fi++) {
-        var line = h('p', { class: 'wfc-line', text: files[fi].name + ' — starting' });
-        log.appendChild(line);
-        /* eslint-disable no-loop-func */
-        var res = await run(files[fi], steps, (function (ln) {
-          return function (i, state, detail) {
-            var n = nodes[i];
-            var nm = (D.names && D.names[steps[i].id]) || steps[i].id;
-            if (state === 'run') { if (n) { n.classList.remove('is-done', 'is-fail'); n.classList.add('is-run'); } ln.textContent = ln.textContent.split(' — ')[0] + ' — ' + nm; }
-            else if (state === 'progress' && typeof detail === 'number' && n) n.style.setProperty('--wfp', Math.round(detail * 100) + '%');
-            else if (state === 'status' && detail) ln.textContent = ln.textContent.split(' — ')[0] + ' — ' + nm + ': ' + detail;
-            else if (state === 'done' && n) { n.classList.remove('is-run'); n.classList.add('is-done'); }
-            else if (state === 'fail' && n) { n.classList.remove('is-run'); n.classList.add('is-fail'); ln.className = 'wfc-line is-err'; ln.textContent = files[0] && ln.textContent.split(' — ')[0] + ' — ' + nm + ': ' + detail; }
-          };
-        })(line));
-        /* eslint-enable no-loop-func */
-        if (res.file) {
-          results.push(res.file);
-          line.textContent = line.textContent.split(' — ')[0] + (res.ok ? ' — done' : ' — stopped at step ' + (res.at + 1) + ', partial result kept');
+      for (var pi = 0; pi < paths.length; pi++) {
+        var path = paths[pi];
+        for (var fi = 0; fi < files.length; fi++) {
+          var line = h('p', { class: 'wfc-line', text: files[fi].name + (paths.length > 1 ? ' · route ' + (pi + 1) : '') + ' — starting' });
+          log.appendChild(line);
+          /* eslint-disable no-loop-func */
+          var res = await run(files[fi], path, (function (ln, pth) {
+            return function (i, state, detail) {
+              var el3 = pan.querySelector('.wfc-node[data-uid="' + pth[i].uid + '"]');
+              var nm = (D.names && D.names[pth[i].id]) || pth[i].id;
+              var head = ln.textContent.split(' — ')[0];
+              if (state === 'run') { if (el3) { el3.classList.remove('is-done', 'is-fail'); el3.classList.add('is-run'); } ln.textContent = head + ' — ' + nm; }
+              else if (state === 'progress' && typeof detail === 'number' && el3) el3.style.setProperty('--wfp', Math.round(detail * 100) + '%');
+              else if (state === 'status' && detail) ln.textContent = head + ' — ' + nm + ': ' + detail;
+              else if (state === 'done' && el3) { el3.classList.remove('is-run'); el3.classList.add('is-done'); }
+              else if (state === 'fail') { if (el3) { el3.classList.remove('is-run'); el3.classList.add('is-fail'); } ln.className = 'wfc-line is-err'; ln.textContent = head + ' — ' + nm + ': ' + detail; }
+            };
+          })(line, path));
+          /* eslint-enable no-loop-func */
+          if (res.file) {
+            results.push(res.file);
+            var head2 = line.textContent.split(' — ')[0];
+            line.textContent = head2 + (res.ok ? ' — done' : ' — stopped at step ' + (res.at + 1) + ', partial result kept');
+          }
         }
       }
 
       runBtn.disabled = false; saveBtn.disabled = false;
-      if (!results.length) {
-        log.appendChild(h('p', { class: 'note err', text: 'Nothing came out. Your originals are untouched and nothing was uploaded.' }));
-        return;
-      }
-      log.appendChild(h('p', { class: 'note', text: results.length + ' of ' + files.length + ' file(s) came through.' }));
+      if (!results.length) { log.appendChild(h('p', { class: 'note err', text: 'Nothing came out. Your originals are untouched and nothing was uploaded.' })); return; }
+      log.appendChild(h('p', { class: 'note', text: results.length + ' file(s) produced from ' + files.length + ' input(s) over ' + paths.length + ' route(s).' }));
       results.forEach(function (r, i) {
-        var b = h('button', { class: 'btn' + (i === 0 ? ' btn-primary' : '') + ' btn-sm', type: 'button', text: 'Download ' + r.name });
+        var b = h('button', { class: 'btn btn-sm' + (i === 0 ? ' btn-primary' : ''), type: 'button', text: 'Download ' + r.name });
         b.addEventListener('click', function () {
           if (root.VKDeliver && root.VKDeliver.deliver) root.VKDeliver.deliver(r.blob, r.name, { toolId: 'workflow', host: log });
           else {
@@ -627,6 +790,7 @@
     host.appendChild(bar);
     host.appendChild(stage);
     host.appendChild(log);
+    drawPalette();
     refreshSaved();
     setZoom(1);
     draw();
@@ -636,11 +800,13 @@
      recognisable without being named by hand. */
   function describe(D, steps) {
     var names = (D || {}).names || {};
-    return steps.map(function (s) { return names[s.id] || s.id; }).join(' \u2192 ');
+    return (steps || []).map(function (s) { return names[s.id] || s.id; }).join(' \u2192 ');
   }
 
   root.VKWorkflow = {
     mount: mount,
+    pathsFrom: pathsFrom,
+    wouldCycle: wouldCycle,
     describe: describe,
     outputOf: outputOf,
     stepChoices: stepChoices,

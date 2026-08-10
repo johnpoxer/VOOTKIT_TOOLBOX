@@ -569,7 +569,7 @@ video.wcode { padding: 0; }
  */
 .wfc {
   position: relative; display: grid;
-  grid-template-columns: minmax(0, 1fr) 300px;
+  grid-template-columns: 210px minmax(0, 1fr) 290px;
   height: clamp(420px, 62vh, 680px);
   border: 1px solid #1e293b; border-radius: var(--r-lg);
   background: #0b1120; overflow: hidden;
@@ -683,3 +683,71 @@ video.wcode { padding: 0; }
 }
 .wfc-pickbtn .wfc-picktx { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .wfc-pickic { display: flex; flex: 0 0 auto; }
+
+/* --- palette: the thing you drag FROM --------------------------------------
+ * An editor without a palette is a form with a canvas behind it. Items are
+ * draggable AND clickable: dragging is the good way to use this, but it must
+ * not be the only way, or the whole feature is unreachable by keyboard and
+ * unreliable on a phone. */
+.wfc-pal {
+  border-right: 1px solid #1e293b; background: #0e1729; color: #e8eefb;
+  padding: var(--s-3); display: flex; flex-direction: column; gap: var(--s-2);
+  min-height: 0;
+}
+.wfc-search {
+  background: #16233c; border-color: #2c3d5c; color: #fff; min-height: 36px;
+  font-size: var(--t-sm);
+}
+.wfc-search::placeholder { color: #6d84a8; }
+.wfc-pal-list { overflow-y: auto; display: flex; flex-direction: column; gap: 4px; min-height: 0; }
+.wfc-palitem {
+  display: flex; align-items: center; gap: var(--s-2); width: 100%;
+  padding: 7px 8px; border-radius: 9px; cursor: grab;
+  background: transparent; border: 1px solid transparent; color: #cfe0fb;
+  font: inherit; font-size: var(--t-sm); text-align: left;
+}
+.wfc-palitem:hover { background: #16233c; border-color: #2c3d5c; }
+.wfc-palitem:active { cursor: grabbing; }
+.wfc-palitem:focus-visible { outline: 2px solid #7dabf8; outline-offset: 1px; }
+.wfc-palitem .ic-tool { width: 24px; height: 24px; border-radius: 7px; box-shadow: none; }
+.wfc-palitem .ic-tool svg { width: 14px; height: 14px; }
+
+/* The canvas says what to do when it is empty, and shows it is a drop target
+   while something is being dragged over it. */
+.wfc-hint {
+  position: absolute; inset: auto 0 auto 0; top: 42%; margin: 0;
+  text-align: center; color: #5f7396; font-size: var(--t-sm); pointer-events: none;
+}
+.wfc-canvas.is-target { box-shadow: inset 0 0 0 2px #7dabf8; }
+.wfc-canvas.is-linking { cursor: crosshair; }
+
+/* --- ports: the things you drag BETWEEN ----------------------------------- */
+.wfc-port {
+  position: absolute; top: 50%; width: 13px; height: 13px; margin-top: -6.5px;
+  border-radius: 50%; background: #0b1120; border: 2px solid #3b5580;
+}
+.wfc-port-in { left: -7px; }
+.wfc-port-out { right: -7px; cursor: crosshair; background: #3b5580; }
+.wfc-port-out:hover, .wfc-port-out:focus-visible { background: #7dabf8; border-color: #7dabf8; }
+.wfc-node:hover .wfc-port { border-color: #7dabf8; }
+
+.wfc-edge { pointer-events: stroke; cursor: pointer; }
+.wfc-edge:hover { stroke: #ff9d9d; }
+.wfc-edge.is-temp { pointer-events: none; color: #7dabf8; }
+
+/* A node nothing feeds is not an error, it is a thought in progress — so it is
+   dimmed rather than flagged red. */
+.wfc-node.is-orphan { opacity: .62; border-style: dashed; }
+
+.wfc-steps-help { margin: 0; padding-left: 1.1rem; color: #93a7c6; font-size: var(--t-sm); display: flex; flex-direction: column; gap: 6px; }
+
+@media (max-width: 1000px) {
+  /* The palette becomes a strip above the canvas; a 210px column plus a 290px
+     panel leaves nothing for the graph itself. */
+  .wfc { grid-template-columns: 1fr; height: auto; }
+  .wfc-pal { border-right: 0; border-bottom: 1px solid #1e293b; }
+  .wfc-pal-list { flex-direction: row; overflow-x: auto; padding-bottom: 4px; }
+  .wfc-palitem { width: auto; flex: 0 0 auto; }
+  .wfc-canvas { height: 360px; }
+  .wfc-panel { border-left: 0; border-top: 1px solid #1e293b; max-height: 320px; }
+}
