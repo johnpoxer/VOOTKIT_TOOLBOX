@@ -149,7 +149,11 @@
     var current = file;
     var produced = null;
     for (var i = 0; i < steps.length; i++) {
-      var id = steps[i];
+      /* A step is {id, opts} now. Plain ids are still accepted so a saved
+         workflow from before settings existed still runs, on defaults. */
+      var st = steps[i];
+      var id = typeof st === 'string' ? st : st.id;
+      var chosen = (typeof st === 'string' ? null : st.opts) || null;
       var spec = specFor(id);
       if (!spec) {
         onStep(i, 'fail', 'That tool is not loaded on this page.');
@@ -157,7 +161,8 @@
       }
       onStep(i, 'run', '');
       try {
-        var out = await spec.process([current], defaults(spec), {
+        var opts = Object.assign(defaults(spec), chosen || {});
+        var out = await spec.process([current], opts, {
           urls: { make: function (b) { return URL.createObjectURL(b); }, free: function () {} },
           loadImage: function (f) {
             return new Promise(function (res, rej) {
@@ -209,126 +214,268 @@
     var D = root.VK_FLOW;
     if (!D) { host.textContent = 'Workflows are unavailable right now.'; return; }
 
-    var file = null;
-    var steps = [];
+    var files = [];          // a workflow runs over MANY files, not one
+    var steps = [];          // [{id, opts:{}}]
 
-    var input = h('input', { type: 'file', class: 'sr-only', id: 'wf-file' });
+    var input = h('input', { type: 'file', multiple: 'multiple', class: 'sr-only', id: 'wf-file' });
     var drop = h('button', { class: 'drop', type: 'button', onclick: function () { input.click(); } }, [
-      h('strong', { text: 'Choose the file to start with' }),
-      h('small', { text: 'Everything runs on your device — nothing is uploaded' })
+      h('strong', { text: 'Choose the files to run through' }),
+      h('small', { text: 'Several at once — every one goes through every step, on your device' })
     ]);
     var fileNote = h('p', { class: 'note', id: 'wf-file-note' });
     var list = h('ol', { class: 'wf-steps' });
     var addWrap = h('div', { class: 'wf-add' });
+    var savedWrap = h('div', { class: 'wf-saved' });
     var runBtn = h('button', { class: 'btn btn-primary', type: 'button', text: 'Run workflow', disabled: 'disabled' });
+    var saveBtn = h('button', { class: 'btn', type: 'button', text: 'Save this workflow', disabled: 'disabled' });
     var out = h('div', { class: 'wf-out', 'aria-live': 'polite' });
 
-    function currentKind() {
-      var k = file ? kindOfFile(file.name, file.type) : '';
-      for (var i = 0; i < steps.length; i++) k = outputOf(D.flow, steps[i], k);
-      return k;
+    function startKind() { return files.length ? kindOfFile(files[0].name, files[0].type) : ''; }
+
+    /* ---- per-step settings -------------------------------------------------
+     * Every tool already declares its controls as data — {k, label, type, def}
+     * — because filetool.js builds a tool page's options from exactly this. So
+     * the workflow can render the real controls for each step rather than
+     * running everything on defaults, and it stays correct as tools change
+     * their options, because there is no second copy of them here. */
+    function optionField(opt, val, onChange) {
+      var id = 'wf-o-' + Math.random().toString(36).slice(2, 8);
+      var field;
+      if (opt.type === 'select') {
+        field = h('select', { class: 'field', id: id });
+        (opt.options || []).forEach(function (o) {
+          var oe = h('option', { value: String(o.v), text: o.label });
+          if (String(o.v) === String(val)) oe.selected = true;
+          field.appendChild(oe);
+        });
+        field.addEventListener('change', function () {
+          var raw = field.value;
+          var match = (opt.options || []).filter(function (o) { return String(o.v) === raw; })[0];
+          onChange(match ? match.v : raw);
+        });
+      } else if (opt.type === 'range' || (opt.min != null && opt.max != null)) {
+        field = h('input', {
+          type: 'range', class: 'wf-range', id: id,
+          min: String(opt.min != null ? opt.min : 0),
+          max: String(opt.max != null ? opt.max : 100),
+          step: String(opt.step || 1), value: String(val)
+        });
+        var read = h('span', { class: 'wf-val', text: String(val) + (opt.suffix || '') });
+        field.addEventListener('input', function () {
+          read.textContent = field.value + (opt.suffix || '');
+          onChange(Number(field.value));
+        });
+        return h('label', { class: 'wf-opt', for: id }, [
+          h('span', { class: 'wf-opt-l', text: opt.label || opt.k }), field, read
+        ]);
+      } else if (opt.type === 'checkbox' || typeof opt.def === 'boolean') {
+        field = h('input', { type: 'checkbox', id: id });
+        field.checked = !!val;
+        field.addEventListener('change', function () { onChange(field.checked); });
+      } else {
+        field = h('input', { type: 'text', class: 'field', id: id, value: String(val == null ? '' : val) });
+        field.addEventListener('input', function () { onChange(field.value); });
+      }
+      return h('label', { class: 'wf-opt', for: id }, [
+        h('span', { class: 'wf-opt-l', text: opt.label || opt.k }), field
+      ]);
+    }
+
+    function move(i, by) {
+      var j = i + by;
+      if (j < 0 || j >= steps.length) return;
+      var t = steps[i]; steps[i] = steps[j]; steps[j] = t;
+      redraw();
     }
 
     function redraw() {
       list.innerHTML = '';
-      var k = file ? kindOfFile(file.name, file.type) : '';
-      steps.forEach(function (id, i) {
-        var nm = (D.names && D.names[id]) || id;
-        var bad = !kindAccepted((D.flow[id] || {}).a, k);
-        list.appendChild(h('li', { class: 'wf-step' + (bad ? ' is-bad' : ''), 'data-i': i }, [
-          h('span', { class: 'wf-n', text: String(i + 1) }),
-          h('span', { class: 'wf-name', text: nm }),
-          bad ? h('span', { class: 'wf-warn', text: 'cannot take the file at this point' }) : null,
-          h('button', {
-            class: 'btn btn-sm', type: 'button', text: 'Remove',
-            'aria-label': 'Remove step ' + (i + 1) + ', ' + nm,
-            onclick: function () { steps.splice(i, 1); redraw(); }
-          })
-        ]));
-        k = outputOf(D.flow, id, k);
+      var k = startKind();
+      steps.forEach(function (st, i) {
+        var nm = (D.names && D.names[st.id]) || st.id;
+        var bad = !kindAccepted((D.flow[st.id] || {}).a, k);
+        var spec = specFor(st.id);
+        var body = h('div', { class: 'wf-body' }, [
+          h('div', { class: 'wf-head' }, [
+            h('span', { class: 'wf-n', text: String(i + 1) }),
+            h('span', { class: 'wf-name', text: nm }),
+            bad ? h('span', { class: 'wf-warn', text: 'cannot take the file at this point' }) : null,
+            h('div', { class: 'wf-acts' }, [
+              h('button', { class: 'btn btn-sm', type: 'button', text: '\u2191',
+                'aria-label': 'Move ' + nm + ' earlier', disabled: i === 0 ? 'disabled' : null,
+                onclick: function () { move(i, -1); } }),
+              h('button', { class: 'btn btn-sm', type: 'button', text: '\u2193',
+                'aria-label': 'Move ' + nm + ' later', disabled: i === steps.length - 1 ? 'disabled' : null,
+                onclick: function () { move(i, 1); } }),
+              h('button', { class: 'btn btn-sm', type: 'button', text: 'Remove',
+                'aria-label': 'Remove ' + nm,
+                onclick: function () { steps.splice(i, 1); redraw(); } })
+            ])
+          ])
+        ]);
+        var opts = (spec && spec.options) || [];
+        if (opts.length) {
+          var grid = h('div', { class: 'wf-opts' });
+          opts.forEach(function (opt) {
+            if (st.opts[opt.k] === undefined) st.opts[opt.k] = opt.def;
+            grid.appendChild(optionField(opt, st.opts[opt.k], function (v) { st.opts[opt.k] = v; }));
+          });
+          body.appendChild(grid);
+        } else {
+          body.appendChild(h('p', { class: 'wf-noopt', text: 'No settings — this step does one thing.' }));
+        }
+        list.appendChild(h('li', { class: 'wf-step' + (bad ? ' is-bad' : '') }, [body]));
+        k = outputOf(D.flow, st.id, k);
       });
 
       addWrap.innerHTML = '';
-      var choices = stepChoices(D, k || 'pdf', steps[steps.length - 1]);
-      if (!file) {
-        addWrap.appendChild(h('p', { class: 'note', text: 'Choose a file first — the steps on offer depend on what it is.' }));
+      var choices = stepChoices(D, k || '', steps.length ? steps[steps.length - 1].id : null);
+      if (!files.length) {
+        addWrap.appendChild(h('p', { class: 'note', text: 'Choose your files first — which steps are possible depends on what they are.' }));
       } else if (!choices.length) {
-        addWrap.appendChild(h('p', { class: 'note', text: 'Nothing else can be done to the file at this point. Run the workflow to get it.' }));
+        addWrap.appendChild(h('p', { class: 'note', text: 'Nothing further can be done to the file at this point.' }));
       } else {
         var sel = h('select', { class: 'field', 'aria-label': 'Add a step' });
         choices.forEach(function (c) { sel.appendChild(h('option', { value: c.id, text: c.name })); });
         addWrap.appendChild(sel);
-        addWrap.appendChild(h('button', {
-          class: 'btn', type: 'button', text: 'Add step',
-          onclick: function () { steps.push(sel.value); redraw(); }
-        }));
+        addWrap.appendChild(h('button', { class: 'btn', type: 'button', text: 'Add step',
+          onclick: function () { steps.push({ id: sel.value, opts: {} }); redraw(); } }));
       }
-      runBtn.disabled = !(file && steps.length);
+      runBtn.disabled = !(files.length && steps.length);
+      saveBtn.disabled = !steps.length;
+      runBtn.textContent = files.length > 1
+        ? 'Run on ' + files.length + ' files'
+        : 'Run workflow';
       out.innerHTML = '';
+      drawSaved();
     }
 
+    /* ---- saved workflows ---------------------------------------------------
+     * The settings travel with the steps. A saved workflow that forgot its
+     * options would be a list of tool names, which is a note, not a workflow. */
+    function drawSaved() {
+      savedWrap.innerHTML = '';
+      var list2 = load();
+      if (!list2.length) return;
+      savedWrap.appendChild(h('h2', { class: 'wf-h', text: 'Saved workflows' }));
+      var ul = h('ul', { class: 'wf-savedlist' });
+      list2.forEach(function (wf, i) {
+        ul.appendChild(h('li', {}, [
+          h('button', {
+            class: 'btn btn-sm', type: 'button',
+            text: wf.name + '  (' + wf.steps.length + ' steps)',
+            onclick: function () {
+              steps = wf.steps.map(function (s2) { return { id: s2.id, opts: Object.assign({}, s2.opts) }; });
+              redraw();
+            }
+          }),
+          h('button', {
+            class: 'btn btn-sm btn-ghost', type: 'button', text: 'Delete',
+            'aria-label': 'Delete ' + wf.name,
+            onclick: function () { var l = load(); l.splice(i, 1); save(l); drawSaved(); }
+          })
+        ]));
+      });
+      savedWrap.appendChild(ul);
+    }
+
+    saveBtn.addEventListener('click', function () {
+      var name = (root.prompt && root.prompt('Name this workflow', describe(D, steps))) || '';
+      name = String(name).trim().slice(0, 60);
+      if (!name) return;
+      var l = load();
+      l.unshift({ name: name, steps: steps.map(function (s2) { return { id: s2.id, opts: s2.opts }; }) });
+      if (!save(l)) {
+        out.appendChild(h('p', { class: 'note err', text: 'Could not save — private browsing blocks it. The workflow still runs.' }));
+        return;
+      }
+      drawSaved();
+    });
+
     input.addEventListener('change', function () {
-      if (!input.files || !input.files[0]) return;
-      file = input.files[0];
-      var kind = kindOfFile(file.name, file.type);
-      fileNote.textContent = kind
-        ? file.name + ' — ' + kind
-        : file.name + ' — this kind of file has no workflow steps yet.';
-      steps = [];
+      if (!input.files || !input.files.length) return;
+      files = [].slice.call(input.files);
+      var kinds = {};
+      files.forEach(function (f) { kinds[kindOfFile(f.name, f.type)] = 1; });
+      var ks = Object.keys(kinds).filter(Boolean);
+      if (ks.length > 1) {
+        fileNote.className = 'note err';
+        fileNote.textContent = 'Those are ' + ks.join(' and ') + ' files. A workflow runs one kind at a time, so the steps would not apply to all of them — choose one kind.';
+        files = [];
+        steps = [];
+        redraw();
+        return;
+      }
+      fileNote.className = 'note';
+      fileNote.textContent = files.length === 1
+        ? files[0].name + ' — ' + (ks[0] || 'unsupported here')
+        : files.length + ' ' + (ks[0] || 'unsupported') + ' files';
       redraw();
     });
 
     runBtn.addEventListener('click', async function () {
-      var v = validate(D, steps, kindOfFile(file.name, file.type));
+      var v = validate(D, steps.map(function (s2) { return s2.id; }), startKind());
       if (!v.ok) { out.innerHTML = ''; out.appendChild(h('p', { class: 'note err', text: v.why })); return; }
-      runBtn.disabled = true;
+      runBtn.disabled = true; saveBtn.disabled = true;
       out.innerHTML = '';
-      var rows = steps.map(function (id, i) {
-        var r = h('li', { class: 'wf-run' }, [
-          h('span', { class: 'wf-n', text: String(i + 1) }),
-          h('span', { class: 'wf-name', text: (D.names && D.names[id]) || id }),
-          h('span', { class: 'wf-state', text: 'waiting' })
+      var results = [];
+      var table = h('ol', { class: 'wf-runs' });
+      out.appendChild(table);
+
+      for (var fi = 0; fi < files.length; fi++) {
+        var rowHead = h('li', { class: 'wf-run is-file' }, [
+          h('span', { class: 'wf-name', text: files[fi].name }),
+          h('span', { class: 'wf-state', text: 'queued' })
         ]);
-        return r;
-      });
-      var ol = h('ol', { class: 'wf-runs' }, rows);
-      out.appendChild(ol);
+        table.appendChild(rowHead);
+        var stateCell = rowHead.querySelector('.wf-state');
+        /* eslint-disable no-loop-func */
+        var res = await run(files[fi], steps, (function (cell) {
+          return function (i, state, detail) {
+            var nm = (D.names && D.names[steps[i].id]) || steps[i].id;
+            if (state === 'run') cell.textContent = 'step ' + (i + 1) + ' of ' + steps.length + ' — ' + nm;
+            else if (state === 'progress' && typeof detail === 'number') {
+              cell.textContent = 'step ' + (i + 1) + ' of ' + steps.length + ' — ' + nm + ' ' + Math.round(detail * 100) + '%';
+            } else if (state === 'status' && detail) cell.textContent = nm + ': ' + detail;
+            else if (state === 'fail') cell.textContent = nm + ' — ' + detail;
+          };
+        })(stateCell));
+        /* eslint-enable no-loop-func */
+        if (res.file) {
+          results.push(res.file);
+          rowHead.className = 'wf-run is-file ' + (res.ok ? 'is-done' : 'is-part');
+          stateCell.textContent = res.ok
+            ? 'done'
+            : 'stopped at step ' + (res.at + 1) + ' — partial result kept';
+        } else {
+          rowHead.className = 'wf-run is-file is-fail';
+        }
+      }
 
-      var res = await run(file, steps, function (i, state, detail) {
-        var cell = rows[i].querySelector('.wf-state');
-        if (state === 'run') { rows[i].className = 'wf-run is-run'; cell.textContent = 'working…'; }
-        else if (state === 'status' && detail) cell.textContent = String(detail);
-        else if (state === 'progress' && typeof detail === 'number') cell.textContent = Math.round(detail * 100) + '%';
-        else if (state === 'done') { rows[i].className = 'wf-run is-done'; cell.textContent = 'done'; }
-        else if (state === 'fail') { rows[i].className = 'wf-run is-fail'; cell.textContent = String(detail || 'failed'); }
-      });
-
-      runBtn.disabled = false;
-      if (!res.file) {
-        out.appendChild(h('p', { class: 'note err', text: 'Nothing came out of the run. Nothing was uploaded and your original file is untouched.' }));
+      runBtn.disabled = false; saveBtn.disabled = false;
+      if (!results.length) {
+        out.appendChild(h('p', { class: 'note err', text: 'Nothing came out. Your original files are untouched and nothing was uploaded.' }));
         return;
       }
-      /* Even a failed chain hands back the last good output — losing three
-         minutes of work because the final step had a bad setting would be
-         unforgivable. */
-      var msg = res.ok
-        ? 'Finished. ' + steps.length + ' steps, one file.'
-        : 'Stopped at step ' + (res.at + 1) + '. Here is the result of everything before it.';
-      out.appendChild(h('p', { class: 'note', text: msg }));
-      var dlBtn = h('button', { class: 'btn btn-primary', type: 'button', text: 'Download ' + res.file.name });
-      dlBtn.addEventListener('click', function () {
-        /* Through deliver.js, so the daily limit, the analytics and the run log
-           all behave exactly as they do on a tool page. A workflow is not a
-           side door around the funnel. */
-        if (root.VKDeliver && root.VKDeliver.deliver) {
-          root.VKDeliver.deliver(res.file.blob, res.file.name, { toolId: 'workflow', host: out });
-        } else {
-          var u = URL.createObjectURL(res.file.blob);
-          var a = doc.createElement('a'); a.href = u; a.download = res.file.name; a.click();
-          setTimeout(function () { URL.revokeObjectURL(u); }, 1500);
-        }
+      out.appendChild(h('p', { class: 'note',
+        text: results.length + ' of ' + files.length + ' file' + (files.length === 1 ? '' : 's') + ' came through ' + steps.length + ' step' + (steps.length === 1 ? '' : 's') + '.' }));
+
+      /* One button per result rather than a zip: writing a zip in the browser
+         needs a library nobody has downloaded yet, and on a two-file run that
+         is a worse trade than two clicks. */
+      results.forEach(function (r, i) {
+        var b = h('button', { class: 'btn' + (i === 0 ? ' btn-primary' : ''), type: 'button', text: 'Download ' + r.name });
+        b.addEventListener('click', function () {
+          if (root.VKDeliver && root.VKDeliver.deliver) {
+            root.VKDeliver.deliver(r.blob, r.name, { toolId: 'workflow', host: out });
+          } else {
+            var u = URL.createObjectURL(r.blob);
+            var a = doc.createElement('a'); a.href = u; a.download = r.name; a.click();
+            setTimeout(function () { URL.revokeObjectURL(u); }, 1500);
+          }
+        });
+        out.appendChild(b);
       });
-      out.appendChild(dlBtn);
     });
 
     host.appendChild(drop);
@@ -337,13 +484,22 @@
     host.appendChild(h('h2', { class: 'wf-h', text: 'Steps' }));
     host.appendChild(list);
     host.appendChild(addWrap);
-    host.appendChild(h('div', { class: 'wf-go' }, [runBtn]));
+    host.appendChild(h('div', { class: 'wf-go' }, [runBtn, saveBtn]));
+    host.appendChild(savedWrap);
     host.appendChild(out);
     redraw();
   }
 
+  /* A default name that describes the chain, so a saved workflow is
+     recognisable without being named by hand. */
+  function describe(D, steps) {
+    var names = (D || {}).names || {};
+    return steps.map(function (s) { return names[s.id] || s.id; }).join(' \u2192 ');
+  }
+
   root.VKWorkflow = {
     mount: mount,
+    describe: describe,
     outputOf: outputOf,
     stepChoices: stepChoices,
     kindAccepted: kindAccepted,

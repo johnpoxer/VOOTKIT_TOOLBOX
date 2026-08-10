@@ -99,3 +99,41 @@ eq(W.outputOf(D.flow, "not-a-tool", "pdf"), "pdf", "an unknown id does not chang
 }
 
 console.log(`workflow: ${pass} assertions passed`);
+
+/* ---------------------------------------------------------------------------
+ * SETTINGS TRAVEL WITH THE STEP.
+ *
+ * A workflow that ran everything on defaults was a shortcut, not a workflow —
+ * "rotate this PDF" is useless if you cannot say by how much. Steps are
+ * {id, opts} now, and the two things worth pinning down are that a step's
+ * chosen options actually reach process(), and that a workflow saved before
+ * settings existed still runs.
+ * ------------------------------------------------------------------------- */
+{
+  /* Old shape: a bare id. New shape: an object. run() has to take both, or
+     every workflow anyone saved yesterday breaks silently today. */
+  const src = require("fs").readFileSync(
+    require("path").join(__dirname, "..", "assets/js/workflow.js"), "utf8");
+  ok(/typeof st === 'string' \? st : st\.id/.test(src),
+     "run() still accepts a plain id, so saved workflows from before settings keep working");
+  ok(/Object\.assign\(defaults\(spec\), chosen \|\| \{\}\)/.test(src),
+     "chosen settings are layered OVER the tool's defaults, never instead of them");
+
+  /* Layering matters: a step that sets one option must not blank the others. */
+  const spec = { options: [{ k: "deg", def: 90 }, { k: "which", def: "all" }] };
+  const merged = Object.assign(W.defaults(spec), { deg: 180 });
+  eq(merged.deg, 180, "the chosen value wins");
+  eq(merged.which, "all", "and every option the user did not touch keeps its default");
+
+  eq(W.defaults({ options: [] }), {}, "a tool with no options contributes none");
+  eq(W.defaults({}), {}, "a spec with no options array does not throw");
+}
+
+/* A saved workflow is only useful if it is recognisable. */
+{
+  const D2 = { names: { "rotate-pdf": "Rotate PDF", "pdf-watermark": "PDF Watermark" } };
+  eq(W.describe(D2, [{ id: "rotate-pdf" }, { id: "pdf-watermark" }]),
+     "Rotate PDF → PDF Watermark", "the default name describes the chain");
+  eq(W.describe(D2, []), "", "an empty chain describes as nothing");
+}
+console.log(`workflow + settings: ${pass} total assertions passed`);

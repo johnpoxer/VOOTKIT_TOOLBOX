@@ -1995,15 +1995,16 @@ function workflowPage() {
     <div class="sec-head">
       <span class="eyebrow">Workflows</span>
       <h1>Do several things to one file, in one go.</h1>
-      <p>Pick a file, stack up the steps, press run once. Each step feeds the
-      next, and the whole sequence happens on your device — nothing is uploaded
-      at any point, including between the steps.</p>
+      <p>Pick your files, stack up the steps, set each one, press run once.
+      Every file goes through every step, in order, on your device — nothing is
+      uploaded at any point, including between the steps. Save a workflow and
+      it comes back with its settings, ready to run on the next batch.</p>
     </div>
     <div class="card wf" id="wf"></div>
     <p class="note" style="margin-top:var(--s-4);max-width:60ch">
-      Steps run with each tool's default settings. For fine control over a
-      single step — exact crop, specific pages, a particular quality — use that
-      tool's own page, where every option is available.
+      Every step carries the same settings its own tool page has, so a workflow
+      is a saved decision rather than a shortcut. Save one and it comes back
+      with those settings intact.
     </p>
   </section>
 </main>` + foot(1, [

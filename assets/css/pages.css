@@ -569,6 +569,29 @@ video.wcode { padding: 0; }
   border: 1px solid var(--line); border-radius: var(--r-md);
   background: var(--surface);
 }
+/* A step is a small panel now, not a row: it carries the tool's own controls,
+   which is the difference between a workflow and a list of tool names. */
+.wf-step { display: block; }
+.wf-body { display: flex; flex-direction: column; gap: var(--s-3); }
+.wf-head { display: flex; align-items: center; gap: var(--s-3); }
+.wf-acts { display: flex; gap: var(--s-1); margin-left: auto; }
+.wf-acts .btn { min-height: 34px; padding: var(--s-1) var(--s-3); }
+.wf-opts {
+  display: grid; gap: var(--s-3);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  padding-top: var(--s-3); border-top: 1px dashed var(--line);
+}
+.wf-opt { display: flex; flex-direction: column; gap: 6px; margin: 0; }
+.wf-opt-l { font-size: var(--t-sm); font-weight: 600; color: var(--ink-soft); }
+.wf-range { width: 100%; }
+.wf-val { font-size: var(--t-sm); color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.wf-noopt { margin: 0; font-size: var(--t-sm); color: var(--ink-mute); }
+.wf-saved { display: flex; flex-direction: column; gap: var(--s-2); }
+.wf-savedlist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--s-2); }
+.wf-savedlist li { display: flex; gap: var(--s-2); align-items: center; }
+.wf-savedlist li .btn:first-child { flex: 1; justify-content: flex-start; text-align: left; }
+.wf-run.is-part { border-color: var(--warn-border); background: var(--warn-weak); }
+.wf-run.is-part .wf-state { color: var(--warn); }
 .wf-n {
   flex: 0 0 auto; width: 26px; height: 26px; display: grid; place-items: center;
   border-radius: 50%; background: var(--accent-weak); color: var(--accent);
