@@ -1995,12 +1995,12 @@ function workflowPage() {
     <div class="sec-head">
       <span class="eyebrow">Workflows</span>
       <h1>Do several things to one file, in one go.</h1>
-      <p>Pick your files, stack up the steps, set each one, press run once.
-      Every file goes through every step, in order, on your device — nothing is
-      uploaded at any point, including between the steps. Save a workflow and
-      it comes back with its settings, ready to run on the next batch.</p>
+      <p>Lay the steps out on the canvas, click any one to change its settings,
+      then run. Every file goes through every node in order, on your device —
+      nothing is uploaded at any point, including between the steps. Nodes
+      light up as they run, so you can see where a batch has got to.</p>
     </div>
-    <div class="card wf" id="wf"></div>
+    <div id="wf"></div>
     <p class="note" style="margin-top:var(--s-4);max-width:60ch">
       Every step carries the same settings its own tool page has, so a workflow
       is a saved decision rather than a shortcut. Save one and it comes back

@@ -209,35 +209,231 @@
     return n;
   }
 
+  /* ---------- the canvas editor ----------
+   *
+   * A node graph, not a list. The list version was legible and it was also
+   * wrong for the job: a workflow is a THING WITH A SHAPE, and the shape is
+   * what you are reasoning about while you build it — what feeds what, where
+   * it changes type, where it will stop. A vertical list of names hides all of
+   * that behind reading order.
+   *
+   * Everything is HTML nodes over one SVG edge layer, inside a single panned
+   * and scaled wrapper. No canvas element and no library: the nodes have to be
+   * real focusable elements or the whole thing is unusable by keyboard and
+   * invisible to a screen reader, which is where most graph editors on the web
+   * give up.
+   */
   function mount(host) {
     if (!host) return;
     var D = root.VK_FLOW;
     if (!D) { host.textContent = 'Workflows are unavailable right now.'; return; }
 
-    var files = [];          // a workflow runs over MANY files, not one
-    var steps = [];          // [{id, opts:{}}]
+    var files = [];
+    var steps = [];              // [{id, opts, x, y}]
+    var sel = -1;                // selected step index, -1 = none
+    var view = { x: 40, y: 40, k: 1 };
+    var NODE_W = 168, NODE_H = 84, GAP_X = 210;
+
+    /* --- shell ------------------------------------------------------------ */
+    var edges = doc.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    edges.setAttribute('class', 'wfc-edges');
+    var pan = h('div', { class: 'wfc-pan' }, [edges]);
+    var canvas = h('div', { class: 'wfc-canvas', tabindex: '0', role: 'application',
+      'aria-label': 'Workflow canvas. Use the panel on the right to change a step.' }, [pan]);
+    var zoom = h('div', { class: 'wfc-zoom' }, [
+      h('button', { class: 'icon-btn', type: 'button', text: '−', 'aria-label': 'Zoom out',
+        onclick: function () { setZoom(view.k / 1.2); } }),
+      h('button', { class: 'icon-btn', type: 'button', text: '+', 'aria-label': 'Zoom in',
+        onclick: function () { setZoom(view.k * 1.2); } }),
+      h('button', { class: 'icon-btn', type: 'button', text: '□', 'aria-label': 'Fit to view',
+        onclick: fit })
+    ]);
+    var panel = h('aside', { class: 'wfc-panel', 'aria-label': 'Step settings' });
+    var stage = h('div', { class: 'wfc' }, [canvas, zoom, panel]);
 
     var input = h('input', { type: 'file', multiple: 'multiple', class: 'sr-only', id: 'wf-file' });
-    var drop = h('button', { class: 'drop', type: 'button', onclick: function () { input.click(); } }, [
-      h('strong', { text: 'Choose the files to run through' }),
-      h('small', { text: 'Several at once — every one goes through every step, on your device' })
-    ]);
-    var fileNote = h('p', { class: 'note', id: 'wf-file-note' });
-    var list = h('ol', { class: 'wf-steps' });
-    var addWrap = h('div', { class: 'wf-add' });
-    var savedWrap = h('div', { class: 'wf-saved' });
+    var fileBtn = h('button', { class: 'btn', type: 'button', text: 'Choose files',
+      onclick: function () { input.click(); } });
+    var fileNote = h('span', { class: 'wfc-files', id: 'wf-file-note', text: 'No files yet' });
     var runBtn = h('button', { class: 'btn btn-primary', type: 'button', text: 'Run workflow', disabled: 'disabled' });
-    var saveBtn = h('button', { class: 'btn', type: 'button', text: 'Save this workflow', disabled: 'disabled' });
-    var out = h('div', { class: 'wf-out', 'aria-live': 'polite' });
+    var saveBtn = h('button', { class: 'btn', type: 'button', text: 'Save', disabled: 'disabled' });
+    var savedSel = h('select', { class: 'field wfc-load', 'aria-label': 'Load a saved workflow' });
+    var bar = h('div', { class: 'wfc-bar' }, [fileBtn, input, fileNote,
+      h('span', { class: 'wfc-spacer' }), savedSel, saveBtn, runBtn]);
+    var log = h('div', { class: 'wfc-log', 'aria-live': 'polite' });
 
+    /* --- geometry --------------------------------------------------------- */
     function startKind() { return files.length ? kindOfFile(files[0].name, files[0].type) : ''; }
+    function layout() {
+      steps.forEach(function (st, i) {
+        if (st.x == null) { st.x = (i + 1) * GAP_X; st.y = 0; }
+      });
+    }
+    function setZoom(k) {
+      view.k = Math.max(0.4, Math.min(1.6, k));
+      pan.style.transform = 'translate(' + view.x + 'px,' + view.y + 'px) scale(' + view.k + ')';
+    }
+    function fit() {
+      var xs = [0].concat(steps.map(function (s2) { return s2.x || 0; })).concat([(steps.length + 1) * GAP_X]);
+      var ys = [0].concat(steps.map(function (s2) { return s2.y || 0; }));
+      var w = Math.max.apply(null, xs) + NODE_W + 40;
+      var hgt = Math.max.apply(null, ys) - Math.min.apply(null, ys) + NODE_H + 40;
+      var k = Math.min(canvas.clientWidth / w, canvas.clientHeight / hgt, 1.2);
+      view.k = Math.max(0.4, k || 1);
+      view.x = 30; view.y = (canvas.clientHeight - hgt * view.k) / 2 - Math.min.apply(null, ys) * view.k;
+      setZoom(view.k);
+    }
 
-    /* ---- per-step settings -------------------------------------------------
-     * Every tool already declares its controls as data — {k, label, type, def}
-     * — because filetool.js builds a tool page's options from exactly this. So
-     * the workflow can render the real controls for each step rather than
-     * running everything on defaults, and it stays correct as tools change
-     * their options, because there is no second copy of them here. */
+    /* --- drawing ---------------------------------------------------------- */
+    function nodeEl(cls, x, y, iconHtml, title, sub, onClick, i) {
+      var n = h('div', { class: 'wfc-node ' + cls, style: 'left:' + x + 'px;top:' + y + 'px',
+        tabindex: onClick ? '0' : null, role: onClick ? 'button' : null,
+        'aria-label': onClick ? title + (sub ? ', ' + sub : '') + '. Open settings.' : title });
+      n.appendChild(h('div', { class: 'wfc-ic', html: iconHtml }));
+      n.appendChild(h('div', { class: 'wfc-tx' }, [
+        h('strong', { text: title }),
+        sub ? h('span', { text: sub }) : null
+      ]));
+      if (onClick) {
+        n.addEventListener('click', function (e) { if (!n.dataset.dragged) onClick(e); delete n.dataset.dragged; });
+        n.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(e); } });
+        makeDraggable(n, i);
+      }
+      return n;
+    }
+
+    function makeDraggable(el2, i) {
+      var sx, sy, ox, oy, moving = false;
+      el2.addEventListener('pointerdown', function (e) {
+        if (e.button) return;
+        moving = true; sx = e.clientX; sy = e.clientY; ox = steps[i].x; oy = steps[i].y;
+        el2.setPointerCapture(e.pointerId); el2.classList.add('is-drag');
+      });
+      el2.addEventListener('pointermove', function (e) {
+        if (!moving) return;
+        var dx = (e.clientX - sx) / view.k, dy = (e.clientY - sy) / view.k;
+        if (Math.abs(dx) + Math.abs(dy) > 3) el2.dataset.dragged = '1';
+        steps[i].x = ox + dx; steps[i].y = oy + dy;
+        el2.style.left = steps[i].x + 'px'; el2.style.top = steps[i].y + 'px';
+        drawEdges();
+      });
+      el2.addEventListener('pointerup', function () { moving = false; el2.classList.remove('is-drag'); });
+      el2.addEventListener('pointercancel', function () { moving = false; el2.classList.remove('is-drag'); });
+    }
+
+    function toolIcon(id) {
+      var I = root.VK_ICONS, e = I && I.icons && I.icons[id];
+      if (!e || !I.glyphs[e.g]) return '<span class="ic"></span>';
+      return '<span class="ic ic-tool" style="--ic-h:' + e.h + ';--ic-bg:' + e.bg + '">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" ' +
+        'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + I.glyphs[e.g] + '</svg></span>';
+    }
+
+    /* A curve, not a straight line: with nodes at different heights a straight
+       edge crosses the node boxes, and the eye loses which end is which. */
+    function drawEdges() {
+      var pts = [{ x: 0, y: 0 }].concat(steps.map(function (s2) { return { x: s2.x, y: s2.y }; }))
+        .concat([{ x: (steps.length + 1) * GAP_X, y: 0 }]);
+      var d = '';
+      for (var i = 0; i < pts.length - 1; i++) {
+        var x1 = pts[i].x + NODE_W, y1 = pts[i].y + NODE_H / 2;
+        var x2 = pts[i + 1].x, y2 = pts[i + 1].y + NODE_H / 2;
+        var mx = (x1 + x2) / 2;
+        d += 'M' + x1 + ',' + y1 + ' C' + mx + ',' + y1 + ' ' + mx + ',' + y2 + ' ' + x2 + ',' + y2 + ' ';
+      }
+      var maxX = (steps.length + 1) * GAP_X + NODE_W + 60;
+      var ys = pts.map(function (p) { return p.y; });
+      var minY = Math.min.apply(null, ys) - 60, maxY = Math.max.apply(null, ys) + NODE_H + 60;
+      edges.setAttribute('viewBox', '0 ' + minY + ' ' + maxX + ' ' + (maxY - minY));
+      edges.setAttribute('width', maxX); edges.setAttribute('height', maxY - minY);
+      edges.style.top = minY + 'px';
+      edges.innerHTML =
+        '<defs><marker id="wfa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">' +
+        '<path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>' +
+        '<path d="' + d + '" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#wfa)"/>';
+    }
+
+    function summarise(st) {
+      var spec = specFor(st.id);
+      var o = (spec && spec.options) || [];
+      if (!o.length) return '';
+      var k = o[0];
+      var v = st.opts[k.k];
+      return (k.label || k.k) + ': ' + (v == null ? k.def : v) + (k.suffix || '');
+    }
+
+    function draw() {
+      layout();
+      [].slice.call(pan.querySelectorAll('.wfc-node, .wfc-add')).forEach(function (n) { n.remove(); });
+
+      pan.appendChild(nodeEl('is-start', 0, 0,
+        '<span class="ic ic-tool" style="--ic-bg:#1d4ed8;--ic-h:220"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V5m0 0L8 9m4-4 4 4M5 14v5h14v-5"/></svg></span>',
+        files.length ? (files.length === 1 ? files[0].name : files.length + ' files') : 'Your files',
+        files.length ? startKind() : 'nothing chosen yet', null));
+
+      steps.forEach(function (st, i) {
+        var nm = (D.names && D.names[st.id]) || st.id;
+        var kindHere = startKind();
+        for (var j = 0; j < i; j++) kindHere = outputOf(D.flow, steps[j].id, kindHere);
+        var bad = files.length && !kindAccepted((D.flow[st.id] || {}).a, kindHere);
+        pan.appendChild(nodeEl(
+          'is-step' + (bad ? ' is-bad' : '') + (sel === i ? ' is-sel' : ''),
+          st.x, st.y, toolIcon(st.id), nm, bad ? 'cannot take this file' : summarise(st),
+          function () { sel = i; draw(); }, i));
+      });
+
+      var endX = (steps.length + 1) * GAP_X;
+      pan.appendChild(nodeEl('is-end', endX, 0,
+        '<span class="ic ic-tool" style="--ic-bg:#0f7a4a;--ic-h:150"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>',
+        'Finished file', steps.length + ' step' + (steps.length === 1 ? '' : 's'), null));
+
+      var addX = endX - GAP_X + NODE_W + 18;
+      var add = h('button', { class: 'wfc-add', type: 'button', text: '+', 'aria-label': 'Add a step',
+        style: 'left:' + addX + 'px;top:' + (NODE_H / 2 - 16) + 'px', onclick: openPicker });
+      pan.appendChild(add);
+
+      drawEdges();
+      drawPanel();
+      runBtn.disabled = !(files.length && steps.length);
+      saveBtn.disabled = !steps.length;
+      runBtn.textContent = files.length > 1 ? 'Run on ' + files.length + ' files' : 'Run workflow';
+    }
+
+    /* --- the picker ------------------------------------------------------- */
+    function openPicker() {
+      var kind = startKind();
+      for (var j = 0; j < steps.length; j++) kind = outputOf(D.flow, steps[j].id, kind);
+      var choices = stepChoices(D, kind || '', steps.length ? steps[steps.length - 1].id : null);
+      panel.innerHTML = '';
+      panel.appendChild(h('h3', { class: 'wfc-h', text: 'Add a step' }));
+      if (!files.length) {
+        panel.appendChild(h('p', { class: 'note', text: 'Choose your files first — which steps are possible depends on what they are.' }));
+        return;
+      }
+      if (!choices.length) {
+        panel.appendChild(h('p', { class: 'note', text: 'Nothing further can be done to the file at this point.' }));
+        return;
+      }
+      var listEl = h('div', { class: 'wfc-pick' });
+      choices.forEach(function (c) {
+        /* The name goes in as a TEXT NODE, not as innerHTML. Tool names come
+           from the catalogue rather than a user, but building markup out of
+           any name is the habit that eventually ships an injection. */
+        var btn = h('button', { class: 'wfc-pickbtn', type: 'button' }, [
+          h('span', { class: 'wfc-pickic', html: toolIcon(c.id) }),
+          h('span', { class: 'wfc-picktx', text: c.name })
+        ]);
+        btn.addEventListener('click', function () {
+          steps.push({ id: c.id, opts: {}, x: (steps.length + 1) * GAP_X, y: 0 });
+          sel = steps.length - 1;
+          draw();
+        });
+        listEl.appendChild(btn);
+      });
+      panel.appendChild(listEl);
+    }
+
+    /* --- the settings panel ----------------------------------------------- */
     function optionField(opt, val, onChange) {
       var id = 'wf-o-' + Math.random().toString(36).slice(2, 8);
       var field;
@@ -249,25 +445,19 @@
           field.appendChild(oe);
         });
         field.addEventListener('change', function () {
-          var raw = field.value;
-          var match = (opt.options || []).filter(function (o) { return String(o.v) === raw; })[0];
-          onChange(match ? match.v : raw);
+          var match = (opt.options || []).filter(function (o) { return String(o.v) === field.value; })[0];
+          onChange(match ? match.v : field.value);
         });
       } else if (opt.type === 'range' || (opt.min != null && opt.max != null)) {
-        field = h('input', {
-          type: 'range', class: 'wf-range', id: id,
-          min: String(opt.min != null ? opt.min : 0),
-          max: String(opt.max != null ? opt.max : 100),
-          step: String(opt.step || 1), value: String(val)
-        });
-        var read = h('span', { class: 'wf-val', text: String(val) + (opt.suffix || '') });
+        field = h('input', { type: 'range', id: id, min: String(opt.min != null ? opt.min : 0),
+          max: String(opt.max != null ? opt.max : 100), step: String(opt.step || 1), value: String(val) });
+        var read = h('span', { class: 'wfc-val', text: String(val) + (opt.suffix || '') });
         field.addEventListener('input', function () {
           read.textContent = field.value + (opt.suffix || '');
           onChange(Number(field.value));
         });
-        return h('label', { class: 'wf-opt', for: id }, [
-          h('span', { class: 'wf-opt-l', text: opt.label || opt.k }), field, read
-        ]);
+        return h('label', { class: 'wfc-opt', for: id }, [
+          h('span', { class: 'wfc-opt-l', text: opt.label || opt.k }), field, read]);
       } else if (opt.type === 'checkbox' || typeof opt.def === 'boolean') {
         field = h('input', { type: 'checkbox', id: id });
         field.checked = !!val;
@@ -276,218 +466,170 @@
         field = h('input', { type: 'text', class: 'field', id: id, value: String(val == null ? '' : val) });
         field.addEventListener('input', function () { onChange(field.value); });
       }
-      return h('label', { class: 'wf-opt', for: id }, [
-        h('span', { class: 'wf-opt-l', text: opt.label || opt.k }), field
-      ]);
+      return h('label', { class: 'wfc-opt', for: id }, [
+        h('span', { class: 'wfc-opt-l', text: opt.label || opt.k }), field]);
     }
 
     function move(i, by) {
       var j = i + by;
       if (j < 0 || j >= steps.length) return;
+      var tx = steps[i].x, ty = steps[i].y;
+      steps[i].x = steps[j].x; steps[i].y = steps[j].y;
+      steps[j].x = tx; steps[j].y = ty;
       var t = steps[i]; steps[i] = steps[j]; steps[j] = t;
-      redraw();
+      sel = j; draw();
     }
 
-    function redraw() {
-      list.innerHTML = '';
-      var k = startKind();
-      steps.forEach(function (st, i) {
-        var nm = (D.names && D.names[st.id]) || st.id;
-        var bad = !kindAccepted((D.flow[st.id] || {}).a, k);
-        var spec = specFor(st.id);
-        var body = h('div', { class: 'wf-body' }, [
-          h('div', { class: 'wf-head' }, [
-            h('span', { class: 'wf-n', text: String(i + 1) }),
-            h('span', { class: 'wf-name', text: nm }),
-            bad ? h('span', { class: 'wf-warn', text: 'cannot take the file at this point' }) : null,
-            h('div', { class: 'wf-acts' }, [
-              h('button', { class: 'btn btn-sm', type: 'button', text: '\u2191',
-                'aria-label': 'Move ' + nm + ' earlier', disabled: i === 0 ? 'disabled' : null,
-                onclick: function () { move(i, -1); } }),
-              h('button', { class: 'btn btn-sm', type: 'button', text: '\u2193',
-                'aria-label': 'Move ' + nm + ' later', disabled: i === steps.length - 1 ? 'disabled' : null,
-                onclick: function () { move(i, 1); } }),
-              h('button', { class: 'btn btn-sm', type: 'button', text: 'Remove',
-                'aria-label': 'Remove ' + nm,
-                onclick: function () { steps.splice(i, 1); redraw(); } })
-            ])
-          ])
-        ]);
-        var opts = (spec && spec.options) || [];
-        if (opts.length) {
-          var grid = h('div', { class: 'wf-opts' });
-          opts.forEach(function (opt) {
-            if (st.opts[opt.k] === undefined) st.opts[opt.k] = opt.def;
-            grid.appendChild(optionField(opt, st.opts[opt.k], function (v) { st.opts[opt.k] = v; }));
-          });
-          body.appendChild(grid);
-        } else {
-          body.appendChild(h('p', { class: 'wf-noopt', text: 'No settings — this step does one thing.' }));
-        }
-        list.appendChild(h('li', { class: 'wf-step' + (bad ? ' is-bad' : '') }, [body]));
-        k = outputOf(D.flow, st.id, k);
-      });
-
-      addWrap.innerHTML = '';
-      var choices = stepChoices(D, k || '', steps.length ? steps[steps.length - 1].id : null);
-      if (!files.length) {
-        addWrap.appendChild(h('p', { class: 'note', text: 'Choose your files first — which steps are possible depends on what they are.' }));
-      } else if (!choices.length) {
-        addWrap.appendChild(h('p', { class: 'note', text: 'Nothing further can be done to the file at this point.' }));
+    function drawPanel() {
+      if (sel < 0 || !steps[sel]) { if (!panel.querySelector('.wfc-pick')) openPicker(); return; }
+      var st = steps[sel];
+      var spec = specFor(st.id);
+      var nm = (D.names && D.names[st.id]) || st.id;
+      panel.innerHTML = '';
+      panel.appendChild(h('h3', { class: 'wfc-h', text: nm }));
+      panel.appendChild(h('div', { class: 'wfc-panacts' }, [
+        h('button', { class: 'btn btn-sm', type: 'button', text: 'Move earlier',
+          disabled: sel === 0 ? 'disabled' : null, onclick: function () { move(sel, -1); } }),
+        h('button', { class: 'btn btn-sm', type: 'button', text: 'Move later',
+          disabled: sel === steps.length - 1 ? 'disabled' : null, onclick: function () { move(sel, 1); } }),
+        h('button', { class: 'btn btn-sm', type: 'button', text: 'Delete',
+          onclick: function () { steps.splice(sel, 1); steps.forEach(function (s2, i2) { s2.x = (i2 + 1) * GAP_X; s2.y = 0; }); sel = -1; draw(); } })
+      ]));
+      var opts = (spec && spec.options) || [];
+      if (!opts.length) {
+        panel.appendChild(h('p', { class: 'note', text: 'This step has no settings — it does one thing.' }));
       } else {
-        var sel = h('select', { class: 'field', 'aria-label': 'Add a step' });
-        choices.forEach(function (c) { sel.appendChild(h('option', { value: c.id, text: c.name })); });
-        addWrap.appendChild(sel);
-        addWrap.appendChild(h('button', { class: 'btn', type: 'button', text: 'Add step',
-          onclick: function () { steps.push({ id: sel.value, opts: {} }); redraw(); } }));
+        var wrap = h('div', { class: 'wfc-opts' });
+        opts.forEach(function (opt) {
+          if (st.opts[opt.k] === undefined) st.opts[opt.k] = opt.def;
+          wrap.appendChild(optionField(opt, st.opts[opt.k], function (v) { st.opts[opt.k] = v; draw(); }));
+        });
+        panel.appendChild(wrap);
       }
-      runBtn.disabled = !(files.length && steps.length);
-      saveBtn.disabled = !steps.length;
-      runBtn.textContent = files.length > 1
-        ? 'Run on ' + files.length + ' files'
-        : 'Run workflow';
-      out.innerHTML = '';
-      drawSaved();
+      panel.appendChild(h('button', { class: 'btn btn-sm', type: 'button', text: 'Add another step', onclick: openPicker }));
     }
 
-    /* ---- saved workflows ---------------------------------------------------
-     * The settings travel with the steps. A saved workflow that forgot its
-     * options would be a list of tool names, which is a note, not a workflow. */
-    function drawSaved() {
-      savedWrap.innerHTML = '';
-      var list2 = load();
-      if (!list2.length) return;
-      savedWrap.appendChild(h('h2', { class: 'wf-h', text: 'Saved workflows' }));
-      var ul = h('ul', { class: 'wf-savedlist' });
-      list2.forEach(function (wf, i) {
-        ul.appendChild(h('li', {}, [
-          h('button', {
-            class: 'btn btn-sm', type: 'button',
-            text: wf.name + '  (' + wf.steps.length + ' steps)',
-            onclick: function () {
-              steps = wf.steps.map(function (s2) { return { id: s2.id, opts: Object.assign({}, s2.opts) }; });
-              redraw();
-            }
-          }),
-          h('button', {
-            class: 'btn btn-sm btn-ghost', type: 'button', text: 'Delete',
-            'aria-label': 'Delete ' + wf.name,
-            onclick: function () { var l = load(); l.splice(i, 1); save(l); drawSaved(); }
-          })
-        ]));
+    /* --- panning ---------------------------------------------------------- */
+    (function () {
+      var px, py, ox, oy, panning = false;
+      canvas.addEventListener('pointerdown', function (e) {
+        if (e.target !== canvas && e.target !== pan && e.target !== edges) return;
+        panning = true; px = e.clientX; py = e.clientY; ox = view.x; oy = view.y;
+        canvas.setPointerCapture(e.pointerId); canvas.classList.add('is-pan');
       });
-      savedWrap.appendChild(ul);
-    }
+      canvas.addEventListener('pointermove', function (e) {
+        if (!panning) return;
+        view.x = ox + (e.clientX - px); view.y = oy + (e.clientY - py); setZoom(view.k);
+      });
+      canvas.addEventListener('pointerup', function () { panning = false; canvas.classList.remove('is-pan'); });
+      canvas.addEventListener('wheel', function (e) {
+        if (!e.ctrlKey && Math.abs(e.deltaY) < 2) return;
+        e.preventDefault(); setZoom(view.k * (e.deltaY > 0 ? 0.92 : 1.08));
+      }, { passive: false });
+    })();
 
+    /* --- files, saving, running ------------------------------------------- */
+    input.addEventListener('change', function () {
+      if (!input.files || !input.files.length) return;
+      var picked = [].slice.call(input.files);
+      var kinds = {};
+      picked.forEach(function (f) { kinds[kindOfFile(f.name, f.type)] = 1; });
+      var ks = Object.keys(kinds).filter(Boolean);
+      if (ks.length > 1) {
+        fileNote.className = 'wfc-files is-err';
+        fileNote.textContent = 'Those are ' + ks.join(' and ') + ' files — a workflow runs one kind at a time.';
+        return;
+      }
+      files = picked;
+      fileNote.className = 'wfc-files';
+      fileNote.textContent = files.length === 1 ? files[0].name : files.length + ' ' + (ks[0] || '') + ' files';
+      draw();
+    });
+
+    function refreshSaved() {
+      savedSel.innerHTML = '';
+      savedSel.appendChild(h('option', { value: '', text: 'Saved workflows…' }));
+      load().forEach(function (wf, i) {
+        savedSel.appendChild(h('option', { value: String(i), text: wf.name + ' (' + wf.steps.length + ')' }));
+      });
+    }
+    savedSel.addEventListener('change', function () {
+      var i = savedSel.value;
+      if (i === '') return;
+      var wf = load()[+i];
+      if (!wf) return;
+      steps = wf.steps.map(function (s2, n) {
+        return { id: s2.id, opts: Object.assign({}, s2.opts), x: (n + 1) * GAP_X, y: 0 };
+      });
+      sel = -1; draw(); fit();
+    });
     saveBtn.addEventListener('click', function () {
       var name = (root.prompt && root.prompt('Name this workflow', describe(D, steps))) || '';
       name = String(name).trim().slice(0, 60);
       if (!name) return;
       var l = load();
       l.unshift({ name: name, steps: steps.map(function (s2) { return { id: s2.id, opts: s2.opts }; }) });
-      if (!save(l)) {
-        out.appendChild(h('p', { class: 'note err', text: 'Could not save — private browsing blocks it. The workflow still runs.' }));
-        return;
-      }
-      drawSaved();
-    });
-
-    input.addEventListener('change', function () {
-      if (!input.files || !input.files.length) return;
-      files = [].slice.call(input.files);
-      var kinds = {};
-      files.forEach(function (f) { kinds[kindOfFile(f.name, f.type)] = 1; });
-      var ks = Object.keys(kinds).filter(Boolean);
-      if (ks.length > 1) {
-        fileNote.className = 'note err';
-        fileNote.textContent = 'Those are ' + ks.join(' and ') + ' files. A workflow runs one kind at a time, so the steps would not apply to all of them — choose one kind.';
-        files = [];
-        steps = [];
-        redraw();
-        return;
-      }
-      fileNote.className = 'note';
-      fileNote.textContent = files.length === 1
-        ? files[0].name + ' — ' + (ks[0] || 'unsupported here')
-        : files.length + ' ' + (ks[0] || 'unsupported') + ' files';
-      redraw();
+      if (!save(l)) { log.textContent = 'Could not save — private browsing blocks it. The workflow still runs.'; return; }
+      refreshSaved();
     });
 
     runBtn.addEventListener('click', async function () {
       var v = validate(D, steps.map(function (s2) { return s2.id; }), startKind());
-      if (!v.ok) { out.innerHTML = ''; out.appendChild(h('p', { class: 'note err', text: v.why })); return; }
+      if (!v.ok) { log.innerHTML = ''; log.appendChild(h('p', { class: 'note err', text: v.why })); return; }
       runBtn.disabled = true; saveBtn.disabled = true;
-      out.innerHTML = '';
+      log.innerHTML = '';
+      var nodes = [].slice.call(pan.querySelectorAll('.wfc-node.is-step'));
+      nodes.forEach(function (n) { n.classList.remove('is-run', 'is-done', 'is-fail'); });
       var results = [];
-      var table = h('ol', { class: 'wf-runs' });
-      out.appendChild(table);
 
       for (var fi = 0; fi < files.length; fi++) {
-        var rowHead = h('li', { class: 'wf-run is-file' }, [
-          h('span', { class: 'wf-name', text: files[fi].name }),
-          h('span', { class: 'wf-state', text: 'queued' })
-        ]);
-        table.appendChild(rowHead);
-        var stateCell = rowHead.querySelector('.wf-state');
+        var line = h('p', { class: 'wfc-line', text: files[fi].name + ' — starting' });
+        log.appendChild(line);
         /* eslint-disable no-loop-func */
-        var res = await run(files[fi], steps, (function (cell) {
+        var res = await run(files[fi], steps, (function (ln) {
           return function (i, state, detail) {
+            var n = nodes[i];
             var nm = (D.names && D.names[steps[i].id]) || steps[i].id;
-            if (state === 'run') cell.textContent = 'step ' + (i + 1) + ' of ' + steps.length + ' — ' + nm;
-            else if (state === 'progress' && typeof detail === 'number') {
-              cell.textContent = 'step ' + (i + 1) + ' of ' + steps.length + ' — ' + nm + ' ' + Math.round(detail * 100) + '%';
-            } else if (state === 'status' && detail) cell.textContent = nm + ': ' + detail;
-            else if (state === 'fail') cell.textContent = nm + ' — ' + detail;
+            if (state === 'run') { if (n) { n.classList.remove('is-done', 'is-fail'); n.classList.add('is-run'); } ln.textContent = ln.textContent.split(' — ')[0] + ' — ' + nm; }
+            else if (state === 'progress' && typeof detail === 'number' && n) n.style.setProperty('--wfp', Math.round(detail * 100) + '%');
+            else if (state === 'status' && detail) ln.textContent = ln.textContent.split(' — ')[0] + ' — ' + nm + ': ' + detail;
+            else if (state === 'done' && n) { n.classList.remove('is-run'); n.classList.add('is-done'); }
+            else if (state === 'fail' && n) { n.classList.remove('is-run'); n.classList.add('is-fail'); ln.className = 'wfc-line is-err'; ln.textContent = files[0] && ln.textContent.split(' — ')[0] + ' — ' + nm + ': ' + detail; }
           };
-        })(stateCell));
+        })(line));
         /* eslint-enable no-loop-func */
         if (res.file) {
           results.push(res.file);
-          rowHead.className = 'wf-run is-file ' + (res.ok ? 'is-done' : 'is-part');
-          stateCell.textContent = res.ok
-            ? 'done'
-            : 'stopped at step ' + (res.at + 1) + ' — partial result kept';
-        } else {
-          rowHead.className = 'wf-run is-file is-fail';
+          line.textContent = line.textContent.split(' — ')[0] + (res.ok ? ' — done' : ' — stopped at step ' + (res.at + 1) + ', partial result kept');
         }
       }
 
       runBtn.disabled = false; saveBtn.disabled = false;
       if (!results.length) {
-        out.appendChild(h('p', { class: 'note err', text: 'Nothing came out. Your original files are untouched and nothing was uploaded.' }));
+        log.appendChild(h('p', { class: 'note err', text: 'Nothing came out. Your originals are untouched and nothing was uploaded.' }));
         return;
       }
-      out.appendChild(h('p', { class: 'note',
-        text: results.length + ' of ' + files.length + ' file' + (files.length === 1 ? '' : 's') + ' came through ' + steps.length + ' step' + (steps.length === 1 ? '' : 's') + '.' }));
-
-      /* One button per result rather than a zip: writing a zip in the browser
-         needs a library nobody has downloaded yet, and on a two-file run that
-         is a worse trade than two clicks. */
+      log.appendChild(h('p', { class: 'note', text: results.length + ' of ' + files.length + ' file(s) came through.' }));
       results.forEach(function (r, i) {
-        var b = h('button', { class: 'btn' + (i === 0 ? ' btn-primary' : ''), type: 'button', text: 'Download ' + r.name });
+        var b = h('button', { class: 'btn' + (i === 0 ? ' btn-primary' : '') + ' btn-sm', type: 'button', text: 'Download ' + r.name });
         b.addEventListener('click', function () {
-          if (root.VKDeliver && root.VKDeliver.deliver) {
-            root.VKDeliver.deliver(r.blob, r.name, { toolId: 'workflow', host: out });
-          } else {
+          if (root.VKDeliver && root.VKDeliver.deliver) root.VKDeliver.deliver(r.blob, r.name, { toolId: 'workflow', host: log });
+          else {
             var u = URL.createObjectURL(r.blob);
             var a = doc.createElement('a'); a.href = u; a.download = r.name; a.click();
             setTimeout(function () { URL.revokeObjectURL(u); }, 1500);
           }
         });
-        out.appendChild(b);
+        log.appendChild(b);
       });
     });
 
-    host.appendChild(drop);
-    host.appendChild(input);
-    host.appendChild(fileNote);
-    host.appendChild(h('h2', { class: 'wf-h', text: 'Steps' }));
-    host.appendChild(list);
-    host.appendChild(addWrap);
-    host.appendChild(h('div', { class: 'wf-go' }, [runBtn, saveBtn]));
-    host.appendChild(savedWrap);
-    host.appendChild(out);
-    redraw();
+    host.appendChild(bar);
+    host.appendChild(stage);
+    host.appendChild(log);
+    refreshSaved();
+    setZoom(1);
+    draw();
   }
 
   /* A default name that describes the chain, so a saved workflow is
