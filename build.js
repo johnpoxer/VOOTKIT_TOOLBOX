@@ -366,7 +366,7 @@ function footCols(up) {
       </div>
       <div class="ftr-col">
         <h4>Vootkit</h4>
-        <a href="${up}tools/">All tools</a><a href="${up}pricing.html">Pricing</a><a href="${up}about.html">About</a><a href="${up}blog/">Blog</a><a href="${up}contact.html">Contact &amp; support</a>
+        <a href="${up}tools/">All tools</a><a href="${up}workflows/">Workflows</a><a href="${up}pricing.html">Pricing</a><a href="${up}about.html">About</a><a href="${up}blog/">Blog</a><a href="${up}contact.html">Contact &amp; support</a>
       </div>
       <div class="ftr-col">
         <h4>Legal</h4>
@@ -1980,6 +1980,40 @@ write("contact.html", infoPage({
   </div>`
 }));
 
+/* ---------- /workflows/ ----------
+ * The tool-chaining page. Not a marketing page about workflows — the builder
+ * itself, on its own route, so it can be linked to and returned to. */
+function workflowPage() {
+  return head({
+    title: "Workflows — chain several tools into one run | Vootkit",
+    desc: "Build a sequence of Vootkit tools and run them on one file, back to back. Everything happens in your browser — the file is never uploaded.",
+    url: CFG.origin + "/workflows/",
+    depth: 1
+  }) + `
+<main id="main">
+  <section class="wrap section">
+    <div class="sec-head">
+      <span class="eyebrow">Workflows</span>
+      <h1>Do several things to one file, in one go.</h1>
+      <p>Pick a file, stack up the steps, press run once. Each step feeds the
+      next, and the whole sequence happens on your device — nothing is uploaded
+      at any point, including between the steps.</p>
+    </div>
+    <div class="card wf" id="wf"></div>
+    <p class="note" style="margin-top:var(--s-4);max-width:60ch">
+      Steps run with each tool's default settings. For fine control over a
+      single step — exact crop, specific pages, a particular quality — use that
+      tool's own page, where every option is available.
+    </p>
+  </section>
+</main>` + foot(1, [
+    "data/tool-flow.js", "assets/js/tools-pdf.js", "assets/js/tools-image.js",
+    "assets/js/tools-image2.js", "assets/js/tools-videofx.js",
+    "assets/js/videoengine.js", "assets/js/workflow.js", "assets/js/wf-init.js"
+  ]);
+}
+write("workflows/index.html", workflowPage());
+
 write("contact-success/index.html", infoPage({
   depth: 1, slug: "contact-success/", title: "Message sent", eyebrow: "Contact & Support", noindex: true,
   h1: "Thanks — your message is on its way.",
@@ -2315,7 +2349,12 @@ const cssBundle = CSS_PARTS
     Object.keys(T).forEach((id) => {
       const spec = T[id];
       if (!spec || typeof spec.accept !== "string" || !spec.accept) return;
+      /* w:1 means the tool can be a WORKFLOW step — it exposes a process()
+         that takes files and returns blobs, so it can be called without
+         drawing its interface. The scraped widget tools below never get it:
+         their logic and their controls are the same function. */
       flow[id] = { a: spec.accept, m: spec.multiple ? 1 : 0 };
+      if (typeof spec.process === "function") flow[id].w = 1;
     });
   });
   if (!hadWindow) delete g.window;
@@ -2343,8 +2382,19 @@ const cssBundle = CSS_PARTS
     "compress-video", "trim-video", "video-to-gif", "extract-audio",
     "audio-compressor", "audio-converter"
   ];
+  /* Tools that change the KIND of file they are given. Everything else hands
+     back what it was handed, which is why only the exceptions are listed —
+     and why getting this wrong would offer a PDF tool after PDF to JPG. */
+  const EMITS = {
+    "pdf-to-jpg": "image", "pdf-to-png": "image", "pdf-to-image": "image",
+    "jpg-to-pdf": "pdf", "png-to-pdf": "pdf", "webp-to-pdf": "pdf",
+    "images-to-pdf": "pdf", "scan-to-pdf": "pdf", "html-to-pdf": "pdf",
+    "excel-to-pdf": "pdf", "video-to-gif": "image", "extract-audio": "audio",
+    "frame-grabber": "image"
+  };
   const names = {};
   Object.keys(flow).forEach((id) => {
+    if (EMITS[id]) flow[id].o = EMITS[id];
     const t = VK.find(id);
     if (t) { names[id] = t.name; flow[id].c = t.cat; }
     const r = CHAIN_FIRST.indexOf(id);

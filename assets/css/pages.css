@@ -553,3 +553,43 @@ video.wcode { padding: 0; }
   background: var(--accent-weak); color: var(--ink);
   font-size: var(--t-sm); font-weight: 500;
 }
+
+/* --- workflow builder (/workflows/) ---------------------------------------
+ * A numbered list you assemble, then run. The steps are deliberately plain:
+ * this is a page where the user is composing something, and every ornament
+ * would compete with the thing they are trying to read — the order.
+ */
+.wf { display: flex; flex-direction: column; gap: var(--s-4); }
+.wf .drop { min-height: 120px; }
+.wf-h { font-size: var(--t-lg); margin: 0; }
+.wf-steps, .wf-runs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--s-2); }
+.wf-step, .wf-run {
+  display: flex; align-items: center; gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  border: 1px solid var(--line); border-radius: var(--r-md);
+  background: var(--surface);
+}
+.wf-n {
+  flex: 0 0 auto; width: 26px; height: 26px; display: grid; place-items: center;
+  border-radius: 50%; background: var(--accent-weak); color: var(--accent);
+  font-size: var(--t-xs); font-weight: 700;
+}
+.wf-name { flex: 1; font-weight: 600; font-size: var(--t-base); }
+.wf-state { font-size: var(--t-sm); color: var(--ink-soft); }
+.wf-warn { font-size: var(--t-xs); color: var(--err); }
+/* A step that cannot take the file at its point in the chain is marked where
+   the user is looking, not in a message underneath the list. */
+.wf-step.is-bad { border-color: var(--err-border); background: var(--err-weak); }
+.wf-run.is-run  { border-color: var(--accent-border); }
+.wf-run.is-done { border-color: var(--ok-border); }
+.wf-run.is-done .wf-state { color: var(--ok); }
+.wf-run.is-fail { border-color: var(--err-border); background: var(--err-weak); }
+.wf-run.is-fail .wf-state { color: var(--err); }
+.wf-add { display: flex; gap: var(--s-2); align-items: center; flex-wrap: wrap; }
+.wf-add .field { flex: 1 1 240px; }
+.wf-go { display: flex; gap: var(--s-3); align-items: center; }
+.wf-out { display: flex; flex-direction: column; gap: var(--s-3); }
+@media (max-width: 560px) {
+  .wf-step, .wf-run { flex-wrap: wrap; }
+  .wf-add .btn { width: 100%; }
+}

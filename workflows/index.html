@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="google-adsense-account" content="ca-pub-5906583727409402">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#fbfcfe" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)">
+<title>Workflows — chain several tools into one run | Vootkit</title>
+<meta name="description" content="Build a sequence of Vootkit tools and run them on one file, back to back. Everything happens in your browser — the file is never uploaded.">
+<link rel="canonical" href="https://www.vootkit.com/workflows/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Vootkit">
+<meta property="og:title" content="Workflows — chain several tools into one run | Vootkit">
+<meta property="og:description" content="Build a sequence of Vootkit tools and run them on one file, back to back. Everything happens in your browser — the file is never uploaded.">
+<meta property="og:url" content="https://www.vootkit.com/workflows/">
+<meta property="og:image" content="https://www.vootkit.com/assets/og-default.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Vootkit — free browser tools that never upload your files">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Workflows — chain several tools into one run | Vootkit">
+<meta name="twitter:description" content="Build a sequence of Vootkit tools and run them on one file, back to back. Everything happens in your browser — the file is never uploaded.">
+<meta name="twitter:image" content="https://www.vootkit.com/assets/og-default.png">
+<script type="application/ld+json">undefined</script>
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="manifest" href="../site.webmanifest">
+<link rel="stylesheet" href="../assets/css/app.css?v=904bba6d0a">
+<script>(function (root) {
+  'use strict';
+  var KEY = 'vk-consent';
+  var VERSION = 1;          // bump to re-ask everyone after a material change
+  
+  var CONSENT_REQUIRED_REGIONS = [
+    'AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT',
+    'LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE',   // EU
+    'IS','LI','NO',                                                 // EEA
+    'GB','CH'                                                       // UK, CH
+  ];
+  function read() {
+    try {
+      var raw = root.localStorage.getItem(KEY);
+      if (!raw) return null;
+      var v = JSON.parse(raw);
+      if (!v || v.v !== VERSION) return null;
+      return v;
+    } catch (e) { return null; }
+  }
+  function write(granted) {
+    try {
+      root.localStorage.setItem(KEY, JSON.stringify({
+        v: VERSION, granted: !!granted, at: new Date().toISOString().slice(0, 10)
+      }));
+    } catch (e) {}
+  }
+  
+  function signals(granted) {
+    var v = granted ? 'granted' : 'denied';
+    return {
+      ad_storage: v,
+      ad_user_data: v,
+      ad_personalization: v,
+      analytics_storage: v,
+      functionality_storage: 'granted',   // theme, recent tools — strictly necessary
+      security_storage: 'granted'
+    };
+  }
+  function gtagSafe() {
+    if (typeof root.gtag === 'function') return root.gtag;
+    
+    root.dataLayer = root.dataLayer || [];
+    return function () { root.dataLayer.push(arguments); };
+  }
+  
+  function setDefaults() {
+    var g = gtagSafe();
+    var saved = read();
+    if (saved) {
+      
+      g('consent', 'default', signals(saved.granted));
+      return;
+    }
+    
+    g('consent', 'default', Object.assign(signals(false), {
+      region: CONSENT_REQUIRED_REGIONS,
+      wait_for_update: 500
+    }));
+    g('consent', 'default', signals(true));
+  }
+  function update(granted) {
+    gtagSafe()('consent', 'update', signals(granted));
+    write(granted);
+  }
+  root.VKConsent = {
+    KEY: KEY, VERSION: VERSION,
+    REGIONS: CONSENT_REQUIRED_REGIONS,
+    signals: signals, read: read, write: write,
+    setDefaults: setDefaults, update: update,
+    needsBanner: function () { return read() === null; }
+  };
+  if (typeof module === 'object' && module.exports) module.exports = root.VKConsent;
+})(typeof window !== 'undefined' ? window : globalThis);
+window.VKConsent&&window.VKConsent.setDefaults();</script>
+<!-- no ads inside an active tool workspace -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KLEWTJ8WG2"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-KLEWTJ8WG2');</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="hdr">
+  <div class="wrap hdr-in">
+    <a class="brand" href="../" aria-label="Vootkit home">
+      <svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="17.5" fill="none" stroke="var(--accent)" stroke-opacity=".45" stroke-width="1.3" stroke-dasharray="17 7"/><path d="M12.5 14.5 21.5 30 31.5 13.5" fill="none" stroke="var(--accent)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="33.5" cy="10.5" r="2.7" fill="#06b6d4"/></svg>
+      vootkit
+    </a>
+    <nav class="nav" id="nav" aria-label="Main">
+      <a href="../tools/">Tools</a>
+      <a href="../pricing.html">Pricing</a>
+      <a href="../#features">Features</a>
+      <a href="../blog/">Blog</a>
+      <a href="../about.html">About</a>
+      <a href="../contact.html">Contact</a>
+    </nav>
+    <div class="hdr-act">
+      <a class="icon-btn" href="../tools/" aria-label="Search tools">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+      </a>
+      
+      <button class="icon-btn" id="theme" type="button" aria-label="Switch theme">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.5M12 19v2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M2.5 12H5M19 12h2.5M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8"/></svg>
+      </button>
+      <a class="hdr-cta" href="../pricing.html">Get Pro</a>
+      <button class="icon-btn" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav">
+        <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+<main id="main">
+  <section class="wrap section">
+    <div class="sec-head">
+      <span class="eyebrow">Workflows</span>
+      <h1>Do several things to one file, in one go.</h1>
+      <p>Pick a file, stack up the steps, press run once. Each step feeds the
+      next, and the whole sequence happens on your device — nothing is uploaded
+      at any point, including between the steps.</p>
+    </div>
+    <div class="card wf" id="wf"></div>
+    <p class="note" style="margin-top:var(--s-4);max-width:60ch">
+      Steps run with each tool's default settings. For fine control over a
+      single step — exact crop, specific pages, a particular quality — use that
+      tool's own page, where every option is available.
+    </p>
+  </section>
+</main></main>
+<footer class="ftr">
+  <div class="wrap">
+    <div class="ftr-top">
+      <div class="ftr-cols">
+      <div class="ftr-col">
+        <h4>Tools</h4>
+        <a href="../tools/pdf/">PDF</a><a href="../tools/images/">Images</a><a href="../tools/video/">Video</a><a href="../tools/audio/">Audio</a><a href="../tools/text/">Text</a><a href="../tools/finance/">Finance</a>
+      </div>
+      <div class="ftr-col">
+        <h4>More tools</h4>
+        <a href="../tools/seo/">SEO</a><a href="../tools/developer/">Developer</a><a href="../tools/design/">Design</a><a href="../tools/privacy/">Privacy</a><a href="../tools/data/">Data</a><a href="../tools/">All 21 categories</a>
+      </div>
+      <div class="ftr-col">
+        <h4>Vootkit</h4>
+        <a href="../tools/">All tools</a><a href="../workflows/">Workflows</a><a href="../pricing.html">Pricing</a><a href="../about.html">About</a><a href="../blog/">Blog</a><a href="../contact.html">Contact &amp; support</a>
+      </div>
+      <div class="ftr-col">
+        <h4>Legal</h4>
+        <a href="../privacy.html">Privacy policy</a><a href="../cookies.html">Cookie policy</a><a href="../terms.html">Terms</a><a href="../disclaimer.html">Disclaimer</a>
+      </div>
+      </div>
+      <div class="ftr-brand">
+        <span class="ftr-mark">
+          <svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="17.5" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-width="1.3" stroke-dasharray="17 7"/><path d="M12.5 14.5 21.5 30 31.5 13.5" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="33.5" cy="10.5" r="2.7" fill="#22d3ee"/></svg>
+          vootkit
+        </span>
+        <p>250+ free tools for PDF, images, video, finance and more.</p>
+        <p class="ftr-trust">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4.5 6.2v5.4c0 4.6 3.2 8.9 7.5 10.2 4.3-1.3 7.5-5.6 7.5-10.2V6.2z"/><path d="m9 12 2.2 2.2L15.4 10"/></svg>
+          Most tools run on your device. Your files are never uploaded.
+        </p>
+      </div>
+    </div>
+    <div class="ftr-nl" data-newsletter="footer"></div>
+    <div class="ftr-bar">
+      
+      <p class="ftr-copy">&copy; <span id="yr"></span> Vootkit — every digital task, done in your browser.</p>
+    </div>
+  </div>
+</footer>
+<script src="../data/site.config.js?v=904bba6d0a"></script>
+<script src="../data/catalog.js?v=904bba6d0a"></script>
+<script>
+document.getElementById('yr').textContent=new Date().getFullYear();
+(function(){var b=document.getElementById('burger'),n=document.getElementById('nav');
+b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');b.setAttribute('aria-label',o?'Close menu':'Open menu');});
+var t=document.getElementById('theme'),s=null;try{s=localStorage.getItem('vk-theme');}catch(e){}
+if(s)document.documentElement.setAttribute('data-theme',s);
+t.addEventListener('click',function(){var c=document.documentElement.getAttribute('data-theme'),x=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',x);try{localStorage.setItem('vk-theme',x);}catch(e){}});})();
+</script>
+<script src="../assets/js/track.js?v=904bba6d0a" defer></script>
+<script src="../assets/js/consent-ui.js?v=904bba6d0a" defer></script>
+<script src="../assets/js/ads.js?v=904bba6d0a" defer></script>
+<script src="../assets/js/ui.js?v=904bba6d0a" defer></script>
+<script src="../assets/js/recent.js?v=904bba6d0a" defer></script>
+<script src="../assets/js/supabase-config.js?v=904bba6d0a" defer></script>
+<script src="../assets/js/errors.js?v=904bba6d0a" defer></script>
+<script src="../assets/js/convert.js?v=904bba6d0a" defer></script>
+<script src="../assets/js/newsletter.js?v=904bba6d0a" defer></script>
+<script src="../assets/js/auth.js?v=904bba6d0a" defer></script>
+<script src="../assets/js/usage.js?v=904bba6d0a" defer></script>
+<script src="../assets/js/deliver.js?v=904bba6d0a" defer></script>
+<!-- Tool chaining. tool-flow.js says what each tool accepts, tool-icons.js
+     gives the next-step buttons the same per-tool icons as everywhere else,
+     and handoff.js parks the finished file on the device between the two
+     pages. All three are optional: without them a tool simply downloads. -->
+<script src="../data/tool-flow.js?v=904bba6d0a" defer></script>
+<script src="../data/tool-icons.js?v=904bba6d0a" defer></script>
+<script src="../assets/js/handoff.js?v=904bba6d0a" defer></script>
+<script src="../assets/js/gate.js?v=904bba6d0a" defer></script>
+<script src="../data/tool-flow.js?v=904bba6d0a" defer></script>
+<script src="../assets/js/tools-pdf.js?v=904bba6d0a" defer></script>
+<script src="../assets/js/tools-image.js?v=904bba6d0a" defer></script>
+<script src="../assets/js/tools-image2.js?v=904bba6d0a" defer></script>
+<script src="../assets/js/tools-videofx.js?v=904bba6d0a" defer></script>
+<script src="../assets/js/videoengine.js?v=904bba6d0a" defer></script>
+<script src="../assets/js/workflow.js?v=904bba6d0a" defer></script>
+<script src="../assets/js/wf-init.js?v=904bba6d0a" defer></script>
+</body>
+</html>
