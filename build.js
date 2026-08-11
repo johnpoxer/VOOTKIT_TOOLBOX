@@ -1299,7 +1299,14 @@ function parseFrontmatter(raw) {
 function loadPosts() {
   const dir = path.join(ROOT, "content", "blog");
   let files = [];
-  try { files = fs.readdirSync(dir).filter((f) => f.endsWith(".md")); } catch (e) { return []; }
+  /* Not every .md in here is a post. A README or a notes file dropped beside
+     the content would otherwise be published, indexed and put in the sitemap —
+     which is exactly what happened the first time one was added. Anything
+     starting with an underscore, and README itself, is treated as workspace. */
+  try {
+    files = fs.readdirSync(dir).filter((f) =>
+      f.endsWith(".md") && f.charAt(0) !== "_" && !/^readme\.md$/i.test(f));
+  } catch (e) { return []; }
   const posts = files.map((f) => {
     const { data, body } = parseFrontmatter(fs.readFileSync(path.join(dir, f), "utf8"));
     const slug = (data.slug || f.replace(/\.md$/, "")).toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "");
