@@ -193,7 +193,19 @@
       steps: ['trim-video', 'video-to-gif'] },
     { id: 'photo-set', name: 'Clean up a batch of photos', kind: 'image',
       why: 'Crop them all to the same shape, then compress for sharing.',
-      steps: ['crop-image', 'compress-image'] }
+      steps: ['crop-image', 'compress-image'] },
+    { id: 'print-pack', name: 'Turn photos into a printable PDF', kind: 'image',
+      why: 'Resize them to a consistent size, then bind them into one document.',
+      steps: ['resize-image', 'jpg-to-pdf'] },
+    { id: 'pdf-share', name: 'Make a PDF safe to send', kind: 'pdf',
+      why: 'Stamp it so a copy is traceable, then password-protect it.',
+      steps: ['pdf-watermark', 'protect-pdf'] },
+    { id: 'pdf-report', name: 'Assemble a report from several PDFs', kind: 'pdf',
+      why: 'Combine them in order, then number the pages so it reads as one.',
+      steps: ['merge-pdf', 'pdf-page-numbers'] },
+    { id: 'thumbs', name: 'Make thumbnails from a video', kind: 'video',
+      why: 'Grab a frame, then size it for wherever it is going.',
+      steps: ['frame-grabber', 'resize-image'] }
   ];
 
   /* A template is only worth showing if every step in it still exists and can

@@ -255,3 +255,59 @@ console.log(`workflow + settings: ${pass} total assertions passed`);
      "cancelling says Cancelling, not Cancelled — the running step cannot be interrupted");
 }
 console.log(`workflow + cancel + retry: ${pass} total assertions passed`);
+
+/* ---------------------------------------------------------------------------
+ * THE PAGE MUST STAND UP WITHOUT JAVASCRIPT.
+ *
+ * The editor is a Pro feature that mounts client-side, so for a crawler — and
+ * for a signed-out visitor — the page was one empty div. On a site already
+ * rejected once for thin content, a route whose whole body is painted by a
+ * script is the same mistake with a new name.
+ * ------------------------------------------------------------------------- */
+{
+  const fsW = require("fs"), pathW = require("path");
+  const html = (() => { try {
+    return fsW.readFileSync(pathW.join(__dirname, "..", "workflows/index.html"), "utf8");
+  } catch (e) { return ""; } })();
+
+  if (!html) {
+    console.log("workflows page: SKIPPED (run npm run build first)");
+  } else {
+    /* Strip every script, then measure what a crawler is left with. */
+    const noJs = html.replace(/<script[\s\S]*?<\/script>/g, "")
+                     .replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+    ok(noJs.split(" ").length > 700,
+       "the page carries real content with JS stripped, got " + noJs.split(" ").length + " words");
+
+    /* It has to pass traffic on, not just exist. */
+    const toolLinks = (html.match(/href="\.\.\/tools\/[a-z-]+\/[a-z0-9-]+\//g) || []).length;
+    ok(toolLinks >= 12, "it links out to individual tools, got " + toolLinks);
+
+    eq((html.match(/<h1/g) || []).length, 1, "exactly one h1");
+    ok((html.match(/<h2/g) || []).length >= 4, "and a real heading structure under it");
+
+    /* Structured data, and it must parse — a malformed block is worse than
+       none, because Google reports it as an error against the domain. */
+    const ld = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
+      .map((m) => { try { return JSON.parse(m[1]); } catch (e) { return null; } });
+    ok(ld.length >= 2, "structured data is present, got " + ld.length + " blocks");
+    ok(ld.every(Boolean), "every JSON-LD block parses");
+    ok(ld.some((x) => x && x["@type"] === "FAQPage"), "a FAQPage block");
+    ok(ld.some((x) => x && x["@type"] === "SoftwareApplication"), "a SoftwareApplication block");
+
+    /* The FAQ answers in the markup must match the ones in the structured
+       data. Marking up an answer the page does not show is cloaking. */
+    const faq = ld.filter((x) => x && x["@type"] === "FAQPage")[0];
+    faq.mainEntity.forEach((q) => {
+      ok(html.includes(q.name.replace(/&/g, "&amp;")),
+         "the FAQ question is on the page, not only in the markup: " + q.name.slice(0, 40));
+    });
+
+    /* And it must not promise the thing the whole site denies. */
+    ok(!/upload your files|files are uploaded|we store your/i.test(noJs),
+       "nothing on the page contradicts the no-upload promise");
+    ok(/never uploaded|not uploaded|on your device/i.test(noJs),
+       "and it states the promise plainly");
+  }
+}
+console.log(`workflow + page SEO: ${pass} total assertions passed`);

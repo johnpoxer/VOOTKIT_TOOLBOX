@@ -272,7 +272,7 @@ function head(o) {
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${esc(o.ogTitle || o.title)}">
 <meta name="twitter:description" content="${esc(o.desc)}">\n<meta name="twitter:image" content="${o.image || OG_DEFAULT}">
-<script type="application/ld+json">${JSON.stringify(o.ld)}</script>
+${o.ld ? `<script type="application/ld+json">${JSON.stringify(o.ld)}</script>` : ""}
 <link rel="icon" href="${up}favicon.ico" sizes="any">
 <link rel="icon" href="${up}assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="${up}apple-touch-icon.png">
@@ -1981,33 +1981,200 @@ write("contact.html", infoPage({
 }));
 
 /* ---------- /workflows/ ----------
- * The tool-chaining page. Not a marketing page about workflows — the builder
- * itself, on its own route, so it can be linked to and returned to. */
+ *
+ * THE PAGE IS WRITTEN IN HTML, NOT PAINTED BY JAVASCRIPT.
+ *
+ * The editor is a Pro feature that mounts client-side, which meant a crawler —
+ * and a signed-out visitor with a slow connection — saw one empty <div>. On a
+ * site that has already been rejected once for thin content, shipping a route
+ * whose entire body is built by a script is the exact mistake again.
+ *
+ * So everything below is server-rendered: what a workflow is, the real chains
+ * with every step linked to its own tool page, how it runs, and what it will
+ * not do. The editor mounts into #wf underneath it. Turn JavaScript off and
+ * the page still explains itself and still passes traffic to 20-odd tools.
+ *
+ * The chains come from workflow.js's own TEMPLATES, filtered through the flow
+ * map, so the page cannot describe a workflow the product does not offer.
+ */
+function workflowCopy() {
+  const g = global;
+  const hadWindow = "window" in g;
+  if (!hadWindow) g.window = g;
+  let W;
+  try { delete require.cache[require.resolve("./assets/js/workflow.js")]; W = require("./assets/js/workflow.js"); }
+  catch (e) { throw new Error("workflows page: cannot load workflow.js — " + e.message); }
+  if (!hadWindow) delete g.window;
+
+  const FLOW = require("./data/tool-flow.js");
+  const live = W.templatesFor(FLOW);
+  if (live.length < 5) throw new Error("workflows page: only " + live.length + " runnable templates");
+
+  const chain = (t) => t.steps.map((id) => {
+    const tool = VK.find(id);
+    return tool
+      ? `<a href="../tools/${tool.cat}/${tool.id}/">${esc(tool.name)}</a>`
+      : esc(id);
+  }).join(' <span class="wf-arrow" aria-hidden="true">→</span> ');
+
+  const KIND_LABEL = { pdf: "PDF", image: "Images", video: "Video", audio: "Audio" };
+  const byKind = {};
+  live.forEach((t) => { (byKind[t.kind] = byKind[t.kind] || []).push(t); });
+
+  const groups = Object.keys(byKind).map((k) => `
+      <h3>${esc(KIND_LABEL[k] || k)}</h3>
+      <ul class="wf-chains">
+        ${byKind[k].map((t) => `<li>
+          <strong>${esc(t.name)}</strong>
+          <span class="wf-chain">${chain(t)}</span>
+          <span class="wf-why">${esc(t.why)}</span>
+        </li>`).join("")}
+      </ul>`).join("");
+
+  const FAQ = [
+    ["Do my files get uploaded when I run a workflow?",
+     "No. Every step runs in your browser on your own machine, including the "
+     + "handover between steps — the file produced by one step is passed "
+     + "straight to the next in memory. Nothing is sent to a server at any "
+     + "point, so there is nothing for us to store, leak or hand over."],
+    ["How is this different from using the tools one at a time?",
+     "Time, and the number of decisions. Running five tools by hand means five "
+     + "pages, five uploads of the same file into the next tool, and five "
+     + "downloads. A workflow is one file selection and one button. It also "
+     + "runs over a whole batch, so twenty files take one click rather than a "
+     + "hundred."],
+    ["Can I run a workflow over many files at once?",
+     "Yes. Choose as many as you like of one kind and every one goes through "
+     + "every step, with per-file progress. Mixed kinds are refused up front "
+     + "rather than failing halfway, because a PDF step cannot open an image."],
+    ["What happens if one step fails?",
+     "The run stops at that step and tells you which one, in the tool's own "
+     + "words. The output of the last step that worked is still offered for "
+     + "download, and if the failure is the kind that might clear — a network "
+     + "hiccup, an engine that did not load — you get a button to retry from "
+     + "that step rather than from the beginning."],
+    ["Can I save a workflow and use it again?",
+     "Yes, with its settings intact. Saved workflows are stored on your device, "
+     + "so no account is needed to keep one."],
+    ["Which tools can be workflow steps?",
+     `${Object.keys(FLOW.flow).filter((id) => FLOW.flow[id].w).length} of them today — the PDF, image and video sets. `
+     + "Some tools build their controls and their logic together and cannot yet "
+     + "be called without drawing their interface, so they are not offered "
+     + "rather than offered and then failing."],
+    ["Is it free?",
+     "The workflow builder is part of Vootkit Pro. Every individual tool stays "
+     + "free and always will."]
+  ];
+
+  const faqHtml = FAQ.map(([q, a]) => `
+      <details class="wf-faq">
+        <summary>${esc(q)}</summary>
+        <p>${esc(a)}</p>
+      </details>`).join("");
+
+  const faqLd = {
+    "@context": "https://schema.org", "@type": "FAQPage",
+    mainEntity: FAQ.map(([q, a]) => ({
+      "@type": "Question", name: q,
+      acceptedAnswer: { "@type": "Answer", text: a }
+    }))
+  };
+  const appLd = {
+    "@context": "https://schema.org", "@type": "SoftwareApplication",
+    name: "Vootkit Workflows",
+    applicationCategory: "BusinessApplication",
+    operatingSystem: "Any modern web browser",
+    url: CFG.origin + "/workflows/",
+    description: "Chain Vootkit's tools into one run. Every step happens in "
+      + "your browser, so files are never uploaded — including between steps.",
+    featureList: live.map((t) => t.name),
+    offers: { "@type": "Offer", category: "Subscription" }
+  };
+
+  return { groups, faqHtml, count: live.length,
+    ld: `<script type="application/ld+json">${JSON.stringify(appLd)}</script>\n`
+      + `<script type="application/ld+json">${JSON.stringify(faqLd)}</script>` };
+}
+
 function workflowPage() {
+  const C = workflowCopy();
+  const steppable = (() => {
+    const F = require("./data/tool-flow.js");
+    return Object.keys(F.flow).filter((id) => F.flow[id].w).length;
+  })();
   return head({
-    title: "Workflows — chain several tools into one run | Vootkit",
-    desc: "Build a sequence of Vootkit tools and run them on one file, back to back. Everything happens in your browser — the file is never uploaded.",
+    title: "Workflows — run several Vootkit tools as one job | Vootkit",
+    desc: "Chain PDF, image and video tools into a single run and put a whole "
+        + "batch through it. Every step happens in your browser, so files are "
+        + "never uploaded — not even between steps.",
     url: CFG.origin + "/workflows/",
     depth: 1
-  }) + `
+  }) + C.ld + `
 <main id="main">
   <section class="wrap section">
     <div class="sec-head">
       <span class="eyebrow">Workflows</span>
-      <h1>Do several things to one file, in one go.</h1>
+      <h1>Run several tools as one job.</h1>
+      <p>Lay the steps out, set each one, press run once. Every file goes
+      through every step, in order, on your device — nothing is uploaded at any
+      point, including between the steps.</p>
       <p class="wf-pro-note"><strong>Workflows are part of Vootkit Pro.</strong>
       Every individual tool stays free and always will.</p>
-      <p>Lay the steps out on the canvas, click any one to change its settings,
-      then run. Every file goes through every node in order, on your device —
-      nothing is uploaded at any point, including between the steps. Nodes
-      light up as they run, so you can see where a batch has got to.</p>
     </div>
     <div id="wf"></div>
-    <p class="note" style="margin-top:var(--s-4);max-width:60ch">
-      Every step carries the same settings its own tool page has, so a workflow
-      is a saved decision rather than a shortcut. Save one and it comes back
-      with those settings intact.
-    </p>
+  </section>
+
+  <section class="wrap section prose wf-prose">
+    <h2>What you can build</h2>
+    <p>Each of these is a real chain you can start from and then change — the
+    steps are ordinary Vootkit tools, and every one of them also works on its
+    own.</p>
+    ${C.groups}
+
+    <h2>How a run works</h2>
+    <p>A workflow is a graph, not a list. You drag tools onto a canvas and draw
+    the connections yourself, so the order comes from what feeds what. A step
+    can sit unconnected while you think, be rewired without being deleted, or
+    feed two different paths from the same file.</p>
+    <p>Before anything runs, the whole chain is checked: each step has to accept
+    what the step before it produced. That cannot be worked out from tool names
+    alone — <a href="../tools/pdf/jpg-to-pdf/">Images to PDF</a> turns an image
+    into a PDF, so what may follow it is completely different from what may
+    follow an in-place tool. A step that cannot take the file at its position is
+    marked before you press run, not after.</p>
+    <p>During the run each node reports its own state, and if one fails the run
+    stops there and says which — in the tool's own words rather than an error
+    code. Whatever the last working step produced is still yours to download.</p>
+
+    <h2>Why the files stay on your device</h2>
+    <p>Vootkit's tools are already programs that run in your browser rather than
+    on a server. That is what makes chaining them possible at all: when a step
+    finishes, its output is sitting in your computer's memory, so handing it to
+    the next step costs nothing and involves no upload. A site that processes
+    files on its own servers has to send yours up, process, send it back, and
+    take it up again for every single step.</p>
+    <p>It also means the privacy position does not change when you use a
+    workflow. There is no copy on a server to be breached, retained, or handed
+    over, because there is no server in the loop.</p>
+
+    <h2>What it will not do</h2>
+    <p>${steppable} tools can currently be steps — the PDF, image and video
+    sets. Some tools build their controls and their processing together and
+    cannot yet be run without drawing their interface, so they are left out of
+    the picker rather than offered and then failing mid-run.</p>
+    <p>Because the work happens on your machine, a very large batch is bounded
+    by your computer's memory rather than by a server queue, and a run does not
+    continue on another device. Those are the honest trade-offs of not
+    uploading anything.</p>
+
+    <h2>Questions</h2>
+    ${C.faqHtml}
+
+    <p class="note">Looking for a single tool instead?
+      <a href="../tools/">Browse all ${floorTo(VK.counts.live, 50)}+</a>, or start with
+      <a href="../tools/pdf/">PDF</a>,
+      <a href="../tools/images/">images</a> or
+      <a href="../tools/video/">video</a>.</p>
   </section>
 </main>` + foot(1, [
     "data/tool-flow.js", "assets/js/tools-pdf.js", "assets/js/tools-image.js",
@@ -2094,7 +2261,7 @@ console.log(`generated ${pages} pages (${localizedPages} localised)`);
  * so Google can still reach and cluster them through the alternates on every
  * English page. This only changes what we actively ask it to prioritise.
  * Revisit once English pages hold real positions. */
-const enUrls = ["/", "/tools/", "/pricing.html", "/about.html", "/contact.html", "/privacy.html", "/terms.html", "/cookies.html", "/disclaimer.html"]
+const enUrls = ["/", "/tools/", "/workflows/", "/pricing.html", "/about.html", "/contact.html", "/privacy.html", "/terms.html", "/cookies.html", "/disclaimer.html"]
   .concat(POSTS.length ? ["/blog/"] : [])                       // only list blog when it has posts
   .concat(POSTS.map((p) => `/blog/${p.slug}/`))
   .concat(VK.CATEGORIES.map((c) => `/tools/${c.slug}/`))

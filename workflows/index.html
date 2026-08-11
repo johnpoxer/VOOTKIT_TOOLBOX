@@ -6,28 +6,28 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#fbfcfe" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)">
-<title>Workflows — chain several tools into one run | Vootkit</title>
-<meta name="description" content="Build a sequence of Vootkit tools and run them on one file, back to back. Everything happens in your browser — the file is never uploaded.">
+<title>Workflows — run several Vootkit tools as one job | Vootkit</title>
+<meta name="description" content="Chain PDF, image and video tools into a single run and put a whole batch through it. Every step happens in your browser, so files are never uploaded — not even between steps.">
 <link rel="canonical" href="https://www.vootkit.com/workflows/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Vootkit">
-<meta property="og:title" content="Workflows — chain several tools into one run | Vootkit">
-<meta property="og:description" content="Build a sequence of Vootkit tools and run them on one file, back to back. Everything happens in your browser — the file is never uploaded.">
+<meta property="og:title" content="Workflows — run several Vootkit tools as one job | Vootkit">
+<meta property="og:description" content="Chain PDF, image and video tools into a single run and put a whole batch through it. Every step happens in your browser, so files are never uploaded — not even between steps.">
 <meta property="og:url" content="https://www.vootkit.com/workflows/">
 <meta property="og:image" content="https://www.vootkit.com/assets/og-default.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Vootkit — free browser tools that never upload your files">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Workflows — chain several tools into one run | Vootkit">
-<meta name="twitter:description" content="Build a sequence of Vootkit tools and run them on one file, back to back. Everything happens in your browser — the file is never uploaded.">
+<meta name="twitter:title" content="Workflows — run several Vootkit tools as one job | Vootkit">
+<meta name="twitter:description" content="Chain PDF, image and video tools into a single run and put a whole batch through it. Every step happens in your browser, so files are never uploaded — not even between steps.">
 <meta name="twitter:image" content="https://www.vootkit.com/assets/og-default.png">
-<script type="application/ld+json">undefined</script>
+
 <link rel="icon" href="../favicon.ico" sizes="any">
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="manifest" href="../site.webmanifest">
-<link rel="stylesheet" href="../assets/css/app.css?v=6d7e5de99c">
+<link rel="stylesheet" href="../assets/css/app.css?v=73e90eb5d8">
 <script>(function (root) {
   'use strict';
   var KEY = 'vk-consent';
@@ -138,25 +138,149 @@ window.VKConsent&&window.VKConsent.setDefaults();</script>
     </div>
   </div>
 </header>
-<main id="main" tabindex="-1">
+<main id="main" tabindex="-1"><script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Vootkit Workflows","applicationCategory":"BusinessApplication","operatingSystem":"Any modern web browser","url":"https://www.vootkit.com/workflows/","description":"Chain Vootkit's tools into one run. Every step happens in your browser, so files are never uploaded — including between steps.","featureList":["Optimise images for a website","Prepare documents to send","Pull pages out and tidy them","Cut a clip for social","Clean up a batch of photos","Turn photos into a printable PDF","Make a PDF safe to send","Assemble a report from several PDFs","Make thumbnails from a video"],"offers":{"@type":"Offer","category":"Subscription"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Do my files get uploaded when I run a workflow?","acceptedAnswer":{"@type":"Answer","text":"No. Every step runs in your browser on your own machine, including the handover between steps — the file produced by one step is passed straight to the next in memory. Nothing is sent to a server at any point, so there is nothing for us to store, leak or hand over."}},{"@type":"Question","name":"How is this different from using the tools one at a time?","acceptedAnswer":{"@type":"Answer","text":"Time, and the number of decisions. Running five tools by hand means five pages, five uploads of the same file into the next tool, and five downloads. A workflow is one file selection and one button. It also runs over a whole batch, so twenty files take one click rather than a hundred."}},{"@type":"Question","name":"Can I run a workflow over many files at once?","acceptedAnswer":{"@type":"Answer","text":"Yes. Choose as many as you like of one kind and every one goes through every step, with per-file progress. Mixed kinds are refused up front rather than failing halfway, because a PDF step cannot open an image."}},{"@type":"Question","name":"What happens if one step fails?","acceptedAnswer":{"@type":"Answer","text":"The run stops at that step and tells you which one, in the tool's own words. The output of the last step that worked is still offered for download, and if the failure is the kind that might clear — a network hiccup, an engine that did not load — you get a button to retry from that step rather than from the beginning."}},{"@type":"Question","name":"Can I save a workflow and use it again?","acceptedAnswer":{"@type":"Answer","text":"Yes, with its settings intact. Saved workflows are stored on your device, so no account is needed to keep one."}},{"@type":"Question","name":"Which tools can be workflow steps?","acceptedAnswer":{"@type":"Answer","text":"57 of them today — the PDF, image and video sets. Some tools build their controls and their logic together and cannot yet be called without drawing their interface, so they are not offered rather than offered and then failing."}},{"@type":"Question","name":"Is it free?","acceptedAnswer":{"@type":"Answer","text":"The workflow builder is part of Vootkit Pro. Every individual tool stays free and always will."}}]}</script>
 <main id="main">
   <section class="wrap section">
     <div class="sec-head">
       <span class="eyebrow">Workflows</span>
-      <h1>Do several things to one file, in one go.</h1>
+      <h1>Run several tools as one job.</h1>
+      <p>Lay the steps out, set each one, press run once. Every file goes
+      through every step, in order, on your device — nothing is uploaded at any
+      point, including between the steps.</p>
       <p class="wf-pro-note"><strong>Workflows are part of Vootkit Pro.</strong>
       Every individual tool stays free and always will.</p>
-      <p>Lay the steps out on the canvas, click any one to change its settings,
-      then run. Every file goes through every node in order, on your device —
-      nothing is uploaded at any point, including between the steps. Nodes
-      light up as they run, so you can see where a batch has got to.</p>
     </div>
     <div id="wf"></div>
-    <p class="note" style="margin-top:var(--s-4);max-width:60ch">
-      Every step carries the same settings its own tool page has, so a workflow
-      is a saved decision rather than a shortcut. Save one and it comes back
-      with those settings intact.
-    </p>
+  </section>
+
+  <section class="wrap section prose wf-prose">
+    <h2>What you can build</h2>
+    <p>Each of these is a real chain you can start from and then change — the
+    steps are ordinary Vootkit tools, and every one of them also works on its
+    own.</p>
+    
+      <h3>Images</h3>
+      <ul class="wf-chains">
+        <li>
+          <strong>Optimise images for a website</strong>
+          <span class="wf-chain"><a href="../tools/images/resize-image/">Image Resizer</a> <span class="wf-arrow" aria-hidden="true">→</span> <a href="../tools/images/compress-image/">Image Compressor</a> <span class="wf-arrow" aria-hidden="true">→</span> <a href="../tools/images/convert-image/">Image Converter</a></span>
+          <span class="wf-why">Resize to a sane width, compress, then convert to WebP.</span>
+        </li><li>
+          <strong>Clean up a batch of photos</strong>
+          <span class="wf-chain"><a href="../tools/images/crop-image/">Crop Image</a> <span class="wf-arrow" aria-hidden="true">→</span> <a href="../tools/images/compress-image/">Image Compressor</a></span>
+          <span class="wf-why">Crop them all to the same shape, then compress for sharing.</span>
+        </li><li>
+          <strong>Turn photos into a printable PDF</strong>
+          <span class="wf-chain"><a href="../tools/images/resize-image/">Image Resizer</a> <span class="wf-arrow" aria-hidden="true">→</span> <a href="../tools/pdf/jpg-to-pdf/">Images to PDF</a></span>
+          <span class="wf-why">Resize them to a consistent size, then bind them into one document.</span>
+        </li>
+      </ul>
+      <h3>PDF</h3>
+      <ul class="wf-chains">
+        <li>
+          <strong>Prepare documents to send</strong>
+          <span class="wf-chain"><a href="../tools/pdf/rotate-pdf/">Rotate PDF</a> <span class="wf-arrow" aria-hidden="true">→</span> <a href="../tools/pdf/pdf-watermark/">PDF Watermark</a> <span class="wf-arrow" aria-hidden="true">→</span> <a href="../tools/pdf/protect-pdf/">Protect PDF</a></span>
+          <span class="wf-why">Shrink a scan, stamp it, and lock it before it leaves your hands.</span>
+        </li><li>
+          <strong>Pull pages out and tidy them</strong>
+          <span class="wf-chain"><a href="../tools/pdf/extract-pdf-pages/">Extract PDF Pages</a> <span class="wf-arrow" aria-hidden="true">→</span> <a href="../tools/pdf/pdf-page-numbers/">Add Page Numbers</a></span>
+          <span class="wf-why">Take the pages you need, drop the rest, number what is left.</span>
+        </li><li>
+          <strong>Make a PDF safe to send</strong>
+          <span class="wf-chain"><a href="../tools/pdf/pdf-watermark/">PDF Watermark</a> <span class="wf-arrow" aria-hidden="true">→</span> <a href="../tools/pdf/protect-pdf/">Protect PDF</a></span>
+          <span class="wf-why">Stamp it so a copy is traceable, then password-protect it.</span>
+        </li><li>
+          <strong>Assemble a report from several PDFs</strong>
+          <span class="wf-chain"><a href="../tools/pdf/merge-pdf/">Merge PDFs</a> <span class="wf-arrow" aria-hidden="true">→</span> <a href="../tools/pdf/pdf-page-numbers/">Add Page Numbers</a></span>
+          <span class="wf-why">Combine them in order, then number the pages so it reads as one.</span>
+        </li>
+      </ul>
+      <h3>Video</h3>
+      <ul class="wf-chains">
+        <li>
+          <strong>Cut a clip for social</strong>
+          <span class="wf-chain"><a href="../tools/video/trim-video/">Video Trimmer</a> <span class="wf-arrow" aria-hidden="true">→</span> <a href="../tools/video/video-to-gif/">Video to GIF</a></span>
+          <span class="wf-why">Trim it, then make a looping GIF of the good bit.</span>
+        </li><li>
+          <strong>Make thumbnails from a video</strong>
+          <span class="wf-chain"><a href="../tools/video/frame-grabber/">Frame Grabber</a> <span class="wf-arrow" aria-hidden="true">→</span> <a href="../tools/images/resize-image/">Image Resizer</a></span>
+          <span class="wf-why">Grab a frame, then size it for wherever it is going.</span>
+        </li>
+      </ul>
+
+    <h2>How a run works</h2>
+    <p>A workflow is a graph, not a list. You drag tools onto a canvas and draw
+    the connections yourself, so the order comes from what feeds what. A step
+    can sit unconnected while you think, be rewired without being deleted, or
+    feed two different paths from the same file.</p>
+    <p>Before anything runs, the whole chain is checked: each step has to accept
+    what the step before it produced. That cannot be worked out from tool names
+    alone — <a href="../tools/pdf/jpg-to-pdf/">Images to PDF</a> turns an image
+    into a PDF, so what may follow it is completely different from what may
+    follow an in-place tool. A step that cannot take the file at its position is
+    marked before you press run, not after.</p>
+    <p>During the run each node reports its own state, and if one fails the run
+    stops there and says which — in the tool's own words rather than an error
+    code. Whatever the last working step produced is still yours to download.</p>
+
+    <h2>Why the files stay on your device</h2>
+    <p>Vootkit's tools are already programs that run in your browser rather than
+    on a server. That is what makes chaining them possible at all: when a step
+    finishes, its output is sitting in your computer's memory, so handing it to
+    the next step costs nothing and involves no upload. A site that processes
+    files on its own servers has to send yours up, process, send it back, and
+    take it up again for every single step.</p>
+    <p>It also means the privacy position does not change when you use a
+    workflow. There is no copy on a server to be breached, retained, or handed
+    over, because there is no server in the loop.</p>
+
+    <h2>What it will not do</h2>
+    <p>57 tools can currently be steps — the PDF, image and video
+    sets. Some tools build their controls and their processing together and
+    cannot yet be run without drawing their interface, so they are left out of
+    the picker rather than offered and then failing mid-run.</p>
+    <p>Because the work happens on your machine, a very large batch is bounded
+    by your computer's memory rather than by a server queue, and a run does not
+    continue on another device. Those are the honest trade-offs of not
+    uploading anything.</p>
+
+    <h2>Questions</h2>
+    
+      <details class="wf-faq">
+        <summary>Do my files get uploaded when I run a workflow?</summary>
+        <p>No. Every step runs in your browser on your own machine, including the handover between steps — the file produced by one step is passed straight to the next in memory. Nothing is sent to a server at any point, so there is nothing for us to store, leak or hand over.</p>
+      </details>
+      <details class="wf-faq">
+        <summary>How is this different from using the tools one at a time?</summary>
+        <p>Time, and the number of decisions. Running five tools by hand means five pages, five uploads of the same file into the next tool, and five downloads. A workflow is one file selection and one button. It also runs over a whole batch, so twenty files take one click rather than a hundred.</p>
+      </details>
+      <details class="wf-faq">
+        <summary>Can I run a workflow over many files at once?</summary>
+        <p>Yes. Choose as many as you like of one kind and every one goes through every step, with per-file progress. Mixed kinds are refused up front rather than failing halfway, because a PDF step cannot open an image.</p>
+      </details>
+      <details class="wf-faq">
+        <summary>What happens if one step fails?</summary>
+        <p>The run stops at that step and tells you which one, in the tool&#39;s own words. The output of the last step that worked is still offered for download, and if the failure is the kind that might clear — a network hiccup, an engine that did not load — you get a button to retry from that step rather than from the beginning.</p>
+      </details>
+      <details class="wf-faq">
+        <summary>Can I save a workflow and use it again?</summary>
+        <p>Yes, with its settings intact. Saved workflows are stored on your device, so no account is needed to keep one.</p>
+      </details>
+      <details class="wf-faq">
+        <summary>Which tools can be workflow steps?</summary>
+        <p>57 of them today — the PDF, image and video sets. Some tools build their controls and their logic together and cannot yet be called without drawing their interface, so they are not offered rather than offered and then failing.</p>
+      </details>
+      <details class="wf-faq">
+        <summary>Is it free?</summary>
+        <p>The workflow builder is part of Vootkit Pro. Every individual tool stays free and always will.</p>
+      </details>
+
+    <p class="note">Looking for a single tool instead?
+      <a href="../tools/">Browse all 250+</a>, or start with
+      <a href="../tools/pdf/">PDF</a>,
+      <a href="../tools/images/">images</a> or
+      <a href="../tools/video/">video</a>.</p>
   </section>
 </main></main>
 <footer class="ftr">
@@ -199,8 +323,8 @@ window.VKConsent&&window.VKConsent.setDefaults();</script>
     </div>
   </div>
 </footer>
-<script src="../data/site.config.js?v=6d7e5de99c"></script>
-<script src="../data/catalog.js?v=6d7e5de99c"></script>
+<script src="../data/site.config.js?v=73e90eb5d8"></script>
+<script src="../data/catalog.js?v=73e90eb5d8"></script>
 <script>
 document.getElementById('yr').textContent=new Date().getFullYear();
 (function(){var b=document.getElementById('burger'),n=document.getElementById('nav');
@@ -209,33 +333,33 @@ var t=document.getElementById('theme'),s=null;try{s=localStorage.getItem('vk-the
 if(s)document.documentElement.setAttribute('data-theme',s);
 t.addEventListener('click',function(){var c=document.documentElement.getAttribute('data-theme'),x=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',x);try{localStorage.setItem('vk-theme',x);}catch(e){}});})();
 </script>
-<script src="../assets/js/track.js?v=6d7e5de99c" defer></script>
-<script src="../assets/js/consent-ui.js?v=6d7e5de99c" defer></script>
-<script src="../assets/js/ads.js?v=6d7e5de99c" defer></script>
-<script src="../assets/js/ui.js?v=6d7e5de99c" defer></script>
-<script src="../assets/js/recent.js?v=6d7e5de99c" defer></script>
-<script src="../assets/js/supabase-config.js?v=6d7e5de99c" defer></script>
-<script src="../assets/js/errors.js?v=6d7e5de99c" defer></script>
-<script src="../assets/js/convert.js?v=6d7e5de99c" defer></script>
-<script src="../assets/js/newsletter.js?v=6d7e5de99c" defer></script>
-<script src="../assets/js/auth.js?v=6d7e5de99c" defer></script>
-<script src="../assets/js/usage.js?v=6d7e5de99c" defer></script>
-<script src="../assets/js/deliver.js?v=6d7e5de99c" defer></script>
+<script src="../assets/js/track.js?v=73e90eb5d8" defer></script>
+<script src="../assets/js/consent-ui.js?v=73e90eb5d8" defer></script>
+<script src="../assets/js/ads.js?v=73e90eb5d8" defer></script>
+<script src="../assets/js/ui.js?v=73e90eb5d8" defer></script>
+<script src="../assets/js/recent.js?v=73e90eb5d8" defer></script>
+<script src="../assets/js/supabase-config.js?v=73e90eb5d8" defer></script>
+<script src="../assets/js/errors.js?v=73e90eb5d8" defer></script>
+<script src="../assets/js/convert.js?v=73e90eb5d8" defer></script>
+<script src="../assets/js/newsletter.js?v=73e90eb5d8" defer></script>
+<script src="../assets/js/auth.js?v=73e90eb5d8" defer></script>
+<script src="../assets/js/usage.js?v=73e90eb5d8" defer></script>
+<script src="../assets/js/deliver.js?v=73e90eb5d8" defer></script>
 <!-- Tool chaining. tool-flow.js says what each tool accepts, tool-icons.js
      gives the next-step buttons the same per-tool icons as everywhere else,
      and handoff.js parks the finished file on the device between the two
      pages. All three are optional: without them a tool simply downloads. -->
-<script src="../data/tool-flow.js?v=6d7e5de99c" defer></script>
-<script src="../data/tool-icons.js?v=6d7e5de99c" defer></script>
-<script src="../assets/js/handoff.js?v=6d7e5de99c" defer></script>
-<script src="../assets/js/gate.js?v=6d7e5de99c" defer></script>
-<script src="../data/tool-flow.js?v=6d7e5de99c" defer></script>
-<script src="../assets/js/tools-pdf.js?v=6d7e5de99c" defer></script>
-<script src="../assets/js/tools-image.js?v=6d7e5de99c" defer></script>
-<script src="../assets/js/tools-image2.js?v=6d7e5de99c" defer></script>
-<script src="../assets/js/tools-videofx.js?v=6d7e5de99c" defer></script>
-<script src="../assets/js/videoengine.js?v=6d7e5de99c" defer></script>
-<script src="../assets/js/workflow.js?v=6d7e5de99c" defer></script>
-<script src="../assets/js/wf-init.js?v=6d7e5de99c" defer></script>
+<script src="../data/tool-flow.js?v=73e90eb5d8" defer></script>
+<script src="../data/tool-icons.js?v=73e90eb5d8" defer></script>
+<script src="../assets/js/handoff.js?v=73e90eb5d8" defer></script>
+<script src="../assets/js/gate.js?v=73e90eb5d8" defer></script>
+<script src="../data/tool-flow.js?v=73e90eb5d8" defer></script>
+<script src="../assets/js/tools-pdf.js?v=73e90eb5d8" defer></script>
+<script src="../assets/js/tools-image.js?v=73e90eb5d8" defer></script>
+<script src="../assets/js/tools-image2.js?v=73e90eb5d8" defer></script>
+<script src="../assets/js/tools-videofx.js?v=73e90eb5d8" defer></script>
+<script src="../assets/js/videoengine.js?v=73e90eb5d8" defer></script>
+<script src="../assets/js/workflow.js?v=73e90eb5d8" defer></script>
+<script src="../assets/js/wf-init.js?v=73e90eb5d8" defer></script>
 </body>
 </html>

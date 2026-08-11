@@ -798,3 +798,28 @@ video.wcode { padding: 0; }
 .wf-locked .note { margin: var(--s-3) 0 0; font-size: var(--t-sm); color: var(--ink-mute); }
 .wf-pro-note { margin-top: var(--s-3); font-size: var(--t-sm); color: var(--ink-soft); }
 .wf-pro-note strong { color: var(--ink); }
+
+/* The server-rendered half of /workflows/. It carries the page for a crawler
+   and for anyone the editor never loads for, so it is real prose rather than
+   filler around a widget. */
+.wf-prose h2 { margin-top: var(--s-7); }
+.wf-prose h3 { margin-top: var(--s-5); font-size: var(--t-md); color: var(--ink-soft); }
+.wf-chains { list-style: none; margin: var(--s-3) 0 0; padding: 0; display: grid; gap: var(--s-2); }
+.wf-chains li {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: var(--s-3) var(--s-4);
+  border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface);
+}
+.wf-chains strong { font-size: var(--t-base); }
+.wf-chain { font-size: var(--t-sm); }
+.wf-chain a { color: var(--accent); }
+.wf-chain a:hover { text-decoration: underline; }
+.wf-arrow { color: var(--ink-mute); padding: 0 2px; }
+.wf-why { font-size: var(--t-sm); color: var(--ink-soft); }
+.wf-faq {
+  border: 1px solid var(--line); border-radius: var(--r-md);
+  background: var(--surface); padding: var(--s-3) var(--s-4); margin-top: var(--s-2);
+}
+.wf-faq summary { cursor: pointer; font-weight: 600; font-size: var(--t-base); }
+.wf-faq[open] summary { margin-bottom: var(--s-2); }
+.wf-faq p { margin: 0; color: var(--ink-soft); font-size: var(--t-sm); line-height: 1.65; }
