@@ -311,3 +311,58 @@ console.log(`workflow + cancel + retry: ${pass} total assertions passed`);
   }
 }
 console.log(`workflow + page SEO: ${pass} total assertions passed`);
+
+/* ---------------------------------------------------------------------------
+ * AUTO-FIX: turning "incompatible" into a button.
+ *
+ * "These two are incompatible" is a true sentence that helps nobody. The
+ * dangerous version of this feature is one that says "no conversion exists"
+ * when a conversion plainly does — the user knows PDF to JPG is on the site,
+ * and being told otherwise is the point they stop believing the product.
+ * ------------------------------------------------------------------------- */
+{
+  /* A bridge that can actually run, offered as a fix. */
+  const imgToPdf = W.bridgeAdvice(D, "image", "rotate-pdf");
+  ok(imgToPdf.fixable, "an image reaching a PDF tool gets a runnable fix");
+  ok(imgToPdf.path.length >= 1 && imgToPdf.path.length <= 2, "and it is short");
+  ok(imgToPdf.path.every((p) => D.flow[p.id] && D.flow[p.id].w),
+     "every step of the suggested bridge can actually run");
+  ok(/cannot take/.test(imgToPdf.text) && /makes it work/.test(imgToPdf.text),
+     "the sentence says what is wrong and what fixes it");
+
+  /* Nothing to fix when the types already line up. */
+  eq(W.bridge(D, "pdf", "rotate-pdf"), [], "a valid pairing needs no bridge");
+  ok(!W.bridgeAdvice(D, "image", "compress-image").fixable, "and offers no fix");
+
+  /* THE CASE THAT MUST NOT LIE. PDF to JPG exists as a tool but cannot be a
+     workflow step yet, so the bridge search finds nothing runnable — and the
+     advice has to say that rather than "there is no conversion". */
+  const pdfToImg = W.bridgeAdvice(D, "pdf", "resize-image");
+  ok(!pdfToImg.fixable, "no runnable bridge from a PDF to an image tool today");
+  ok(pdfToImg.manual && pdfToImg.manual.length, "but the manual route is found and named");
+  ok(!/there is no conversion/.test(pdfToImg.text),
+     "and it never claims a conversion does not exist when one does");
+  ok(/cannot be a workflow step yet/.test(pdfToImg.text),
+     "it explains the real reason instead");
+  ok(pdfToImg.manual.every((m) => VK.find(m.id)), "the named tool is real and linkable");
+
+  /* When there is genuinely no route, say so plainly. */
+  const none = W.bridgeAdvice(D, "audio", "rotate-pdf");
+  ok(!none.fixable && !none.manual, "audio into a PDF tool has no route at all");
+  ok(/no conversion between them/.test(none.text), "and that is stated plainly");
+
+  /* The search is bounded — a bridge longer than two hops is a different
+     workflow, not a fix, and that is the user's call. */
+  Object.keys(D.flow).slice(0, 40).forEach((id) => {
+    ["pdf", "image", "video"].forEach((k) => {
+      const p = W.bridge(D, k, id);
+      if (p) ok(p.length <= 2, "no suggested bridge exceeds two hops (" + k + " -> " + id + ")");
+    });
+  });
+
+  /* Guards. */
+  eq(W.bridge(D, "", "rotate-pdf"), null, "no starting kind, no bridge");
+  eq(W.bridge(D, "pdf", "not-a-tool"), null, "unknown target, no bridge");
+  eq(W.bridge(null, "pdf", "rotate-pdf"), null, "no flow map, no bridge");
+}
+console.log(`workflow + auto-fix: ${pass} total assertions passed`);

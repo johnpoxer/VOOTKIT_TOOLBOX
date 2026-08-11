@@ -167,6 +167,89 @@
     return false;
   }
 
+  /* ---------- auto-fix: find a bridge ----------
+   *
+   * "These two are incompatible" is a true sentence that helps nobody. The
+   * user has already decided what they want; being told it cannot be done and
+   * left to work out why is where people give up on a builder.
+   *
+   * Vootkit can do better than a warning, because the flow map already knows
+   * what every tool takes and what the type-changing ones emit. That makes
+   * "PDF into an image tool" a shortest-path problem over file KINDS, and the
+   * answer is a real step the user can insert: PDF -> PDF to JPG -> image.
+   *
+   * Breadth-first over kinds rather than tools, so the first route found is
+   * the shortest one and the suggestion is never a scenic detour. Capped at
+   * two hops: past that it stops being a fix and starts being a different
+   * workflow, which is the user's decision rather than ours.
+   */
+  function bridge(D, fromKind, toId, maxHops, anyTool) {
+    var flow = (D || {}).flow || {};
+    var names = (D || {}).names || {};
+    var target = flow[toId];
+    if (!fromKind || !target) return null;
+    if (kindAccepted(target.a, fromKind)) return [];      // already fine
+
+    var cap = maxHops == null ? 2 : maxHops;
+
+    /* Only tools that CHANGE the kind are useful as a bridge — an in-place
+       tool moves you nowhere, and including them makes the search explode. */
+    var converters = Object.keys(flow).filter(function (id) {
+      return (anyTool || flow[id].w) && flow[id].o && id !== toId;
+    });
+
+    var queue = [{ kind: fromKind, path: [] }];
+    var seen = {};
+    seen[fromKind] = 1;
+
+    while (queue.length) {
+      var cur = queue.shift();
+      if (cur.path.length >= cap) continue;
+      for (var i = 0; i < converters.length; i++) {
+        var id = converters[i];
+        if (!kindAccepted(flow[id].a, cur.kind)) continue;
+        var next = flow[id].o;
+        var path = cur.path.concat([{ id: id, name: names[id] || id, from: cur.kind, to: next }]);
+        if (kindAccepted(target.a, next)) return path;     // shortest wins
+        if (!seen[next]) { seen[next] = 1; queue.push({ kind: next, path: path }); }
+      }
+    }
+    return null;                                           // no route exists
+  }
+
+  /* The sentence to show. A fix the user cannot understand is a fix they will
+     not trust enough to click. */
+  function bridgeAdvice(D, fromKind, toId) {
+    var names = (D || {}).names || {};
+    var to = names[toId] || toId;
+    var path = bridge(D, fromKind, toId);
+    if (path === null) {
+      /* A route may exist among Vootkit's TOOLS while not existing among
+         workflow STEPS — PDF to JPG converts a PDF to an image, but it is one
+         of the widget-shaped tools that cannot yet be called without drawing
+         its interface. Saying "there is no conversion" would be false, and the
+         user would be right not to believe us. Name the tool, say why it is
+         not a step, and point at its page. */
+      var offline = bridge(D, fromKind, toId, 2, true);
+      if (offline && offline.length) {
+        return { fixable: false, manual: offline,
+          text: to + ' cannot take a ' + fromKind + ' directly. '
+              + offline.map(function (x) { return x.name; }).join(' then ')
+              + ' would convert it, but that tool cannot be a workflow step yet — '
+              + 'run it on its own page first, then start the workflow from what it gives you.' };
+      }
+      return { fixable: false,
+        text: to + ' cannot take a ' + (fromKind || 'file') + ', and there is no '
+            + 'conversion between them. Remove this step or change the one before it.' };
+    }
+    if (!path.length) return { fixable: false, text: '' };  // nothing wrong
+    return {
+      fixable: true, path: path,
+      text: to + ' cannot take a ' + fromKind + ' directly. Inserting '
+          + path.map(function (p) { return p.name; }).join(' then ') + ' makes it work.'
+    };
+  }
+
   /* ---------- templates ----------
    *
    * The empty state of an editor is where most people decide it is not for
@@ -886,6 +969,53 @@
       }
       var spec = specFor(n.id);
       panel.appendChild(h('h3', { class: 'wfc-h', text: (D.names && D.names[n.id]) || n.id }));
+
+      /* AUTO-FIX. If this node cannot take what reaches it, do not just say so
+         — offer the conversion that makes it work, as one button. Telling
+         somebody their workflow is invalid and leaving them to work out why is
+         where people abandon a builder. */
+      var arriving = kindAt(n.uid);
+      if (files.length && arriving && !kindAccepted((D.flow[n.id] || {}).a, arriving)) {
+        var adv = bridgeAdvice(D, arriving, n.id);
+        var box = h('div', { class: 'wfc-fix' }, [h('p', { text: adv.text })]);
+        if (!adv.fixable && adv.manual) {
+          var t0 = adv.manual[0];
+          var tool = root.VK && root.VK.find && root.VK.find(t0.id);
+          if (tool) {
+            box.appendChild(h('a', { class: 'btn btn-sm wfc-fixbtn',
+              href: '../tools/' + tool.cat + '/' + tool.id + '/',
+              text: 'Open ' + t0.name }));
+          }
+        }
+        if (adv.fixable) {
+          var fixBtn = h('button', {
+            class: 'btn btn-sm wfc-fixbtn', type: 'button',
+            text: 'Insert ' + adv.path.map(function (x) { return x.name; }).join(' + ')
+          });
+          fixBtn.addEventListener('click', function () {
+            pushHistory();
+            /* The bridge is spliced in BEFORE this node, taking over its
+               incoming link, so the rest of the graph is untouched. */
+            var parent = parentOf(n.uid);
+            links = links.filter(function (l) { return l.to !== n.uid; });
+            var prev = parent;
+            adv.path.forEach(function (step, k) {
+              var uid = 'n' + (++uidN);
+              nodes.push({ uid: uid, id: step.id, opts: {},
+                x: n.x - (adv.path.length - k) * 200, y: n.y + 90 });
+              if (prev) links.push({ from: prev, to: uid });
+              prev = uid;
+            });
+            if (prev) links.push({ from: prev, to: n.uid });
+            sel = n.uid;
+            draw(); fit();
+            try { if (root.VKTrack && root.VKTrack.event) root.VKTrack.event('workflow_autofix', { to_tool: n.id, hops: adv.path.length }); } catch (e) {}
+          });
+          box.appendChild(fixBtn);
+        }
+        panel.appendChild(box);
+      }
+
       panel.appendChild(h('div', { class: 'wfc-panacts' }, [
         h('button', { class: 'btn btn-sm', type: 'button', text: 'Disconnect',
           onclick: function () { links = links.filter(function (l) { return l.to !== n.uid; }); draw(); } }),
@@ -1101,6 +1231,8 @@
 
   root.VKWorkflow = {
     mount: mount,
+    bridge: bridge,
+    bridgeAdvice: bridgeAdvice,
     lockedView: lockedView,
     classifyError: classifyError,
     failureAdvice: failureAdvice,

@@ -366,7 +366,7 @@ function footCols(up) {
       </div>
       <div class="ftr-col">
         <h4>Vootkit</h4>
-        <a href="${up}tools/">All tools</a><a href="${up}workflows/">Workflows <span class="ftr-pro">Pro</span></a><a href="${up}pricing.html">Pricing</a><a href="${up}about.html">About</a><a href="${up}blog/">Blog</a><a href="${up}contact.html">Contact &amp; support</a>
+        <a href="${up}tools/">All tools</a><a href="${up}workflows/">Workflows <span class="ftr-pro">Pro</span></a><a href="${up}blog/file-upload-size-limits/">Upload size limits</a><a href="${up}pricing.html">Pricing</a><a href="${up}about.html">About</a><a href="${up}blog/">Blog</a><a href="${up}contact.html">Contact &amp; support</a>
       </div>
       <div class="ftr-col">
         <h4>Legal</h4>

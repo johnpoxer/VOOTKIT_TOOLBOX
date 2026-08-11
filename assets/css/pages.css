@@ -823,3 +823,10 @@ video.wcode { padding: 0; }
 .wf-faq summary { cursor: pointer; font-weight: 600; font-size: var(--t-base); }
 .wf-faq[open] summary { margin-bottom: var(--s-2); }
 .wf-faq p { margin: 0; color: var(--ink-soft); font-size: var(--t-sm); line-height: 1.65; }
+/* Auto-fix: the panel turns "incompatible" into one button. */
+.wfc-fix {
+  border: 1px solid #6b3a3a; background: #2a1618; border-radius: 10px;
+  padding: var(--s-3); display: flex; flex-direction: column; gap: var(--s-2);
+}
+.wfc-fix p { margin: 0; font-size: var(--t-sm); color: #ffc9c9; line-height: 1.5; }
+.wfc-fixbtn { align-self: flex-start; background: #16233c; border-color: #7dabf8; color: #dbe7fb; }
