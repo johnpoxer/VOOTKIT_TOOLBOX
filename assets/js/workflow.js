@@ -250,6 +250,68 @@
     };
   }
 
+  /* ---------- the optimiser ----------
+   *
+   * A workflow somebody assembled by hand often contains work that cancels
+   * itself out — compressing, converting, then compressing again; resizing
+   * twice; stamping a file that is about to be flattened. None of it is an
+   * error, so validation says nothing, and the user pays for it in time on
+   * every single run.
+   *
+   * This reads the chain and reports what it can see. It never edits anything
+   * on its own: a suggestion the user has to accept is advice, and a workflow
+   * that quietly rewrites itself is a workflow nobody can trust to do what it
+   * shows. Every finding names the step by number so it can be acted on.
+   */
+  function analyse(D, steps) {
+    var names = (D || {}).names || {};
+    var flow = (D || {}).flow || {};
+    var ids = (steps || []).map(function (s2) { return typeof s2 === 'string' ? s2 : s2.id; });
+    var out = [];
+    var nameOf = function (id) { return names[id] || id; };
+
+    /* The same tool twice in a row. The second run works on output the first
+       already produced, so it is doing the job again on worse input. */
+    for (var i = 1; i < ids.length; i++) {
+      if (ids[i] === ids[i - 1]) {
+        out.push({ kind: 'duplicate', step: i,
+          text: nameOf(ids[i]) + ' runs twice in a row (steps ' + i + ' and ' + (i + 1)
+              + '). The second pass works on what the first produced, so it costs '
+              + 'time without adding anything. Remove one.' });
+      }
+    }
+
+    /* Compressing before a step that re-encodes anyway. The early compression
+       is thrown away by the later one, and it degrades what the later one has
+       to work with. */
+    var LOSSY = { 'compress-image': 1, 'compress-pdf': 1, 'compress-video': 1 };
+    var REENCODES = { 'convert-image': 1, 'resize-image': 1, 'crop-image': 1,
+                      'png-to-jpg': 1, 'jpg-to-png': 1, 'video-to-gif': 1 };
+    for (var j = 0; j < ids.length - 1; j++) {
+      if (LOSSY[ids[j]] && REENCODES[ids[j + 1]]) {
+        out.push({ kind: 'order', step: j,
+          text: nameOf(ids[j]) + ' before ' + nameOf(ids[j + 1]) + ' throws its own '
+              + 'work away — the next step re-encodes the file anyway, from a copy '
+              + 'you already degraded. Compressing last gives a better result in '
+              + 'less time.' });
+      }
+    }
+
+    /* A step whose output the next step discards entirely. Stamping or
+       numbering a PDF that is then turned into images loses the stamp. */
+    for (var k = 0; k < ids.length - 1; k++) {
+      var emits = flow[ids[k + 1]] && flow[ids[k + 1]].o;
+      var cosmetic = { 'pdf-watermark': 1, 'pdf-page-numbers': 1 };
+      if (cosmetic[ids[k]] && emits && emits !== 'pdf') {
+        out.push({ kind: 'wasted', step: k,
+          text: nameOf(ids[k]) + ' is undone by ' + nameOf(ids[k + 1])
+              + ', which converts the file to ' + emits + '. Do it after, or drop it.' });
+      }
+    }
+
+    return out;
+  }
+
   /* ---------- templates ----------
    *
    * The empty state of an editor is where most people decide it is not for
@@ -964,6 +1026,20 @@
           h('li', { text: 'Drag from a node’s right-hand dot to another node to connect them.' }),
           h('li', { text: 'Click a node to change its settings, then run.' })
         ]));
+        /* What the optimiser can see about the chain as it stands. Advice
+           only — nothing here edits the graph, because a workflow that
+           quietly rewrites itself is one nobody can trust to do what it
+           shows on screen. */
+        var chainNow = pathsFrom(nodes, links, 'in')[0];
+        if (chainNow && chainNow.length > 1) {
+          var notes = analyse(D, chainNow.map(function (x) { return x.id; }));
+          if (notes.length) {
+            panel.appendChild(h('h3', { class: 'wfc-h', text: 'Worth a look' }));
+            var nl = h('div', { class: 'wfc-tips' });
+            notes.forEach(function (n2) { nl.appendChild(h('p', { text: n2.text })); });
+            panel.appendChild(nl);
+          }
+        }
         panel.appendChild(h('p', { class: 'note', text: 'Click a connection to delete it. Select a node and press Delete to remove it. Ctrl+Z undoes.' }));
         return;
       }
@@ -1231,6 +1307,7 @@
 
   root.VKWorkflow = {
     mount: mount,
+    analyse: analyse,
     bridge: bridge,
     bridgeAdvice: bridgeAdvice,
     lockedView: lockedView,

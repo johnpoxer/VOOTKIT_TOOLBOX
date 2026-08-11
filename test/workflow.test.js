@@ -366,3 +366,54 @@ console.log(`workflow + page SEO: ${pass} total assertions passed`);
   eq(W.bridge(null, "pdf", "rotate-pdf"), null, "no flow map, no bridge");
 }
 console.log(`workflow + auto-fix: ${pass} total assertions passed`);
+
+/* ---------------------------------------------------------------------------
+ * THE OPTIMISER.
+ *
+ * These are not errors — validation passes on every one of them — so nothing
+ * else in the system would ever mention them, and the user pays the cost on
+ * every run. The risk is the opposite of a false negative: crying wolf on a
+ * chain that is fine trains people to ignore the panel.
+ * ------------------------------------------------------------------------- */
+{
+  const t = (ids) => W.analyse(D, ids);
+
+  /* The same tool twice running back to back. */
+  const dup = t(["compress-image", "compress-image"]);
+  eq(dup.length, 1, "the same tool twice in a row is flagged once");
+  eq(dup[0].kind, "duplicate", "and classified");
+  ok(/steps 1 and 2/.test(dup[0].text), "naming the steps so it can be acted on");
+
+  /* Lossy work thrown away by a later re-encode. */
+  const order = t(["resize-image", "compress-image", "convert-image"]);
+  eq(order.length, 1, "compressing before a re-encode is flagged");
+  eq(order[0].kind, "order", "and classified");
+  ok(/Compressing last/.test(order[0].text), "with the fix stated, not just the fault");
+
+  /* Chains that are genuinely fine must stay silent. This is the assertion
+     that stops the panel becoming noise. */
+  [
+    ["rotate-pdf", "pdf-watermark", "protect-pdf"],
+    ["resize-image", "convert-image", "compress-image"],
+    ["merge-pdf", "pdf-page-numbers"],
+    ["crop-image"],
+    []
+  ].forEach((ids) => eq(t(ids).length, 0, "no complaint about a sound chain: " + (ids.join(" -> ") || "empty")));
+
+  /* Accepts both step shapes, like run() does. */
+  eq(W.analyse(D, [{ id: "compress-image" }, { id: "compress-image" }]).length, 1,
+     "objects work as well as bare ids");
+
+  /* Never throws on nonsense — this runs on every redraw. */
+  eq(W.analyse(D, null).length, 0, "no steps, no findings");
+  eq(W.analyse(null, ["compress-image", "compress-image"]).length, 1,
+     "works without a flow map for the rules that do not need one");
+  ok(W.analyse(D, ["ghost", "ghost"]).length === 1, "unknown ids do not crash it");
+
+  /* Every finding must name a step index the caller can use. */
+  t(["compress-image", "compress-image", "convert-image"]).forEach((f) => {
+    ok(typeof f.step === "number" && f.step >= 0, "each finding carries a step index");
+    ok(f.text && f.text.length > 40, "and a sentence a person can act on");
+  });
+}
+console.log(`workflow + optimiser: ${pass} total assertions passed`);

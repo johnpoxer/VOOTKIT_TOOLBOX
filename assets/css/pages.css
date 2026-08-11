@@ -830,3 +830,10 @@ video.wcode { padding: 0; }
 }
 .wfc-fix p { margin: 0; font-size: var(--t-sm); color: #ffc9c9; line-height: 1.5; }
 .wfc-fixbtn { align-self: flex-start; background: #16233c; border-color: #7dabf8; color: #dbe7fb; }
+/* Optimiser notes: advice, never an automatic edit. */
+.wfc-tips { display: flex; flex-direction: column; gap: var(--s-2); }
+.wfc-tips p {
+  margin: 0; padding: var(--s-3); border-radius: 10px;
+  border: 1px solid #4a3f1e; background: #241f10; color: #f0dfae;
+  font-size: var(--t-xs); line-height: 1.5;
+}
