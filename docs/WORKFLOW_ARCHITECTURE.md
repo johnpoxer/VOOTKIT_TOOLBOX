@@ -49,13 +49,27 @@ would make Vootkit a slower iLovePDF with fewer tools.
 | `favorites` | yes | starred tools |
 | `links` | yes | URL shortener |
 | `error_logs` | yes | scrubbed crash reports |
-| `tool_runs` | **no** | `deliver.js` writes to it |
-| `subscribers` | **no** | `newsletter.js` writes to it |
+| `tool_runs` | not in repo | `deliver.js` writes to it |
+| `subscribers` | not in repo | `newsletter.js` writes to it |
 
-**Two tables are written by shipped code and do not exist in `supabase/`.**
-Either they were created by hand in the dashboard and never captured as
-migrations, or those writes have been failing silently. Both cases are a
-problem before anything is built on top.
+**RESOLVED — checked against the live database on 10 Aug.** Both tables exist
+and are correctly locked down. They were created by hand in the dashboard and
+never captured as migrations; nothing has been failing. Verified:
+
+| Table | RLS | Policies |
+|---|---|---|
+| `subscribers` | on | INSERT for `anon, authenticated` — and **no SELECT policy**, so the list cannot be read by the browser. Correct. |
+| `tool_runs` | on | INSERT and SELECT for `authenticated` only. No update or delete. Correct. |
+
+`unsubscribe_by_token()` exists. `supabase/subscribers.sql` and
+`supabase/tool_runs.sql` now serve as the captured definition of what is
+already there — `if not exists` throughout, so running them is a no-op.
+
+The live database also holds tables with no counterpart in the repo at all:
+`Vootkit`, `goals`, `goal_milestones`, `mission_usage`, `processing_jobs`.
+Eighteen tables in total against five in `supabase/`. Worth a pass to work out
+which are live and which are abandoned before the workflow tables are added —
+an unowned table with RLS off is the shape most data leaks arrive in.
 
 ### Auth, billing, limits
 - Supabase auth; plan on `profiles.plan` (`creator_pro` / `creator_teams`)
@@ -209,10 +223,10 @@ Generated at build time from the specs, as `data/tool-flow.js` already is.
 ## 6. What needs your decision before I write more code
 
 1. **Option A, B or C.** Everything else depends on it.
-2. **`tool_runs` and `subscribers` migrations are now written** —
-   `supabase/tool_runs.sql` and `supabase/subscribers.sql`, not applied.
-   Run `subscribers.sql` first: if that table is missing, signups have been
-   failing visibly in front of real people.
+2. ~~`tool_runs` and `subscribers`~~ — **done.** Both verified present and
+   correctly restricted; the SQL files capture what is already live. What is
+   still open is the other direction: five tables exist in the database with
+   no code and no migration behind them.
 3. **Execution history means a new table and RLS policies.** Section 53 says
    stop before changing the database. I am stopping.
 4. **Netlify credits.** 37 commits, including everything in V1, have never
