@@ -1308,6 +1308,10 @@ function loadPosts() {
       slug, title: data.title || slug, date: data.date || "",
       description: data.description || plain.slice(0, 160),
       thumbnail: data.thumbnail || "", author: data.author || "The Vootkit team",
+      /* Reading time from the ACTUAL body, at 220wpm. Not decoration: it is
+         the one number on a card that tells somebody whether they have time
+         for this now, and a made-up one is worse than none. */
+      words: body.split(/\s+/).filter(Boolean).length,
       draft: String(data.draft) === "true", html: marked.parse(body)
     };
   }).filter((p) => !p.draft && p.slug);
@@ -1364,19 +1368,57 @@ function blogIndexPage(posts) {
   let hd = head({ depth: 1, url, ads: true, ld, title: "Vootkit Blog — Guides, tips & updates", ogTitle: "Vootkit Blog",
     desc: "Practical guides on PDF, image, video and finance tools, plus product updates from Vootkit." });
   if (!hasPosts) hd = hd.replace("</head>", '<meta name="robots" content="noindex,follow">\n</head>');
-  const cards = posts.map((p) => `<a class="card blog-card" href="${p.slug}/">
-      ${p.thumbnail ? `<img class="blog-card-img" src="${esc(p.thumbnail)}" alt="${esc(p.title)}" loading="lazy">` : ""}
-      <div class="blog-card-b">
-        <span class="tc-cat">${esc(fmtDate(p.date) || "Blog")}</span>
+
+  const mins = (p) => Math.max(1, Math.round((p.words || 0) / 220));
+  const meta = (p) => `<span class="bl-meta">
+        <time datetime="${esc(p.date)}">${esc(fmtDate(p.date) || "")}</time>
+        <span aria-hidden="true">·</span>
+        <span>${mins(p)} min read</span>
+      </span>`;
+
+  /* THE LEAD POST GETS THE ROOM IT DESERVES.
+   *
+   * A uniform grid says every post matters equally, which is never true and
+   * costs the newest piece the attention it should get. Every publication
+   * worth copying leads with one story at full width and lets the rest sit in
+   * a grid beneath — so the page has a shape, and a first-time reader has an
+   * obvious place to start rather than twelve equal choices. */
+  const lead = hasPosts ? posts[0] : null;
+  const rest = hasPosts ? posts.slice(1) : [];
+
+  const leadHtml = lead ? `
+    <a class="bl-lead" href="${lead.slug}/">
+      ${lead.thumbnail ? `<span class="bl-lead-img"><img src="${esc(lead.thumbnail)}" alt="" width="1200" height="630" loading="eager" decoding="async"></span>` : ""}
+      <span class="bl-lead-b">
+        <span class="bl-tag">Latest</span>
+        <h2>${esc(lead.title)}</h2>
+        <p>${esc(lead.description)}</p>
+        ${meta(lead)}
+        <span class="bl-more">Read it</span>
+      </span>
+    </a>` : "";
+
+  const cards = rest.map((p) => `<a class="bl-card" href="${p.slug}/">
+      ${p.thumbnail ? `<span class="bl-card-img"><img src="${esc(p.thumbnail)}" alt="" width="600" height="315" loading="lazy" decoding="async"></span>` : ""}
+      <span class="bl-card-b">
         <h3>${esc(p.title)}</h3>
         <p>${esc(p.description)}</p>
-      </div>
+        ${meta(p)}
+      </span>
     </a>`).join("\n");
+
   return hd + `<div class="wrap section">
-  <header class="sec-head" style="margin-top:var(--s-4)"><span class="eyebrow">Blog</span><h1 class="page-h1">The Vootkit blog</h1><p class="page-lede">Guides, tips and product updates for getting the most out of your browser-based toolkit.</p></header>
-  ${hasPosts
-    ? `<div class="blog-grid">${cards}</div>`
-    : `<div class="cta-band" style="padding:var(--s-6);border:1px solid var(--line);border-radius:var(--r-lg);text-align:center"><h2 style="margin:0 0 var(--s-2)">New guides are coming</h2><p class="page-lede" style="margin:0 auto var(--s-4)">The best way to learn Vootkit is to use it.</p><a class="btn btn-primary" href="../tools/">Explore the tools</a></div>`}
+  <header class="sec-head bl-head">
+    <span class="eyebrow">Blog</span>
+    <h1 class="page-h1">Guides worth the time they take</h1>
+    <p class="page-lede">How to get more out of the tools — what actually shrinks a
+    PDF, what a lender does with your debt-to-income ratio, and where the usual
+    advice is wrong. Written by the people who build them.</p>
+  </header>
+  ${hasPosts ? leadHtml : ""}
+  ${rest.length ? `<h2 class="bl-more-h">More from the blog</h2><div class="bl-grid">${cards}</div>` : ""}
+  ${hasPosts ? "" : `<div class="cta-band" style="padding:var(--s-6);border:1px solid var(--line);border-radius:var(--r-lg);text-align:center"><h2 style="margin:0 0 var(--s-2)">New guides are coming</h2><p class="page-lede" style="margin:0 auto var(--s-4)">The best way to learn Vootkit is to use it.</p><a class="btn btn-primary" href="../tools/">Explore the tools</a></div>`}
+  ${hasPosts ? `<div class="bl-nl" data-newsletter="blog_index"></div>` : ""}
 </div>` + foot(1);
 }
 
