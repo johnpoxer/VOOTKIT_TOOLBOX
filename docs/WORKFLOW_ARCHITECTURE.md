@@ -67,9 +67,17 @@ already there — `if not exists` throughout, so running them is a no-op.
 
 The live database also holds tables with no counterpart in the repo at all:
 `Vootkit`, `goals`, `goal_milestones`, `mission_usage`, `processing_jobs`.
-Eighteen tables in total against five in `supabase/`. Worth a pass to work out
-which are live and which are abandoned before the workflow tables are added —
-an unowned table with RLS off is the shape most data leaks arrive in.
+Eighteen tables in total against five in `supabase/`.
+
+**No exposure, checked: every one of the eighteen has RLS enabled.** `Vootkit`
+and `links` have RLS on with zero policies, which under RLS means no access at
+all through the anon or authenticated keys — locked rather than leaking.
+`links` is deliberate (served by a Netlify function with the service role key).
+
+So this is a documentation and ownership gap rather than a security one. It
+still wants a pass before workflow tables are added, for a different reason:
+`processing_jobs` in particular sounds like an earlier attempt at the thing
+this document is designing, and if it is live the design should account for it.
 
 ### Auth, billing, limits
 - Supabase auth; plan on `profiles.plan` (`creator_pro` / `creator_teams`)
