@@ -766,3 +766,35 @@ video.wcode { padding: 0; }
 .wfc-temp em { font-size: var(--t-xs); color: #6d84a8; font-style: normal; }
 .wfc-cancel { border-color: var(--err-border); color: var(--err); }
 .wfc-cancel[disabled] { opacity: .6; }
+
+/* The locked state a non-Pro visitor sees instead of the editor. It has to
+   answer "what am I buying" — a lock with nothing behind it converts nobody
+   and gives a search engine nothing to read. */
+.wf-locked {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--r-lg); padding: var(--s-6);
+  box-shadow: var(--shadow-sm); max-width: 46rem;
+}
+.wf-lock-tag {
+  display: inline-block; margin-bottom: var(--s-3);
+  padding: 4px 12px; border-radius: var(--r-sm);
+  background: var(--accent-weak); color: var(--accent);
+  border: 1px solid var(--accent-border);
+  font-family: var(--font-mono); font-size: var(--t-xs);
+  font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+}
+.wf-locked h2 { font-size: var(--t-2xl); margin: 0 0 var(--s-3); }
+.wf-locked h3 { font-size: var(--t-md); margin: var(--s-5) 0 var(--s-3); }
+.wf-locked > p { color: var(--ink-soft); max-width: 56ch; margin: 0 0 var(--s-4); }
+.wf-lock-list { list-style: none; margin: 0 0 var(--s-5); padding: 0; display: flex; flex-direction: column; gap: var(--s-2); }
+.wf-lock-list li {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: var(--s-3) var(--s-4);
+  border: 1px solid var(--line); border-radius: var(--r-md);
+  background: var(--surface-sunk);
+}
+.wf-lock-list strong { font-size: var(--t-sm); }
+.wf-lock-list span { font-size: var(--t-xs); color: var(--ink-soft); }
+.wf-locked .note { margin: var(--s-3) 0 0; font-size: var(--t-sm); color: var(--ink-mute); }
+.wf-pro-note { margin-top: var(--s-3); font-size: var(--t-sm); color: var(--ink-soft); }
+.wf-pro-note strong { color: var(--ink); }

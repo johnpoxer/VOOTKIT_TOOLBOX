@@ -437,3 +437,11 @@ label { display: block; font-size: var(--t-sm); font-weight: 600; color: var(--i
 }
 
 @media print { .ad-slot { display: none; } }
+/* Marks a footer link as a paid feature, so nobody follows it expecting free. */
+.ftr-pro {
+  display: inline-block; margin-left: 6px; padding: 1px 6px;
+  border-radius: 4px; background: rgb(255 255 255 / .14); color: #fff;
+  font-family: var(--font-mono); font-size: 10px;
+  font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+  vertical-align: 1px;
+}

@@ -366,7 +366,7 @@ function footCols(up) {
       </div>
       <div class="ftr-col">
         <h4>Vootkit</h4>
-        <a href="${up}tools/">All tools</a><a href="${up}workflows/">Workflows</a><a href="${up}pricing.html">Pricing</a><a href="${up}about.html">About</a><a href="${up}blog/">Blog</a><a href="${up}contact.html">Contact &amp; support</a>
+        <a href="${up}tools/">All tools</a><a href="${up}workflows/">Workflows <span class="ftr-pro">Pro</span></a><a href="${up}pricing.html">Pricing</a><a href="${up}about.html">About</a><a href="${up}blog/">Blog</a><a href="${up}contact.html">Contact &amp; support</a>
       </div>
       <div class="ftr-col">
         <h4>Legal</h4>
@@ -1995,6 +1995,8 @@ function workflowPage() {
     <div class="sec-head">
       <span class="eyebrow">Workflows</span>
       <h1>Do several things to one file, in one go.</h1>
+      <p class="wf-pro-note"><strong>Workflows are part of Vootkit Pro.</strong>
+      Every individual tool stays free and always will.</p>
       <p>Lay the steps out on the canvas, click any one to change its settings,
       then run. Every file goes through every node in order, on your device —
       nothing is uploaded at any point, including between the steps. Nodes

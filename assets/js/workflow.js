@@ -390,10 +390,62 @@
    * graph editors give up. Every node here is a focusable button, and there is
    * a keyboard route to every action that dragging performs.
    */
+  /* The locked state a non-Pro visitor sees INSTEAD of the editor.
+   *
+   * Workflows are a Pro feature outright, not a free tool with a paid run
+   * button. So the editor does not load at all — but the page still has to
+   * answer "what am I buying", because a lock with nothing behind it converts
+   * nobody and gives a search engine nothing to index either. It shows the
+   * real templates, named, with their real steps, and says plainly what it
+   * does. That is a description of the product, not a demo of it. */
+  function lockedView(host, D) {
+    host.innerHTML = '';
+    var wrap = h('div', { class: 'wf-locked' });
+    wrap.appendChild(h('span', { class: 'wf-lock-tag', text: 'Vootkit Pro' }));
+    wrap.appendChild(h('h2', { text: 'Workflows are part of Pro' }));
+    wrap.appendChild(h('p', {
+      text: 'Chain any of the tools into one run — compress, then stamp, then '
+          + 'lock — and put a whole folder through it at once. Every step runs '
+          + 'on your device, so nothing is uploaded between them, and a saved '
+          + 'workflow comes back with its settings ready for the next batch.'
+    }));
+
+    var temps = templatesFor(D);
+    if (temps.length) {
+      wrap.appendChild(h('h3', { text: 'Workflows people run' }));
+      var ul = h('ul', { class: 'wf-lock-list' });
+      temps.forEach(function (t) {
+        ul.appendChild(h('li', {}, [
+          h('strong', { text: t.name }),
+          h('span', { text: t.steps.map(function (id) { return (D.names && D.names[id]) || id; }).join('  →  ') })
+        ]));
+      });
+      wrap.appendChild(ul);
+    }
+
+    wrap.appendChild(h('a', { class: 'btn btn-primary', href: '../pricing.html', text: 'See Vootkit Pro' }));
+    wrap.appendChild(h('p', { class: 'note',
+      text: 'Already Pro? Sign in and this page becomes the editor.' }));
+    host.appendChild(wrap);
+    try { if (root.VKTrack && root.VKTrack.event) root.VKTrack.event('workflow_locked', {}); } catch (e) {}
+  }
+
   function mount(host) {
     if (!host) return;
     var D = root.VK_FLOW;
     if (!D) { host.textContent = 'Workflows are unavailable right now.'; return; }
+
+    /* THE WHOLE FEATURE IS GATED, not just the run. isPro() still fails OPEN,
+       so a plan lookup that errors gives the editor rather than the lock —
+       showing a paying customer a sales page because a network call hiccupped
+       is the one failure this must not have. */
+    isPro(root).then(function (allowed) {
+      if (!allowed) { lockedView(host, D); return; }
+      editor(host, D);
+    });
+  }
+
+  function editor(host, D) {
 
     var files = [];
     var nodes = [];            // [{uid, id, opts, x, y}]
@@ -914,19 +966,9 @@
     });
 
     runBtn.addEventListener('click', async function () {
-      /* THE GATE IS ON RUN, NOT ON THE EDITOR. You cannot judge whether a
-         thing is worth paying for from a description of it, so building is
-         free forever and this is the moment the value is obvious. Fails open:
-         a plan lookup that errors lets the run through. */
-      var allowed = await isPro(root);
-      if (!allowed) {
-        log.innerHTML = '';
-        log.appendChild(h('p', { class: 'note', text: 'Running a workflow is part of Vootkit Pro. Your workflow is saved on this device — upgrade and press run again.' }));
-        var up = h('a', { class: 'btn btn-primary btn-sm', href: '../pricing.html', text: 'See Vootkit Pro' });
-        log.appendChild(up);
-        try { if (root.VKTrack && root.VKTrack.event) root.VKTrack.event('workflow_gated', { nodes: nodes.length }); } catch (e) {}
-        return;
-      }
+      /* No plan check here. The editor only exists for Pro accounts — mount()
+         decides that before any of this is built, so a second check would be
+         a second thing to keep in step. */
       var paths = pathsFrom(nodes, links, 'in');
       if (!paths.length) { log.innerHTML = ''; log.appendChild(h('p', { class: 'note err', text: 'Nothing is connected to your files yet — drag from the input node to a step.' })); return; }
       var bad = null;
@@ -1047,6 +1089,7 @@
 
   root.VKWorkflow = {
     mount: mount,
+    lockedView: lockedView,
     classifyError: classifyError,
     failureAdvice: failureAdvice,
     TEMPLATES: TEMPLATES,
