@@ -2314,6 +2314,61 @@ ${written.map((s) => `  <sitemap><loc>${SITE}/${s.name}</loc><lastmod>${BUILD_DA
 console.log(`sitemap index: ${written.map((s) => s.name + " (" + s.n + ")").join(", ")}` +
   ` — ${enUrls.length} English urls; ${localisedCount} localised pages live but not listed`);
 
+/* ---------- sitemap-retire.xml — the deindex accelerator ----------
+ *
+ * WHAT THIS IS FOR, AND WHY IT LOOKS BACKWARDS.
+ *
+ * The 1,192 localised pages carry <meta robots="noindex">, but that tag does
+ * nothing until Googlebot fetches the page again. Those URLs are in no
+ * sitemap and nothing links to them any more, so Google has no reason to
+ * revisit — a noindex on an unlinked page can sit unread for months, and the
+ * AdSense review is judged on what is IN the index, not on what the site now
+ * says.
+ *
+ * So this file lists exactly the pages we want REMOVED. Submitting a sitemap
+ * of URLs you want dropped is counter-intuitive and it is the standard way to
+ * do it: a sitemap is a request to CRAWL, not a demand to index. Google
+ * fetches each one, finds the noindex, and drops it. Weeks instead of months.
+ *
+ * IT IS DELIBERATELY NOT IN sitemap.xml. The index at sitemap.xml is the
+ * site's real map and must keep meaning "these are the pages that matter".
+ * This one is submitted by hand in Search Console, used until the indexed
+ * count falls, and then removed. It is a tool, not part of the site.
+ *
+ * THE GUARD IS THE IMPORTANT PART. If a single URL in here did NOT carry
+ * noindex, this file would be doing the exact opposite of its job — actively
+ * asking Google to index a duplicate page, 1,192 times over, on a site that
+ * has already been rejected once for duplication. So every page is read back
+ * off disk and checked, and the build FAILS rather than emit a file that
+ * would make things worse.
+ */
+{
+  const retire = [];
+  const missing = [];
+  I18N.LOCALES.forEach((loc) => {
+    VK.TOOLS.forEach((t) => {
+      const rel = `${loc.code}/tools/${t.cat}/${t.id}/index.html`;
+      const abs = path.join(ROOT, rel);
+      if (!fs.existsSync(abs)) return;
+      const html = fs.readFileSync(abs, "utf8");
+      if (!/<meta name="robots" content="noindex/.test(html)) { missing.push(rel); return; }
+      retire.push(`/${loc.code}/tools/${t.cat}/${t.id}/`);
+    });
+  });
+
+  if (missing.length) {
+    throw new Error(
+      "sitemap-retire: " + missing.length + " localised pages do not carry noindex — "
+      + "listing them would ASK Google to index duplicates. First offender: " + missing[0]);
+  }
+
+  if (retire.length) {
+    fs.writeFileSync(path.join(ROOT, "sitemap-retire.xml"), urlset(retire));
+    console.log(`sitemap-retire.xml: ${retire.length} noindexed pages listed for recrawl `
+      + `(submit by hand in Search Console, remove once the indexed count falls)`);
+  }
+}
+
 /* robots */
 fs.writeFileSync(path.join(ROOT, "robots.txt"),
 `User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap.xml\n`);

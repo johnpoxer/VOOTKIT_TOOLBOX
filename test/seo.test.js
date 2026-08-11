@@ -967,3 +967,55 @@ console.log(`seo + slot wiring: ${pass} total assertions passed`);
   }
 }
 console.log(`seo + icon fills: ${pass} total assertions passed`);
+
+/* ---------------------------------------------------------------------------
+ * THE DEINDEX ACCELERATOR.
+ *
+ * sitemap-retire.xml lists pages we want REMOVED from Google's index, so that
+ * Googlebot recrawls them and finds their noindex instead of leaving them
+ * unread for months. It is the one file on the site where a mistake is
+ * actively harmful rather than merely wrong: a URL in here that does NOT
+ * carry noindex is a request to index a duplicate, on a site already rejected
+ * once for duplication.
+ * ------------------------------------------------------------------------- */
+{
+  const fsR = require("fs"), pathR = require("path");
+  const RR = pathR.join(__dirname, "..");
+  const readR = (p) => { try { return fsR.readFileSync(pathR.join(RR, p), "utf8"); } catch (e) { return ""; } };
+  const retire = readR("sitemap-retire.xml");
+
+  if (!retire) {
+    console.log("sitemap-retire: SKIPPED (run npm run build first)");
+  } else {
+    const urls = [...retire.matchAll(/<loc>https:\/\/[^/]+([^<]*)<\/loc>/g)].map((m) => m[1]);
+    ok(urls.length > 500, "it lists the localised pages, got " + urls.length);
+
+    /* THE ASSERTION THAT MATTERS. Every listed page must carry noindex. */
+    let bad = 0, firstBad = "";
+    urls.forEach((u) => {
+      const h = readR(u.replace(/^\//, "") + "index.html");
+      if (!h) return;
+      if (!/<meta name="robots" content="noindex/.test(h)) { bad++; if (!firstBad) firstBad = u; }
+    });
+    eq(bad, 0, "every URL listed for retirement carries noindex — first offender: " + firstBad);
+
+    /* It must never be part of the real sitemap index, or Google is told these
+       are the pages that matter. */
+    ok(!/retire/.test(readR("sitemap.xml")),
+       "sitemap-retire.xml is NOT referenced from sitemap.xml");
+    ok(!/retire/.test(readR("robots.txt")),
+       "and not advertised in robots.txt — it is submitted by hand, then removed");
+
+    /* And no URL may appear in both a retire list and an indexable one. */
+    const indexable = ["sitemap-core.xml", "sitemap-tools.xml", "sitemap-blog.xml"]
+      .map(readR).join("");
+    const overlap = urls.filter((u) => indexable.includes(">https://www.vootkit.com" + u + "<"));
+    eq(overlap.length, 0, "nothing is both retired and indexed: " + overlap.slice(0, 3).join(", "));
+
+    /* Localised pages must still be reachable — noindex,follow keeps their
+       links flowing. A 404 here would be a different and worse signal. */
+    ok(/noindex,follow/.test(readR(urls[0].replace(/^\//, "") + "index.html")),
+       "retired pages are noindex,FOLLOW rather than removed outright");
+  }
+}
+console.log(`seo + deindex accelerator: ${pass} total assertions passed`);
