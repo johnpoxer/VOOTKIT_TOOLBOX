@@ -195,9 +195,11 @@ Generated at build time from the specs, as `data/tool-flow.js` already is.
 
 | Stage | Contents | State |
 |---|---|---|
-| **V1** | Canvas editor, drag from palette, draw connections, per-step settings, type validation, batch input, save/load, run with live node states, partial results kept | **built, unpushed** |
-| **V1.5** | Formal tool contract; undo/redo; duplicate node; multi-select; keyboard shortcuts; templates; empty states; mobile step-list view | next |
-| **V2** | Worker execution (UI stays responsive); checkpoints; retry classification; cancellation; execution history in Supabase; versioning and draft/published | after V1.5 |
+| **V1** | Canvas editor, drag from palette, draw connections, per-step settings, type validation, batch input, save/load, run with live node states, partial results kept | **built** |
+| **V1.5** | Templates (5, filtered by file kind); undo/redo/duplicate via Ctrl+Z/Y/D; Pro gate on run, fails open | **built** |
+| **V2a** | Cancellation with honest granularity; per-step checkpoints; retry that resumes from the failed step; error classification (retryable / resource / permanent) | **built** |
+| **V2b** | Worker execution so the canvas stays responsive during long runs | **next — no database needed** |
+| **V2c** | Execution history, versioning, draft/published | **blocked on the database decision** |
 | **V2.5** | Refactor the 33 widget tools onto the spec contract — unlocks Compress PDF, PDF→JPG, OCR as steps | large, independent |
 | **V3** | Parallel branches; conditions; bridge suggestions ("insert PDF→JPG here"); AI-proposed workflows requiring confirmation | later |
 | **V4** | Server execution for scheduled/API runs, Pro only, opt-in, priced | only with revenue |
@@ -207,8 +209,10 @@ Generated at build time from the specs, as `data/tool-flow.js` already is.
 ## 6. What needs your decision before I write more code
 
 1. **Option A, B or C.** Everything else depends on it.
-2. **`tool_runs` and `subscribers` are missing from `supabase/`.** I should
-   write those migrations and confirm the tables and RLS actually exist.
+2. **`tool_runs` and `subscribers` migrations are now written** —
+   `supabase/tool_runs.sql` and `supabase/subscribers.sql`, not applied.
+   Run `subscribers.sql` first: if that table is missing, signups have been
+   failing visibly in front of real people.
 3. **Execution history means a new table and RLS policies.** Section 53 says
    stop before changing the database. I am stopping.
 4. **Netlify credits.** 37 commits, including everything in V1, have never
