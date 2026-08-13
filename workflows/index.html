@@ -6,28 +6,28 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#fbfcfe" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)">
-<title>Workflows — run several Vootkit tools as one job | Vootkit</title>
-<meta name="description" content="Chain PDF, image and video tools into a single run and put a whole batch through it. Every step happens in your browser, so files are never uploaded — not even between steps.">
+<title>Workflow - build reusable tool chains | Vootkit</title>
+<meta name="description" content="Build browser-based Vootkit workflows with a tool library, canvas, step inspector and reusable template marketplace.">
 <link rel="canonical" href="https://www.vootkit.com/workflows/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Vootkit">
-<meta property="og:title" content="Workflows — run several Vootkit tools as one job | Vootkit">
-<meta property="og:description" content="Chain PDF, image and video tools into a single run and put a whole batch through it. Every step happens in your browser, so files are never uploaded — not even between steps.">
+<meta property="og:title" content="Workflow - build reusable tool chains | Vootkit">
+<meta property="og:description" content="Build browser-based Vootkit workflows with a tool library, canvas, step inspector and reusable template marketplace.">
 <meta property="og:url" content="https://www.vootkit.com/workflows/">
 <meta property="og:image" content="https://www.vootkit.com/assets/og-default.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Vootkit — free browser tools that never upload your files">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Workflows — run several Vootkit tools as one job | Vootkit">
-<meta name="twitter:description" content="Chain PDF, image and video tools into a single run and put a whole batch through it. Every step happens in your browser, so files are never uploaded — not even between steps.">
+<meta name="twitter:title" content="Workflow - build reusable tool chains | Vootkit">
+<meta name="twitter:description" content="Build browser-based Vootkit workflows with a tool library, canvas, step inspector and reusable template marketplace.">
 <meta name="twitter:image" content="https://www.vootkit.com/assets/og-default.png">
 
 <link rel="icon" href="../favicon.ico" sizes="any">
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="manifest" href="../site.webmanifest">
-<link rel="stylesheet" href="../assets/css/app.css?v=76c83adf45">
+<link rel="stylesheet" href="../assets/css/app.css?v=a6d05ee33a">
 <script>(function (root) {
   'use strict';
   var KEY = 'vk-consent';
@@ -107,7 +107,7 @@ window.VKConsent&&window.VKConsent.setDefaults();</script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KLEWTJ8WG2"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-KLEWTJ8WG2');</script>
 </head>
-<body>
+<body class="wf-page">
 <a class="skip" href="#main">Skip to content</a>
 <header class="hdr">
   <div class="wrap hdr-in">
@@ -141,151 +141,969 @@ window.VKConsent&&window.VKConsent.setDefaults();</script>
     </div>
   </div>
 </header>
-<main id="main" tabindex="-1"><script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Vootkit Workflows","applicationCategory":"BusinessApplication","operatingSystem":"Any modern web browser","url":"https://www.vootkit.com/workflows/","description":"Chain Vootkit's tools into one run. Every step happens in your browser, so files are never uploaded — including between steps.","featureList":["Optimise images for a website","Prepare documents to send","Pull pages out and tidy them","Cut a clip for social","Clean up a batch of photos","Turn photos into a printable PDF","Make a PDF safe to send","Assemble a report from several PDFs","Make thumbnails from a video"],"offers":{"@type":"Offer","category":"Subscription"}}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Do my files get uploaded when I run a workflow?","acceptedAnswer":{"@type":"Answer","text":"No. Every step runs in your browser on your own machine, including the handover between steps — the file produced by one step is passed straight to the next in memory. Nothing is sent to a server at any point, so there is nothing for us to store, leak or hand over."}},{"@type":"Question","name":"How is this different from using the tools one at a time?","acceptedAnswer":{"@type":"Answer","text":"Time, and the number of decisions. Running five tools by hand means five pages, five uploads of the same file into the next tool, and five downloads. A workflow is one file selection and one button. It also runs over a whole batch, so twenty files take one click rather than a hundred."}},{"@type":"Question","name":"Can I run a workflow over many files at once?","acceptedAnswer":{"@type":"Answer","text":"Yes. Choose as many as you like of one kind and every one goes through every step, with per-file progress. Mixed kinds are refused up front rather than failing halfway, because a PDF step cannot open an image."}},{"@type":"Question","name":"What happens if one step fails?","acceptedAnswer":{"@type":"Answer","text":"The run stops at that step and tells you which one, in the tool's own words. The output of the last step that worked is still offered for download, and if the failure is the kind that might clear — a network hiccup, an engine that did not load — you get a button to retry from that step rather than from the beginning."}},{"@type":"Question","name":"Can I save a workflow and use it again?","acceptedAnswer":{"@type":"Answer","text":"Yes, with its settings intact. Saved workflows are stored on your device for quick reuse on the same browser."}},{"@type":"Question","name":"Which tools can be workflow steps?","acceptedAnswer":{"@type":"Answer","text":"57 of them today — the PDF, image and video sets. Some tools build their controls and their logic together and cannot yet be called without drawing their interface, so they are not offered rather than offered and then failing."}},{"@type":"Question","name":"Is it free?","acceptedAnswer":{"@type":"Answer","text":"The workflow builder is part of Vootkit Pro. Every individual tool stays free and always will."}}]}</script>
-<main id="main">
-  <section class="wrap section">
-    <div class="sec-head">
-      <span class="eyebrow">Workflows</span>
-      <h1>Run several tools as one job.</h1>
-      <p>Lay the steps out, set each one, press run once. Every file goes
-      through every step, in order, on your device — nothing is uploaded at any
-      point, including between the steps.</p>
-      <p class="wf-pro-note"><strong>Workflows are part of Vootkit Pro.</strong>
-      Every individual tool stays free and always will.</p>
+<main id="main" tabindex="-1"><script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Vootkit Workflows","applicationCategory":"BusinessApplication","operatingSystem":"Any modern web browser","url":"https://www.vootkit.com/workflows/","description":"Chain Vootkit tools into one browser-based run.","featureList":["Website Image Optimizer","PDF Document Workflow","Invoice PDF Packet","Video Social Workflow","Photo Batch Cleanup","Print Ready Images","Safe PDF Share","PDF Report Builder","Video Thumbnail Workflow","Social Image Pack","Profile Photo Polish","Ecommerce Image Set","Blog Image Ready","Photo Touchup Export","Thumbnail Export Pack","PDF Client Packet","PDF Page Cleanup","PDF Review Extract","PDF Archive Lock","PDF Watermark Delivery","Quick PDF Trim","Video Compress Export","Muted Preview GIF","Vertical Social Cut","Training Clip Package","Audio Extract Pack","Scan Pack Builder","Image Report PDF","Document Watermark Lock","Page Numbered Archive","Signature Ready PDF","Receipt Archive","Proposal Delivery Pack","Contract Send Ready","Billing Image Packet","Web Thumbnail Set","App Icon Export","Docs Asset WebP","Release GIF Preview","SVG Export Pack","Study Handout Pack","Assignment PDF Lock","Presentation Image Optimizer","Lecture Clip GIF","Research Appendix Builder"],"offers":{"@type":"Offer","category":"Subscription"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Do my files get uploaded when I run a workflow?","acceptedAnswer":{"@type":"Answer","text":"No. Every workflow-compatible step runs in your browser on your own machine, including the handover between steps."}},{"@type":"Question","name":"How is this different from using the tools one at a time?","acceptedAnswer":{"@type":"Answer","text":"A workflow is one file selection and one run through a reusable chain, instead of opening several pages manually."}},{"@type":"Question","name":"Which tools can be workflow steps?","acceptedAnswer":{"@type":"Answer","text":"57 tools today - the runnable PDF, image, audio and video sets."}}]}</script>
+  <!-- ORDER. The builder leads, the template gallery follows, the prose sits
+       last. It used to be the other way round: someone arriving at /workflows/
+       met a wall of template marketing and had to scroll past four sections of
+       copy to reach the thing the page is named after. The prose still earns
+       its keep for search, but it is support material, not the entrance. -->
+  <section class="wrap wf-builder-intro" aria-labelledby="wf-builder-title">
+    <div>
+      <p class="eyebrow">Workflow Builder</p>
+      <h1 id="wf-builder-title">Build and customize your workflow</h1>
+      <p>Drag tools onto the canvas, adjust each step, and run a real browser-based chain.</p>
     </div>
-    <div id="wf"></div>
   </section>
 
-  <section class="wrap section prose wf-prose">
-    <h2>What you can build</h2>
-    <p>Each of these is a real chain you can start from and then change — the
-    steps are ordinary Vootkit tools, and every one of them also works on its
-    own.</p>
-    
-      <h3>Images</h3>
-      <ul class="wf-chains">
-        <li>
-          <strong>Optimise images for a website</strong>
-          <span class="wf-chain"><a href="../tools/images/resize-image/">Image Resizer</a> <span class="wf-arrow" aria-hidden="true">→</span> <a href="../tools/images/compress-image/">Image Compressor</a> <span class="wf-arrow" aria-hidden="true">→</span> <a href="../tools/images/convert-image/">Image Converter</a></span>
-          <span class="wf-why">Resize to a sane width, compress, then convert to WebP.</span>
-        </li><li>
-          <strong>Clean up a batch of photos</strong>
-          <span class="wf-chain"><a href="../tools/images/crop-image/">Crop Image</a> <span class="wf-arrow" aria-hidden="true">→</span> <a href="../tools/images/compress-image/">Image Compressor</a></span>
-          <span class="wf-why">Crop them all to the same shape, then compress for sharing.</span>
-        </li><li>
-          <strong>Turn photos into a printable PDF</strong>
-          <span class="wf-chain"><a href="../tools/images/resize-image/">Image Resizer</a> <span class="wf-arrow" aria-hidden="true">→</span> <a href="../tools/pdf/jpg-to-pdf/">Images to PDF</a></span>
-          <span class="wf-why">Resize them to a consistent size, then bind them into one document.</span>
-        </li>
-      </ul>
-      <h3>PDF</h3>
-      <ul class="wf-chains">
-        <li>
-          <strong>Prepare documents to send</strong>
-          <span class="wf-chain"><a href="../tools/pdf/rotate-pdf/">Rotate PDF</a> <span class="wf-arrow" aria-hidden="true">→</span> <a href="../tools/pdf/pdf-watermark/">PDF Watermark</a> <span class="wf-arrow" aria-hidden="true">→</span> <a href="../tools/pdf/protect-pdf/">Protect PDF</a></span>
-          <span class="wf-why">Shrink a scan, stamp it, and lock it before it leaves your hands.</span>
-        </li><li>
-          <strong>Pull pages out and tidy them</strong>
-          <span class="wf-chain"><a href="../tools/pdf/extract-pdf-pages/">Extract PDF Pages</a> <span class="wf-arrow" aria-hidden="true">→</span> <a href="../tools/pdf/pdf-page-numbers/">Add Page Numbers</a></span>
-          <span class="wf-why">Take the pages you need, drop the rest, number what is left.</span>
-        </li><li>
-          <strong>Make a PDF safe to send</strong>
-          <span class="wf-chain"><a href="../tools/pdf/pdf-watermark/">PDF Watermark</a> <span class="wf-arrow" aria-hidden="true">→</span> <a href="../tools/pdf/protect-pdf/">Protect PDF</a></span>
-          <span class="wf-why">Stamp it so a copy is traceable, then password-protect it.</span>
-        </li><li>
-          <strong>Assemble a report from several PDFs</strong>
-          <span class="wf-chain"><a href="../tools/pdf/merge-pdf/">Merge PDFs</a> <span class="wf-arrow" aria-hidden="true">→</span> <a href="../tools/pdf/pdf-page-numbers/">Add Page Numbers</a></span>
-          <span class="wf-why">Combine them in order, then number the pages so it reads as one.</span>
-        </li>
-      </ul>
-      <h3>Video</h3>
-      <ul class="wf-chains">
-        <li>
-          <strong>Cut a clip for social</strong>
-          <span class="wf-chain"><a href="../tools/video/trim-video/">Video Trimmer</a> <span class="wf-arrow" aria-hidden="true">→</span> <a href="../tools/video/video-to-gif/">Video to GIF</a></span>
-          <span class="wf-why">Trim it, then make a looping GIF of the good bit.</span>
-        </li><li>
-          <strong>Make thumbnails from a video</strong>
-          <span class="wf-chain"><a href="../tools/video/frame-grabber/">Frame Grabber</a> <span class="wf-arrow" aria-hidden="true">→</span> <a href="../tools/images/resize-image/">Image Resizer</a></span>
-          <span class="wf-why">Grab a frame, then size it for wherever it is going.</span>
-        </li>
-      </ul>
-
-    <h2>How a run works</h2>
-    <p>A workflow is a graph, not a list. You drag tools onto a canvas and draw
-    the connections yourself, so the order comes from what feeds what. A step
-    can sit unconnected while you think, be rewired without being deleted, or
-    feed two different paths from the same file.</p>
-    <p>Before anything runs, the whole chain is checked: each step has to accept
-    what the step before it produced. That cannot be worked out from tool names
-    alone — <a href="../tools/pdf/jpg-to-pdf/">Images to PDF</a> turns an image
-    into a PDF, so what may follow it is completely different from what may
-    follow an in-place tool. A step that cannot take the file at its position is
-    marked before you press run, not after.</p>
-    <p>During the run each node reports its own state, and if one fails the run
-    stops there and says which — in the tool's own words rather than an error
-    code. Whatever the last working step produced is still yours to download.</p>
-
-    <h2>Why the files stay on your device</h2>
-    <p>Vootkit's tools are already programs that run in your browser rather than
-    on a server. That is what makes chaining them possible at all: when a step
-    finishes, its output is sitting in your computer's memory, so handing it to
-    the next step costs nothing and involves no upload. A site that processes
-    files on its own servers has to send yours up, process, send it back, and
-    take it up again for every single step.</p>
-    <p>It also means the privacy position does not change when you use a
-    workflow. There is no copy on a server to be breached, retained, or handed
-    over, because there is no server in the loop.</p>
-
-    <h2>What it will not do</h2>
-    <p>57 tools can currently be steps — the PDF, image and video
-    sets. Some tools build their controls and their processing together and
-    cannot yet be run without drawing their interface, so they are left out of
-    the picker rather than offered and then failing mid-run.</p>
-    <p>Because the work happens on your machine, a very large batch is bounded
-    by your computer's memory rather than by a server queue, and a run does not
-    continue on another device. Those are the honest trade-offs of not
-    uploading anything.</p>
-
-    <h2>Questions</h2>
-    
-      <details class="wf-faq">
-        <summary>Do my files get uploaded when I run a workflow?</summary>
-        <p>No. Every step runs in your browser on your own machine, including the handover between steps — the file produced by one step is passed straight to the next in memory. Nothing is sent to a server at any point, so there is nothing for us to store, leak or hand over.</p>
-      </details>
-      <details class="wf-faq">
-        <summary>How is this different from using the tools one at a time?</summary>
-        <p>Time, and the number of decisions. Running five tools by hand means five pages, five uploads of the same file into the next tool, and five downloads. A workflow is one file selection and one button. It also runs over a whole batch, so twenty files take one click rather than a hundred.</p>
-      </details>
-      <details class="wf-faq">
-        <summary>Can I run a workflow over many files at once?</summary>
-        <p>Yes. Choose as many as you like of one kind and every one goes through every step, with per-file progress. Mixed kinds are refused up front rather than failing halfway, because a PDF step cannot open an image.</p>
-      </details>
-      <details class="wf-faq">
-        <summary>What happens if one step fails?</summary>
-        <p>The run stops at that step and tells you which one, in the tool&#39;s own words. The output of the last step that worked is still offered for download, and if the failure is the kind that might clear — a network hiccup, an engine that did not load — you get a button to retry from that step rather than from the beginning.</p>
-      </details>
-      <details class="wf-faq">
-        <summary>Can I save a workflow and use it again?</summary>
-        <p>Yes, with its settings intact. Saved workflows are stored on your device for quick reuse on the same browser.</p>
-      </details>
-      <details class="wf-faq">
-        <summary>Which tools can be workflow steps?</summary>
-        <p>57 of them today — the PDF, image and video sets. Some tools build their controls and their logic together and cannot yet be called without drawing their interface, so they are not offered rather than offered and then failing.</p>
-      </details>
-      <details class="wf-faq">
-        <summary>Is it free?</summary>
-        <p>The workflow builder is part of Vootkit Pro. Every individual tool stays free and always will.</p>
-      </details>
-
-    <p class="note">Looking for a single tool instead?
-      <a href="../tools/">Browse all 250+</a>, or start with
-      <a href="../tools/pdf/">PDF</a>,
-      <a href="../tools/images/">images</a> or
-      <a href="../tools/video/">video</a>.</p>
+  <section class="wf-builder-shell" id="wf-builder" aria-label="Workflow builder application">
+    <div class="wf-builder-wrap">
+      <div id="wf" class="wf-mount"></div>
+    </div>
   </section>
-</main></main>
+
+  
+    <section class="wf-marketplace" id="wf-examples" aria-labelledby="wf-market-title">
+      <div class="wf-market-shell">
+        <div class="wf-market-heading">
+          <p class="eyebrow">Templates</p>
+          <!-- h2, not h1: the builder above owns the page's single h1 now. -->
+          <h2 id="wf-market-title">Workflow Templates</h2>
+          <p>Start with a proven workflow and save hours of manual work.</p>
+        </div>
+        <div class="wf-filterbar" aria-label="Workflow template filters">
+          <input type="search" placeholder="Search workflow templates..." data-wf-template-search>
+          <select data-wf-template-filter="category" aria-label="All Categories"><option value="all">All Categories</option><option value="image">Image</option><option value="pdf">PDF</option><option value="business">Business</option><option value="video">Video</option><option value="document">Document</option><option value="developer">Developer</option><option value="education">Education</option></select>
+          <select aria-label="All Inputs"><option>All Inputs</option><option>PDF</option><option>Images</option><option>Video</option></select>
+          <select aria-label="All Outputs"><option>All Outputs</option><option>PDF</option><option>WebP</option><option>GIF</option></select>
+          <select data-wf-template-filter="plan" aria-label="Free and Pro"><option value="all">Free &amp; Pro</option><option value="free">Free</option><option value="pro">Pro</option></select>
+        </div>
+        <div class="wf-market-tabs" role="tablist" aria-label="Template categories">
+          <button type="button" class="is-on" data-wf-template-tab="all">All</button><button type="button" class="" data-wf-template-tab="featured">Featured</button><button type="button" class="" data-wf-template-tab="image">Image</button><button type="button" class="" data-wf-template-tab="pdf">PDF</button><button type="button" class="" data-wf-template-tab="business">Business</button><button type="button" class="" data-wf-template-tab="video">Video</button><button type="button" class="" data-wf-template-tab="document">Document</button><button type="button" class="" data-wf-template-tab="developer">Developer</button><button type="button" class="" data-wf-template-tab="education">Education</button>
+        </div>
+        <div class="wf-market-grid">
+      <article class="wf-market-card wf-cover-center" data-wf-market-card data-wf-template-card="website-image-optimizer" data-category="image" data-plan="free" data-featured="true" tabindex="0" role="button" aria-label="Open Website Image Optimizer template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/website-image-optimizer.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/website-image-optimizer.webp" alt="Website Image Optimizer workflow cover showing clean professional photography and editing workspace." loading="lazy" decoding="async" style="object-position:50% 50%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Featured</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:200;--ic-bg:#207cab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="12" height="12" rx="2"/><path d="M9 21h12V9"/><path d="m13 13 7 7"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:152;--ic-bg:#198553"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h6V3"/><path d="M20 15h-6v6"/><path d="m10 9-6-6"/><path d="m14 15 6 6"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:216;--ic-bg:#3073d7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13l-3-3"/><path d="M20 16H7l3 3"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Website Image Optimizer</h3>
+          <p>Resize, compress and convert images for faster websites.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>JPG, PNG, WebP images -> WebP images</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-center" data-wf-market-card data-wf-template-card="pdf-document-workflow" data-category="pdf" data-plan="free" data-featured="true" tabindex="0" role="button" aria-label="Open PDF Document Workflow template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/pdf-document-workflow.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/pdf-document-workflow.webp" alt="PDF Document Workflow workflow cover showing business table containing laptop and documents." loading="lazy" decoding="async" style="object-position:50% 50%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Featured</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:200;--ic-bg:#207cab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:284;--ic-bg:#b03eda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 20h12"/><path d="M9 16V9a3 3 0 1 1 6 0v7"/><rect x="5" y="16" width="14" height="4" rx="1"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:4;--ic-bg:#d73b30"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>PDF Document Workflow</h3>
+          <p>Prepare PDF documents with real browser-based PDF steps.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>PDF documents -> Protected PDF</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-center" data-wf-market-card data-wf-template-card="invoice-pdf-packet" data-category="business" data-plan="pro" data-featured="false" tabindex="0" role="button" aria-label="Open Invoice PDF Packet template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/invoice-pdf-packet.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/invoice-pdf-packet.webp" alt="Invoice PDF Packet workflow cover showing hands organizing invoice documents on an office desk." loading="lazy" decoding="async" style="object-position:50% 50%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Business</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:250;--ic-bg:#725ce0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4v6a4 4 0 0 0 4 4h6"/><path d="M16 4v6a4 4 0 0 1-4 4H6"/><path d="m17 11 3 3-3 3"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:32;--ic-bg:#a56720"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/><path d="M12 11v6"/><path d="m9 14 3 3 3-3"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:4;--ic-bg:#d73b30"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Invoice PDF Packet</h3>
+          <p>Assemble invoice PDFs into a clean send-ready packet.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>PDF invoices -> Numbered PDF packet</span><b>Pro</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-center" data-wf-market-card data-wf-template-card="video-social-workflow" data-category="video" data-plan="free" data-featured="false" tabindex="0" role="button" aria-label="Open Video Social Workflow template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/video-social-workflow.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/video-social-workflow.webp" alt="Video Social Workflow workflow cover showing social media laptop and smartphone composition." loading="lazy" decoding="async" style="object-position:50% 50%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Video</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:340;--ic-bg:#d83169"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><path d="M8 8l12 10M20 6 8 16"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:216;--ic-bg:#3073d7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13l-3-3"/><path d="M20 16H7l3 3"/></svg></span><small>2</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Video Social Workflow</h3>
+          <p>Trim a clip and convert the shareable moment into a GIF.</p>
+          <div class="wf-market-meta"><span>2 steps</span><span>MP4, MOV, WebM video -> GIF image</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-right" data-wf-market-card data-wf-template-card="social-image-pack" data-category="image" data-plan="free" data-featured="true" tabindex="0" role="button" aria-label="Open Social Image Pack template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/social-image-pack.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/social-image-pack.webp" alt="Social Image Pack workflow cover showing woman working with social content across phone and laptop." loading="lazy" decoding="async" style="object-position:50% 48%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Featured</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:200;--ic-bg:#207cab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M2 6h14a2 2 0 0 1 2 2v14"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:200;--ic-bg:#207cab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M2 6h14a2 2 0 0 1 2 2v14"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:152;--ic-bg:#198553"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h6V3"/><path d="M20 15h-6v6"/><path d="m10 9-6-6"/><path d="m14 15 6 6"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Social Image Pack</h3>
+          <p>Resize, crop and compress images for social posts.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>JPG, PNG, WebP images -> Compressed social images</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-left" data-wf-market-card data-wf-template-card="pdf-watermark-delivery" data-category="pdf" data-plan="free" data-featured="true" tabindex="0" role="button" aria-label="Open PDF Watermark Delivery template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/pdf-watermark-delivery.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/pdf-watermark-delivery.webp" alt="PDF Watermark Delivery workflow cover showing digital photo and document editing workspace." loading="lazy" decoding="async" style="object-position:50% 48%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Featured</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:284;--ic-bg:#b03eda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 20h12"/><path d="M9 16V9a3 3 0 1 1 6 0v7"/><rect x="5" y="16" width="14" height="4" rx="1"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:32;--ic-bg:#a56720"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/><path d="M12 11v6"/><path d="m9 14 3 3 3-3"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:4;--ic-bg:#d73b30"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>PDF Watermark Delivery</h3>
+          <p>Watermark a PDF and lock it before delivery.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>PDF document -> Watermarked protected PDF</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-bottom" data-wf-market-card data-wf-template-card="video-compress-export" data-category="video" data-plan="free" data-featured="true" tabindex="0" role="button" aria-label="Open Video Compress Export template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/video-compress-export.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/video-compress-export.webp" alt="Video Compress Export workflow cover showing professional editing workstation with multiple monitors." loading="lazy" decoding="async" style="object-position:50% 50%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Featured</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:340;--ic-bg:#d83169"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><path d="M8 8l12 10M20 6 8 16"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:152;--ic-bg:#198553"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h6V3"/><path d="M20 15h-6v6"/><path d="m10 9-6-6"/><path d="m14 15 6 6"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:216;--ic-bg:#3073d7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13l-3-3"/><path d="M20 16H7l3 3"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Video Compress Export</h3>
+          <p>Trim, compress and export a shareable video.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>MP4, MOV, WebM video -> Compressed video</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-left" data-wf-market-card data-wf-template-card="scan-pack-builder" data-category="document" data-plan="free" data-featured="true" tabindex="0" role="button" aria-label="Open Scan Pack Builder template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/scan-pack-builder.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/scan-pack-builder.webp" alt="Scan Pack Builder workflow cover showing folders documents and calculator for organized processing." loading="lazy" decoding="async" style="object-position:50% 50%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Featured</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:216;--ic-bg:#3073d7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13l-3-3"/><path d="M20 16H7l3 3"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:32;--ic-bg:#a56720"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/><path d="M12 11v6"/><path d="m9 14 3 3 3-3"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:4;--ic-bg:#d73b30"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Scan Pack Builder</h3>
+          <p>Turn scans into a numbered protected PDF packet.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>Scanned images -> Protected PDF</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-right" data-wf-market-card data-wf-template-card="proposal-delivery-pack" data-category="business" data-plan="pro" data-featured="true" tabindex="0" role="button" aria-label="Open Proposal Delivery Pack template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/proposal-delivery-pack.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/proposal-delivery-pack.webp" alt="Proposal Delivery Pack workflow cover showing business professionals collaborating around a laptop." loading="lazy" decoding="async" style="object-position:50% 48%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Featured</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:284;--ic-bg:#b03eda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 20h12"/><path d="M9 16V9a3 3 0 1 1 6 0v7"/><rect x="5" y="16" width="14" height="4" rx="1"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:32;--ic-bg:#a56720"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/><path d="M12 11v6"/><path d="m9 14 3 3 3-3"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:4;--ic-bg:#d73b30"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Proposal Delivery Pack</h3>
+          <p>Watermark, number and protect proposal PDFs.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>Proposal PDF -> Protected proposal PDF</span><b>Pro</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-right" data-wf-market-card data-wf-template-card="web-thumbnail-set" data-category="developer" data-plan="free" data-featured="true" tabindex="0" role="button" aria-label="Open Web Thumbnail Set template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/web-thumbnail-set.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/web-thumbnail-set.webp" alt="Web Thumbnail Set workflow cover showing modern workspace with laptop tablet and camera." loading="lazy" decoding="async" style="object-position:50% 50%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Featured</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:200;--ic-bg:#207cab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="12" height="12" rx="2"/><path d="M9 21h12V9"/><path d="m13 13 7 7"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:216;--ic-bg:#3073d7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2.5"/><circle cx="12" cy="13.5" r="3.5"/><path d="M9 7l1.5-3h3L15 7"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:152;--ic-bg:#198553"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h6V3"/><path d="M20 15h-6v6"/><path d="m10 9-6-6"/><path d="m14 15 6 6"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Web Thumbnail Set</h3>
+          <p>Create consistent thumbnails for website UI.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>Website images -> Optimized thumbnails</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-center" data-wf-market-card data-wf-template-card="study-handout-pack" data-category="education" data-plan="free" data-featured="true" tabindex="0" role="button" aria-label="Open Study Handout Pack template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/study-handout-pack.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/study-handout-pack.webp" alt="Study Handout Pack workflow cover showing student researching with books and laptop." loading="lazy" decoding="async" style="object-position:50% 48%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Featured</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:250;--ic-bg:#725ce0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4v6a4 4 0 0 0 4 4h6"/><path d="M16 4v6a4 4 0 0 1-4 4H6"/><path d="m17 11 3 3-3 3"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:32;--ic-bg:#a56720"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/><path d="M12 11v6"/><path d="m9 14 3 3 3-3"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:4;--ic-bg:#d73b30"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Study Handout Pack</h3>
+          <p>Merge class PDFs, number them and protect the handout.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>Class PDFs -> Numbered handout PDF</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-bottom" data-wf-market-card data-wf-template-card="photo-batch-cleanup" data-category="image" data-plan="free" data-featured="false" tabindex="0" role="button" aria-label="Open Photo Batch Cleanup template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/photo-batch-cleanup.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/photo-batch-cleanup.webp" alt="Photo Batch Cleanup workflow cover showing photographer editing a collection of images on a laptop." loading="lazy" decoding="async" style="object-position:50% 48%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Image</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:200;--ic-bg:#207cab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M2 6h14a2 2 0 0 1 2 2v14"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:152;--ic-bg:#198553"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h6V3"/><path d="M20 15h-6v6"/><path d="m10 9-6-6"/><path d="m14 15 6 6"/></svg></span><small>2</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Photo Batch Cleanup</h3>
+          <p>Crop photos to one shape, then compress them for sharing.</p>
+          <div class="wf-market-meta"><span>2 steps</span><span>JPG, PNG, WebP images -> Compressed images</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-center" data-wf-market-card data-wf-template-card="print-ready-images" data-category="document" data-plan="free" data-featured="false" tabindex="0" role="button" aria-label="Open Print Ready Images template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/print-ready-images.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/print-ready-images.webp" alt="Print Ready Images workflow cover showing photographer working with digital and printed photographs." loading="lazy" decoding="async" style="object-position:50% 50%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Document</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:200;--ic-bg:#207cab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="12" height="12" rx="2"/><path d="M9 21h12V9"/><path d="m13 13 7 7"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:216;--ic-bg:#3073d7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13l-3-3"/><path d="M20 16H7l3 3"/></svg></span><small>2</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Print Ready Images</h3>
+          <p>Resize images, then bind them into one downloadable PDF.</p>
+          <div class="wf-market-meta"><span>2 steps</span><span>Images -> PDF document</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-left" data-wf-market-card data-wf-template-card="pdf-share-safe" data-category="pdf" data-plan="free" data-featured="false" tabindex="0" role="button" aria-label="Open Safe PDF Share template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/pdf-share-safe.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/pdf-share-safe.webp" alt="Safe PDF Share workflow cover showing modern workspace with laptop and external storage drives." loading="lazy" decoding="async" style="object-position:50% 50%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">PDF</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:284;--ic-bg:#b03eda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 20h12"/><path d="M9 16V9a3 3 0 1 1 6 0v7"/><rect x="5" y="16" width="14" height="4" rx="1"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:4;--ic-bg:#d73b30"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><small>2</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Safe PDF Share</h3>
+          <p>Watermark a PDF, then protect it before sharing.</p>
+          <div class="wf-market-meta"><span>2 steps</span><span>PDF document -> Protected PDF</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-bottom" data-wf-market-card data-wf-template-card="pdf-report-builder" data-category="document" data-plan="free" data-featured="false" tabindex="0" role="button" aria-label="Open PDF Report Builder template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/pdf-report-builder.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/pdf-report-builder.webp" alt="PDF Report Builder workflow cover showing financial documents calculator and reporting workspace." loading="lazy" decoding="async" style="object-position:50% 50%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Document</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:250;--ic-bg:#725ce0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4v6a4 4 0 0 0 4 4h6"/><path d="M16 4v6a4 4 0 0 1-4 4H6"/><path d="m17 11 3 3-3 3"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:32;--ic-bg:#a56720"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/><path d="M12 11v6"/><path d="m9 14 3 3 3-3"/></svg></span><small>2</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>PDF Report Builder</h3>
+          <p>Combine PDFs in order, then number the finished report.</p>
+          <div class="wf-market-meta"><span>2 steps</span><span>Multiple PDFs -> Numbered PDF</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-right" data-wf-market-card data-wf-template-card="video-thumbnail-workflow" data-category="video" data-plan="free" data-featured="false" tabindex="0" role="button" aria-label="Open Video Thumbnail Workflow template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/video-thumbnail-workflow.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/video-thumbnail-workflow.webp" alt="Video Thumbnail Workflow workflow cover showing editor working on dual computer monitors." loading="lazy" decoding="async" style="object-position:50% 50%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Video</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:216;--ic-bg:#3073d7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2.5"/><circle cx="12" cy="13.5" r="3.5"/><path d="M9 7l1.5-3h3L15 7"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:200;--ic-bg:#207cab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="12" height="12" rx="2"/><path d="M9 21h12V9"/><path d="m13 13 7 7"/></svg></span><small>2</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Video Thumbnail Workflow</h3>
+          <p>Grab a frame from a video, then resize it for use as a thumbnail.</p>
+          <div class="wf-market-meta"><span>2 steps</span><span>Video file -> Image thumbnail</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-left" data-wf-market-card data-wf-template-card="profile-photo-polish" data-category="image" data-plan="free" data-featured="false" tabindex="0" role="button" aria-label="Open Profile Photo Polish template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/profile-photo-polish.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/profile-photo-polish.webp" alt="Profile Photo Polish workflow cover showing professional photographer in a portrait studio." loading="lazy" decoding="async" style="object-position:46% 42%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Image</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:200;--ic-bg:#207cab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M2 6h14a2 2 0 0 1 2 2v14"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:200;--ic-bg:#207cab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M2 6h14a2 2 0 0 1 2 2v14"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:152;--ic-bg:#198553"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h6V3"/><path d="M20 15h-6v6"/><path d="m10 9-6-6"/><path d="m14 15 6 6"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Profile Photo Polish</h3>
+          <p>Crop a portrait into a clean circular profile image.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>Portrait image -> Rounded profile image</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-center" data-wf-market-card data-wf-template-card="ecommerce-image-set" data-category="image" data-plan="pro" data-featured="false" tabindex="0" role="button" aria-label="Open Ecommerce Image Set template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/ecommerce-image-set.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/ecommerce-image-set.webp" alt="Ecommerce Image Set workflow cover showing photo editing laptop with clothing and ecommerce context." loading="lazy" decoding="async" style="object-position:50% 50%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Image</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:200;--ic-bg:#207cab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="12" height="12" rx="2"/><path d="M9 21h12V9"/><path d="m13 13 7 7"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:216;--ic-bg:#3073d7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3s6 6.4 6 10a6 6 0 0 1-12 0c0-3.6 6-10 6-10Z"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:152;--ic-bg:#198553"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h6V3"/><path d="M20 15h-6v6"/><path d="m10 9-6-6"/><path d="m14 15 6 6"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Ecommerce Image Set</h3>
+          <p>Prepare product photos with consistent size and weight.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>Product images -> Optimized product images</span><b>Pro</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-split" data-wf-market-card data-wf-template-card="blog-image-ready" data-category="image" data-plan="free" data-featured="false" tabindex="0" role="button" aria-label="Open Blog Image Ready template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/blog-image-ready.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/blog-image-ready.webp" alt="Blog Image Ready workflow cover showing creative laptop and camera editing workspace." loading="lazy" decoding="async" style="object-position:50% 50%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Image</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:200;--ic-bg:#207cab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="12" height="12" rx="2"/><path d="M9 21h12V9"/><path d="m13 13 7 7"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:216;--ic-bg:#3073d7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13l-3-3"/><path d="M20 16H7l3 3"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:152;--ic-bg:#198553"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h6V3"/><path d="M20 15h-6v6"/><path d="m10 9-6-6"/><path d="m14 15 6 6"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Blog Image Ready</h3>
+          <p>Create lightweight WebP images for blog articles.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>Article images -> WebP images</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-bottom" data-wf-market-card data-wf-template-card="photo-touchup-export" data-category="image" data-plan="free" data-featured="false" tabindex="0" role="button" aria-label="Open Photo Touchup Export template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/photo-touchup-export.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/photo-touchup-export.webp" alt="Photo Touchup Export workflow cover showing photographer retouching images at a desk." loading="lazy" decoding="async" style="object-position:50% 48%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Image</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:190;--ic-bg:#1c8094"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18Z" fill="currentColor" stroke="none"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:216;--ic-bg:#3073d7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3s6 6.4 6 10a6 6 0 0 1-12 0c0-3.6 6-10 6-10Z"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:152;--ic-bg:#198553"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h6V3"/><path d="M20 15h-6v6"/><path d="m10 9-6-6"/><path d="m14 15 6 6"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Photo Touchup Export</h3>
+          <p>Adjust brightness, sharpen and export a smaller photo.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>Photo image -> Polished photo</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-right" data-wf-market-card data-wf-template-card="thumbnail-export-pack" data-category="image" data-plan="free" data-featured="false" tabindex="0" role="button" aria-label="Open Thumbnail Export Pack template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/thumbnail-export-pack.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/thumbnail-export-pack.webp" alt="Thumbnail Export Pack workflow cover showing dual-monitor professional visual editing workstation." loading="lazy" decoding="async" style="object-position:50% 50%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Image</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:200;--ic-bg:#207cab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="12" height="12" rx="2"/><path d="M9 21h12V9"/><path d="m13 13 7 7"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:216;--ic-bg:#3073d7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2.5"/><circle cx="12" cy="13.5" r="3.5"/><path d="M9 7l1.5-3h3L15 7"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:216;--ic-bg:#3073d7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13l-3-3"/><path d="M20 16H7l3 3"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Thumbnail Export Pack</h3>
+          <p>Create smaller thumbnails from larger source images.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>Large images -> Thumbnails</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-bottom" data-wf-market-card data-wf-template-card="pdf-client-packet" data-category="pdf" data-plan="pro" data-featured="false" tabindex="0" role="button" aria-label="Open PDF Client Packet template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/pdf-client-packet.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/pdf-client-packet.webp" alt="PDF Client Packet workflow cover showing professional paperwork and document preparation." loading="lazy" decoding="async" style="object-position:50% 50%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">PDF</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:250;--ic-bg:#725ce0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4v6a4 4 0 0 0 4 4h6"/><path d="M16 4v6a4 4 0 0 1-4 4H6"/><path d="m17 11 3 3-3 3"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:32;--ic-bg:#a56720"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/><path d="M12 11v6"/><path d="m9 14 3 3 3-3"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:4;--ic-bg:#d73b30"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>PDF Client Packet</h3>
+          <p>Merge client PDFs, number the packet and protect it.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>Multiple PDFs -> Protected PDF packet</span><b>Pro</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-split" data-wf-market-card data-wf-template-card="pdf-page-cleanup" data-category="pdf" data-plan="free" data-featured="false" tabindex="0" role="button" aria-label="Open PDF Page Cleanup template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/pdf-page-cleanup.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/pdf-page-cleanup.webp" alt="PDF Page Cleanup workflow cover showing clean minimalist designer desk and laptop workspace." loading="lazy" decoding="async" style="object-position:50% 50%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">PDF</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:200;--ic-bg:#207cab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:268;--ic-bg:#9453de"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h10M4 12h16M4 18h7"/><path d="m18 4 3 3-3 3"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:4;--ic-bg:#d73b30"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>PDF Page Cleanup</h3>
+          <p>Rotate, reorder and protect a PDF before sharing.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>PDF document -> Clean protected PDF</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-right" data-wf-market-card data-wf-template-card="pdf-review-extract" data-category="pdf" data-plan="free" data-featured="false" tabindex="0" role="button" aria-label="Open PDF Review Extract template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/pdf-review-extract.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/pdf-review-extract.webp" alt="PDF Review Extract workflow cover showing professionals reviewing and signing documents together." loading="lazy" decoding="async" style="object-position:50% 48%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">PDF</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:32;--ic-bg:#a56720"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v6"/><path d="M12 10 7 15v5"/><path d="m12 10 5 5v5"/><circle cx="12" cy="4" r="1.6"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:32;--ic-bg:#a56720"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v6"/><path d="M12 10 7 15v5"/><path d="m12 10 5 5v5"/><circle cx="12" cy="4" r="1.6"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:4;--ic-bg:#d73b30"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>PDF Review Extract</h3>
+          <p>Split a PDF and protect the pages you need.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>PDF document -> Extracted PDF files</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-center" data-wf-market-card data-wf-template-card="pdf-archive-lock" data-category="pdf" data-plan="free" data-featured="false" tabindex="0" role="button" aria-label="Open PDF Archive Lock template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/pdf-archive-lock.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/pdf-archive-lock.webp" alt="PDF Archive Lock workflow cover showing student working in a historical library archive." loading="lazy" decoding="async" style="object-position:50% 47%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">PDF</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:4;--ic-bg:#d73b30"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/><path d="M10 12h6M10 16h4"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:32;--ic-bg:#a56720"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/><path d="M12 11v6"/><path d="m9 14 3 3 3-3"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:4;--ic-bg:#d73b30"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>PDF Archive Lock</h3>
+          <p>Repair, number and protect an archive PDF.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>PDF document -> Protected archive PDF</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-bottom" data-wf-market-card data-wf-template-card="quick-pdf-trim" data-category="pdf" data-plan="free" data-featured="false" tabindex="0" role="button" aria-label="Open Quick PDF Trim template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/quick-pdf-trim.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/quick-pdf-trim.webp" alt="Quick PDF Trim workflow cover showing clean organized office desk with documents and a computer." loading="lazy" decoding="async" style="object-position:50% 50%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">PDF</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:4;--ic-bg:#d73b30"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 13h10l1-13"/><path d="M9 7V4h6v3"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:190;--ic-bg:#1c8094"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17a8 8 0 1 1 16 0"/><path d="m12 15 4-4"/><circle cx="12" cy="17" r="1.4"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:4;--ic-bg:#d73b30"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Quick PDF Trim</h3>
+          <p>Delete unwanted pages and protect the final document.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>PDF document -> Trimmed PDF</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-left" data-wf-market-card data-wf-template-card="muted-preview-gif" data-category="video" data-plan="free" data-featured="false" tabindex="0" role="button" aria-label="Open Muted Preview GIF template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/muted-preview-gif.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/muted-preview-gif.webp" alt="Muted Preview GIF workflow cover showing vibrant editing computer setup for media covers." loading="lazy" decoding="async" style="object-position:50% 50%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Video</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:340;--ic-bg:#d83169"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="m16 9 5 6M21 9l-5 6"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:340;--ic-bg:#d83169"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V8a3 3 0 0 1 3-3h10l-3-3"/><path d="M20 15v1a3 3 0 0 1-3 3H7l3 3"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:216;--ic-bg:#3073d7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13l-3-3"/><path d="M20 16H7l3 3"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Muted Preview GIF</h3>
+          <p>Make a silent looping preview and GIF version.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>Video file -> GIF preview</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-center" data-wf-market-card data-wf-template-card="vertical-social-cut" data-category="video" data-plan="pro" data-featured="false" tabindex="0" role="button" aria-label="Open Vertical Social Cut template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/vertical-social-cut.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/vertical-social-cut.webp" alt="Vertical Social Cut workflow cover showing smartphone showing social media content beside laptop." loading="lazy" decoding="async" style="object-position:50% 50%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Video</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:200;--ic-bg:#207cab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M2 6h14a2 2 0 0 1 2 2v14"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:340;--ic-bg:#d83169"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><path d="M8 8l12 10M20 6 8 16"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:152;--ic-bg:#198553"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h6V3"/><path d="M20 15h-6v6"/><path d="m10 9-6-6"/><path d="m14 15 6 6"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Vertical Social Cut</h3>
+          <p>Reframe a clip vertically and compress it for social.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>Video file -> Vertical video</span><b>Pro</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-split" data-wf-market-card data-wf-template-card="training-clip-package" data-category="video" data-plan="free" data-featured="false" tabindex="0" role="button" aria-label="Open Training Clip Package template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/training-clip-package.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/training-clip-package.webp" alt="Training Clip Package workflow cover showing modern computer-based professional workspace." loading="lazy" decoding="async" style="object-position:50% 48%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Video</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:200;--ic-bg:#207cab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="12" height="12" rx="2"/><path d="M9 21h12V9"/><path d="m13 13 7 7"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:340;--ic-bg:#d83169"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 9.5a4 4 0 0 1 0 5M18 7a7.5 7.5 0 0 1 0 10"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:152;--ic-bg:#198553"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h6V3"/><path d="M20 15h-6v6"/><path d="m10 9-6-6"/><path d="m14 15 6 6"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Training Clip Package</h3>
+          <p>Resize, adjust volume and compress a training clip.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>Video lesson -> Compressed training video</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-right" data-wf-market-card data-wf-template-card="audio-extract-pack" data-category="video" data-plan="free" data-featured="false" tabindex="0" role="button" aria-label="Open Audio Extract Pack template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/audio-extract-pack.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/audio-extract-pack.webp" alt="Audio Extract Pack workflow cover showing audio-editing studio with computer." loading="lazy" decoding="async" style="object-position:50% 50%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Video</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:340;--ic-bg:#d83169"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><path d="M8 8l12 10M20 6 8 16"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:32;--ic-bg:#a56720"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/><path d="M12 11v6"/><path d="m9 14 3 3 3-3"/></svg></span><small>2</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Audio Extract Pack</h3>
+          <p>Trim a video and extract the audio track.</p>
+          <div class="wf-market-meta"><span>2 steps</span><span>Video file -> Audio file</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-right" data-wf-market-card data-wf-template-card="image-report-pdf" data-category="document" data-plan="free" data-featured="false" tabindex="0" role="button" aria-label="Open Image Report PDF template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/image-report-pdf.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/image-report-pdf.webp" alt="Image Report PDF workflow cover showing laptop with photographs and a visual editing project." loading="lazy" decoding="async" style="object-position:50% 48%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Document</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:200;--ic-bg:#207cab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="12" height="12" rx="2"/><path d="M9 21h12V9"/><path d="m13 13 7 7"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:216;--ic-bg:#3073d7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13l-3-3"/><path d="M20 16H7l3 3"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:32;--ic-bg:#a56720"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/><path d="M12 11v6"/><path d="m9 14 3 3 3-3"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Image Report PDF</h3>
+          <p>Resize report images and bind them into one PDF.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>Report images -> PDF report</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-split" data-wf-market-card data-wf-template-card="document-watermark-lock" data-category="document" data-plan="free" data-featured="false" tabindex="0" role="button" aria-label="Open Document Watermark Lock template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/document-watermark-lock.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/document-watermark-lock.webp" alt="Document Watermark Lock workflow cover showing secure storage drive and laptop for document protection." loading="lazy" decoding="async" style="object-position:50% 50%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Document</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:284;--ic-bg:#b03eda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 20h12"/><path d="M9 16V9a3 3 0 1 1 6 0v7"/><rect x="5" y="16" width="14" height="4" rx="1"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:32;--ic-bg:#a56720"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/><path d="M12 11v6"/><path d="m9 14 3 3 3-3"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:4;--ic-bg:#d73b30"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Document Watermark Lock</h3>
+          <p>Watermark and protect an important PDF document.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>PDF document -> Protected PDF</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-center" data-wf-market-card data-wf-template-card="page-numbered-archive" data-category="document" data-plan="free" data-featured="false" tabindex="0" role="button" aria-label="Open Page Numbered Archive template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/page-numbered-archive.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/page-numbered-archive.webp" alt="Page Numbered Archive workflow cover showing researcher working with books and laptop in a library." loading="lazy" decoding="async" style="object-position:50% 47%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Document</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:250;--ic-bg:#725ce0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4v6a4 4 0 0 0 4 4h6"/><path d="M16 4v6a4 4 0 0 1-4 4H6"/><path d="m17 11 3 3-3 3"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:32;--ic-bg:#a56720"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/><path d="M12 11v6"/><path d="m9 14 3 3 3-3"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:4;--ic-bg:#d73b30"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Page Numbered Archive</h3>
+          <p>Merge documents, add page numbers and protect the archive.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>PDF documents -> Numbered archive PDF</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-bottom" data-wf-market-card data-wf-template-card="signature-ready-pdf" data-category="document" data-plan="free" data-featured="false" tabindex="0" role="button" aria-label="Open Signature Ready PDF template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/signature-ready-pdf.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/signature-ready-pdf.webp" alt="Signature Ready PDF workflow cover showing close-up document signing scene." loading="lazy" decoding="async" style="object-position:50% 50%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Document</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:200;--ic-bg:#207cab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:32;--ic-bg:#a56720"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/><path d="M12 11v6"/><path d="m9 14 3 3 3-3"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:4;--ic-bg:#d73b30"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Signature Ready PDF</h3>
+          <p>Prepare a PDF for safe sharing.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>PDF document -> Share-ready PDF</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-bottom" data-wf-market-card data-wf-template-card="receipt-archive" data-category="business" data-plan="free" data-featured="false" tabindex="0" role="button" aria-label="Open Receipt Archive template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/receipt-archive.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/receipt-archive.webp" alt="Receipt Archive workflow cover showing receipts and calculator expense-management visual." loading="lazy" decoding="async" style="object-position:50% 50%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Business</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:250;--ic-bg:#725ce0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4v6a4 4 0 0 0 4 4h6"/><path d="M16 4v6a4 4 0 0 1-4 4H6"/><path d="m17 11 3 3-3 3"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:32;--ic-bg:#a56720"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/><path d="M12 11v6"/><path d="m9 14 3 3 3-3"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:4;--ic-bg:#d73b30"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Receipt Archive</h3>
+          <p>Merge receipts into a numbered secure archive.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>Receipt PDFs -> Receipt archive PDF</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-left" data-wf-market-card data-wf-template-card="contract-send-ready" data-category="business" data-plan="free" data-featured="false" tabindex="0" role="button" aria-label="Open Contract Send Ready template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/contract-send-ready.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/contract-send-ready.webp" alt="Contract Send Ready workflow cover showing professional signing a contract beside a laptop." loading="lazy" decoding="async" style="object-position:50% 50%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Business</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:200;--ic-bg:#207cab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:32;--ic-bg:#a56720"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/><path d="M12 11v6"/><path d="m9 14 3 3 3-3"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:4;--ic-bg:#d73b30"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Contract Send Ready</h3>
+          <p>Prepare contracts with numbering and protection.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>Contract PDF -> Protected contract PDF</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-split" data-wf-market-card data-wf-template-card="billing-image-packet" data-category="business" data-plan="free" data-featured="false" tabindex="0" role="button" aria-label="Open Billing Image Packet template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/billing-image-packet.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/billing-image-packet.webp" alt="Billing Image Packet workflow cover showing organized business desk with calculator documents laptop and payment equipment." loading="lazy" decoding="async" style="object-position:50% 50%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Business</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:200;--ic-bg:#207cab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="12" height="12" rx="2"/><path d="M9 21h12V9"/><path d="m13 13 7 7"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:216;--ic-bg:#3073d7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13l-3-3"/><path d="M20 16H7l3 3"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:4;--ic-bg:#d73b30"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Billing Image Packet</h3>
+          <p>Turn billing screenshots into a protected PDF packet.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>Billing images -> Billing PDF</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-center" data-wf-market-card data-wf-template-card="app-icon-export" data-category="developer" data-plan="free" data-featured="false" tabindex="0" role="button" aria-label="Open App Icon Export template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/app-icon-export.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/app-icon-export.webp" alt="App Icon Export workflow cover showing modern laptop and smartphone technology workspace." loading="lazy" decoding="async" style="object-position:50% 50%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Developer</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:200;--ic-bg:#207cab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="12" height="12" rx="2"/><path d="M9 21h12V9"/><path d="m13 13 7 7"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:200;--ic-bg:#207cab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M2 6h14a2 2 0 0 1 2 2v14"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:152;--ic-bg:#198553"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h6V3"/><path d="M20 15h-6v6"/><path d="m10 9-6-6"/><path d="m14 15 6 6"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>App Icon Export</h3>
+          <p>Resize and round app icons for product pages.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>Icon image -> Rounded icon image</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-left" data-wf-market-card data-wf-template-card="docs-asset-webp" data-category="developer" data-plan="free" data-featured="false" tabindex="0" role="button" aria-label="Open Docs Asset WebP template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/docs-asset-webp.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/docs-asset-webp.webp" alt="Docs Asset WebP workflow cover showing focused IT professional coding on a laptop." loading="lazy" decoding="async" style="object-position:50% 48%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Developer</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:200;--ic-bg:#207cab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="12" height="12" rx="2"/><path d="M9 21h12V9"/><path d="m13 13 7 7"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:216;--ic-bg:#3073d7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13l-3-3"/><path d="M20 16H7l3 3"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:152;--ic-bg:#198553"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h6V3"/><path d="M20 15h-6v6"/><path d="m10 9-6-6"/><path d="m14 15 6 6"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Docs Asset WebP</h3>
+          <p>Convert documentation images into lighter WebP assets.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>Documentation images -> WebP assets</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-bottom" data-wf-market-card data-wf-template-card="release-gif-preview" data-category="developer" data-plan="pro" data-featured="false" tabindex="0" role="button" aria-label="Open Release GIF Preview template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/release-gif-preview.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/release-gif-preview.webp" alt="Release GIF Preview workflow cover showing video editing software interface on a computer monitor." loading="lazy" decoding="async" style="object-position:50% 50%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Developer</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:340;--ic-bg:#d83169"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><path d="M8 8l12 10M20 6 8 16"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:216;--ic-bg:#3073d7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13l-3-3"/><path d="M20 16H7l3 3"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:152;--ic-bg:#198553"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h6V3"/><path d="M20 15h-6v6"/><path d="m10 9-6-6"/><path d="m14 15 6 6"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Release GIF Preview</h3>
+          <p>Create GIF previews from short product videos.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>Product video -> GIF preview</span><b>Pro</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-split" data-wf-market-card data-wf-template-card="svg-export-pack" data-category="developer" data-plan="free" data-featured="false" tabindex="0" role="button" aria-label="Open SVG Export Pack template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/svg-export-pack.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/svg-export-pack.webp" alt="SVG Export Pack workflow cover showing startup software workspace with computers and design assets." loading="lazy" decoding="async" style="object-position:50% 50%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Developer</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:216;--ic-bg:#3073d7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13l-3-3"/><path d="M20 16H7l3 3"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:200;--ic-bg:#207cab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="12" height="12" rx="2"/><path d="M9 21h12V9"/><path d="m13 13 7 7"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:152;--ic-bg:#198553"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h6V3"/><path d="M20 15h-6v6"/><path d="m10 9-6-6"/><path d="m14 15 6 6"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>SVG Export Pack</h3>
+          <p>Convert SVG artwork into compressed PNG assets.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>SVG or image asset -> PNG asset</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-left" data-wf-market-card data-wf-template-card="assignment-pdf-lock" data-category="education" data-plan="free" data-featured="false" tabindex="0" role="button" aria-label="Open Assignment PDF Lock template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/assignment-pdf-lock.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/assignment-pdf-lock.webp" alt="Assignment PDF Lock workflow cover showing student studying alone in a library with laptop and textbooks." loading="lazy" decoding="async" style="object-position:50% 48%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Education</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:284;--ic-bg:#b03eda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 20h12"/><path d="M9 16V9a3 3 0 1 1 6 0v7"/><rect x="5" y="16" width="14" height="4" rx="1"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:32;--ic-bg:#a56720"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/><path d="M12 11v6"/><path d="m9 14 3 3 3-3"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:4;--ic-bg:#d73b30"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Assignment PDF Lock</h3>
+          <p>Watermark and protect assignment PDFs before sharing.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>Assignment PDF -> Protected assignment PDF</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-right" data-wf-market-card data-wf-template-card="presentation-image-optimizer" data-category="education" data-plan="free" data-featured="false" tabindex="0" role="button" aria-label="Open Presentation Image Optimizer template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/presentation-image-optimizer.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/presentation-image-optimizer.webp" alt="Presentation Image Optimizer workflow cover showing students collaborating in a classroom." loading="lazy" decoding="async" style="object-position:50% 48%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Education</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:200;--ic-bg:#207cab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="12" height="12" rx="2"/><path d="M9 21h12V9"/><path d="m13 13 7 7"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:216;--ic-bg:#3073d7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3s6 6.4 6 10a6 6 0 0 1-12 0c0-3.6 6-10 6-10Z"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:152;--ic-bg:#198553"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h6V3"/><path d="M20 15h-6v6"/><path d="m10 9-6-6"/><path d="m14 15 6 6"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Presentation Image Optimizer</h3>
+          <p>Resize and compress images for slides or handouts.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>Presentation images -> Compressed images</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-bottom" data-wf-market-card data-wf-template-card="lecture-clip-gif" data-category="education" data-plan="free" data-featured="false" tabindex="0" role="button" aria-label="Open Lecture Clip GIF template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/lecture-clip-gif.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/lecture-clip-gif.webp" alt="Lecture Clip GIF workflow cover showing students studying collaboratively in a library." loading="lazy" decoding="async" style="object-position:50% 48%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Education</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:340;--ic-bg:#d83169"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><path d="M8 8l12 10M20 6 8 16"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:216;--ic-bg:#3073d7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13l-3-3"/><path d="M20 16H7l3 3"/></svg></span><small>2</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Lecture Clip GIF</h3>
+          <p>Turn a short lecture clip into a GIF preview.</p>
+          <div class="wf-market-meta"><span>2 steps</span><span>Lecture video -> GIF preview</span><b>Free</b></div>
+        </div>
+      </article>
+      <article class="wf-market-card wf-cover-split" data-wf-market-card data-wf-template-card="research-appendix-builder" data-category="education" data-plan="pro" data-featured="false" tabindex="0" role="button" aria-label="Open Research Appendix Builder template preview">
+        <div class="wf-market-cover">
+      <picture class="wf-card-photo">
+        <source srcset="../public/images/workflows/templates/research-appendix-builder.avif" type="image/avif">
+        <img src="../public/images/workflows/templates/research-appendix-builder.webp" alt="Research Appendix Builder workflow cover showing books laptop and research material on a study desk." loading="lazy" decoding="async" style="object-position:50% 50%">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">Education</span>
+      <div class="wf-card-flow" aria-hidden="true">
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:250;--ic-bg:#725ce0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4v6a4 4 0 0 0 4 4h6"/><path d="M16 4v6a4 4 0 0 1-4 4H6"/><path d="m17 11 3 3-3 3"/></svg></span><small>1</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:32;--ic-bg:#a56720"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/><path d="M12 11v6"/><path d="m9 14 3 3 3-3"/></svg></span><small>2</small></span><i class="wf-card-line" aria-hidden="true"></i>
+      <span class="wf-card-node"><span class="ic ic-tool" style="--ic-h:4;--ic-bg:#d73b30"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><small>3</small></span></div></div>
+        <div class="wf-market-body">
+          <h3>Research Appendix Builder</h3>
+          <p>Merge appendix PDFs, number them and protect the packet.</p>
+          <div class="wf-market-meta"><span>3 steps</span><span>Research PDFs -> Protected appendix PDF</span><b>Pro</b></div>
+        </div>
+      </article></div>
+      </div>
+    </section>
+
+    <section class="wf-template-preview" id="wf-template-preview" aria-labelledby="wf-preview-title">
+      <div class="wf-preview-shell" data-wf-preview>
+        <button class="wf-preview-close" type="button" data-wf-preview-close aria-label="Close template preview">&times;</button>
+        <div class="wf-preview-main">
+          <header>
+            <h2 id="wf-preview-title">Website Image Optimizer</h2><span>Featured</span>
+            <p>Perfect for website owners, developers and marketers who need faster loading images.</p>
+          </header>
+          <div class="wf-preview-meta">
+            <span>3 Steps</span><span>JPG, PNG, WebP images</span><span>WebP images</span><span>2-3 min</span><span>Fully local</span>
+          </div>
+          <div class="wf-preview-chain">
+      <span class="wf-preview-node"><span class="ic ic-tool" style="--ic-h:250;--ic-bg:#eef2ff;color:#5b21e9"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V5m0 0L8 9m4-4 4 4M5 14v5h14v-5"/></svg></span><strong>Upload Images</strong><small>JPG, PNG, WebP</small></span><i aria-hidden="true">-></i>
+      <span class="wf-preview-node"><span class="ic ic-tool" style="--ic-h:200;--ic-bg:#207cab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="12" height="12" rx="2"/><path d="M9 21h12V9"/><path d="m13 13 7 7"/></svg></span><strong>Image Resizer</strong><small>1920px width</small></span><i aria-hidden="true">-></i>
+      <span class="wf-preview-node"><span class="ic ic-tool" style="--ic-h:152;--ic-bg:#198553"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h6V3"/><path d="M20 15h-6v6"/><path d="m10 9-6-6"/><path d="m14 15 6 6"/></svg></span><strong>Image Compressor</strong><small>Quality: 80%</small></span><i aria-hidden="true">-></i>
+      <span class="wf-preview-node"><span class="ic ic-tool" style="--ic-h:216;--ic-bg:#3073d7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13l-3-3"/><path d="M20 16H7l3 3"/></svg></span><strong>Image Converter</strong><small>Best quality</small></span></div>
+          <figure class="wf-before-after">
+            <picture><source srcset="../public/images/workflows/templates/website-image-optimizer.avif" type="image/avif"><img src="../public/images/workflows/templates/website-image-optimizer.webp" alt="Website Image Optimizer workflow cover showing clean professional photography and editing workspace." loading="lazy" decoding="async" style="object-position:50% 50%"></picture>
+            <figcaption><span>Before</span><span>After</span></figcaption>
+          </figure>
+        </div>
+        <aside class="wf-preview-side">
+          <h3>About this template</h3>
+          <p>Perfect for website owners, developers and marketers who need faster loading images.</p>
+          <h4>Input</h4><p>JPG, PNG, WebP images</p>
+          <h4>Output</h4><p>WebP images</p>
+          <h4>What it does</h4>
+          <ul><li>Resize images to optimal web dimensions.</li><li>Compress images to reduce file size.</li><li>Convert to WebP for best web performance.</li></ul>
+          <div class="wf-preview-actions"><a class="btn" href="#wf-builder" data-wf-template="website-image-optimizer">Preview in Builder</a><a class="btn btn-primary" href="#wf-builder" data-wf-template="website-image-optimizer">Use This Template</a></div>
+        </aside>
+      </div>
+    </section>
+
+  <section class="wrap section prose wf-prose" aria-labelledby="wf-questions">
+    <h2 id="wf-questions">How Vootkit Workflow Works</h2>
+    <p>A workflow is a reusable path through several compatible Vootkit tools. The builder uses the same processing functions as the individual tool pages, so if a tool cannot be called by the workflow engine yet, it is not offered as a step.</p>
+    <p>57 tools can currently be workflow steps. Every chain is checked before it runs, and your files stay in your browser while one step hands its output to the next. That means you can prepare a whole batch without repeatedly downloading a file, opening another page, and choosing the same file again.</p>
+    <h2>Workflow-ready tools</h2>
+    <p>The current workflow engine focuses on file-processing tools with callable browser engines. These include image tools such as <a href="../tools/images/resize-image/">Image Resizer</a>, <a href="../tools/images/compress-image/">Image Compressor</a>, <a href="../tools/images/convert-image/">Image Converter</a>, <a href="../tools/images/crop-image/">Crop Image</a>, <a href="../tools/images/jpg-to-webp/">JPG to WebP</a> and <a href="../tools/images/png-to-webp/">PNG to WebP</a>. The website image optimizer template uses that exact family of tools so the canvas is not a fake demo: resize, compress and convert all stay editable after the template loads.</p>
+    <p>PDF workflows can combine real PDF tools including <a href="../tools/pdf/merge-pdf/">Merge PDFs</a>, <a href="../tools/pdf/compress-pdf/">Compress PDF</a>, <a href="../tools/pdf/split-pdf/">Split PDF</a>, <a href="../tools/pdf/rotate-pdf/">Rotate PDF</a>, <a href="../tools/pdf/pdf-watermark/">PDF Watermark</a>, <a href="../tools/pdf/protect-pdf/">Protect PDF</a>, <a href="../tools/pdf/extract-pdf-pages/">Extract PDF Pages</a>, <a href="../tools/pdf/pdf-page-numbers/">Add Page Numbers</a>, <a href="../tools/pdf/jpg-to-pdf/">Images to PDF</a>, <a href="../tools/pdf/png-to-pdf/">PNG to PDF</a> and <a href="../tools/pdf/webp-to-pdf/">WebP to PDF</a>. If a requested document conversion is not workflow-ready yet, it is kept out of the builder instead of being shown and failing later.</p>
+    <p>Video workflows use the same in-browser media engine as the individual pages, with steps such as <a href="../tools/video/trim-video/">Video Trimmer</a>, <a href="../tools/video/compress-video/">Video Compressor</a>, <a href="../tools/video/video-to-gif/">Video to GIF</a>, <a href="../tools/video/resize-video/">Video Resizer</a>, <a href="../tools/video/mute-video/">Mute Video</a>, <a href="../tools/video/extract-audio/">Extract Audio</a>, <a href="../tools/video/convert-video/">Video Converter</a> and <a href="../tools/video/frame-grabber/">Frame Grabber</a>. The first video run may load the video engine, then processing happens locally in the browser.</p>
+    <h2>Why templates matter</h2>
+    <p>The template marketplace is there for people who know the result they want but do not want to design a chain from zero. A template clones a real definition into the builder, preserves its starting settings, and leaves every node editable. You can open Website Image Optimizer, inspect the resize/compress/convert chain, adjust the compression level, add another image step, remove a step, save the workflow locally, then run it on your own files.</p>
+    <p>The preview panel shows what the template is meant to do before you use it: accepted inputs, output format, privacy status and a simple before/after visual. It does not run anything by itself and it does not imply the stock-photo subjects or image sources are Vootkit customers. The photographs are local template artwork, while the workflow itself still depends on the real tool definitions available in the registry.</p>
+    <h2>Running safely</h2>
+    <p>Before a workflow runs, Vootkit checks the chain from input to output. A PDF step cannot receive an image unless a compatible conversion step appears before it. A video step cannot receive a PDF. If the chain is incompatible, the builder marks the step and, where possible, suggests a real bridge tool. During a run, each node reports its own status. If one step fails, the run stops at that step, keeps the last successful output when possible, and tells you what happened in the tool's own words.</p>
+    <details class="wf-faq"><summary>Do my files get uploaded when I run a workflow?</summary><p>No. Every workflow-compatible step runs in your browser on your own machine, including the handover between steps.</p></details><details class="wf-faq"><summary>How is this different from using the tools one at a time?</summary><p>A workflow is one file selection and one run through a reusable chain, instead of opening several pages manually.</p></details><details class="wf-faq"><summary>Which tools can be workflow steps?</summary><p>57 tools today - the runnable PDF, image, audio and video sets.</p></details>
+  </section>
+
+  <script>
+  var wfTemplateState = { q: '', category: 'all', plan: 'all', tab: 'all' };
+  function wfApplyTemplateFilters() {
+    document.querySelectorAll('[data-wf-market-card]').forEach(function (card) {
+      var text = card.textContent.toLowerCase();
+      var cat = card.getAttribute('data-category');
+      var plan = card.getAttribute('data-plan');
+      var featured = card.getAttribute('data-featured') === 'true';
+      var tab = wfTemplateState.tab;
+      var ok = true;
+      if (wfTemplateState.q && !text.includes(wfTemplateState.q)) ok = false;
+      if (wfTemplateState.category !== 'all' && cat !== wfTemplateState.category) ok = false;
+      if (wfTemplateState.plan !== 'all' && plan !== wfTemplateState.plan) ok = false;
+      if (tab === 'featured' && !featured) ok = false;
+      else if (tab !== 'all' && tab !== 'featured' && cat !== tab) ok = false;
+      card.hidden = !ok;
+    });
+  }
+  document.addEventListener('click', function (e) {
+    var card = e.target.closest && e.target.closest('[data-wf-template-card]');
+    if (card) {
+      e.preventDefault();
+      var preview = document.querySelector('[data-wf-preview]');
+      if (preview) preview.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    var close = e.target.closest && e.target.closest('[data-wf-preview-close]');
+    if (close) {
+      var market = document.getElementById('wf-examples');
+      if (market) market.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+    var b = e.target.closest && e.target.closest('[data-wf-template]');
+    if (b) {
+      e.preventDefault();
+      var id = b.getAttribute('data-wf-template');
+      function load() {
+        if (window.VKWorkflow && window.VKWorkflow.useTemplate && window.VKWorkflow.useTemplate(id)) return;
+        if (window.VKWorkflowUseTemplate && window.VKWorkflowUseTemplate(id)) return;
+        setTimeout(load, 80);
+      }
+      load();
+      var builder = document.getElementById('wf-builder');
+      if (builder) builder.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+    var tab = e.target.closest && e.target.closest('[data-wf-template-tab]');
+    if (tab) {
+      e.preventDefault();
+      wfTemplateState.tab = tab.getAttribute('data-wf-template-tab');
+      document.querySelectorAll('[data-wf-template-tab]').forEach(function (x) { x.classList.toggle('is-on', x === tab); });
+      wfApplyTemplateFilters();
+    }
+  });
+  document.addEventListener('input', function (e) {
+    if (!e.target.matches('[data-wf-template-search]')) return;
+    wfTemplateState.q = e.target.value.trim().toLowerCase();
+    document.querySelectorAll('[data-wf-template-search]').forEach(function (x) { if (x !== e.target) x.value = e.target.value; });
+    wfApplyTemplateFilters();
+  });
+  document.addEventListener('change', function (e) {
+    if (!e.target.matches('[data-wf-template-filter]')) return;
+    var type = e.target.getAttribute('data-wf-template-filter'), val = e.target.value;
+    wfTemplateState[type] = val;
+    wfApplyTemplateFilters();
+  });
+  </script>
+</main>
 <footer class="ftr">
   <div class="wrap">
     <div class="ftr-top">
@@ -330,8 +1148,8 @@ window.VKConsent&&window.VKConsent.setDefaults();</script>
     </div>
   </div>
 </footer>
-<script src="../data/site.config.js?v=76c83adf45"></script>
-<script src="../data/catalog.js?v=76c83adf45"></script>
+<script src="../data/site.config.js?v=a6d05ee33a"></script>
+<script src="../data/catalog.js?v=a6d05ee33a"></script>
 <script>
 document.getElementById('yr').textContent=new Date().getFullYear();
 (function(){var b=document.getElementById('burger'),n=document.getElementById('nav');
@@ -340,34 +1158,34 @@ var t=document.getElementById('theme'),s=null;try{s=localStorage.getItem('vk-the
 if(s)document.documentElement.setAttribute('data-theme',s);
 t.addEventListener('click',function(){var c=document.documentElement.getAttribute('data-theme'),x=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',x);try{localStorage.setItem('vk-theme',x);}catch(e){}});})();
 </script>
-<script src="../assets/js/track.js?v=76c83adf45" defer></script>
-<script src="../assets/js/consent-ui.js?v=76c83adf45" defer></script>
-<script src="../assets/js/ads.js?v=76c83adf45" defer></script>
-<script src="../assets/js/ui.js?v=76c83adf45" defer></script>
-<script src="../assets/js/recent.js?v=76c83adf45" defer></script>
-<script src="../assets/js/supabase-config.js?v=76c83adf45" defer></script>
-<script src="../assets/js/errors.js?v=76c83adf45" defer></script>
-<script src="../assets/js/convert.js?v=76c83adf45" defer></script>
-<script src="../assets/js/newsletter.js?v=76c83adf45" defer></script>
-<script src="../assets/js/auth.js?v=76c83adf45" defer></script>
+<script src="../assets/js/track.js?v=a6d05ee33a" defer></script>
+<script src="../assets/js/consent-ui.js?v=a6d05ee33a" defer></script>
+<script src="../assets/js/ads.js?v=a6d05ee33a" defer></script>
+<script src="../assets/js/ui.js?v=a6d05ee33a" defer></script>
+<script src="../assets/js/recent.js?v=a6d05ee33a" defer></script>
+<script src="../assets/js/supabase-config.js?v=a6d05ee33a" defer></script>
+<script src="../assets/js/errors.js?v=a6d05ee33a" defer></script>
+<script src="../assets/js/convert.js?v=a6d05ee33a" defer></script>
+<script src="../assets/js/newsletter.js?v=a6d05ee33a" defer></script>
+<script src="../assets/js/auth.js?v=a6d05ee33a" defer></script>
 
-<script src="../assets/js/usage.js?v=76c83adf45" defer></script>
-<script src="../assets/js/deliver.js?v=76c83adf45" defer></script>
+<script src="../assets/js/usage.js?v=a6d05ee33a" defer></script>
+<script src="../assets/js/deliver.js?v=a6d05ee33a" defer></script>
 <!-- Tool chaining. tool-flow.js says what each tool accepts, tool-icons.js
      gives the next-step buttons the same per-tool icons as everywhere else,
      and handoff.js parks the finished file on the device between the two
      pages. All three are optional: without them a tool simply downloads. -->
-<script src="../data/tool-flow.js?v=76c83adf45" defer></script>
-<script src="../data/tool-icons.js?v=76c83adf45" defer></script>
-<script src="../assets/js/handoff.js?v=76c83adf45" defer></script>
-<script src="../assets/js/gate.js?v=76c83adf45" defer></script>
-<script src="../data/tool-flow.js?v=76c83adf45" defer></script>
-<script src="../assets/js/tools-pdf.js?v=76c83adf45" defer></script>
-<script src="../assets/js/tools-image.js?v=76c83adf45" defer></script>
-<script src="../assets/js/tools-image2.js?v=76c83adf45" defer></script>
-<script src="../assets/js/tools-videofx.js?v=76c83adf45" defer></script>
-<script src="../assets/js/videoengine.js?v=76c83adf45" defer></script>
-<script src="../assets/js/workflow.js?v=76c83adf45" defer></script>
-<script src="../assets/js/wf-init.js?v=76c83adf45" defer></script>
+<script src="../data/tool-flow.js?v=a6d05ee33a" defer></script>
+<script src="../data/tool-icons.js?v=a6d05ee33a" defer></script>
+<script src="../assets/js/handoff.js?v=a6d05ee33a" defer></script>
+<script src="../assets/js/gate.js?v=a6d05ee33a" defer></script>
+<script src="../data/tool-flow.js?v=a6d05ee33a" defer></script>
+<script src="../assets/js/tools-pdf.js?v=a6d05ee33a" defer></script>
+<script src="../assets/js/tools-image.js?v=a6d05ee33a" defer></script>
+<script src="../assets/js/tools-image2.js?v=a6d05ee33a" defer></script>
+<script src="../assets/js/tools-videofx.js?v=a6d05ee33a" defer></script>
+<script src="../assets/js/videoengine.js?v=a6d05ee33a" defer></script>
+<script src="../assets/js/workflow.js?v=a6d05ee33a" defer></script>
+<script src="../assets/js/wf-init.js?v=a6d05ee33a" defer></script>
 </body>
 </html>

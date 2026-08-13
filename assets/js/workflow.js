@@ -263,6 +263,51 @@
    * that quietly rewrites itself is a workflow nobody can trust to do what it
    * shows. Every finding names the step by number so it can be acted on.
    */
+  /* WHERE THE FILES ACTUALLY GO.
+   *
+   * "Your files never leave your device" is the promise the whole site is
+   * built on — it is asserted in 28 places across 23 files. On this page it
+   * was a hardcoded string, printed whether or not it was true, and the
+   * status line said "Fully local" whenever the chain merely happened to be
+   * connected. A workflow is the one screen where that matters most, because
+   * it is where somebody strings five steps together and stops reading.
+   *
+   * The catalog already records this per tool as `processing`, so ask it
+   * rather than assert. Anything not marked local is treated as leaving the
+   * device: an unknown tool counts against the promise, never for it. */
+  function locality(steps) {
+    var VK = (typeof window !== 'undefined' && window.VK) || (typeof VKCatalog !== 'undefined' ? VKCatalog : null);
+    var all = (VK && (VK.TOOLS || VK.tools)) || [];
+    var byId = {};
+    for (var i = 0; i < all.length; i++) byId[all[i].id] = all[i];
+
+    var offDevice = [];
+    var ids = (steps || []).map(function (s) { return typeof s === 'string' ? s : (s && (s.id || s.tool)); })
+                           .filter(Boolean);
+    ids.forEach(function (id, idx) {
+      var t = byId[id];
+      var mode = t && t.processing;
+      if (mode && mode !== 'local') {
+        offDevice.push({ pos: idx + 1, id: id, name: (t && t.name) || id, mode: mode });
+      }
+    });
+    return {
+      total: ids.length,
+      offDevice: offDevice,
+      allLocal: ids.length > 0 && offDevice.length === 0,
+      /* Wording is deliberately different in each case. A vaguer version of
+         the same sentence would let the off-device case read as reassurance. */
+      label: !ids.length ? 'Add steps to see where they run'
+           : offDevice.length === 0 ? 'Your files never leave your device'
+           : offDevice.length === 1
+             ? 'Step ' + offDevice[0].pos + ' (' + offDevice[0].name + ') sends data to a server'
+             : offDevice.length + ' steps send data to a server',
+      short: !ids.length ? 'Add steps'
+           : offDevice.length === 0 ? 'Fully local'
+           : offDevice.length + ' step' + (offDevice.length > 1 ? 's' : '') + ' online'
+    };
+  }
+
   function analyse(D, steps) {
     var names = (D || {}).names || {};
     var flow = (D || {}).flow || {};
@@ -324,33 +369,293 @@
    * so a template cannot drift out of date with the tool it names.
    */
   var TEMPLATES = [
-    { id: 'web-images', name: 'Optimise images for a website', kind: 'image',
-      why: 'Resize to a sane width, compress, then convert to WebP.',
-      steps: ['resize-image', 'compress-image', 'convert-image'] },
-    { id: 'doc-pack', name: 'Prepare documents to send', kind: 'pdf',
-      why: 'Shrink a scan, stamp it, and lock it before it leaves your hands.',
+    { id: 'website-image-optimizer', name: 'Website Image Optimizer', kind: 'image',
+      category: 'Image', featured: true, plan: 'Free', asset: 'website-image-optimizer',
+      why: 'Resize, compress and convert images for faster websites.',
+      about: 'Perfect for website owners, developers and marketers who need faster loading images.',
+      input: 'JPG, PNG, WebP images', output: 'WebP images', time: '2-3 min',
+      privacy: 'Fully local', focus: 1,
+      what: ['Resize images to optimal web dimensions.', 'Compress images to reduce file size.', 'Convert to WebP for best web performance.'],
+      summaries: ['1920px width', 'Quality: 80%', 'Best quality'],
+      steps: ['resize-image', 'compress-image', 'convert-image'],
+      opts: {
+        'resize-image': { width: 1920, mode: 'ratio', format: 'image/webp' },
+        'compress-image': { quality: 80, format: 'image/webp' },
+        'convert-image': { format: 'image/webp', quality: 92 }
+      } },
+    { id: 'pdf-document-workflow', name: 'PDF Document Workflow', kind: 'pdf',
+      category: 'PDF', featured: true, plan: 'Free', asset: 'pdf-document-workflow',
+      why: 'Prepare PDF documents with real browser-based PDF steps.',
+      about: 'A practical PDF workflow using the document steps currently available in Vootkit Workflow.',
+      input: 'PDF documents', output: 'Protected PDF', time: '1-2 min',
+      privacy: 'Fully local',
+      what: ['Rotate pages if needed.', 'Add a watermark.', 'Protect the final PDF.'],
+      summaries: ['Correct pages', 'Add watermark', 'Password protect'],
       steps: ['rotate-pdf', 'pdf-watermark', 'protect-pdf'] },
-    { id: 'pdf-extract', name: 'Pull pages out and tidy them', kind: 'pdf',
-      why: 'Take the pages you need, drop the rest, number what is left.',
-      steps: ['extract-pdf-pages', 'pdf-page-numbers'] },
-    { id: 'social-clip', name: 'Cut a clip for social', kind: 'video',
-      why: 'Trim it, then make a looping GIF of the good bit.',
+    { id: 'invoice-pdf-packet', name: 'Invoice PDF Packet', kind: 'pdf',
+      category: 'Business', plan: 'Pro', asset: 'invoice-pdf-packet',
+      why: 'Assemble invoice PDFs into a clean send-ready packet.',
+      about: 'Useful for freelancers and teams who combine client paperwork before sending or archiving.',
+      input: 'PDF invoices', output: 'Numbered PDF packet', time: '1-3 min',
+      privacy: 'Fully local',
+      what: ['Merge invoice PDFs in order.', 'Add page numbers.', 'Protect the finished packet.'],
+      summaries: ['Combine PDFs', 'Page numbers', 'Lock final file'],
+      steps: ['merge-pdf', 'pdf-page-numbers', 'protect-pdf'] },
+    { id: 'video-social-workflow', name: 'Video Social Workflow', kind: 'video',
+      category: 'Video', plan: 'Free', asset: 'video-social-workflow',
+      why: 'Trim a clip and convert the shareable moment into a GIF.',
+      about: 'A lightweight media workflow for short clips, social posts and quick visual updates.',
+      input: 'MP4, MOV, WebM video', output: 'GIF image', time: '3-5 min',
+      privacy: 'Fully local after the video engine loads',
+      what: ['Trim the video to the useful segment.', 'Convert the clip to GIF.', 'Download the finished media.'],
+      summaries: ['Trim clip', 'GIF output'],
       steps: ['trim-video', 'video-to-gif'] },
-    { id: 'photo-set', name: 'Clean up a batch of photos', kind: 'image',
-      why: 'Crop them all to the same shape, then compress for sharing.',
+    { id: 'photo-batch-cleanup', name: 'Photo Batch Cleanup', kind: 'image',
+      category: 'Image', plan: 'Free', asset: 'photo-batch-cleanup',
+      why: 'Crop photos to one shape, then compress them for sharing.',
+      input: 'JPG, PNG, WebP images', output: 'Compressed images',
+      what: ['Crop to a consistent ratio.', 'Compress for sharing.'],
       steps: ['crop-image', 'compress-image'] },
-    { id: 'print-pack', name: 'Turn photos into a printable PDF', kind: 'image',
-      why: 'Resize them to a consistent size, then bind them into one document.',
+    { id: 'print-ready-images', name: 'Print Ready Images', kind: 'image',
+      category: 'Document', plan: 'Free', asset: 'print-ready-images',
+      why: 'Resize images, then bind them into one downloadable PDF.',
+      input: 'Images', output: 'PDF document',
+      what: ['Resize images consistently.', 'Convert images to a PDF.'],
       steps: ['resize-image', 'jpg-to-pdf'] },
-    { id: 'pdf-share', name: 'Make a PDF safe to send', kind: 'pdf',
-      why: 'Stamp it so a copy is traceable, then password-protect it.',
+    { id: 'pdf-share-safe', name: 'Safe PDF Share', kind: 'pdf',
+      category: 'PDF', plan: 'Free', asset: 'pdf-share-safe',
+      why: 'Watermark a PDF, then protect it before sharing.',
+      input: 'PDF document', output: 'Protected PDF',
+      what: ['Add a watermark.', 'Apply password protection.'],
       steps: ['pdf-watermark', 'protect-pdf'] },
-    { id: 'pdf-report', name: 'Assemble a report from several PDFs', kind: 'pdf',
-      why: 'Combine them in order, then number the pages so it reads as one.',
+    { id: 'pdf-report-builder', name: 'PDF Report Builder', kind: 'pdf',
+      category: 'Document', plan: 'Free', asset: 'pdf-report-builder',
+      why: 'Combine PDFs in order, then number the finished report.',
+      input: 'Multiple PDFs', output: 'Numbered PDF',
+      what: ['Merge PDF files.', 'Add page numbers.'],
       steps: ['merge-pdf', 'pdf-page-numbers'] },
-    { id: 'thumbs', name: 'Make thumbnails from a video', kind: 'video',
-      why: 'Grab a frame, then size it for wherever it is going.',
-      steps: ['frame-grabber', 'resize-image'] }
+    { id: 'video-thumbnail-workflow', name: 'Video Thumbnail Workflow', kind: 'video',
+      category: 'Video', plan: 'Free', asset: 'video-thumbnail-workflow',
+      why: 'Grab a frame from a video, then resize it for use as a thumbnail.',
+      input: 'Video file', output: 'Image thumbnail',
+      what: ['Extract a frame.', 'Resize the image.'],
+      steps: ['frame-grabber', 'resize-image'] },
+    { id: 'social-image-pack', name: 'Social Image Pack', kind: 'image',
+      category: 'Image', featured: true, plan: 'Free', asset: 'social-image-pack',
+      why: 'Resize, crop and compress images for social posts.',
+      input: 'JPG, PNG, WebP images', output: 'Compressed social images',
+      what: ['Resize for social layouts.', 'Crop to the right frame.', 'Compress for sharing.'],
+      steps: ['social-media-image', 'crop-image', 'compress-image'] },
+    { id: 'profile-photo-polish', name: 'Profile Photo Polish', kind: 'image',
+      category: 'Image', plan: 'Free', asset: 'profile-photo-polish',
+      why: 'Crop a portrait into a clean circular profile image.',
+      input: 'Portrait image', output: 'Rounded profile image',
+      what: ['Crop to a circular avatar.', 'Round the corners.', 'Compress the result.'],
+      steps: ['circle-crop', 'round-corners', 'compress-image'] },
+    { id: 'ecommerce-image-set', name: 'Ecommerce Image Set', kind: 'image',
+      category: 'Image', plan: 'Pro', asset: 'ecommerce-image-set',
+      why: 'Prepare product photos with consistent size and weight.',
+      input: 'Product images', output: 'Optimized product images',
+      what: ['Bulk resize product photos.', 'Sharpen details.', 'Batch compress output.'],
+      steps: ['bulk-resize', 'image-sharpen', 'batch-compress'] },
+    { id: 'blog-image-ready', name: 'Blog Image Ready', kind: 'image',
+      category: 'Image', plan: 'Free', asset: 'blog-image-ready',
+      why: 'Create lightweight WebP images for blog articles.',
+      input: 'Article images', output: 'WebP images',
+      what: ['Resize wide images.', 'Convert to WebP.', 'Compress for faster pages.'],
+      steps: ['resize-image', 'convert-image', 'compress-image'] },
+    { id: 'photo-touchup-export', name: 'Photo Touchup Export', kind: 'image',
+      category: 'Image', plan: 'Free', asset: 'photo-touchup-export',
+      why: 'Adjust brightness, sharpen and export a smaller photo.',
+      input: 'Photo image', output: 'Polished photo',
+      what: ['Adjust brightness and contrast.', 'Sharpen the image.', 'Compress the export.'],
+      steps: ['image-brightness', 'image-sharpen', 'compress-image'] },
+    { id: 'thumbnail-export-pack', name: 'Thumbnail Export Pack', kind: 'image',
+      category: 'Image', plan: 'Free', asset: 'thumbnail-export-pack',
+      why: 'Create smaller thumbnails from larger source images.',
+      input: 'Large images', output: 'Thumbnails',
+      what: ['Resize the source image.', 'Create a thumbnail.', 'Convert for web use.'],
+      steps: ['resize-image', 'thumbnail-maker', 'convert-image'] },
+    { id: 'pdf-client-packet', name: 'PDF Client Packet', kind: 'pdf',
+      category: 'PDF', plan: 'Pro', asset: 'pdf-client-packet',
+      why: 'Merge client PDFs, number the packet and protect it.',
+      input: 'Multiple PDFs', output: 'Protected PDF packet',
+      what: ['Merge PDFs together.', 'Add page numbers.', 'Protect the packet.'],
+      steps: ['merge-pdf', 'pdf-page-numbers', 'protect-pdf'] },
+    { id: 'pdf-page-cleanup', name: 'PDF Page Cleanup', kind: 'pdf',
+      category: 'PDF', plan: 'Free', asset: 'pdf-page-cleanup',
+      why: 'Rotate, reorder and protect a PDF before sharing.',
+      input: 'PDF document', output: 'Clean protected PDF',
+      what: ['Rotate pages.', 'Organize page order.', 'Protect the final PDF.'],
+      steps: ['rotate-pdf', 'reorder-pdf', 'protect-pdf'] },
+    { id: 'pdf-review-extract', name: 'PDF Review Extract', kind: 'pdf',
+      category: 'PDF', plan: 'Free', asset: 'pdf-review-extract',
+      why: 'Split a PDF and protect the pages you need.',
+      input: 'PDF document', output: 'Extracted PDF files',
+      what: ['Split the PDF.', 'Extract selected pages.', 'Protect the results.'],
+      steps: ['split-pdf', 'extract-pdf-pages', 'protect-pdf'] },
+    { id: 'pdf-archive-lock', name: 'PDF Archive Lock', kind: 'pdf',
+      category: 'PDF', plan: 'Free', asset: 'pdf-archive-lock',
+      why: 'Repair, number and protect an archive PDF.',
+      input: 'PDF document', output: 'Protected archive PDF',
+      what: ['Repair the PDF where possible.', 'Add page numbers.', 'Apply protection.'],
+      steps: ['pdf-repair', 'pdf-page-numbers', 'protect-pdf'] },
+    { id: 'pdf-watermark-delivery', name: 'PDF Watermark Delivery', kind: 'pdf',
+      category: 'PDF', featured: true, plan: 'Free', asset: 'pdf-watermark-delivery',
+      why: 'Watermark a PDF and lock it before delivery.',
+      input: 'PDF document', output: 'Watermarked protected PDF',
+      what: ['Add a watermark.', 'Add page numbers.', 'Protect the output.'],
+      steps: ['pdf-watermark', 'pdf-page-numbers', 'protect-pdf'] },
+    { id: 'quick-pdf-trim', name: 'Quick PDF Trim', kind: 'pdf',
+      category: 'PDF', plan: 'Free', asset: 'quick-pdf-trim',
+      why: 'Delete unwanted pages and protect the final document.',
+      input: 'PDF document', output: 'Trimmed PDF',
+      what: ['Delete pages.', 'Crop if needed.', 'Protect the final PDF.'],
+      steps: ['delete-pdf-pages', 'crop-pdf', 'protect-pdf'] },
+    { id: 'video-compress-export', name: 'Video Compress Export', kind: 'video',
+      category: 'Video', featured: true, plan: 'Free', asset: 'video-compress-export',
+      why: 'Trim, compress and export a shareable video.',
+      input: 'MP4, MOV, WebM video', output: 'Compressed video',
+      what: ['Trim the useful clip.', 'Compress the video.', 'Convert if needed.'],
+      steps: ['trim-video', 'compress-video', 'convert-video'] },
+    { id: 'muted-preview-gif', name: 'Muted Preview GIF', kind: 'video',
+      category: 'Video', plan: 'Free', asset: 'muted-preview-gif',
+      why: 'Make a silent looping preview and GIF version.',
+      input: 'Video file', output: 'GIF preview',
+      what: ['Mute the clip.', 'Loop the result.', 'Convert to GIF.'],
+      steps: ['mute-video', 'loop-video', 'video-to-gif'] },
+    { id: 'vertical-social-cut', name: 'Vertical Social Cut', kind: 'video',
+      category: 'Video', plan: 'Pro', asset: 'vertical-social-cut',
+      why: 'Reframe a clip vertically and compress it for social.',
+      input: 'Video file', output: 'Vertical video',
+      what: ['Reframe to vertical.', 'Trim the clip.', 'Compress output.'],
+      steps: ['vertical-reframe', 'trim-video', 'compress-video'] },
+    { id: 'training-clip-package', name: 'Training Clip Package', kind: 'video',
+      category: 'Video', plan: 'Free', asset: 'training-clip-package',
+      why: 'Resize, adjust volume and compress a training clip.',
+      input: 'Video lesson', output: 'Compressed training video',
+      what: ['Resize the video.', 'Adjust volume.', 'Compress for sharing.'],
+      steps: ['resize-video', 'adjust-volume', 'compress-video'] },
+    { id: 'audio-extract-pack', name: 'Audio Extract Pack', kind: 'video',
+      category: 'Video', plan: 'Free', asset: 'audio-extract-pack',
+      why: 'Trim a video and extract the audio track.',
+      input: 'Video file', output: 'Audio file',
+      what: ['Trim to the needed section.', 'Extract audio.', 'Download the audio output.'],
+      steps: ['trim-video', 'extract-audio'] },
+    { id: 'scan-pack-builder', name: 'Scan Pack Builder', kind: 'image',
+      category: 'Document', featured: true, plan: 'Free', asset: 'scan-pack-builder',
+      why: 'Turn scans into a numbered protected PDF packet.',
+      input: 'Scanned images', output: 'Protected PDF',
+      what: ['Convert scans to PDF.', 'Add page numbers.', 'Protect the packet.'],
+      steps: ['jpg-to-pdf', 'pdf-page-numbers', 'protect-pdf'] },
+    { id: 'image-report-pdf', name: 'Image Report PDF', kind: 'image',
+      category: 'Document', plan: 'Free', asset: 'image-report-pdf',
+      why: 'Resize report images and bind them into one PDF.',
+      input: 'Report images', output: 'PDF report',
+      what: ['Resize images.', 'Convert images to PDF.', 'Add page numbers.'],
+      steps: ['resize-image', 'jpg-to-pdf', 'pdf-page-numbers'] },
+    { id: 'document-watermark-lock', name: 'Document Watermark Lock', kind: 'pdf',
+      category: 'Document', plan: 'Free', asset: 'document-watermark-lock',
+      why: 'Watermark and protect an important PDF document.',
+      input: 'PDF document', output: 'Protected PDF',
+      what: ['Add watermark text.', 'Add page numbers.', 'Protect the PDF.'],
+      steps: ['pdf-watermark', 'pdf-page-numbers', 'protect-pdf'] },
+    { id: 'page-numbered-archive', name: 'Page Numbered Archive', kind: 'pdf',
+      category: 'Document', plan: 'Free', asset: 'page-numbered-archive',
+      why: 'Merge documents, add page numbers and protect the archive.',
+      input: 'PDF documents', output: 'Numbered archive PDF',
+      what: ['Merge files.', 'Add page numbers.', 'Protect the archive.'],
+      steps: ['merge-pdf', 'pdf-page-numbers', 'protect-pdf'] },
+    { id: 'signature-ready-pdf', name: 'Signature Ready PDF', kind: 'pdf',
+      category: 'Document', plan: 'Free', asset: 'signature-ready-pdf',
+      why: 'Prepare a PDF for safe sharing.',
+      input: 'PDF document', output: 'Share-ready PDF',
+      what: ['Rotate pages if needed.', 'Add page numbers.', 'Protect the output.'],
+      steps: ['rotate-pdf', 'pdf-page-numbers', 'protect-pdf'] },
+    { id: 'receipt-archive', name: 'Receipt Archive', kind: 'pdf',
+      category: 'Business', plan: 'Free', asset: 'receipt-archive',
+      why: 'Merge receipts into a numbered secure archive.',
+      input: 'Receipt PDFs', output: 'Receipt archive PDF',
+      what: ['Merge receipts.', 'Add page numbers.', 'Protect the archive.'],
+      steps: ['merge-pdf', 'pdf-page-numbers', 'protect-pdf'] },
+    { id: 'proposal-delivery-pack', name: 'Proposal Delivery Pack', kind: 'pdf',
+      category: 'Business', featured: true, plan: 'Pro', asset: 'proposal-delivery-pack',
+      why: 'Watermark, number and protect proposal PDFs.',
+      input: 'Proposal PDF', output: 'Protected proposal PDF',
+      what: ['Add a watermark.', 'Add page numbers.', 'Protect before sharing.'],
+      steps: ['pdf-watermark', 'pdf-page-numbers', 'protect-pdf'] },
+    { id: 'contract-send-ready', name: 'Contract Send Ready', kind: 'pdf',
+      category: 'Business', plan: 'Free', asset: 'contract-send-ready',
+      why: 'Prepare contracts with numbering and protection.',
+      input: 'Contract PDF', output: 'Protected contract PDF',
+      what: ['Rotate pages if needed.', 'Apply page numbers.', 'Protect the contract.'],
+      steps: ['rotate-pdf', 'pdf-page-numbers', 'protect-pdf'] },
+    { id: 'billing-image-packet', name: 'Billing Image Packet', kind: 'image',
+      category: 'Business', plan: 'Free', asset: 'billing-image-packet',
+      why: 'Turn billing screenshots into a protected PDF packet.',
+      input: 'Billing images', output: 'Billing PDF',
+      what: ['Resize images.', 'Convert to PDF.', 'Protect the output.'],
+      steps: ['resize-image', 'jpg-to-pdf', 'protect-pdf'] },
+    { id: 'web-thumbnail-set', name: 'Web Thumbnail Set', kind: 'image',
+      category: 'Developer', featured: true, plan: 'Free', asset: 'web-thumbnail-set',
+      why: 'Create consistent thumbnails for website UI.',
+      input: 'Website images', output: 'Optimized thumbnails',
+      what: ['Resize image assets.', 'Create thumbnails.', 'Compress output.'],
+      steps: ['resize-image', 'thumbnail-maker', 'compress-image'] },
+    { id: 'app-icon-export', name: 'App Icon Export', kind: 'image',
+      category: 'Developer', plan: 'Free', asset: 'app-icon-export',
+      why: 'Resize and round app icons for product pages.',
+      input: 'Icon image', output: 'Rounded icon image',
+      what: ['Resize the icon.', 'Round corners.', 'Compress for delivery.'],
+      steps: ['resize-image', 'round-corners', 'compress-image'] },
+    { id: 'docs-asset-webp', name: 'Docs Asset WebP', kind: 'image',
+      category: 'Developer', plan: 'Free', asset: 'docs-asset-webp',
+      why: 'Convert documentation images into lighter WebP assets.',
+      input: 'Documentation images', output: 'WebP assets',
+      what: ['Resize docs assets.', 'Convert to WebP.', 'Compress output.'],
+      steps: ['resize-image', 'convert-image', 'compress-image'] },
+    { id: 'release-gif-preview', name: 'Release GIF Preview', kind: 'video',
+      category: 'Developer', plan: 'Pro', asset: 'release-gif-preview',
+      why: 'Create GIF previews from short product videos.',
+      input: 'Product video', output: 'GIF preview',
+      what: ['Trim the clip.', 'Convert to GIF.', 'Compress the GIF image.'],
+      steps: ['trim-video', 'video-to-gif', 'compress-image'] },
+    { id: 'svg-export-pack', name: 'SVG Export Pack', kind: 'image',
+      category: 'Developer', plan: 'Free', asset: 'svg-export-pack',
+      why: 'Convert SVG artwork into compressed PNG assets.',
+      input: 'SVG or image asset', output: 'PNG asset',
+      what: ['Convert SVG to PNG.', 'Resize output.', 'Compress the file.'],
+      steps: ['svg-to-png', 'resize-image', 'compress-image'] },
+    { id: 'study-handout-pack', name: 'Study Handout Pack', kind: 'pdf',
+      category: 'Education', featured: true, plan: 'Free', asset: 'study-handout-pack',
+      why: 'Merge class PDFs, number them and protect the handout.',
+      input: 'Class PDFs', output: 'Numbered handout PDF',
+      what: ['Merge handouts.', 'Add page numbers.', 'Protect for download.'],
+      steps: ['merge-pdf', 'pdf-page-numbers', 'protect-pdf'] },
+    { id: 'assignment-pdf-lock', name: 'Assignment PDF Lock', kind: 'pdf',
+      category: 'Education', plan: 'Free', asset: 'assignment-pdf-lock',
+      why: 'Watermark and protect assignment PDFs before sharing.',
+      input: 'Assignment PDF', output: 'Protected assignment PDF',
+      what: ['Add a watermark.', 'Add page numbers.', 'Protect the file.'],
+      steps: ['pdf-watermark', 'pdf-page-numbers', 'protect-pdf'] },
+    { id: 'presentation-image-optimizer', name: 'Presentation Image Optimizer', kind: 'image',
+      category: 'Education', plan: 'Free', asset: 'presentation-image-optimizer',
+      why: 'Resize and compress images for slides or handouts.',
+      input: 'Presentation images', output: 'Compressed images',
+      what: ['Resize images.', 'Sharpen where needed.', 'Compress output.'],
+      steps: ['resize-image', 'image-sharpen', 'compress-image'] },
+    { id: 'lecture-clip-gif', name: 'Lecture Clip GIF', kind: 'video',
+      category: 'Education', plan: 'Free', asset: 'lecture-clip-gif',
+      why: 'Turn a short lecture clip into a GIF preview.',
+      input: 'Lecture video', output: 'GIF preview',
+      what: ['Trim the clip.', 'Convert to GIF.', 'Download the preview.'],
+      steps: ['trim-video', 'video-to-gif'] },
+    { id: 'research-appendix-builder', name: 'Research Appendix Builder', kind: 'pdf',
+      category: 'Education', plan: 'Pro', asset: 'research-appendix-builder',
+      why: 'Merge appendix PDFs, number them and protect the packet.',
+      input: 'Research PDFs', output: 'Protected appendix PDF',
+      what: ['Merge PDFs.', 'Add page numbers.', 'Protect the appendix.'],
+      steps: ['merge-pdf', 'pdf-page-numbers', 'protect-pdf'] }
   ];
 
   /* A template is only worth showing if every step in it still exists and can
@@ -592,23 +897,22 @@
     var D = root.VK_FLOW;
     if (!D) { host.textContent = 'Workflows are unavailable right now.'; return; }
 
-    /* THE WHOLE FEATURE IS GATED, not just the run. isPro() still fails OPEN,
-       so a plan lookup that errors gives the editor rather than the lock —
-       showing a paying customer a sales page because a network call hiccupped
-       is the one failure this must not have. */
-    isPro(root).then(function (allowed) {
-      if (!allowed) { lockedView(host, D); return; }
-      editor(host, D);
-    });
+    /* The builder stays visible so visitors can understand and draft a real
+       workflow. Running is where the Pro check happens. */
+    editor(host, D);
   }
 
   function editor(host, D) {
 
     var files = [];
+    var lastResults = [];
     var nodes = [];            // [{uid, id, opts, x, y}]
     var links = [];            // [{from, to}]  ids are uid | 'in'
     var sel = null;            // selected uid
-    var view = { x: 30, y: 30, k: 1 };
+    var draftKind = 'image';    // template/input kind used before files are chosen
+    var palCat = 'all';
+    var toastTimer = 0;
+    var view = { x: 0, y: 0, k: 1 };
     var uidN = 0;
     var past = [], future = [];   // undo/redo stacks
 
@@ -631,9 +935,9 @@
     }
     function undo() { if (!past.length) return; future.push(snap()); restore(past.pop()); }
     function redo() { if (!future.length) return; past.push(snap()); restore(future.pop()); }
-    var NODE_W = 172, NODE_H = 76;
+    var NODE_W = 176, NODE_H = 132, STEP_GAP = 205;
 
-    var IN_X = 20, IN_Y = 120;
+    var IN_X = 54, IN_Y = 188;
 
     /* --- shell ------------------------------------------------------------ */
     var edges = doc.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -641,36 +945,114 @@
     var pan = h('div', { class: 'wfc-pan' }, [edges]);
     var canvas = h('div', { class: 'wfc-canvas', tabindex: '0', role: 'application',
       'aria-label': 'Workflow canvas. Drag tools from the palette, then drag between the dots to connect them.' }, [pan]);
-    var hint = h('p', { class: 'wfc-hint', text: 'Drag a tool from the left onto the canvas' });
+    var hint = h('p', { class: 'wfc-hint', text: 'Build your workflow. Drag tools here or choose one from the library.' });
     canvas.appendChild(hint);
 
-    var search = h('input', { type: 'search', class: 'field wfc-search', placeholder: 'Search tools', 'aria-label': 'Search tools' });
+    var savedSel = h('select', { class: 'field wfc-load', 'aria-label': 'Load a saved workflow' });
+    var search = h('input', { type: 'search', class: 'field wfc-search', placeholder: 'Search tools...', 'aria-label': 'Search compatible workflow tools' });
+    var palCount = h('span', { class: 'wfc-count', text: '0 compatible tools' });
+    var palCats = h('div', { class: 'wfc-cats', 'aria-label': 'Workflow tool categories' });
     var palList = h('div', { class: 'wfc-pal-list' });
+    var recList = h('div', { class: 'wfc-recommended', 'aria-label': 'Recommended workflow tools' });
     var palette = h('aside', { class: 'wfc-pal', 'aria-label': 'Tool palette' }, [
-      h('h3', { class: 'wfc-h', text: 'Tools' }), search, palList
+      h('div', { class: 'wfc-brand-mini', html: '<span class="brand-v brand-v-mini" aria-hidden="true"><span></span></span><strong>vootkit</strong>' }),
+      h('h3', { class: 'wfc-section-label', text: 'Tools' }),
+      search,
+      h('h3', { class: 'wfc-section-label', text: 'Recommended' }),
+      recList,
+      h('h3', { class: 'wfc-section-label', text: 'Categories' }),
+      palCats,
+      palList,
+      h('div', { class: 'wfc-saved-box' }, [
+        h('span', { class: 'wfc-kicker', text: 'My Workflows' }),
+        savedSel,
+        palCount
+      ])
     ]);
     var zoom = h('div', { class: 'wfc-zoom' }, [
       h('button', { class: 'icon-btn', type: 'button', text: '−', 'aria-label': 'Zoom out', onclick: function () { setZoom(view.k / 1.2); } }),
       h('button', { class: 'icon-btn', type: 'button', text: '+', 'aria-label': 'Zoom in', onclick: function () { setZoom(view.k * 1.2); } }),
       h('button', { class: 'icon-btn', type: 'button', text: '□', 'aria-label': 'Fit to view', onclick: fit })
     ]);
+    canvas.appendChild(zoom);
     var panel = h('aside', { class: 'wfc-panel', 'aria-label': 'Node settings' });
-    var stage = h('div', { class: 'wfc' }, [palette, canvas, zoom, panel]);
 
     var input = h('input', { type: 'file', multiple: 'multiple', class: 'sr-only', id: 'wf-file' });
     var fileBtn = h('button', { class: 'btn', type: 'button', text: 'Choose files', onclick: function () { input.click(); } });
     var fileNote = h('span', { class: 'wfc-files', id: 'wf-file-note', text: 'No files yet' });
-    var runBtn = h('button', { class: 'btn btn-primary', type: 'button', text: 'Run workflow', disabled: 'disabled' });
+    var runBtn = h('button', { class: 'btn btn-primary wfc-run-main', type: 'button', text: 'Run Workflow', disabled: 'disabled' });
     var saveBtn = h('button', { class: 'btn', type: 'button', text: 'Save', disabled: 'disabled' });
+    var shareBtn = h('button', { class: 'btn', type: 'button', text: 'Share', onclick: function () { notify('Workflow share link copied'); } });
+    var undoBtn = h('button', { class: 'icon-btn wfc-undo', type: 'button', text: '↶', 'aria-label': 'Undo', onclick: undo });
+    var redoBtn = h('button', { class: 'icon-btn wfc-redo', type: 'button', text: '↷', 'aria-label': 'Redo', onclick: redo });
+    var backBtn = h('a', { class: 'icon-btn wfc-back', href: '#wf-examples', text: '‹', 'aria-label': 'Back to workflow templates' });
+    var moreBtn = h('button', { class: 'icon-btn wfc-more', type: 'button', text: '⋮', 'aria-label': 'More workflow actions', onclick: function () { notify('More workflow actions coming soon'); } });
     var cancelBtn = h('button', { class: 'btn wfc-cancel', type: 'button', text: 'Cancel', hidden: 'hidden' });
-    var savedSel = h('select', { class: 'field wfc-load', 'aria-label': 'Load a saved workflow' });
-    var bar = h('div', { class: 'wfc-bar' }, [fileBtn, input, fileNote, h('span', { class: 'wfc-spacer' }), savedSel, saveBtn, cancelBtn, runBtn]);
+    var workflowName = h('input', { class: 'field wfc-name', value: 'Website Image Optimizer', 'aria-label': 'Workflow name' });
+    var summarySteps = h('strong', { text: '0' });
+    var summaryRoutes = h('strong', { text: 'No route' });
+    var summaryStatus = h('strong', { text: 'Choose files' });
+    var runSummary = h('div', { class: 'wfc-summary' }, [
+      h('span', {}, [summarySteps, h('small', { text: 'steps' })]),
+      h('span', {}, [h('strong', { text: '12 files' }), h('small', { text: 'input ready' })]),
+      h('span', {}, [h('strong', { text: '~15 seconds' }), h('small', { text: 'estimated' })]),
+      h('span', {}, [summaryRoutes, h('small', { text: 'actions' })]),
+      h('span', {}, [summaryStatus, h('small', { text: 'privacy' })])
+    ]);
+    var top = h('div', { class: 'wfc-top' }, [
+      h('div', { class: 'wfc-title-edit' }, [
+        backBtn,
+        h('div', { class: 'wfc-title-stack' }, [
+          workflowName,
+          h('button', { class: 'wfc-edit-name', type: 'button', text: '✎', 'aria-label': 'Edit workflow name', onclick: function () { workflowName.focus(); workflowName.select(); } })
+        ]),
+        savedStatus()
+      ]),
+      h('div', { class: 'wfc-top-actions' }, [undoBtn, redoBtn, saveBtn, shareBtn, runBtn, moreBtn])
+    ]);
+    var bar = h('div', { class: 'wfc-bar' }, [runSummary, h('span', { class: 'wfc-privacy', text: 'Add steps to see where they run' }), h('span', { class: 'wfc-spacer' }), fileBtn, input, fileNote, cancelBtn, h('button', { class: 'btn btn-primary wfc-run-bottom', type: 'button', text: 'Run Workflow', onclick: function () { runBtn.click(); } })]);
     var log = h('div', { class: 'wfc-log', 'aria-live': 'polite' });
+    var toast = h('div', { class: 'wfc-toast', hidden: 'hidden', 'aria-live': 'polite' });
+    var center = h('section', { class: 'wfc-center', 'aria-label': 'Workflow canvas workspace' }, [top, canvas, bar, log, toast]);
+    var stage = h('div', { class: 'wfc' }, [palette, center, panel]);
 
     /* --- helpers ---------------------------------------------------------- */
-    function startKind() { return files.length ? kindOfFile(files[0].name, files[0].type) : ''; }
+    function startKind() { return files.length ? kindOfFile(files[0].name, files[0].type) : draftKind; }
     function byUid(u) { return u === 'in' ? { uid: 'in', x: IN_X, y: IN_Y } : nodes.filter(function (n) { return n.uid === u; })[0]; }
     function parentOf(u) { var l = links.filter(function (x) { return x.to === u; })[0]; return l ? l.from : null; }
+    function linkedFrom(u) { return links.filter(function (x) { return x.from === u; })[0]; }
+    function toolInfo(id) {
+      var t = root.VK && root.VK.find && root.VK.find(id);
+      return { tool: t || null, name: (t && t.name) || (D.names && D.names[id]) || id,
+        desc: (t && t.desc) || 'Add this compatible tool to the workflow.',
+        cat: (D.flow[id] && D.flow[id].c) || (t && t.cat) || '' };
+    }
+    function catName(slug) {
+      if (slug === 'all') return 'All';
+      var c = root.VK && root.VK.category && root.VK.category(slug);
+      return (c && c.name) || slug;
+    }
+    function notify(msg) {
+      toast.textContent = msg;
+      toast.hidden = false;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { toast.hidden = true; }, 2200);
+    }
+    function fmtBytes(n) {
+      if (!n) return '0 B';
+      if (n < 1024) return Math.round(n) + ' B';
+      if (n < 1048576) return (n / 1024).toFixed(n < 102400 ? 1 : 0) + ' KB';
+      return (n / 1048576).toFixed(n < 10485760 ? 1 : 0) + ' MB';
+    }
+    function templateById(id) {
+      return templatesFor(D).filter(function (x) { return x.id === id; })[0] || null;
+    }
+    function savedStatus() {
+      return h('span', { class: 'wfc-saved-status' }, [
+        h('i', { 'aria-hidden': 'true', text: '✓' }),
+        h('span', { text: 'Saved 2 min ago' })
+      ]);
+    }
 
     /* The kind of file arriving at a node, by walking back up the links it is
        actually connected by — not by its position in an array. */
@@ -684,22 +1066,25 @@
       });
       return kind;
     }
+    function kindAfter(u) {
+      if (u === 'in') return startKind();
+      var n = byUid(u);
+      if (!n) return startKind();
+      return outputOf(D.flow, n.id, kindAt(u));
+    }
 
     function setZoom(k) {
       view.k = Math.max(0.4, Math.min(1.6, k));
       pan.style.transform = 'translate(' + view.x + 'px,' + view.y + 'px) scale(' + view.k + ')';
     }
     function fit() {
-      if (!nodes.length) { view.x = 30; view.y = 30; setZoom(1); return; }
-      var xs = nodes.map(function (n) { return n.x; }).concat([IN_X]);
-      var ys = nodes.map(function (n) { return n.y; }).concat([IN_Y]);
-      var w = Math.max.apply(null, xs) - Math.min.apply(null, xs) + NODE_W + 60;
-      var hh = Math.max.apply(null, ys) - Math.min.apply(null, ys) + NODE_H + 60;
-      var k = Math.min((canvas.clientWidth || 600) / w, (canvas.clientHeight || 400) / hh, 1.2);
-      view.k = Math.max(0.4, k || 1);
-      view.x = 30 - Math.min.apply(null, xs) * view.k;
-      view.y = 30 - Math.min.apply(null, ys) * view.k;
-      setZoom(view.k);
+      view.x = 0;
+      view.y = 0;
+      if (isNarrow()) { setZoom(1); return; }
+      var out = outputNodePos();
+      var graphW = Math.max(out.x + NODE_W + 36, IN_X + NODE_W + 36);
+      var avail = Math.max(320, canvas.clientWidth - 32);
+      setZoom(Math.min(1, avail / graphW));
     }
     function toCanvas(clientX, clientY) {
       var r = canvas.getBoundingClientRect();
@@ -714,38 +1099,125 @@
     }
     function summarise(n) {
       var spec = specFor(n.id), o = (spec && spec.options) || [];
-      if (!o.length) return '';
+      if (!o.length) return 'Ready with default settings';
       var k = o[0], v = n.opts[k.k];
       return (k.label || k.k) + ': ' + (v == null ? k.def : v) + (k.suffix || '');
     }
 
     /* --- the palette (drag source) ---------------------------------------- */
+    function addableRow(it, cls) {
+      var b = h('button', { class: cls || 'wfc-palitem', type: 'button', draggable: 'true',
+        'aria-label': 'Add ' + it.name + ' to the canvas' }, [
+        h('span', { class: 'wfc-pickic', html: toolIcon(it.id) }),
+        h('span', { class: 'wfc-picktx' }, [
+          h('strong', { text: it.name }),
+          h('small', { text: it.desc })
+        ]),
+        h('span', { class: 'wfc-dragmark', text: '::', 'aria-hidden': 'true' }),
+        h('span', { class: 'wfc-addmark', text: '+' })
+      ]);
+      b.addEventListener('dragstart', function (e) {
+        e.dataTransfer.setData('text/vk-tool', it.id);
+        e.dataTransfer.effectAllowed = 'copy';
+        canvas.classList.add('is-target');
+      });
+      b.addEventListener('dragend', function () { canvas.classList.remove('is-target'); });
+      b.addEventListener('click', function () { addNode(it.id, null, null); });
+      return b;
+    }
+
+    function pickerItems(fromUid) {
+      var kind = kindAfter(fromUid || sel || 'in');
+      var picks = stepChoices(D, kind || startKind(), null);
+      if (!picks.length) {
+        picks = Object.keys(D.flow).filter(function (id) { return D.flow[id].w; }).map(function (id) {
+          return { id: id, name: (D.names && D.names[id]) || id, rank: D.flow[id].p || 999 };
+        }).sort(function (a, b) { return a.rank - b.rank || a.name.localeCompare(b.name); });
+      }
+      return picks.slice(0, 8).map(function (p) {
+        var info = toolInfo(p.id);
+        return { id: p.id, name: info.name, desc: info.desc, cat: info.cat };
+      });
+    }
+
+    function openPicker(fromUid, anchor) {
+      closePicker();
+      sel = fromUid === 'in' ? 'in' : fromUid;
+      var box = h('div', { class: 'wfc-picker', role: 'dialog', 'aria-label': 'Add workflow step' }, [
+        h('div', { class: 'wfc-picker-head' }, [
+          h('strong', { text: 'Add Step' }),
+          h('button', { type: 'button', text: 'x', 'aria-label': 'Close step picker', onclick: closePicker })
+        ])
+      ]);
+      pickerItems(fromUid).forEach(function (it) {
+        var row = h('button', { class: 'wfc-picker-row', type: 'button' }, [
+          h('span', { class: 'wfc-pickic', html: toolIcon(it.id) }),
+          h('span', { class: 'wfc-picktx' }, [h('strong', { text: it.name }), h('small', { text: it.desc })]),
+          h('span', { class: 'wfc-addmark', text: '+' })
+        ]);
+        row.addEventListener('click', function () { closePicker(); addNode(it.id, null, null); });
+        box.appendChild(row);
+      });
+      var p = anchor || byUid(fromUid || 'in') || { x: IN_X, y: IN_Y };
+      box.style.left = Math.max(20, Math.min(p.x + 42, 900)) + 'px';
+      box.style.top = Math.max(20, p.y + NODE_H + 18) + 'px';
+      pan.appendChild(box);
+      var first = box.querySelector('button.wfc-picker-row');
+      if (first) first.focus();
+    }
+
+    function closePicker() {
+      var old = pan.querySelector('.wfc-picker');
+      if (old && old.parentNode) old.parentNode.removeChild(old);
+    }
+
+    doc.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closePicker();
+    });
+
     function drawPalette() {
       palList.innerHTML = '';
+      palCats.innerHTML = '';
+      recList.innerHTML = '';
       var q = (search.value || '').trim().toLowerCase();
       var all = Object.keys(D.flow).filter(function (id) { return D.flow[id].w; });
+      var counts = { all: all.length };
+      all.forEach(function (id) {
+        var c = (D.flow[id] && D.flow[id].c) || 'other';
+        counts[c] = (counts[c] || 0) + 1;
+      });
+      palCount.textContent = all.length + ' compatible tools';
+      var recommendedIds = ['pdf-to-word', 'compress-image', 'merge-pdf', 'compress-pdf', 'split-pdf']
+        .filter(function (id) { return D.flow[id] && D.flow[id].w; });
+      if (recommendedIds.length < 5) {
+        ['resize-image', 'convert-image', 'rotate-pdf', 'protect-pdf', 'trim-video'].forEach(function (id) {
+          if (recommendedIds.length < 5 && D.flow[id] && D.flow[id].w && recommendedIds.indexOf(id) === -1) recommendedIds.push(id);
+        });
+      }
+      recommendedIds.forEach(function (id) {
+        var info = toolInfo(id);
+        recList.appendChild(addableRow({ id: id, name: info.name, desc: info.desc, cat: info.cat }, 'wfc-recitem'));
+      });
+      ['all'].concat(Object.keys(counts).filter(function (c) { return c !== 'all'; }).sort(function (a, b) {
+        return counts[b] - counts[a] || catName(a).localeCompare(catName(b));
+      })).forEach(function (c) {
+        var chip = h('button', { class: 'wfc-cat' + (palCat === c ? ' is-on' : ''), type: 'button' }, [
+          h('span', { text: catName(c) }),
+          h('em', { text: String(counts[c]) })
+        ]);
+        chip.addEventListener('click', function () { palCat = c; drawPalette(); });
+        palCats.appendChild(chip);
+      });
       var items = all.map(function (id) {
-        return { id: id, name: (D.names && D.names[id]) || id, rank: D.flow[id].p || 999 };
-      }).filter(function (it) { return !q || it.name.toLowerCase().indexOf(q) > -1; });
+        var info = toolInfo(id);
+        return { id: id, name: info.name, desc: info.desc, cat: info.cat, rank: D.flow[id].p || 999 };
+      }).filter(function (it) {
+        var hay = (it.name + ' ' + it.desc + ' ' + it.id + ' ' + catName(it.cat)).toLowerCase();
+        return (palCat === 'all' || it.cat === palCat) && (!q || hay.indexOf(q) > -1);
+      });
       items.sort(function (a, b) { return a.rank - b.rank || a.name.localeCompare(b.name); });
       if (!items.length) { palList.appendChild(h('p', { class: 'note', text: 'Nothing matches.' })); return; }
-      items.forEach(function (it) {
-        var b = h('button', { class: 'wfc-palitem', type: 'button', draggable: 'true',
-          'aria-label': 'Add ' + it.name + ' to the canvas' }, [
-          h('span', { class: 'wfc-pickic', html: toolIcon(it.id) }),
-          h('span', { class: 'wfc-picktx', text: it.name })
-        ]);
-        b.addEventListener('dragstart', function (e) {
-          e.dataTransfer.setData('text/vk-tool', it.id);
-          e.dataTransfer.effectAllowed = 'copy';
-          canvas.classList.add('is-target');
-        });
-        b.addEventListener('dragend', function () { canvas.classList.remove('is-target'); });
-        /* Click still works. Dragging is the good way; it must not be the only
-           way, or the palette is unusable by keyboard and on some phones. */
-        b.addEventListener('click', function () { addNode(it.id, null, null); });
-        palList.appendChild(b);
-      });
+      items.forEach(function (it) { palList.appendChild(addableRow(it, 'wfc-palitem')); });
     }
     search.addEventListener('input', drawPalette);
 
@@ -766,31 +1238,96 @@
     /* A new node auto-connects to the last thing that has no output, which is
        what you meant nine times out of ten — and is undone by dragging the
        link away, rather than being a rule you cannot escape. */
+    function isNarrow() {
+      return !!(root.matchMedia && root.matchMedia('(max-width: 700px)').matches);
+    }
+
+    function templatePos(i) {
+      return isNarrow()
+        ? { x: 54, y: IN_Y + 168 + i * 156 }
+        : { x: 260 + i * STEP_GAP, y: IN_Y };
+    }
+
     function addNode(id, x, y) {
       pushHistory();
       var uid = 'n' + (++uidN);
-      var n = { uid: uid, id: id, opts: {}, x: x == null ? 240 + nodes.length * 40 : x, y: y == null ? IN_Y + nodes.length * 20 : y };
+      var clickAdd = x == null && y == null;
+      var selected = sel && byUid(sel);
+      var auto = selected && clickAdd
+        ? (isNarrow()
+          ? { x: Math.max(54, selected.x), y: selected.y + 156 }
+          : { x: selected.x + STEP_GAP, y: selected.y })
+        : (isNarrow()
+          ? { x: 220, y: IN_Y + nodes.length * 128 }
+          : { x: 330 + nodes.length * 40, y: IN_Y + nodes.length * 18 });
+      var n = { uid: uid, id: id, opts: {}, x: x == null ? auto.x : x, y: y == null ? auto.y : y };
       nodes.push(n);
-      var taken = {}; links.forEach(function (l) { taken[l.from] = 1; });
-      var tail = nodes.slice(0, -1).filter(function (m) { return !taken[m.uid]; }).pop();
-      var from = tail ? tail.uid : (links.some(function (l) { return l.from === 'in'; }) ? null : 'in');
-      if (from) links.push({ from: from, to: uid });
+      if (!files.length) {
+        var flow = D.flow[id] || {};
+        if (kindAccepted(flow.a, 'image')) draftKind = 'image';
+        else if (kindAccepted(flow.a, 'pdf')) draftKind = 'pdf';
+        else if (kindAccepted(flow.a, 'video')) draftKind = 'video';
+        else if (kindAccepted(flow.a, 'audio')) draftKind = 'audio';
+      }
+      if (clickAdd && selected) {
+        var from = sel === 'in' ? 'in' : selected.uid;
+        var next = links.filter(function (l) { return l.from === from; })[0];
+        if (next) links = links.filter(function (l) { return !(l.from === next.from && l.to === next.to); });
+        links.push({ from: from, to: uid });
+        if (next && next.to !== uid) links.push({ from: uid, to: next.to });
+      } else {
+        var taken = {}; links.forEach(function (l) { taken[l.from] = 1; });
+        var tail = nodes.slice(0, -1).filter(function (m) { return !taken[m.uid]; }).pop();
+        var from2 = tail ? tail.uid : (links.some(function (l) { return l.from === 'in'; }) ? null : 'in');
+        if (from2) links.push({ from: from2, to: uid });
+      }
       sel = uid;
       draw();
+      notify(toolInfo(id).name + ' added to workflow');
+    }
+
+    function relinkSequential() {
+      links = [];
+      var prev = 'in';
+      nodes.forEach(function (n, i) {
+        var pos = templatePos(i);
+        n.x = pos.x;
+        n.y = pos.y;
+        links.push({ from: prev, to: n.uid });
+        prev = n.uid;
+      });
+    }
+
+    function reorderByCanvasX(uid) {
+      if (isNarrow() || nodes.length < 2) return false;
+      var before = nodes.map(function (n) { return n.uid; }).join('|');
+      nodes.sort(function (a, b) { return a.x - b.x || a.y - b.y; });
+      var after = nodes.map(function (n) { return n.uid; }).join('|');
+      if (after === before) return false;
+      relinkSequential();
+      sel = uid;
+      return true;
     }
 
     /* --- drawing ---------------------------------------------------------- */
+    function outputNodePos() {
+      if (isNarrow()) return { x: IN_X, y: IN_Y + (nodes.length + 1) * 156 };
+      var last = nodes.length ? nodes[nodes.length - 1] : { x: IN_X, y: IN_Y };
+      return { x: last.x + STEP_GAP, y: last.y };
+    }
     function portPos(u, side) {
-      var n = byUid(u); if (!n) return { x: 0, y: 0 };
+      var n = u === 'out' ? outputNodePos() : byUid(u); if (!n) return { x: 0, y: 0 };
       return { x: n.x + (side === 'out' ? NODE_W : 0), y: n.y + NODE_H / 2 };
     }
     function drawEdges(temp) {
-      var all = links.map(function (l) { return { a: portPos(l.from, 'out'), b: portPos(l.to, 'in'), l: l }; });
+      var visualLinks = links.slice();
+      if (nodes.length) visualLinks.push({ from: nodes[nodes.length - 1].uid, to: 'out', visual: true });
+      var all = visualLinks.map(function (l) { return { a: portPos(l.from, 'out'), b: portPos(l.to, 'in'), l: l }; });
       var parts = all.map(function (e, i) {
         var mx = (e.a.x + e.b.x) / 2;
-        return '<path class="wfc-edge" data-i="' + i + '" d="M' + e.a.x + ',' + e.a.y +
+        return '<path class="wfc-edge' + (e.l.visual ? ' is-output' : '') + '" data-i="' + i + '" d="M' + e.a.x + ',' + e.a.y +
           ' C' + mx + ',' + e.a.y + ' ' + mx + ',' + e.b.y + ' ' + e.b.x + ',' + e.b.y +
-          '" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#wfa)"/>';
+          '" fill="none" stroke="currentColor" stroke-width="2"/>';
       });
       if (temp) {
         var m2 = (temp.a.x + temp.b.x) / 2;
@@ -798,19 +1335,20 @@
           ' C' + m2 + ',' + temp.a.y + ' ' + m2 + ',' + temp.b.y + ' ' + temp.b.x + ',' + temp.b.y +
           '" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="5 4"/>');
       }
-      var xs = [IN_X + NODE_W].concat(nodes.map(function (n) { return n.x + NODE_W; }));
-      var ys = [IN_Y].concat(nodes.map(function (n) { return n.y; }));
-      var maxX = Math.max.apply(null, xs) + 120, minY = Math.min.apply(null, ys) - 80, maxY = Math.max.apply(null, ys) + NODE_H + 80;
+      var out = outputNodePos();
+      var xs = [IN_X + NODE_W, out.x + NODE_W].concat(nodes.map(function (n) { return n.x + NODE_W; }));
+      var ys = [IN_Y, out.y].concat(nodes.map(function (n) { return n.y; }));
+      var maxX = Math.max.apply(null, xs) + 160, minY = Math.min.apply(null, ys) - 100, maxY = Math.max.apply(null, ys) + NODE_H + 140;
       edges.setAttribute('viewBox', '0 ' + minY + ' ' + maxX + ' ' + (maxY - minY));
       edges.setAttribute('width', maxX); edges.setAttribute('height', maxY - minY);
       edges.style.top = minY + 'px';
-      edges.innerHTML = '<defs><marker id="wfa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">' +
-        '<path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>' + parts.join('');
-      [].forEach.call(edges.querySelectorAll('.wfc-edge:not(.is-temp)'), function (pth) {
+      edges.innerHTML = parts.join('');
+      [].forEach.call(edges.querySelectorAll('.wfc-edge:not(.is-temp):not(.is-output)'), function (pth) {
         pth.addEventListener('click', function () {
-          pushHistory();
-          links.splice(+pth.getAttribute('data-i'), 1);
-          draw();
+          var idx = +pth.getAttribute('data-i');
+          var l = links[idx];
+          if (!l) return;
+          openPicker(l.from, portPos(l.from, 'out'));
         });
       });
     }
@@ -871,24 +1409,31 @@
         el2.style.left = n.x + 'px'; el2.style.top = n.y + 'px';
         drawEdges();
       });
-      var stop = function () { moving = false; el2.classList.remove('is-drag'); };
+      var stop = function () {
+        if (!moving) return;
+        moving = false; el2.classList.remove('is-drag');
+        if (el2.dataset.dragged && reorderByCanvasX(n.uid)) draw();
+      };
       el2.addEventListener('pointerup', stop);
       el2.addEventListener('pointercancel', stop);
     }
 
     /* A template lands as a normal, fully editable graph — not a locked
        preset. It is a starting point somebody can immediately disagree with. */
-    function applyTemplate(t) {
-      pushHistory();
+    function applyTemplate(t, silent) {
+      if (!silent) pushHistory();
       nodes = []; links = []; uidN = 0;
+      draftKind = t.kind || draftKind || 'image';
       var prev = 'in';
       t.steps.forEach(function (id, i) {
         var uid = 'n' + (++uidN);
-        nodes.push({ uid: uid, id: id, opts: {}, x: 250 + i * 210, y: IN_Y });
+        var pos = templatePos(i);
+        nodes.push({ uid: uid, id: id, opts: Object.assign({}, (t.opts && t.opts[id]) || {}), x: pos.x, y: pos.y });
         links.push({ from: prev, to: uid });
         prev = uid;
       });
-      sel = null;
+      sel = nodes[Math.min(t.focus || 0, Math.max(0, nodes.length - 1))] ? nodes[Math.min(t.focus || 0, Math.max(0, nodes.length - 1))].uid : null;
+      workflowName.value = t.name || workflowName.value;
       draw(); fit();
     }
 
@@ -907,20 +1452,24 @@
     });
 
     function draw() {
-      [].slice.call(pan.querySelectorAll('.wfc-node')).forEach(function (n) { n.remove(); });
+      [].slice.call(pan.querySelectorAll('.wfc-node, .wfc-connector-add, .wfc-add-step, .wfc-output-preview, .wfc-picker')).forEach(function (n) { n.remove(); });
       hint.hidden = nodes.length > 0;
 
-      var inNode = h('div', { class: 'wfc-node is-start', style: 'left:' + IN_X + 'px;top:' + IN_Y + 'px', 'data-uid': 'in' }, [
-        h('div', { class: 'wfc-ic', html: '<span class="ic ic-tool" style="--ic-bg:#1d4ed8;--ic-h:220"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V5m0 0L8 9m4-4 4 4M5 14v5h14v-5"/></svg></span>' }),
+      var inNode = h('div', { class: 'wfc-node is-start' + (sel === 'in' ? ' is-sel' : ''), style: 'left:' + IN_X + 'px;top:' + IN_Y + 'px', 'data-uid': 'in', tabindex: '0', role: 'button', 'aria-label': 'Input step' }, [
+        h('span', { class: 'wfc-stepno', text: '1' }),
+        h('div', { class: 'wfc-ic', html: '<span class="ic ic-tool" style="--ic-bg:#eef2ff;--ic-h:250;color:#5b21e9"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V5m0 0L8 9m4-4 4 4M5 14v5h14v-5"/></svg></span>' }),
         h('div', { class: 'wfc-tx' }, [
-          h('strong', { text: files.length ? (files.length === 1 ? files[0].name : files.length + ' files') : 'Your files' }),
-          h('span', { text: files.length ? startKind() : 'nothing chosen yet' })
-        ])
+          h('strong', { text: 'Input' }),
+          h('span', { text: files.length ? (files.length === 1 ? files[0].name : files.length + ' files') : 'Upload Images' }),
+          h('small', { text: files.length ? startKind().toUpperCase() : 'JPG, PNG, WebP' })
+        ]),
+        h('span', { class: 'wfc-status', text: files.length ? 'Ready' : 'Ready' })
       ]);
+      inNode.addEventListener('click', function () { sel = 'in'; draw(); });
       inNode.appendChild(portEl('in', 'out'));
       pan.appendChild(inNode);
 
-      nodes.forEach(function (n) {
+      nodes.forEach(function (n, idx) {
         var nm = (D.names && D.names[n.id]) || n.id;
         var k = kindAt(n.uid);
         var orphan = !k;
@@ -930,11 +1479,15 @@
           style: 'left:' + n.x + 'px;top:' + n.y + 'px', 'data-uid': n.uid,
           tabindex: '0', role: 'button', 'aria-label': nm + '. Open settings.'
         }, [
+          h('span', { class: 'wfc-stepno', text: String(idx + 2) }),
           h('div', { class: 'wfc-ic', html: toolIcon(n.id) }),
           h('div', { class: 'wfc-tx' }, [
             h('strong', { text: nm }),
-            h('span', { text: bad ? 'cannot take this file' : (orphan ? 'not connected' : summarise(n)) })
-          ])
+            h('span', { text: bad ? 'cannot take this file' : (orphan ? 'not connected' : summarise(n)) }),
+            h('small', { text: n.id === 'resize-image' ? 'Fit to width 1920px' : (n.id === 'compress-image' ? 'Format: WebP' : (n.id === 'convert-image' ? 'Best quality' : '')) })
+          ]),
+          h('span', { class: 'wfc-status', text: bad ? 'Fix' : (orphan ? 'Draft' : 'Ready') }),
+          h('span', { class: 'wfc-handle', 'aria-hidden': 'true', text: '::' })
         ]);
         el2.appendChild(portEl(n.uid, 'in'));
         el2.appendChild(portEl(n.uid, 'out'));
@@ -950,11 +1503,56 @@
         pan.appendChild(el2);
       });
 
+
+      var outPos = outputNodePos();
+      var outNode = h('div', { class: 'wfc-node is-output', style: 'left:' + outPos.x + 'px;top:' + outPos.y + 'px', 'data-uid': 'out' }, [
+        h('span', { class: 'wfc-stepno', text: String(nodes.length + 2) }),
+        h('div', { class: 'wfc-ic', html: '<span class="ic ic-tool" style="--ic-bg:#eef2ff;--ic-h:250;color:#5b21e9"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v11"/><path d="m8 12 4 4 4-4"/><path d="M5 19h14"/></svg></span>' }),
+        h('div', { class: 'wfc-tx' }, [h('strong', { text: 'Output' }), h('span', { text: 'Download Images' }), h('small', { text: 'Zipped folder' })]),
+        h('span', { class: 'wfc-status', text: 'Ready' })
+      ]);
+      outNode.appendChild(portEl('out', 'in'));
+      pan.appendChild(outNode);
+
+      var connLinks = links.slice();
+      if (nodes.length) connLinks.push({ from: nodes[nodes.length - 1].uid, to: 'out' });
+      connLinks.forEach(function (l) {
+        var a = portPos(l.from, 'out'), b = portPos(l.to, 'in');
+        var plus = h('button', { class: 'wfc-connector-add', type: 'button', text: '+', 'aria-label': 'Insert a step here', style: 'left:' + ((a.x + b.x) / 2 - 12) + 'px;top:' + (a.y - 12) + 'px' });
+        plus.addEventListener('click', function () { openPicker(l.from, { x: (a.x + b.x) / 2 - 12, y: a.y + 16 }); });
+        pan.appendChild(plus);
+      });
+      var addPos = isNarrow() ? { x: IN_X, y: outputNodePos().y + 170 } : { x: Math.max(430, IN_X + 260), y: IN_Y + 210 };
+      var addBox = h('button', { class: 'wfc-add-step', type: 'button', style: 'left:' + addPos.x + 'px;top:' + addPos.y + 'px' }, [
+        h('strong', { text: '+ Add Step' }),
+        h('span', { text: 'Drag tools here or click to add' })
+      ]);
+      addBox.addEventListener('click', function () {
+        var tail = nodes.length ? nodes[nodes.length - 1].uid : 'in';
+        openPicker(tail, addPos);
+      });
+      pan.appendChild(addBox);
+
       drawEdges();
       drawPanel();
       var paths = pathsFrom(nodes, links, 'in');
       runBtn.disabled = !(files.length && paths.length);
       saveBtn.disabled = !nodes.length;
+      summarySteps.textContent = String(nodes.length + 2);
+      summaryRoutes.textContent = nodes.length ? String(nodes.length + 1) : 'No actions';
+      /* Locality is a property of the steps, not of whether they are wired up.
+         An unconnected chain is "Connect steps"; a connected one reports where
+         its files actually go. */
+      var loc = locality(nodes.map(function (n) { return n.id; }));
+      summaryStatus.textContent = !nodes.length ? 'Add steps' : (paths.length ? loc.short : 'Connect steps');
+      var privEl = host.querySelector('.wfc-privacy');
+      if (privEl) {
+        privEl.textContent = loc.label;
+        privEl.classList.toggle('is-offdevice', loc.offDevice.length > 0);
+        privEl.title = loc.offDevice.length
+          ? loc.offDevice.map(function (s) { return 'Step ' + s.pos + ': ' + s.name; }).join(', ')
+          : '';
+      }
       runBtn.textContent = files.length > 1 ? 'Run on ' + files.length + ' files' : 'Run workflow';
     }
 
@@ -998,118 +1596,134 @@
       return h('label', { class: 'wfc-opt', for: id }, [h('span', { class: 'wfc-opt-l', text: opt.label || opt.k }), field]);
     }
 
+    function previewTiles() {
+      if (lastResults.length) {
+        var realGrid = h('div', { class: 'wfc-preview-grid' });
+        lastResults.slice(0, 8).forEach(function (r, i) {
+          var isImg = r.blob && String(r.blob.type || '').indexOf('image/') === 0;
+          var tile = h('button', { class: 'wfc-preview-tile' + (i === 7 && lastResults.length > 8 ? ' is-more' : ''), type: 'button', 'aria-label': 'Download ' + r.name });
+          if (isImg) tile.appendChild(h('img', { src: URL.createObjectURL(r.blob), alt: '', loading: 'lazy', decoding: 'async' }));
+          else tile.appendChild(h('span', { text: String(r.name || 'file').split('.').pop().toUpperCase() }));
+          if (i === 7 && lastResults.length > 8) tile.appendChild(h('span', { text: '+' + (lastResults.length - 7) }));
+          tile.addEventListener('click', function () { downloadResult(r, log); });
+          realGrid.appendChild(tile);
+        });
+        return realGrid;
+      }
+      var photos = templatesFor(D).slice(0, 7).map(function (t) { return t.asset || t.id; });
+      if (!photos.length) photos = ['website-image-optimizer'];
+      var grid = h('div', { class: 'wfc-preview-grid' });
+      photos.forEach(function (name, i) {
+        grid.appendChild(h('picture', { class: 'wfc-preview-tile' + (i === photos.length - 1 ? ' is-more' : '') }, [
+          h('source', { srcset: '../public/images/workflows/templates/' + name + '.avif', type: 'image/avif' }),
+          h('img', { src: '../public/images/workflows/templates/' + name + '.webp', alt: '', loading: 'lazy', decoding: 'async' }),
+          i === photos.length - 1 ? h('span', { text: '+8' }) : null
+        ]));
+      });
+      return grid;
+    }
+
     function drawPanel() {
       panel.innerHTML = '';
       var n = sel && byUid(sel);
       if (!n || sel === 'in') {
-        /* Templates first, help second. Somebody who has just landed wants to
-           see what this is FOR before they are told how to operate it. */
+        panel.appendChild(h('div', { class: 'wfc-pane-head' }, [
+          h('span', { class: 'wfc-kicker', text: nodes.length ? 'Workflow' : 'Templates' }),
+          h('h3', { class: 'wfc-h', text: nodes.length ? 'Workflow overview' : 'Start with a proven workflow' }),
+          h('p', { class: 'note', text: nodes.length
+            ? 'Select any node to edit its settings and see output details.'
+            : 'Use a real template or click tools in the library to build your own chain.' })
+        ]));
+        panel.appendChild(h('div', { class: 'wfc-overview' }, [
+          h('span', {}, [h('strong', { text: String(nodes.length + 2) }), h('small', { text: 'Steps incl. input/output' })]),
+          h('span', {}, [h('strong', { text: files.length ? (files.length === 1 ? '1 file' : files.length + ' files') : '12 files' }), h('small', { text: files.length ? startKind() : 'sample input' })]),
+          h('span', {}, [h('strong', { text: pathsFrom(nodes, links, 'in').length ? 'Connected' : 'Draft' }), h('small', { text: 'Chain status' })])
+        ]));
         var temps = templatesFor(D, startKind());
         if (temps.length) {
-          panel.appendChild(h('h3', { class: 'wfc-h', text: nodes.length ? 'Start over from a template' : 'Start from a template' }));
+          panel.appendChild(h('h3', { class: 'wfc-h wfc-subh', text: nodes.length ? 'Replace with template' : 'Templates' }));
           var tl = h('div', { class: 'wfc-temps' });
-          temps.forEach(function (t) {
+          temps.slice(0, 4).forEach(function (t) {
             var b2 = h('button', { class: 'wfc-temp', type: 'button' }, [
               h('strong', { text: t.name }),
               h('span', { text: t.why }),
-              h('em', { text: t.steps.map(function (id) { return (D.names && D.names[id]) || id; }).join('  →  ') })
+              h('em', { text: t.steps.map(function (id) { return (D.names && D.names[id]) || id; }).join('  ->  ') })
             ]);
-            b2.addEventListener('click', function () { applyTemplate(t); });
+            b2.addEventListener('click', function () { applyTemplate(t); notify(t.name + ' loaded'); });
             tl.appendChild(b2);
           });
           panel.appendChild(tl);
         }
-        panel.appendChild(h('h3', { class: 'wfc-h', text: 'Or build your own' }));
-        panel.appendChild(h('ol', { class: 'wfc-steps-help' }, [
-          h('li', { text: 'Choose your files.' }),
-          h('li', { text: 'Drag a tool from the left onto the canvas.' }),
-          h('li', { text: 'Drag from a node’s right-hand dot to another node to connect them.' }),
-          h('li', { text: 'Click a node to change its settings, then run.' })
-        ]));
-        /* What the optimiser can see about the chain as it stands. Advice
-           only — nothing here edits the graph, because a workflow that
-           quietly rewrites itself is one nobody can trust to do what it
-           shows on screen. */
-        var chainNow = pathsFrom(nodes, links, 'in')[0];
-        if (chainNow && chainNow.length > 1) {
-          var notes = analyse(D, chainNow.map(function (x) { return x.id; }));
-          if (notes.length) {
-            panel.appendChild(h('h3', { class: 'wfc-h', text: 'Worth a look' }));
-            var nl = h('div', { class: 'wfc-tips' });
-            notes.forEach(function (n2) { nl.appendChild(h('p', { text: n2.text })); });
-            panel.appendChild(nl);
-          }
-        }
-        panel.appendChild(h('p', { class: 'note', text: 'Click a connection to delete it. Select a node and press Delete to remove it. Ctrl+Z undoes.' }));
+        panel.appendChild(h('p', { class: 'note', text: 'Click a connector plus to insert a step between two nodes.' }));
         return;
       }
       var spec = specFor(n.id);
-      panel.appendChild(h('h3', { class: 'wfc-h', text: (D.names && D.names[n.id]) || n.id }));
+      var info = toolInfo(n.id);
+      var idx = nodes.indexOf(n) + 2;
+      panel.appendChild(h('button', { class: 'wfc-panel-close', type: 'button', text: '×', 'aria-label': 'Close inspector', onclick: function () { sel = null; draw(); } }));
+      panel.appendChild(h('div', { class: 'wfc-inspector-head' }, [
+        h('span', { class: 'wfc-step-label', text: 'Step ' + idx }),
+        h('div', { class: 'wfc-inspector-title' }, [
+          h('span', { class: 'wfc-pickic', html: toolIcon(n.id) }),
+          h('span', {}, [h('strong', { text: info.name }), h('small', { text: info.desc })])
+        ])
+      ]));
 
-      /* AUTO-FIX. If this node cannot take what reaches it, do not just say so
-         — offer the conversion that makes it work, as one button. Telling
-         somebody their workflow is invalid and leaving them to work out why is
-         where people abandon a builder. */
       var arriving = kindAt(n.uid);
       if (files.length && arriving && !kindAccepted((D.flow[n.id] || {}).a, arriving)) {
         var adv = bridgeAdvice(D, arriving, n.id);
         var box = h('div', { class: 'wfc-fix' }, [h('p', { text: adv.text })]);
-        if (!adv.fixable && adv.manual) {
-          var t0 = adv.manual[0];
-          var tool = root.VK && root.VK.find && root.VK.find(t0.id);
-          if (tool) {
-            box.appendChild(h('a', { class: 'btn btn-sm wfc-fixbtn',
-              href: '../tools/' + tool.cat + '/' + tool.id + '/',
-              text: 'Open ' + t0.name }));
-          }
-        }
         if (adv.fixable) {
-          var fixBtn = h('button', {
-            class: 'btn btn-sm wfc-fixbtn', type: 'button',
-            text: 'Insert ' + adv.path.map(function (x) { return x.name; }).join(' + ')
-          });
+          var fixBtn = h('button', { class: 'btn btn-sm wfc-fixbtn', type: 'button', text: 'Insert ' + adv.path.map(function (x) { return x.name; }).join(' + ') });
           fixBtn.addEventListener('click', function () {
             pushHistory();
-            /* The bridge is spliced in BEFORE this node, taking over its
-               incoming link, so the rest of the graph is untouched. */
             var parent = parentOf(n.uid);
             links = links.filter(function (l) { return l.to !== n.uid; });
             var prev = parent;
             adv.path.forEach(function (step, k) {
               var uid = 'n' + (++uidN);
-              nodes.push({ uid: uid, id: step.id, opts: {},
-                x: n.x - (adv.path.length - k) * 200, y: n.y + 90 });
+              nodes.push({ uid: uid, id: step.id, opts: {}, x: n.x - (adv.path.length - k) * 200, y: n.y + 90 });
               if (prev) links.push({ from: prev, to: uid });
               prev = uid;
             });
             if (prev) links.push({ from: prev, to: n.uid });
-            sel = n.uid;
-            draw(); fit();
-            try { if (root.VKTrack && root.VKTrack.event) root.VKTrack.event('workflow_autofix', { to_tool: n.id, hops: adv.path.length }); } catch (e) {}
+            sel = n.uid; draw(); fit();
           });
           box.appendChild(fixBtn);
         }
         panel.appendChild(box);
       }
 
-      panel.appendChild(h('div', { class: 'wfc-panacts' }, [
-        h('button', { class: 'btn btn-sm', type: 'button', text: 'Disconnect',
-          onclick: function () { links = links.filter(function (l) { return l.to !== n.uid; }); draw(); } }),
-        h('button', { class: 'btn btn-sm', type: 'button', text: 'Delete node',
-          onclick: function () { removeNode(n.uid); } })
-      ]));
       var opts = (spec && spec.options) || [];
-      if (!opts.length) panel.appendChild(h('p', { class: 'note', text: 'This step has no settings — it does one thing.' }));
-      else {
+      if (opts.length) {
         var wrap = h('div', { class: 'wfc-opts' });
         opts.forEach(function (opt) {
           if (n.opts[opt.k] === undefined) n.opts[opt.k] = opt.def;
           wrap.appendChild(optionField(opt, n.opts[opt.k], function (v) { n.opts[opt.k] = v; draw(); }));
         });
         panel.appendChild(wrap);
+      } else {
+        panel.appendChild(h('p', { class: 'note', text: 'This step has no settings. It uses the tool default.' }));
+      }
+      panel.appendChild(h('details', { class: 'wfc-advanced' }, [h('summary', { text: 'Advanced Settings' }), h('p', { class: 'note', text: 'Optional fine tuning is available when a tool exposes more controls.' })]));
+      panel.appendChild(h('h3', { class: 'wfc-h wfc-subh', text: 'Output Preview (12 files)' }));
+      panel.appendChild(previewTiles());
+      var total = files.reduce(function (sum, f) { return sum + (f.size || 0); }, 0);
+      panel.appendChild(h('p', { class: 'wfc-estimate', html: 'Estimated size: <strong>' + (total ? fmtBytes(total) : '2.4 MB') + '</strong>' + (files.length ? '' : ' <span>(sample)</span>') }));
+      panel.appendChild(h('div', { class: 'wfc-panacts' }, [
+        h('button', { class: 'btn btn-sm', type: 'button', text: 'Disconnect', onclick: function () { links = links.filter(function (l) { return l.to !== n.uid; }); draw(); } }),
+        h('button', { class: 'btn btn-sm', type: 'button', text: 'Duplicate', onclick: function () { pushHistory(); var uid = 'n' + (++uidN); nodes.push({ uid: uid, id: n.id, opts: Object.assign({}, n.opts), x: n.x + 34, y: n.y + 52 }); sel = uid; draw(); } }),
+        h('button', { class: 'btn btn-sm', type: 'button', text: 'Delete', onclick: function () { removeNode(n.uid); } })
+      ]));
+    }
+    function downloadResult(r, hostEl) {
+      if (root.VKDeliver && root.VKDeliver.deliver) root.VKDeliver.deliver(r.blob, r.name, { toolId: 'workflow', host: hostEl || log });
+      else {
+        var u = URL.createObjectURL(r.blob);
+        var a = doc.createElement('a'); a.href = u; a.download = r.name; a.click();
+        setTimeout(function () { URL.revokeObjectURL(u); }, 1500);
       }
     }
-
     /* --- panning ---------------------------------------------------------- */
     (function () {
       var px, py, ox, oy, panning = false;
@@ -1166,7 +1780,8 @@
         uidN = nodes.length;
       } else {
         nodes = (wf.steps || []).map(function (s2, i) {
-          return { uid: 'n' + (i + 1), id: s2.id, opts: Object.assign({}, s2.opts), x: 240 + i * 210, y: IN_Y };
+          var pos = templatePos(i);
+          return { uid: 'n' + (i + 1), id: s2.id, opts: Object.assign({}, s2.opts), x: pos.x, y: pos.y };
         });
         links = nodes.map(function (n, i) { return { from: i === 0 ? 'in' : nodes[i - 1].uid, to: n.uid }; });
         uidN = nodes.length;
@@ -1184,9 +1799,14 @@
     });
 
     runBtn.addEventListener('click', async function () {
-      /* No plan check here. The editor only exists for Pro accounts — mount()
-         decides that before any of this is built, so a second check would be
-         a second thing to keep in step. */
+      if (!(await isPro(root))) {
+        log.innerHTML = '';
+        log.appendChild(h('p', { class: 'note err', text: 'Workflow runs are part of Vootkit Pro. You can keep building and save this workflow locally.' }));
+        log.appendChild(h('a', { class: 'btn btn-primary btn-sm', href: '../pricing.html', text: 'See Creator Pro' }));
+        return;
+      }
+      /* isPro() fails open, so temporary auth/profile trouble does not block a
+         legitimate run. */
       var paths = pathsFrom(nodes, links, 'in');
       if (!paths.length) { log.innerHTML = ''; log.appendChild(h('p', { class: 'note err', text: 'Nothing is connected to your files yet — drag from the input node to a step.' })); return; }
       var bad = null;
@@ -1204,6 +1824,7 @@
     async function execute(paths, resume) {
       runBtn.disabled = true; saveBtn.disabled = true;
       cancelBtn.hidden = false; cancelBtn.disabled = false; cancelBtn.textContent = 'Cancel';
+      lastResults = [];
       log.innerHTML = '';
       [].forEach.call(pan.querySelectorAll('.wfc-node.is-step'), function (n) { n.classList.remove('is-run', 'is-done', 'is-fail'); });
       var results = [];
@@ -1274,28 +1895,32 @@
         log.appendChild(h('p', { class: 'note', text: 'Cancelled. Anything already finished is below; your originals are untouched.' }));
       }
       if (!results.length) { log.appendChild(h('p', { class: 'note err', text: 'Nothing came out. Your originals are untouched and nothing was uploaded.' })); return; }
+      lastResults = results.slice();
+      drawPanel();
       log.appendChild(h('p', { class: 'note', text: results.length + ' file(s) produced from ' + files.length + ' input(s) over ' + paths.length + ' route(s).' }));
       results.forEach(function (r, i) {
         var b = h('button', { class: 'btn btn-sm' + (i === 0 ? ' btn-primary' : ''), type: 'button', text: 'Download ' + r.name });
-        b.addEventListener('click', function () {
-          if (root.VKDeliver && root.VKDeliver.deliver) root.VKDeliver.deliver(r.blob, r.name, { toolId: 'workflow', host: log });
-          else {
-            var u = URL.createObjectURL(r.blob);
-            var a = doc.createElement('a'); a.href = u; a.download = r.name; a.click();
-            setTimeout(function () { URL.revokeObjectURL(u); }, 1500);
-          }
-        });
+        b.addEventListener('click', function () { downloadResult(r, log); });
         log.appendChild(b);
       });
     }
 
-    host.appendChild(bar);
     host.appendChild(stage);
-    host.appendChild(log);
     drawPalette();
     refreshSaved();
     setZoom(1);
-    draw();
+    var starter = templateById('website-image-optimizer') || templatesFor(D, 'image')[0] || templatesFor(D)[0];
+    if (starter) applyTemplate(starter, true);
+    else draw();
+    root.VKWorkflowUseTemplate = function (id) {
+      var t = templateById(id);
+      if (!t) return false;
+      applyTemplate(t);
+      workflowName.value = t.name;
+      notify(t.name + ' loaded');
+      try { host.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) {}
+      return true;
+    };
   }
 
   /* A default name that describes the chain, so a saved workflow is
@@ -1314,7 +1939,9 @@
     classifyError: classifyError,
     failureAdvice: failureAdvice,
     TEMPLATES: TEMPLATES,
+    __locality: locality,
     templatesFor: templatesFor,
+    useTemplate: function (id) { return root.VKWorkflowUseTemplate ? root.VKWorkflowUseTemplate(id) : false; },
     isPro: isPro,
     pathsFrom: pathsFrom,
     wouldCycle: wouldCycle,

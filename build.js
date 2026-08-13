@@ -2900,185 +2900,265 @@ function workflowCopy() {
   if (!hadWindow) g.window = g;
   let W;
   try { delete require.cache[require.resolve("./assets/js/workflow.js")]; W = require("./assets/js/workflow.js"); }
-  catch (e) { throw new Error("workflows page: cannot load workflow.js — " + e.message); }
+  catch (e) { throw new Error("workflows page: cannot load workflow.js - " + e.message); }
   if (!hadWindow) delete g.window;
 
   const FLOW = require("./data/tool-flow.js");
   const live = W.templatesFor(FLOW);
   if (live.length < 5) throw new Error("workflows page: only " + live.length + " runnable templates");
+  const assetManifestPath = path.join(ROOT, "public", "images", "workflows", "workflow-template-assets.json");
+  const assetManifest = fs.existsSync(assetManifestPath)
+    ? JSON.parse(fs.readFileSync(assetManifestPath, "utf8"))
+    : [];
+  const assetById = new Map(assetManifest.map((a) => [a.templateId, a]));
+  const preferred = [
+    "website-image-optimizer", "pdf-document-workflow", "invoice-pdf-packet", "video-social-workflow",
+    "social-image-pack", "pdf-watermark-delivery", "video-compress-export", "scan-pack-builder",
+    "proposal-delivery-pack", "web-thumbnail-set", "study-handout-pack"
+  ];
+  const byId = new Map(live.map((t) => [t.id, t]));
+  const ordered = preferred.map((id) => byId.get(id)).filter(Boolean)
+    .concat(live.filter((t) => !preferred.includes(t.id)));
+  const allKinds = Array.from(new Set(ordered.map((t) => t.category || t.kind))).filter(Boolean);
+  const kindLabel = (x) => ({ pdf: "PDF", image: "Image", video: "Video", audio: "Audio", images: "Image" }[String(x).toLowerCase()] || x);
+  const icon = (id) => { const t = VK.find(id); return t ? toolIconHtml(t) : `<span class="ic"></span>`; };
+  const toolName = (id) => (VK.find(id) || {}).name || (FLOW.names && FLOW.names[id]) || id;
+  const chain = (t) => t.steps.map((id) => toolName(id)).join(" -> ");
+  const cardSteps = (t) => t.steps.map((id, i) => `
+      <span class="wf-card-node">${icon(id)}<small>${i + 1}</small></span>`).join(`<i class="wf-card-line" aria-hidden="true"></i>`);
+  const coverAsset = (t) => {
+    const key = t.asset || t.id || "website-image-optimizer";
+    return assetById.get(t.id) || assetById.get(key) || {
+      templateId: key,
+      avifFile: `/public/images/workflows/templates/${key}.avif`,
+      webpFile: `/public/images/workflows/templates/${key}.webp`,
+      alt: `${t.name} workflow cover.`,
+      focalPoint: "50% 50%",
+      overlayVariant: "center"
+    };
+  };
+  const imgRel = (file) => esc(String(file || "").replace(/^\/public\//, "../public/"));
+  const cover = (t) => {
+    const a = coverAsset(t);
+    return `
+      <picture class="wf-card-photo">
+        <source srcset="${imgRel(a.avifFile)}" type="image/avif">
+        <img src="${imgRel(a.webpFile)}" alt="${esc(a.alt || "")}" loading="lazy" decoding="async" style="object-position:${esc(a.focalPoint || "50% 50%")}">
+      </picture>
+      <div class="wf-card-overlay"></div>
+      <span class="wf-cover-badge">${t.featured ? "Featured" : esc(kindLabel(t.category || t.kind))}</span>
+      <div class="wf-card-flow" aria-hidden="true">${cardSteps(t)}</div>`;
+  };
+  const templateCards = ordered.map((t) => `
+      <article class="wf-market-card wf-cover-${esc((coverAsset(t).overlayVariant || "center").toLowerCase())}" data-wf-market-card data-wf-template-card="${esc(t.id)}" data-category="${esc((t.category || t.kind).toLowerCase())}" data-plan="${esc((t.plan || "Free").toLowerCase())}" data-featured="${t.featured ? "true" : "false"}" tabindex="0" role="button" aria-label="Open ${esc(t.name)} template preview">
+        <div class="wf-market-cover">${cover(t)}</div>
+        <div class="wf-market-body">
+          <h3>${esc(t.name)}</h3>
+          <p>${esc(t.why)}</p>
+          <div class="wf-market-meta"><span>${t.steps.length} steps</span><span>${esc(t.input || kindLabel(t.kind))} -> ${esc(t.output || "Output")}</span><b>${esc(t.plan || "Free")}</b></div>
+        </div>
+      </article>`).join("");
+  const tabNames = ["All", "Featured"].concat(allKinds.map(kindLabel));
+  const previewT = ordered[0] || live[0];
+  const previewAsset = coverAsset(previewT);
+  const inputIcon = `<span class="ic ic-tool" style="--ic-h:250;--ic-bg:#eef2ff;color:#5b21e9"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V5m0 0L8 9m4-4 4 4M5 14v5h14v-5"/></svg></span>`;
+  const previewNodes = [{ html: inputIcon, name: "Upload Images", summary: "JPG, PNG, WebP" }]
+    .concat(previewT.steps.map((id, i) => ({ html: icon(id), name: toolName(id), summary: (previewT.summaries && previewT.summaries[i]) || "Ready" })));
+  const previewChain = previewNodes.map((n) => `
+      <span class="wf-preview-node">${n.html}<strong>${esc(n.name)}</strong><small>${esc(n.summary)}</small></span>`).join(`<i aria-hidden="true">-></i>`);
+  const groups = `
+    <section class="wf-marketplace" id="wf-examples" aria-labelledby="wf-market-title">
+      <div class="wf-market-shell">
+        <div class="wf-market-heading">
+          <p class="eyebrow">Templates</p>
+          <!-- h2, not h1: the builder above owns the page's single h1 now. -->
+          <h2 id="wf-market-title">Workflow Templates</h2>
+          <p>Start with a proven workflow and save hours of manual work.</p>
+        </div>
+        <div class="wf-filterbar" aria-label="Workflow template filters">
+          <input type="search" placeholder="Search workflow templates..." data-wf-template-search>
+          <select data-wf-template-filter="category" aria-label="All Categories"><option value="all">All Categories</option>${allKinds.map((k) => `<option value="${esc(k.toLowerCase())}">${esc(kindLabel(k))}</option>`).join("")}</select>
+          <select aria-label="All Inputs"><option>All Inputs</option><option>PDF</option><option>Images</option><option>Video</option></select>
+          <select aria-label="All Outputs"><option>All Outputs</option><option>PDF</option><option>WebP</option><option>GIF</option></select>
+          <select data-wf-template-filter="plan" aria-label="Free and Pro"><option value="all">Free &amp; Pro</option><option value="free">Free</option><option value="pro">Pro</option></select>
+        </div>
+        <div class="wf-market-tabs" role="tablist" aria-label="Template categories">
+          ${tabNames.map((x, i) => `<button type="button" class="${i === 0 ? "is-on" : ""}" data-wf-template-tab="${esc(x.toLowerCase())}">${esc(x)}</button>`).join("")}
+        </div>
+        <div class="wf-market-grid">${templateCards}</div>
+      </div>
+    </section>
 
-  const chain = (t) => t.steps.map((id) => {
-    const tool = VK.find(id);
-    return tool
-      ? `<a href="../tools/${tool.cat}/${tool.id}/">${esc(tool.name)}</a>`
-      : esc(id);
-  }).join(' <span class="wf-arrow" aria-hidden="true">→</span> ');
-
-  const KIND_LABEL = { pdf: "PDF", image: "Images", video: "Video", audio: "Audio" };
-  const byKind = {};
-  live.forEach((t) => { (byKind[t.kind] = byKind[t.kind] || []).push(t); });
-
-  const groups = Object.keys(byKind).map((k) => `
-      <h3>${esc(KIND_LABEL[k] || k)}</h3>
-      <ul class="wf-chains">
-        ${byKind[k].map((t) => `<li>
-          <strong>${esc(t.name)}</strong>
-          <span class="wf-chain">${chain(t)}</span>
-          <span class="wf-why">${esc(t.why)}</span>
-        </li>`).join("")}
-      </ul>`).join("");
+    <section class="wf-template-preview" id="wf-template-preview" aria-labelledby="wf-preview-title">
+      <div class="wf-preview-shell" data-wf-preview>
+        <button class="wf-preview-close" type="button" data-wf-preview-close aria-label="Close template preview">&times;</button>
+        <div class="wf-preview-main">
+          <header>
+            <h2 id="wf-preview-title">${esc(previewT.name)}</h2><span>${previewT.featured ? "Featured" : esc(previewT.plan || "Free")}</span>
+            <p>${esc(previewT.about || previewT.why)}</p>
+          </header>
+          <div class="wf-preview-meta">
+            <span>${previewT.steps.length} Steps</span><span>${esc(previewT.input || "Input files")}</span><span>${esc(previewT.output || "Output files")}</span><span>${esc(previewT.time || "A few minutes")}</span><span>${esc(previewT.privacy || "Browser-based")}</span>
+          </div>
+          <div class="wf-preview-chain">${previewChain}</div>
+          <figure class="wf-before-after">
+            <picture><source srcset="${imgRel(previewAsset.avifFile)}" type="image/avif"><img src="${imgRel(previewAsset.webpFile)}" alt="${esc(previewAsset.alt || `${previewT.name} workflow preview image.`)}" loading="lazy" decoding="async" style="object-position:${esc(previewAsset.focalPoint || "50% 50%")}"></picture>
+            <figcaption><span>Before</span><span>After</span></figcaption>
+          </figure>
+        </div>
+        <aside class="wf-preview-side">
+          <h3>About this template</h3>
+          <p>${esc(previewT.about || previewT.why)}</p>
+          <h4>Input</h4><p>${esc(previewT.input || "Input files")}</p>
+          <h4>Output</h4><p>${esc(previewT.output || "Output files")}</p>
+          <h4>What it does</h4>
+          <ul>${(previewT.what || []).map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+          <div class="wf-preview-actions"><a class="btn" href="#wf-builder" data-wf-template="${esc(previewT.id)}">Preview in Builder</a><a class="btn btn-primary" href="#wf-builder" data-wf-template="${esc(previewT.id)}">Use This Template</a></div>
+        </aside>
+      </div>
+    </section>`;
 
   const FAQ = [
-    ["Do my files get uploaded when I run a workflow?",
-     "No. Every step runs in your browser on your own machine, including the "
-     + "handover between steps — the file produced by one step is passed "
-     + "straight to the next in memory. Nothing is sent to a server at any "
-     + "point, so there is nothing for us to store, leak or hand over."],
-    ["How is this different from using the tools one at a time?",
-     "Time, and the number of decisions. Running five tools by hand means five "
-     + "pages, five uploads of the same file into the next tool, and five "
-     + "downloads. A workflow is one file selection and one button. It also "
-     + "runs over a whole batch, so twenty files take one click rather than a "
-     + "hundred."],
-    ["Can I run a workflow over many files at once?",
-     "Yes. Choose as many as you like of one kind and every one goes through "
-     + "every step, with per-file progress. Mixed kinds are refused up front "
-     + "rather than failing halfway, because a PDF step cannot open an image."],
-    ["What happens if one step fails?",
-     "The run stops at that step and tells you which one, in the tool's own "
-     + "words. The output of the last step that worked is still offered for "
-     + "download, and if the failure is the kind that might clear — a network "
-     + "hiccup, an engine that did not load — you get a button to retry from "
-     + "that step rather than from the beginning."],
-    ["Can I save a workflow and use it again?",
-     "Yes, with its settings intact. Saved workflows are stored on your device "
-     + "for quick reuse on the same browser."],
-    ["Which tools can be workflow steps?",
-     `${Object.keys(FLOW.flow).filter((id) => FLOW.flow[id].w).length} of them today — the PDF, image and video sets. `
-     + "Some tools build their controls and their logic together and cannot yet "
-     + "be called without drawing their interface, so they are not offered "
-     + "rather than offered and then failing."],
-    ["Is it free?",
-     "The workflow builder is part of Vootkit Pro. Every individual tool stays "
-     + "free and always will."]
+    ["Do my files get uploaded when I run a workflow?", "No. Every workflow-compatible step runs in your browser on your own machine, including the handover between steps."],
+    ["How is this different from using the tools one at a time?", "A workflow is one file selection and one run through a reusable chain, instead of opening several pages manually."],
+    ["Which tools can be workflow steps?", `${Object.keys(FLOW.flow).filter((id) => FLOW.flow[id].w).length} tools today - the runnable PDF, image, audio and video sets.`]
   ];
-
-  const faqHtml = FAQ.map(([q, a]) => `
-      <details class="wf-faq">
-        <summary>${esc(q)}</summary>
-        <p>${esc(a)}</p>
-      </details>`).join("");
-
-  const faqLd = {
-    "@context": "https://schema.org", "@type": "FAQPage",
-    mainEntity: FAQ.map(([q, a]) => ({
-      "@type": "Question", name: q,
-      acceptedAnswer: { "@type": "Answer", text: a }
-    }))
-  };
-  const appLd = {
-    "@context": "https://schema.org", "@type": "SoftwareApplication",
-    name: "Vootkit Workflows",
-    applicationCategory: "BusinessApplication",
-    operatingSystem: "Any modern web browser",
-    url: CFG.origin + "/workflows/",
-    description: "Chain Vootkit's tools into one run. Every step happens in "
-      + "your browser, so files are never uploaded — including between steps.",
-    featureList: live.map((t) => t.name),
-    offers: { "@type": "Offer", category: "Subscription" }
-  };
+  const faqHtml = FAQ.map(([q, a]) => `<details class="wf-faq"><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join("");
+  const faqLd = { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: FAQ.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })) };
+  const appLd = { "@context": "https://schema.org", "@type": "SoftwareApplication", name: "Vootkit Workflows", applicationCategory: "BusinessApplication", operatingSystem: "Any modern web browser", url: CFG.origin + "/workflows/", description: "Chain Vootkit tools into one browser-based run.", featureList: live.map((t) => t.name), offers: { "@type": "Offer", category: "Subscription" } };
 
   return { groups, faqHtml, count: live.length,
-    ld: `<script type="application/ld+json">${JSON.stringify(appLd)}</script>\n`
-      + `<script type="application/ld+json">${JSON.stringify(faqLd)}</script>` };
+    ld: `<script type="application/ld+json">${JSON.stringify(appLd)}</script>\n` + `<script type="application/ld+json">${JSON.stringify(faqLd)}</script>` };
 }
 
 function workflowPage() {
   const C = workflowCopy();
-  const steppable = (() => {
-    const F = require("./data/tool-flow.js");
-    return Object.keys(F.flow).filter((id) => F.flow[id].w).length;
-  })();
+  const F = require("./data/tool-flow.js");
+  const workflowIds = Object.keys(F.flow).filter((id) => F.flow[id].w);
+  const steppable = workflowIds.length;
+  const toolGlyph = (id) => {
+    const t = VK.find(id);
+    return t ? toolIconHtml(t) : `<span class="ic"></span>`;
+  };
   return head({
-    title: "Workflows — run several Vootkit tools as one job | Vootkit",
-    desc: "Chain PDF, image and video tools into a single run and put a whole "
-        + "batch through it. Every step happens in your browser, so files are "
-        + "never uploaded — not even between steps.",
+    title: "Workflow - build reusable tool chains | Vootkit",
+    desc: "Build browser-based Vootkit workflows with a tool library, canvas, step inspector and reusable template marketplace.",
     url: CFG.origin + "/workflows/",
-    depth: 1
+    depth: 1,
+    active: "workflow",
+    bodyClass: "wf-page"
   }) + C.ld + `
-<main id="main">
-  <section class="wrap section">
-    <div class="sec-head">
-      <span class="eyebrow">Workflows</span>
-      <h1>Run several tools as one job.</h1>
-      <p>Lay the steps out, set each one, press run once. Every file goes
-      through every step, in order, on your device — nothing is uploaded at any
-      point, including between the steps.</p>
-      <p class="wf-pro-note"><strong>Workflows are part of Vootkit Pro.</strong>
-      Every individual tool stays free and always will.</p>
+  <!-- ORDER. The builder leads, the template gallery follows, the prose sits
+       last. It used to be the other way round: someone arriving at /workflows/
+       met a wall of template marketing and had to scroll past four sections of
+       copy to reach the thing the page is named after. The prose still earns
+       its keep for search, but it is support material, not the entrance. -->
+  <section class="wrap wf-builder-intro" aria-labelledby="wf-builder-title">
+    <div>
+      <p class="eyebrow">Workflow Builder</p>
+      <h1 id="wf-builder-title">Build and customize your workflow</h1>
+      <p>Drag tools onto the canvas, adjust each step, and run a real browser-based chain.</p>
     </div>
-    <div id="wf"></div>
   </section>
 
-  <section class="wrap section prose wf-prose">
-    <h2>What you can build</h2>
-    <p>Each of these is a real chain you can start from and then change — the
-    steps are ordinary Vootkit tools, and every one of them also works on its
-    own.</p>
-    ${C.groups}
+  <section class="wf-builder-shell" id="wf-builder" aria-label="Workflow builder application">
+    <div class="wf-builder-wrap">
+      <div id="wf" class="wf-mount"></div>
+    </div>
+  </section>
 
-    <h2>How a run works</h2>
-    <p>A workflow is a graph, not a list. You drag tools onto a canvas and draw
-    the connections yourself, so the order comes from what feeds what. A step
-    can sit unconnected while you think, be rewired without being deleted, or
-    feed two different paths from the same file.</p>
-    <p>Before anything runs, the whole chain is checked: each step has to accept
-    what the step before it produced. That cannot be worked out from tool names
-    alone — <a href="../tools/pdf/jpg-to-pdf/">Images to PDF</a> turns an image
-    into a PDF, so what may follow it is completely different from what may
-    follow an in-place tool. A step that cannot take the file at its position is
-    marked before you press run, not after.</p>
-    <p>During the run each node reports its own state, and if one fails the run
-    stops there and says which — in the tool's own words rather than an error
-    code. Whatever the last working step produced is still yours to download.</p>
+  ${C.groups}
 
-    <h2>Why the files stay on your device</h2>
-    <p>Vootkit's tools are already programs that run in your browser rather than
-    on a server. That is what makes chaining them possible at all: when a step
-    finishes, its output is sitting in your computer's memory, so handing it to
-    the next step costs nothing and involves no upload. A site that processes
-    files on its own servers has to send yours up, process, send it back, and
-    take it up again for every single step.</p>
-    <p>It also means the privacy position does not change when you use a
-    workflow. There is no copy on a server to be breached, retained, or handed
-    over, because there is no server in the loop.</p>
-
-    <h2>What it will not do</h2>
-    <p>${steppable} tools can currently be steps — the PDF, image and video
-    sets. Some tools build their controls and their processing together and
-    cannot yet be run without drawing their interface, so they are left out of
-    the picker rather than offered and then failing mid-run.</p>
-    <p>Because the work happens on your machine, a very large batch is bounded
-    by your computer's memory rather than by a server queue, and a run does not
-    continue on another device. Those are the honest trade-offs of not
-    uploading anything.</p>
-
-    <h2>Questions</h2>
+  <section class="wrap section prose wf-prose" aria-labelledby="wf-questions">
+    <h2 id="wf-questions">How Vootkit Workflow Works</h2>
+    <p>A workflow is a reusable path through several compatible Vootkit tools. The builder uses the same processing functions as the individual tool pages, so if a tool cannot be called by the workflow engine yet, it is not offered as a step.</p>
+    <p>${steppable} tools can currently be workflow steps. Every chain is checked before it runs, and your files stay in your browser while one step hands its output to the next. That means you can prepare a whole batch without repeatedly downloading a file, opening another page, and choosing the same file again.</p>
+    <h2>Workflow-ready tools</h2>
+    <p>The current workflow engine focuses on file-processing tools with callable browser engines. These include image tools such as <a href="../tools/images/resize-image/">Image Resizer</a>, <a href="../tools/images/compress-image/">Image Compressor</a>, <a href="../tools/images/convert-image/">Image Converter</a>, <a href="../tools/images/crop-image/">Crop Image</a>, <a href="../tools/images/jpg-to-webp/">JPG to WebP</a> and <a href="../tools/images/png-to-webp/">PNG to WebP</a>. The website image optimizer template uses that exact family of tools so the canvas is not a fake demo: resize, compress and convert all stay editable after the template loads.</p>
+    <p>PDF workflows can combine real PDF tools including <a href="../tools/pdf/merge-pdf/">Merge PDFs</a>, <a href="../tools/pdf/compress-pdf/">Compress PDF</a>, <a href="../tools/pdf/split-pdf/">Split PDF</a>, <a href="../tools/pdf/rotate-pdf/">Rotate PDF</a>, <a href="../tools/pdf/pdf-watermark/">PDF Watermark</a>, <a href="../tools/pdf/protect-pdf/">Protect PDF</a>, <a href="../tools/pdf/extract-pdf-pages/">Extract PDF Pages</a>, <a href="../tools/pdf/pdf-page-numbers/">Add Page Numbers</a>, <a href="../tools/pdf/jpg-to-pdf/">Images to PDF</a>, <a href="../tools/pdf/png-to-pdf/">PNG to PDF</a> and <a href="../tools/pdf/webp-to-pdf/">WebP to PDF</a>. If a requested document conversion is not workflow-ready yet, it is kept out of the builder instead of being shown and failing later.</p>
+    <p>Video workflows use the same in-browser media engine as the individual pages, with steps such as <a href="../tools/video/trim-video/">Video Trimmer</a>, <a href="../tools/video/compress-video/">Video Compressor</a>, <a href="../tools/video/video-to-gif/">Video to GIF</a>, <a href="../tools/video/resize-video/">Video Resizer</a>, <a href="../tools/video/mute-video/">Mute Video</a>, <a href="../tools/video/extract-audio/">Extract Audio</a>, <a href="../tools/video/convert-video/">Video Converter</a> and <a href="../tools/video/frame-grabber/">Frame Grabber</a>. The first video run may load the video engine, then processing happens locally in the browser.</p>
+    <h2>Why templates matter</h2>
+    <p>The template marketplace is there for people who know the result they want but do not want to design a chain from zero. A template clones a real definition into the builder, preserves its starting settings, and leaves every node editable. You can open Website Image Optimizer, inspect the resize/compress/convert chain, adjust the compression level, add another image step, remove a step, save the workflow locally, then run it on your own files.</p>
+    <p>The preview panel shows what the template is meant to do before you use it: accepted inputs, output format, privacy status and a simple before/after visual. It does not run anything by itself and it does not imply the stock-photo subjects or image sources are Vootkit customers. The photographs are local template artwork, while the workflow itself still depends on the real tool definitions available in the registry.</p>
+    <h2>Running safely</h2>
+    <p>Before a workflow runs, Vootkit checks the chain from input to output. A PDF step cannot receive an image unless a compatible conversion step appears before it. A video step cannot receive a PDF. If the chain is incompatible, the builder marks the step and, where possible, suggests a real bridge tool. During a run, each node reports its own status. If one step fails, the run stops at that step, keeps the last successful output when possible, and tells you what happened in the tool's own words.</p>
     ${C.faqHtml}
-
-    <p class="note">Looking for a single tool instead?
-      <a href="../tools/">Browse all ${floorTo(VK.counts.live, TOOL_ROUND_TO)}+</a>, or start with
-      <a href="../tools/pdf/">PDF</a>,
-      <a href="../tools/images/">images</a> or
-      <a href="../tools/video/">video</a>.</p>
   </section>
-</main>` + foot(1, [
+
+  <script>
+  var wfTemplateState = { q: '', category: 'all', plan: 'all', tab: 'all' };
+  function wfApplyTemplateFilters() {
+    document.querySelectorAll('[data-wf-market-card]').forEach(function (card) {
+      var text = card.textContent.toLowerCase();
+      var cat = card.getAttribute('data-category');
+      var plan = card.getAttribute('data-plan');
+      var featured = card.getAttribute('data-featured') === 'true';
+      var tab = wfTemplateState.tab;
+      var ok = true;
+      if (wfTemplateState.q && !text.includes(wfTemplateState.q)) ok = false;
+      if (wfTemplateState.category !== 'all' && cat !== wfTemplateState.category) ok = false;
+      if (wfTemplateState.plan !== 'all' && plan !== wfTemplateState.plan) ok = false;
+      if (tab === 'featured' && !featured) ok = false;
+      else if (tab !== 'all' && tab !== 'featured' && cat !== tab) ok = false;
+      card.hidden = !ok;
+    });
+  }
+  document.addEventListener('click', function (e) {
+    var card = e.target.closest && e.target.closest('[data-wf-template-card]');
+    if (card) {
+      e.preventDefault();
+      var preview = document.querySelector('[data-wf-preview]');
+      if (preview) preview.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    var close = e.target.closest && e.target.closest('[data-wf-preview-close]');
+    if (close) {
+      var market = document.getElementById('wf-examples');
+      if (market) market.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+    var b = e.target.closest && e.target.closest('[data-wf-template]');
+    if (b) {
+      e.preventDefault();
+      var id = b.getAttribute('data-wf-template');
+      function load() {
+        if (window.VKWorkflow && window.VKWorkflow.useTemplate && window.VKWorkflow.useTemplate(id)) return;
+        if (window.VKWorkflowUseTemplate && window.VKWorkflowUseTemplate(id)) return;
+        setTimeout(load, 80);
+      }
+      load();
+      var builder = document.getElementById('wf-builder');
+      if (builder) builder.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+    var tab = e.target.closest && e.target.closest('[data-wf-template-tab]');
+    if (tab) {
+      e.preventDefault();
+      wfTemplateState.tab = tab.getAttribute('data-wf-template-tab');
+      document.querySelectorAll('[data-wf-template-tab]').forEach(function (x) { x.classList.toggle('is-on', x === tab); });
+      wfApplyTemplateFilters();
+    }
+  });
+  document.addEventListener('input', function (e) {
+    if (!e.target.matches('[data-wf-template-search]')) return;
+    wfTemplateState.q = e.target.value.trim().toLowerCase();
+    document.querySelectorAll('[data-wf-template-search]').forEach(function (x) { if (x !== e.target) x.value = e.target.value; });
+    wfApplyTemplateFilters();
+  });
+  document.addEventListener('change', function (e) {
+    if (!e.target.matches('[data-wf-template-filter]')) return;
+    var type = e.target.getAttribute('data-wf-template-filter'), val = e.target.value;
+    wfTemplateState[type] = val;
+    wfApplyTemplateFilters();
+  });
+  </script>
+` + foot(1, [
     "data/tool-flow.js", "assets/js/tools-pdf.js", "assets/js/tools-image.js",
     "assets/js/tools-image2.js", "assets/js/tools-videofx.js",
     "assets/js/videoengine.js", "assets/js/workflow.js", "assets/js/wf-init.js"
   ]);
 }
+
 write("workflows/index.html", workflowPage());
 
 write("contact-success/index.html", infoPage({
