@@ -1,0 +1,165 @@
+{
+  "images": [
+    {
+      "file": "home-about-workspace.webp",
+      "source": "https://www.pexels.com/photo/person-using-a-laptop-on-a-table-7439134/",
+      "photographer": "cottonbro studio",
+      "usage": "About section workspace image"
+    },
+    {
+      "file": "home-community-team.webp",
+      "source": "https://www.pexels.com/photo/group-gathering-around-laptop-during-business-meeting-4872045/",
+      "photographer": "Gustavo Fring",
+      "usage": "Community collage main image"
+    },
+    {
+      "file": "home-community-person.webp",
+      "source": "https://www.pexels.com/photo/man-typing-on-laptop-in-office-12899108/",
+      "photographer": "Mizuno K",
+      "usage": "Community collage secondary image"
+    },
+    {
+      "file": "home-community-workspace.webp",
+      "source": "https://www.pexels.com/photo/close-up-photo-of-person-using-laptop-7679186/",
+      "photographer": "Mikhail Nilov",
+      "usage": "Community collage laptop image"
+    },
+    {
+      "file": "home-workflow-workspace.jpg",
+      "source": "https://www.pexels.com/photo/overhead-view-of-workspace-with-laptop-36764558/",
+      "photographer": "Pexels contributor",
+      "usage": "Workflow section overhead workspace image"
+    },
+    {
+      "file": "public/images/home/newsletter/newsletter-workspace.webp",
+      "source": "https://www.pexels.com/photo/5908493/",
+      "photographer": "Karolina Grabowska / Kaboompics",
+      "section": "homepage-newsletter",
+      "license": "Pexels free stock photo, downloaded, cropped to 16:10 and served locally as WebP",
+      "usage": "Homepage newsletter image"
+    },
+    {
+      "file": "public/images/avatars/avatar-01.webp and public/images/avatars/avatar-01.avif",
+      "source": "https://www.pexels.com/photo/a-woman-in-a-business-suit-smiling-27086922/",
+      "photographer": "Helena Lopes",
+      "section": "avatar-stack",
+      "license": "Pexels free stock photo, downloaded, cropped to a square portrait and served locally as AVIF and WebP",
+      "usage": "Homepage audience avatar stack"
+    },
+    {
+      "file": "public/images/avatars/avatar-02.webp and public/images/avatars/avatar-02.avif",
+      "source": "https://www.pexels.com/photo/professional-portrait-of-a-businessman-in-suit-31880869/",
+      "photographer": "wasin pirom",
+      "section": "avatar-stack",
+      "license": "Pexels free stock photo, downloaded, cropped to a square portrait and served locally as AVIF and WebP",
+      "usage": "Homepage audience avatar stack"
+    },
+    {
+      "file": "public/images/avatars/avatar-03.webp and public/images/avatars/avatar-03.avif",
+      "source": "https://www.pexels.com/photo/a-woman-wearing-formal-attire-sitting-while-smiling-at-the-camera-12396627/",
+      "photographer": "Pisey Tuon",
+      "section": "avatar-stack",
+      "license": "Pexels free stock photo, downloaded, cropped to a square portrait and served locally as AVIF and WebP",
+      "usage": "Homepage audience avatar stack"
+    },
+    {
+      "file": "public/images/avatars/avatar-04.webp and public/images/avatars/avatar-04.avif",
+      "source": "https://www.pexels.com/photo/man-sitting-in-an-office-19805878/",
+      "photographer": "Naboth Otieno",
+      "section": "avatar-stack",
+      "license": "Pexels free stock photo, downloaded, cropped to a square portrait and served locally as AVIF and WebP",
+      "usage": "Homepage audience avatar stack"
+    },
+    {
+      "file": "public/images/avatars/avatar-05.webp and public/images/avatars/avatar-05.avif",
+      "source": "https://www.pexels.com/photo/young-it-administrator-of-a-startup-company-6804094/",
+      "photographer": "cottonbro studio",
+      "section": "avatar-stack",
+      "license": "Pexels free stock photo, downloaded, cropped to a square portrait and served locally as AVIF and WebP",
+      "usage": "Homepage audience avatar stack"
+    },
+    {
+      "file": "public/images/avatars/avatar-06.webp and public/images/avatars/avatar-06.avif",
+      "source": "https://www.pexels.com/photo/a-man-in-red-jacket-sitting-at-the-table-8199161/",
+      "photographer": "Yan Krukau",
+      "section": "avatar-stack",
+      "license": "Pexels free stock photo, downloaded, cropped to a square portrait and served locally as AVIF and WebP",
+      "usage": "Homepage community avatar stack"
+    },
+    {
+      "file": "public/images/avatars/avatar-07.webp and public/images/avatars/avatar-07.avif",
+      "source": "https://www.pexels.com/photo/young-hispanic-student-outdoors-with-notebook-33265585/",
+      "photographer": "Raul Sotomayor",
+      "section": "avatar-stack",
+      "license": "Pexels free stock photo, downloaded, cropped to a square portrait and served locally as AVIF and WebP",
+      "usage": "Homepage community avatar stack"
+    },
+    {
+      "file": "public/images/avatars/avatar-08.webp and public/images/avatars/avatar-08.avif",
+      "source": "https://www.pexels.com/photo/content-creator-posing-with-camera-setup-33568641/",
+      "photographer": "Brianna Taylor",
+      "section": "avatar-stack",
+      "license": "Pexels free stock photo, downloaded, cropped to a square portrait and served locally as AVIF and WebP",
+      "usage": "Homepage community avatar stack"
+    },
+    {
+      "file": "public/images/avatars/avatar-09.webp and public/images/avatars/avatar-09.avif",
+      "source": "https://www.pexels.com/photo/woman-using-a-laptop-in-a-restaurant-17609710/",
+      "photographer": "The FullOn Monet",
+      "section": "avatar-stack",
+      "license": "Pexels free stock photo, downloaded, cropped to a square portrait and served locally as AVIF and WebP",
+      "usage": "Homepage community avatar stack"
+    },
+    {
+      "file": "public/images/avatars/avatar-10.webp and public/images/avatars/avatar-10.avif",
+      "source": "https://www.pexels.com/photo/woman-in-suit-13188831/",
+      "photographer": "Marcos Felipe",
+      "section": "avatar-stack",
+      "license": "Pexels free stock photo, downloaded, cropped to a square portrait and served locally as AVIF and WebP",
+      "usage": "Homepage community avatar stack"
+    },
+    {
+      "file": "public/images/brands/cloudflare.svg",
+      "source": "https://cdn.simpleicons.org/cloudflare",
+      "section": "homepage-technology-ecosystem",
+      "license": "Simple Icons CDN SVG used for descriptive brand identification; trademarks remain property of their respective owners",
+      "usage": "Technology ecosystem logo strip"
+    },
+    {
+      "file": "public/images/brands/netlify.svg",
+      "source": "https://cdn.simpleicons.org/netlify",
+      "section": "homepage-technology-ecosystem",
+      "license": "Simple Icons CDN SVG used for descriptive brand identification; trademarks remain property of their respective owners",
+      "usage": "Technology ecosystem logo strip"
+    },
+    {
+      "file": "public/images/brands/supabase.svg",
+      "source": "https://cdn.simpleicons.org/supabase",
+      "section": "homepage-technology-ecosystem",
+      "license": "Simple Icons CDN SVG used for descriptive brand identification; trademarks remain property of their respective owners",
+      "usage": "Technology ecosystem logo strip"
+    },
+    {
+      "file": "public/images/brands/stripe.svg",
+      "source": "https://cdn.simpleicons.org/stripe",
+      "section": "homepage-technology-ecosystem",
+      "license": "Simple Icons CDN SVG used for descriptive brand identification; trademarks remain property of their respective owners",
+      "usage": "Technology ecosystem logo strip"
+    },
+    {
+      "file": "public/images/brands/google.svg",
+      "source": "https://cdn.simpleicons.org/google",
+      "section": "homepage-technology-ecosystem",
+      "license": "Simple Icons CDN SVG used for descriptive brand identification; trademarks remain property of their respective owners",
+      "usage": "Technology ecosystem logo strip"
+    },
+    {
+      "file": "public/images/brands/github.svg",
+      "source": "https://cdn.simpleicons.org/github",
+      "section": "homepage-technology-ecosystem",
+      "license": "Simple Icons CDN SVG used for descriptive brand identification; trademarks remain property of their respective owners",
+      "usage": "Technology ecosystem logo strip"
+    }
+  ]
+}
+

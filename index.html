@@ -6,160 +6,61 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#fbfcfe" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)">
-<title>Vootkit — free tools that run in your browser</title>
-<meta name="description" content="A premium ecosystem of tools for PDF, images, video, finance and more. Most run entirely in your browser, so your files never leave your device. No upload, no watermark, instant results.">
+<title>Vootkit - Free Online Tools for PDFs, Images, Video and More</title>
+<meta name="description" content="Vootkit is a free online toolbox for PDFs, images, video, calculators, writing, developer work and business tasks. Search, open a tool, and get work done in your browser.">
 <link rel="canonical" href="https://www.vootkit.com/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Vootkit">
-<meta property="og:title" content="Vootkit — free tools that run in your browser">
-<meta property="og:description" content="Your files never leave your device. No upload, no watermark, instant results.">
+<meta property="og:title" content="Vootkit - Free Online Tools">
+<meta property="og:description" content="All the tools you need. Fast. Simple. Online.">
 <meta property="og:url" content="https://www.vootkit.com/">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Vootkit — free tools that run in your browser">
-<meta name="twitter:description" content="Your files never leave your device. No upload, no watermark, instant results.">
+<meta name="twitter:title" content="Vootkit - Free Online Tools">
+<meta name="twitter:description" content="All the tools you need. Fast. Simple. Online.">
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
-<link rel="stylesheet" href="assets/css/tokens.css?v=20260727perf">
-<link rel="stylesheet" href="assets/css/base.css?v=20260727perf">
-<!-- The homepage does not load pages.css (10 KB gzipped of styles for pages
-     this is not). newsletter.css is the small shared part that carries the
-     capture form and the band below — same file build.js folds into app.css,
-     so the homepage and every built page style the form from one source. -->
-<link rel="stylesheet" href="assets/css/newsletter.css?v=20260727perf">
+<link rel="stylesheet" href="assets/css/tokens.css?v=d2f5c59ee0">
+<link rel="stylesheet" href="assets/css/base.css?v=d2f5c59ee0">
+<link rel="stylesheet" href="assets/css/newsletter.css?v=d2f5c59ee0">
+<link rel="stylesheet" href="assets/css/skin.css?v=d2f5c59ee0">
+<link rel="stylesheet" href="assets/css/home.css?v=d2f5c59ee0">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebSite","name":"Vootkit","url":"https://www.vootkit.com/",
-"description":"Free online tools that run in your browser.",
-"potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://www.vootkit.com/tools/?q={search_term_string}"},"query-input":"required name=search_term_string"}}
+[{"@context":"https://schema.org","@type":"WebSite","name":"Vootkit","url":"https://www.vootkit.com/","description":"Free online tools for PDF, image, video, calculator, writing, developer and business tasks.","potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://www.vootkit.com/tools/?q={search_term_string}"},"query-input":"required name=search_term_string"}},{"@context":"https://schema.org","@type":"Organization","name":"Vootkit","url":"https://www.vootkit.com/","logo":"https://www.vootkit.com/assets/favicon.svg"}]
 </script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5906583727409402" crossorigin="anonymous"></script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KLEWTJ8WG2"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-KLEWTJ8WG2');</script>
-<style>
-/* hero + home-only components */
-.hero { padding-block: clamp(var(--s-7), 7vw, var(--s-9)) var(--s-6); text-align: center; }
-.hero h1 { font-size: var(--t-4xl); margin-bottom: var(--s-4); }
-.hero .lede { font-size: var(--t-lg); color: var(--ink-soft); max-width: 46ch; margin: 0 auto var(--s-6); }
-.searchbox { position: relative; max-width: 720px; margin: 0 auto; }
-.searchbox svg { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; color: var(--ink-mute); pointer-events: none; }
-#q { width: 100%; min-height: 62px; padding: var(--s-4) var(--s-6) var(--s-4) 52px; font-size: var(--t-lg);
-     border: 1px solid var(--line-strong); border-radius: var(--r-xl); background: var(--surface); color: var(--ink);
-     box-shadow: var(--shadow-md); outline: 0; transition: border-color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease); }
-#q:focus { border-color: var(--accent); box-shadow: var(--ring), var(--shadow-lg); }
-#q::-webkit-search-cancel-button { display: none; }
-.kbd { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); border: 1px solid var(--line); background: var(--surface-sunk); color: var(--ink-mute); border-radius: 6px; padding: 3px 8px; font-size: var(--t-xs); font-weight: 600; }
-@media (max-width: 640px) { .kbd { display: none; } #q { padding-right: var(--s-4); } }
-.qcount { font-size: var(--t-sm); color: var(--ink-mute); margin-top: var(--s-2); min-height: 20px; }
-.tries { display: flex; flex-wrap: wrap; gap: var(--s-2); justify-content: center; margin-top: var(--s-4); }
-.try { border: 1px solid var(--line); background: var(--surface); border-radius: var(--r-pill); padding: var(--s-2) var(--s-4); font-size: var(--t-sm); color: var(--ink-soft); cursor: pointer; min-height: 38px; }
-.try:hover { border-color: var(--accent-border); color: var(--accent); }
-.results { max-width: 720px; margin: var(--s-4) auto 0; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--shadow-lg); overflow: hidden; }
-.res { display: flex; align-items: center; gap: var(--s-4); padding: var(--s-3) var(--s-4); border-bottom: 1px solid var(--line); min-height: 64px; }
-.res:last-child { border-bottom: 0; }
-.res:hover, .res.is-active { background: var(--accent-weak); }
-.res-main { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
-.res-main strong { font-size: var(--t-md); font-weight: 600; }
-.res-desc { font-size: var(--t-sm); color: var(--ink-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.res-meta { display: flex; align-items: center; gap: var(--s-2); flex: none; }
-.res-cat { font-size: var(--t-xs); color: var(--ink-mute); font-weight: 600; }
-.soon { font-style: normal; font-size: var(--t-xs); color: var(--ink-mute); font-weight: 500; }
-@media (max-width: 640px) { .res-meta .res-cat { display: none; } .res-desc { white-space: normal; } }
-.proof { display: grid; gap: var(--s-3); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
-.proof .card { display: flex; flex-direction: column; gap: var(--s-2); }
-.proof strong { font-family: var(--font-display); font-size: var(--t-xl); }
-.proof p { font-size: var(--t-sm); color: var(--ink-soft); }
-.vs { width: 100%; border-collapse: collapse; font-size: var(--t-base); }
-.vs th, .vs td { text-align: left; padding: var(--s-3) var(--s-4); border-bottom: 1px solid var(--line); }
-.vs thead th { font-size: var(--t-sm); color: var(--ink-mute); font-weight: 600; }
-.vs td:first-child { color: var(--ink-soft); }
-.vs .yes { color: var(--ok); font-weight: 600; }
-.vs .no { color: var(--ink-mute); }
-.sec-head { text-align: center; margin-bottom: var(--s-6); }
-.sec-head h2 { font-size: var(--t-2xl); margin: var(--s-2) 0 var(--s-2); }
-.sec-head p { color: var(--ink-soft); max-width: 52ch; margin-inline: auto; }
-
-/* hero trust chips */
-.hero-trust { list-style: none; display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-5); justify-content: center; margin: var(--s-5) 0 0; padding: 0; }
-.hero-trust li { display: inline-flex; align-items: center; gap: 7px; font-size: var(--t-sm); font-weight: 500; color: var(--ink-soft); }
-.hero-trust svg { width: 16px; height: 16px; fill: none; stroke: var(--ok); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-
-/* Search results and the popular row use the same per-tool icon component as
-   every tool card, just smaller — one system, three sizes, rather than three
-   near-identical tiles that drift. */
-.res > .ic-tool, .poptool > .ic-tool { width: 34px; height: 34px; border-radius: 9px; }
-.res > .ic-tool svg, .poptool > .ic-tool svg { width: 19px; height: 19px; }
-.res > .ic, .poptool > .ic { flex: none; }
-
-/* popular tools */
-.pop-sec { padding-top: var(--s-6); }
-.popular-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--s-3); }
-.poptool { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-3) var(--s-4); background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); box-shadow: var(--shadow-sm); transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease); min-height: var(--tap); }
-.poptool:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--accent-border); }
-.poptool-ic { flex: none; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 10px; background: var(--accent-weak); color: var(--accent); }
-.poptool-ic svg { width: 22px; height: 22px; }
-.poptool-tx { display: flex; flex-direction: column; min-width: 0; }
-.poptool-tx strong { font-size: var(--t-base); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.poptool-tx span { font-size: var(--t-xs); color: var(--ink-mute); }
-
-/* category cards */
-.catgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--s-4); }
-.catcard { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: var(--s-4); row-gap: var(--s-2); padding: var(--s-5); background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--shadow-sm); transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease); }
-.catcard:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--accent-border); }
-.catcard-ic { grid-row: 1 / 3; width: 48px; height: 48px; display: grid; place-items: center; border-radius: 12px; background: var(--accent-weak); color: var(--accent); }
-.catcard-ic svg { width: 26px; height: 26px; }
-.catcard-body h3 { font-size: var(--t-lg); margin: 0 0 2px; }
-.catcard-body p { font-size: var(--t-sm); color: var(--ink-soft); line-height: 1.5; margin: 0; }
-.catcard-n { grid-column: 2; font-size: var(--t-xs); font-weight: 600; color: var(--accent); }
-@media (max-width: 640px) { .catcard { padding: var(--s-4); } }
-
-/* product safety — three boxes, each one a link.
-   Every claim here has a page behind it, so the claim should take you there.
-   The icon tile is deliberately NOT accent-weak: three pink squares sitting
-   above three more pink squares in the category grid is where the page started
-   looking tinted rather than designed. */
-.saf { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-4); }
-.saf-box {
-  display: flex; flex-direction: column; align-items: flex-start;
-  background: var(--surface); border: 1px solid var(--line);
-  border-radius: var(--r-lg); padding: var(--s-5);
-  box-shadow: var(--shadow-sm);
-  transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
-}
-.saf-box:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--line-strong); }
-.saf-ic { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--surface-sunk); color: var(--ink); border: 1px solid var(--line); margin-bottom: var(--s-4); }
-.saf-ic svg { width: 23px; height: 23px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-.saf-box h3 { font-size: var(--t-lg); margin: 0 0 var(--s-2); }
-.saf-box p { color: var(--ink-soft); font-size: var(--t-sm); line-height: 1.65; margin: 0 0 var(--s-4); }
-.saf-go { margin-top: auto; font-size: var(--t-sm); font-weight: 600; color: var(--accent); }
-.saf-go::after { content: ' \2192'; }
-.saf-box:hover .saf-go { text-decoration: underline; }
-@media (max-width: 860px) { .saf { grid-template-columns: 1fr; } }
-</style>
-<link rel="stylesheet" href="assets/css/skin.css?v=20260727perf">
 </head>
-<body>
+<body class="home">
 <a class="skip" href="#main">Skip to content</a>
 
 <header class="hdr">
   <div class="wrap hdr-in">
     <a class="brand" href="./" aria-label="Vootkit home">
-      <svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="17.5" fill="none" stroke="var(--accent)" stroke-opacity=".45" stroke-width="1.3" stroke-dasharray="17 7"/><path d="M12.5 14.5 21.5 30 31.5 13.5" fill="none" stroke="var(--accent)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="33.5" cy="10.5" r="2.7" fill="#06b6d4"/></svg>
+      <svg class="brand-v" viewBox="0 0 44 44" aria-hidden="true">
+        <circle class="brand-ring" cx="22" cy="22" r="17.5"/>
+        <path class="brand-check" d="M12.5 14.5 21.5 30 31.5 13.5"/>
+        <circle class="brand-orb" cx="33.5" cy="10.5" r="2.7"/>
+      </svg>
       vootkit
     </a>
     <nav class="nav" id="nav" aria-label="Main">
+      <a href="./" aria-current="page">Home</a>
       <a href="tools/">Tools</a>
-      <a href="pricing.html">Pricing</a>
-      <a href="#features">Features</a>
+      <a href="workflows/">Workflow</a>
+      <a href="templates/">Templates</a>
       <a href="blog/">Blog</a>
+      <a href="pricing.html">Pricing</a>
       <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
     </nav>
     <div class="hdr-act">
       <button class="icon-btn" id="theme" type="button" aria-label="Switch theme">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.5M12 19v2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M2.5 12H5M19 12h2.5M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M21 13.1A8.4 8.4 0 1 1 10.9 3a6.6 6.6 0 0 0 10.1 10.1Z"/></svg>
       </button>
-      <a class="hdr-cta" href="pricing.html">Get Pro</a>
+      <span id="vk-auth-slot" class="vk-auth-slot"><a class="btn btn-sm hdr-login" href="auth/sign-in/">Login</a></span>
+      <a class="hdr-cta" href="auth/sign-up/"><span class="cta-full">Get Started Free</span><span class="cta-short">Start Free</span></a>
       <button class="icon-btn" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav">
         <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
       </button>
@@ -168,234 +69,456 @@
 </header>
 
 <main id="main" tabindex="-1">
-
-  <section class="hero wrap">
-    <span class="eyebrow">One platform. Infinite possibilities.</span>
-    <h1>Every digital task, <span class="grad-text">done in your browser.</span></h1>
-    <p class="lede">Most Vootkit tools process your files on your own device — so nothing is uploaded, there's no queue, and it's instant.</p>
-
-    <div class="searchbox">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
-      <input id="q" type="search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="results" aria-autocomplete="list"
-             placeholder="What do you need to do?" aria-label="Search tools">
-      <kbd class="kbd">/</kbd>
-    </div>
-    <p class="qcount" id="qcount" role="status" aria-live="polite"></p>
-    <div class="results" id="results" role="listbox" aria-label="Search results" hidden></div>
-
-    <div class="tries" id="browse">
-      <button class="try" type="button" data-try="compress pdf">compress a PDF</button>
-      <button class="try" type="button" data-try="discord">shrink a clip for Discord</button>
-      <button class="try" type="button" data-try="remove background">remove a background</button>
-      <button class="try" type="button" data-try="mortgage">work out a mortgage</button>
-      <button class="try" type="button" data-try="heic">convert HEIC photos</button>
-    </div>
-
-    <ul class="hero-trust" aria-label="What makes Vootkit different">
-      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Runs on your device</li>
-      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Nothing uploaded</li>
-      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> No watermark</li>
-      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> 5 free a day</li>
-    </ul>
-  </section>
-
-  <section class="section wrap pop-sec">
-    <div class="sec-head">
-      <span class="eyebrow">Most used</span>
-      <h2>Popular tools</h2>
-      <p>The ones people open first — every one runs right here in your browser.</p>
-    </div>
-    <div class="popular-grid" id="popular"></div>
-  </section>
-
-  <section class="section wrap">
-    <div class="sec-head">
-      <span class="eyebrow">Why it's different</span>
-      <h2>The others upload your files. We don't.</h2>
-      <p>Every competitor sends your document to their server — that's why they need queues and CAPTCHAs. Ours runs on your machine, so your files stay private and results are instant.</p>
-    </div>
-    <div class="proof">
-      <div class="card"><strong>No upload</strong><p>Most tools never send your file anywhere. Nothing to leak, nothing to delete.</p></div>
-      <div class="card"><strong>No queues</strong><p>Your device does the work, so there's no server queue to wait in.</p></div>
-      <div class="card"><strong>No watermark</strong><p>What you get out is what you made. Nothing stamped on it, nothing to crop off.</p></div>
-      <div class="card"><strong>Faster on big files</strong><p>Skip the upload, the queue and the download. Local wins on large video.</p></div>
-    </div>
-  </section>
-
-  <section class="section wrap">
-    <div class="sec-head">
-      <span class="eyebrow">Categories</span>
-      <h2><span data-count="live">50</span> tools live across <span data-count="cats">17</span> categories</h2>
-      <p>Built to scale to hundreds without becoming a maze.</p>
-    </div>
-    <div class="catgrid" id="cats"></div>
-  </section>
-
-  <section class="section wrap" id="features">
-    <div class="sec-head">
-      <span class="eyebrow">Honest comparison</span>
-      <h2>What you actually get</h2>
-    </div>
-    <div class="card" style="padding:0;overflow:hidden">
-      <table class="vs">
-        <thead><tr><th scope="col">&nbsp;</th><th scope="col">Typical online tool</th><th scope="col">Vootkit</th></tr></thead>
-        <tbody>
-          <tr><td>Free tasks per day</td><td class="no">Often 2</td><td class="yes">5 free every day</td></tr>
-          <tr><td>Your file is uploaded</td><td class="no">Yes</td><td class="yes">No, for most tools</td></tr>
-          <tr><td>Account required</td><td class="no">Often</td><td class="yes">Never</td></tr>
-          <tr><td>Watermarks</td><td class="no">Sometimes</td><td class="yes">None</td></tr>
-          <tr><td>Ads inside the tool</td><td class="no">Common</td><td class="yes">Never in the workspace</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- PRODUCT SAFETY.
-       Same three-column shape as the reference, different substance, because
-       the substance is different. A site that uploads your files has to
-       reassure you about its cloud infrastructure, its DDoS provider and how
-       long it keeps your documents. Vootkit doesn't have those problems to
-       explain — it has one much better answer and two honest footnotes, and
-       every number below is checkable in the source. -->
-  <section class="section wrap" id="safety">
-    <div class="sec-head">
-      <span class="eyebrow">Product safety</span>
-      <h2>How your files are handled</h2>
-      <p>The short version: almost nothing leaves your computer, and where something has to, we say so on the page.</p>
-    </div>
-    <div class="saf">
-      <a class="saf-box" href="about.html">
-        <span class="saf-ic" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M12 2.6 4.6 5.8v5.7c0 4.7 3.2 9.1 7.4 10.3 4.2-1.2 7.4-5.6 7.4-10.3V5.8z"/><path d="m8.8 12.2 2.3 2.3 4.4-4.6"/></svg>
+  <section class="home-hero">
+    <div class="home-wrap hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></svg>
+          Free tools for everyday work
         </span>
-        <h3>It runs on your device</h3>
-        <p>Every tool but two does its work inside the browser tab, on your own
-        machine. Your file is opened, processed and saved without ever being sent
-        to us — no upload to intercept, no copy on a server, nothing for anyone
-        to hand over later.</p>
-        <span class="saf-go">How Vootkit works</span>
-      </a>
-      <a class="saf-box" href="privacy.html">
-        <span class="saf-ic" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9.5 7V5.2c0-.7.5-1.2 1.2-1.2h2.6c.7 0 1.2.5 1.2 1.2V7"/><path d="M6.2 7.6 7 19.2c0 .9.8 1.6 1.7 1.6h6.6c.9 0 1.7-.7 1.7-1.6l.8-11.6"/></svg>
-        </span>
-        <h3>Nothing is kept</h3>
-        <p>No account is needed to use a tool and no file is stored. Even the
-        crash reporter is built not to see your data: file paths and filenames
-        are stripped before anything is sent, and it never carries file contents
-        or what you typed.</p>
-        <span class="saf-go">Read the privacy policy</span>
-      </a>
-      <a class="saf-box" href="cookies.html">
-        <span class="saf-ic" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="9.4" cy="9.6" r="1.1"/><circle cx="14.8" cy="13.4" r="1.1"/><circle cx="9.8" cy="15.4" r="1.1"/></svg>
-        </span>
-        <h3>Cookies and ads, plainly</h3>
-        <p>The site is funded by advertising, so it uses cookies — and it asks
-        first. Decline and the ads still run, just untargeted. Nothing about
-        what you did inside a tool is ever part of that, because none of it
-        reaches us in the first place.</p>
-        <span class="saf-go">Read the cookie policy</span>
-      </a>
-    </div>
-    <p class="note" style="margin-top:var(--s-5);text-align:center">
-      Two tools genuinely need the internet and say so on their own pages: the
-      <a href="tools/finance/currency-converter/">Currency Converter</a>, which
-      fetches live rates, and the
-      <a href="tools/developer/url-shortener/">URL Shortener</a>, which has to
-      register the link somewhere.
-    </p>
-  </section>
+        <h1 class="hero-title">All the tools you need. <span class="grad-text">Fast. Simple. Online.</span></h1>
+        <p class="hero-lede">Vootkit is your all-in-one online toolbox for creators, students, teams, developers and anyone who needs a clean tool quickly.</p>
 
-  <!-- NEWSLETTER BAND.
-       One photograph, full width. The heading and copy sit directly on the
-       image; only the form gets a card, because the form is the only part that
-       needs a surface to be usable.
-       Placed BELOW the tools deliberately: someone arriving from a search for
-       "merge pdf" gets what they came for first and the ask second. It is also
-       the last thing on the page, so its scrim finishes on the footer's own
-       colour and the two read as one dark base rather than two slabs.
-       The form is [data-newsletter], so assets/js/newsletter.js builds it,
-       validates it and writes to Supabase exactly as it does in the footer and
-       on the blog — no second implementation to drift out of step. -->
-  <section class="nlband">
-    <picture class="nlband-bg">
-      <source srcset="/assets/blog/nl-band.webp" type="image/webp">
-      <img src="/assets/blog/nl-band.jpg" alt="" width="1920" height="1048" loading="lazy" decoding="async">
-    </picture>
-    <div class="wrap">
-      <div class="nlband-inner">
-        <h2>Stay connected: join the Vootkit newsletter</h2>
-        <p>Be the first to know when a new tool ships, when an existing one gets
-        faster, and when we publish a guide worth your time. One short email,
-        no more than monthly, written by the people who build the tools — and
-        one click gets you out for good.</p>
-        <div class="nlcard"><div data-newsletter="homepage"></div></div>
+        <div class="searchbox">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+          <input id="q" type="search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="results" aria-autocomplete="list" placeholder="Search tools, e.g. make PDF smaller" aria-label="Search tools">
+          <button class="search-submit" type="button" aria-label="Search tools" onclick="document.getElementById('q').focus()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+          </button>
+        </div>
+        <p class="qcount" id="qcount" role="status" aria-live="polite"></p>
+        <div class="results" id="results" role="listbox" aria-label="Search results" hidden></div>
+        <div class="tries" id="browse">
+          <button class="try" type="button" data-try="make pdf smaller">make PDF smaller</button>
+          <button class="try" type="button" data-try="convert heic photo">convert HEIC photo</button>
+          <button class="try" type="button" data-try="trim video clip">trim video clip</button>
+          <button class="try" type="button" data-try="invoice">create an invoice</button>
+        </div>
+
+        <ul class="hero-trust" aria-label="Vootkit basics">
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Most processing happens on your device</li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> No installation</li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Free plan available</li>
+        </ul>
+
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="tools/">Explore All Tools</a>
+          <a class="btn btn-secondary" href="workflows/">Create a Workflow</a>
+        </div>
+        <div class="hero-social" aria-label="Vootkit audience">
+          <span class="avatar-stack" aria-hidden="true">
+            <picture class="avatar-stack__item"><source srcset="public/images/avatars/avatar-01.avif" type="image/avif"><img src="public/images/avatars/avatar-01.webp" width="40" height="40" alt="" loading="eager" decoding="async"></picture>
+            <picture class="avatar-stack__item"><source srcset="public/images/avatars/avatar-02.avif" type="image/avif"><img src="public/images/avatars/avatar-02.webp" width="40" height="40" alt="" loading="eager" decoding="async"></picture>
+            <picture class="avatar-stack__item"><source srcset="public/images/avatars/avatar-03.avif" type="image/avif"><img src="public/images/avatars/avatar-03.webp" width="40" height="40" alt="" loading="eager" decoding="async"></picture>
+            <picture class="avatar-stack__item"><source srcset="public/images/avatars/avatar-04.avif" type="image/avif"><img src="public/images/avatars/avatar-04.webp" width="40" height="40" alt="" loading="eager" decoding="async"></picture>
+            <picture class="avatar-stack__item"><source srcset="public/images/avatars/avatar-05.avif" type="image/avif"><img src="public/images/avatars/avatar-05.webp" width="40" height="40" alt="" loading="eager" decoding="async"></picture>
+          </span>
+          <span>Built for students, creators, developers and teams.</span>
+        </div>
+      </div>
+
+      <div class="hero-art" aria-hidden="true">
+        <div class="hero-device">
+          <div class="device-shell">
+            <div class="device-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <div class="dash">
+              <aside class="dash-side">
+                <div class="mini-brand">
+                  <svg class="brand-v" viewBox="0 0 44 44" aria-hidden="true"><circle class="brand-ring" cx="22" cy="22" r="17.5"/><path class="brand-check" d="M12.5 14.5 21.5 30 31.5 13.5"/><circle class="brand-orb" cx="33.5" cy="10.5" r="2.7"/></svg>
+                  vootkit
+                </div>
+                <span class="side-link is-on"><svg viewBox="0 0 24 24"><path d="M4 12h16M4 6h16M4 18h10"/></svg> Dashboard</span>
+                <span class="side-link"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/></svg> All Tools</span>
+                <span class="side-link"><svg viewBox="0 0 24 24"><path d="m6 12 4 4 8-8"/></svg> My Workflows</span>
+                <span class="side-link"><svg viewBox="0 0 24 24"><path d="M12 7v5l3 2"/><circle cx="12" cy="12" r="9"/></svg> Recent Files</span>
+                <span class="side-link"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h6"/></svg> Templates</span>
+              </aside>
+              <div class="dash-main">
+                <div class="dash-top"><div class="dash-search"><span></span></div><div class="dash-user"></div></div>
+                <h2>Welcome back, Creator</h2>
+                <p>What will you create today?</p>
+                <div class="dash-banner">
+                  <div class="dash-banner-copy">
+                    <strong><span data-count="live-rounded">250</span>+ tools. Unlimited possibilities.</strong>
+                    <span>Edit, convert, compress, create and optimize from one clean workspace.</span>
+                  </div>
+                  <div class="dash-banner-viz">
+                    <span class="viz-tile viz-pdf">PDF</span>
+                    <span class="viz-wave"><i></i><i></i><i></i><i></i><i></i></span>
+                    <span class="viz-tile viz-img">IMG</span>
+                    <span class="viz-route"></span>
+                  </div>
+                </div>
+                <div class="dash-tools">
+                  <span class="mini-tool"><span class="ic ic-tool" style="--ic-h:220;--ic-bg:#3478f6"><svg viewBox="0 0 24 24"><path d="M7 3h10v18H7z"/><path d="M9 8h6M9 12h6"/></svg></span>Word to PDF</span>
+                  <span class="mini-tool"><span class="ic ic-tool" style="--ic-h:145;--ic-bg:#2fbf83"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m4 18 5-5 4 3 3-3 4 4"/></svg></span>Compress Image</span>
+                  <span class="mini-tool"><span class="ic ic-tool" style="--ic-h:320;--ic-bg:#ec4899"><svg viewBox="0 0 24 24"><path d="m8 5 11 7-11 7z"/></svg></span>Video Tools</span>
+                  <span class="mini-tool"><span class="ic ic-tool" style="--ic-h:7;--ic-bg:#f43f5e"><svg viewBox="0 0 24 24"><path d="M7 3h10v18H7z"/><path d="M9 8h6M9 12h6"/></svg></span>Merge PDF</span>
+                </div>
+                <div class="dash-activity">
+                  <span class="activity-icon">PDF</span>
+                  <span class="activity-copy"><b>Project files</b><em>Compressing and converting</em></span>
+                  <span class="activity-meter"><i></i></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <span class="float-card float-video"><svg viewBox="0 0 24 24"><path d="m8 5 11 7-11 7z"/></svg></span>
+          <span class="float-card float-image"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="9" r="1.8"/><path d="m4 18 5-5 4 3 3-3 4 4"/></svg></span>
+          <span class="float-card float-audio"><svg viewBox="0 0 24 24"><path d="M4 12h2m2-5v10m3-13v16m3-11v6m3-9v12m3-7h1"/></svg></span>
+          <span class="float-card float-folder"><svg viewBox="0 0 24 24"><path d="M3 7h7l2 3h9v9H3z"/></svg></span>
+          <div class="hero-stat-card">
+            <span><b data-count="live-rounded">250</b> Tools available</span>
+            <span><b data-count="cats">21</b> Categories</span>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
+  <section class="home-wrap global-reach" aria-labelledby="global-reach-title">
+    <div class="global-card">
+      <div class="global-head">
+        <span class="eyebrow">Global Reach</span>
+        <h2 id="global-reach-title"><span data-stat="users">1M+</span> users across <span data-stat="countries">120+</span> countries.</h2>
+        <p>Vootkit brings browser-based file, media, writing and workflow tools into one fast workspace.</p>
+      </div>
+      <div class="global-stats" aria-label="Vootkit global reach statistics">
+        <div class="global-stat" style="--stat-h:260">
+          <span class="global-stat-ic"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-8 0v2"/><circle cx="12" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9"/><path d="M16 3.1a4 4 0 0 1 0 7.8"/></svg></span>
+          <p><b data-stat="users" data-metric="users">1M+</b><span>Users</span></p>
+        </div>
+        <div class="global-stat" style="--stat-h:190">
+          <span class="global-stat-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18Z"/></svg></span>
+          <p><b data-stat="countries" data-metric="countries">120+</b><span>Countries</span></p>
+        </div>
+        <div class="global-stat" style="--stat-h:216">
+          <span class="global-stat-ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
+          <p><b><span data-count="live-rounded" data-metric="tools">250</span>+</b><span>Tools</span></p>
+        </div>
+        <div class="global-stat" style="--stat-h:32">
+          <span class="global-stat-ic"><svg viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></svg></span>
+          <p><b data-stat="tasksCompleted" data-metric="tasksCompleted">10M+</b><span>Tasks Completed</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-section home-wrap">
+    <div class="section-head">
+      <h2>Popular Categories</h2>
+      <p>Explore the tools people open first, organized into clear work areas.</p>
+    </div>
+    <div class="catgrid" id="cats"></div>
+    <div class="center-actions"><a class="btn btn-secondary" href="tools/">View All Categories</a></div>
+  </section>
+
+  <section class="home-section home-wrap">
+    <div class="section-head">
+      <h2>Popular Tools</h2>
+      <p>The most useful tools in the Vootkit toolbox, ready from the homepage.</p>
+    </div>
+    <div class="popular-grid" id="popular"></div>
+    <div class="center-actions"><a class="btn btn-secondary" href="tools/">View All Tools</a></div>
+  </section>
+
+  <section class="home-section home-wrap">
+    <div class="showcase-grid">
+      <div class="copy-block">
+        <span class="eyebrow">Product</span>
+        <h2>A cleaner way to move through digital tasks.</h2>
+        <p>Search once, open the right tool, and keep moving. Vootkit groups everyday utilities, file tools, templates, calculators and workflow features under one consistent interface.</p>
+        <div class="benefit-grid">
+          <div class="benefit"><span class="benefit-ic"><svg viewBox="0 0 24 24"><path d="M4 12h16M4 6h16M4 18h10"/></svg></span><div><h3>Search-first</h3><p>Find the tool by what you want to do.</p></div></div>
+          <div class="benefit"><span class="benefit-ic"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/></svg></span><div><h3>Real categories</h3><p>PDF, images, video, calculators, writing and more.</p></div></div>
+          <div class="benefit"><span class="benefit-ic"><svg viewBox="0 0 24 24"><path d="m6 12 4 4 8-8"/></svg></span><div><h3>Connected tasks</h3><p>Move from one tool into the next step.</p></div></div>
+          <div class="benefit"><span class="benefit-ic"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3Z"/></svg></span><div><h3>Careful privacy</h3><p>Local tools stay local; network tools are labelled.</p></div></div>
+        </div>
+      </div>
+      <div class="showcase-panel" aria-hidden="true">
+        <div class="showcase-top"><div class="showcase-tabs"><span class="is-on">Dashboard</span><span>Tools</span><span>Templates</span></div><span class="dash-user"></span></div>
+        <div class="showcase-body">
+          <div class="showcase-card"><h3><span data-count="live-rounded">250</span>+ tools, one workspace.</h3><p>Edit, convert, compress, create and calculate without hopping between sites.</p></div>
+          <div class="showcase-list">
+            <span class="showcase-row"><span class="ic ic-tool" style="--ic-h:260;--ic-bg:#7c3aed"><svg viewBox="0 0 24 24"><path d="M7 3h10v18H7z"/><path d="M9 8h6M9 12h6"/></svg></span>PDF tools</span>
+            <span class="showcase-row"><span class="ic ic-tool" style="--ic-h:145;--ic-bg:#2fbf83"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m4 18 5-5 4 3 3-3 4 4"/></svg></span>Image tools</span>
+            <span class="showcase-row"><span class="ic ic-tool" style="--ic-h:32;--ic-bg:#f7b21b"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-3-6 3z"/></svg></span>Templates</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-section home-wrap home-about-section">
+    <div class="story-grid">
+      <div class="story-copy">
+        <span class="eyebrow">About Vootkit</span>
+        <h2>Built for creators. Designed for everyone.</h2>
+        <p>Vootkit helps you edit, convert, create and optimize from one browser tab. It is simple enough for quick personal tasks and broad enough for repeat daily work.</p>
+        <div class="benefit-grid">
+          <div class="benefit"><span class="benefit-ic"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-3-6 3z"/></svg></span><div><h3>Free Tools</h3><p>All core tools are available from one clean place.</p></div></div>
+          <div class="benefit"><span class="benefit-ic"><svg viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></svg></span><div><h3>Fast &amp; Easy</h3><p>Powerful tools that anyone can use in seconds.</p></div></div>
+          <div class="benefit"><span class="benefit-ic"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3Z"/></svg></span><div><h3>Secure &amp; Private</h3><p>Most file tools do their processing inside the browser.</p></div></div>
+          <div class="benefit"><span class="benefit-ic"><svg viewBox="0 0 24 24"><path d="M4 17 10 11l4 4 6-8"/><path d="M20 7v6h-6"/></svg></span><div><h3>Always improving</h3><p>The catalog keeps growing with useful new tools.</p></div></div>
+        </div>
+        <a class="btn btn-primary" href="about.html">Learn More About Vootkit</a>
+      </div>
+      <div class="photo-card about-photo">
+        <img src="assets/images/home/home-about-workspace.webp" width="1200" height="800" alt="A laptop on a desk showing an organized digital workspace." loading="lazy" decoding="async">
+        <div class="about-ui" aria-hidden="true">
+          <strong>vootkit</strong>
+          <span>Search tools...</span>
+          <div><i>PDF</i><i>Image</i><i>Video</i><i>Code</i></div>
+        </div>
+        <div class="about-stat-card" aria-label="Vootkit summary">
+          <span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><b><span data-count="live-rounded">250</span>+</b><em>Free tools</em></span>
+          <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20M4.5 7h15M4.5 17h15"/></svg><b><span data-count="cats">21</span></b><em>Categories</em></span>
+          <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></svg><b>Fast</b><em>Browser tools</em></span>
+          <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3Z"/><path d="M9 12l2 2 4-4"/></svg><b>Local</b><em>For most files</em></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-section alt">
+    <div class="home-wrap community-grid">
+      <div class="story-copy">
+        <span class="eyebrow">Community</span>
+        <h2>Join a growing community of <span class="grad-text">creators</span>.</h2>
+        <p>Connect, share ideas, get help and grow together with people who use tools to move faster every day.</p>
+        <div class="community-panel">
+          <div class="community-point"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-8 0v2"/><circle cx="12" cy="7" r="4"/></svg><b>Creators</b><span>Media and content work</span></div>
+          <div class="community-point"><svg viewBox="0 0 24 24"><path d="M7 8h10M7 12h6"/><path d="M21 12a8 8 0 0 1-11.4 7.2L4 21l1.8-5.1A8 8 0 1 1 21 12Z"/></svg><b>Helpful Tools</b><span>Tips, guides and workflows</span></div>
+          <div class="community-point"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.2 5.2 0 0 0-7.4 0L12 6l-1.4-1.4a5.2 5.2 0 1 0-7.4 7.4L12 20.8l8.8-8.8a5.2 5.2 0 0 0 0-7.4Z"/></svg><b>Positive Vibes</b><span>Friendly and useful by design</span></div>
+        </div>
+        <div class="community-actions">
+          <a class="btn btn-secondary" href="tools/">Explore Tools</a>
+          <span class="avatar-stack avatar-stack--compact" aria-hidden="true">
+            <picture class="avatar-stack__item"><source srcset="public/images/avatars/avatar-06.avif" type="image/avif"><img src="public/images/avatars/avatar-06.webp" width="40" height="40" alt="" loading="lazy" decoding="async"></picture>
+            <picture class="avatar-stack__item"><source srcset="public/images/avatars/avatar-07.avif" type="image/avif"><img src="public/images/avatars/avatar-07.webp" width="40" height="40" alt="" loading="lazy" decoding="async"></picture>
+            <picture class="avatar-stack__item"><source srcset="public/images/avatars/avatar-08.avif" type="image/avif"><img src="public/images/avatars/avatar-08.webp" width="40" height="40" alt="" loading="lazy" decoding="async"></picture>
+            <picture class="avatar-stack__item"><source srcset="public/images/avatars/avatar-09.avif" type="image/avif"><img src="public/images/avatars/avatar-09.webp" width="40" height="40" alt="" loading="lazy" decoding="async"></picture>
+            <picture class="avatar-stack__item"><source srcset="public/images/avatars/avatar-10.avif" type="image/avif"><img src="public/images/avatars/avatar-10.webp" width="40" height="40" alt="" loading="lazy" decoding="async"></picture>
+          </span>
+          <span>Designed for people working across files, media and ideas.</span>
+        </div>
+      </div>
+      <div class="community-collage">
+        <img class="community-img community-img-main" src="assets/images/home/home-community-team.webp" width="1200" height="800" alt="A small group collaborating around a laptop." loading="lazy" decoding="async">
+        <img class="community-img community-img-person" src="assets/images/home/home-community-person.webp" width="1200" height="800" alt="A person working on a laptop in an office." loading="lazy" decoding="async">
+        <img class="community-img community-img-workspace" src="assets/images/home/home-community-workspace.webp" width="1200" height="800" alt="Hands using a laptop in a bright workspace." loading="lazy" decoding="async">
+        <span class="person-chip chip-sarah"><b>Product tips</b> Learn faster ways to use everyday tools.</span>
+        <span class="person-chip chip-david"><b>Shared workflows</b> Connect tools into cleaner task flows.</span>
+        <span class="person-chip chip-priya"><b>Free toolkit</b> Start with useful tools from one place.</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-section home-wrap">
+    <div class="workflow-grid">
+      <div class="workflow-copy">
+        <span class="eyebrow">Workflow</span>
+        <h2>Your workflow, supercharged.</h2>
+        <p>Move from quick edits to multi-step work. Choose a tool, process your file, download the result, or connect compatible tools into a workflow.</p>
+        <div class="workflow-steps">
+          <div class="workflow-step"><span class="step-num">01</span><div><h3>Choose a tool</h3><p>Pick the right utility from search, categories or templates.</p></div></div>
+          <div class="workflow-step"><span class="step-num">02</span><div><h3>Upload and process</h3><p>Use the tool in your browser and check the result.</p></div></div>
+          <div class="workflow-step"><span class="step-num">03</span><div><h3>Download or continue</h3><p>Save your file, or send it into another compatible step.</p></div></div>
+        </div>
+      </div>
+      <div class="workflow-visual">
+        <div class="workflow-photo">
+          <img src="assets/images/home/home-workflow-workspace.jpg" width="1260" height="750" alt="An overhead workspace with a laptop, notebook and headphones." loading="lazy" decoding="async">
+          <div class="workflow-screen" aria-hidden="true">
+            <div class="workflow-mini-head">
+              <span class="mini-dot"></span>
+              <b>Vootkit Workflow</b>
+              <em>Ready</em>
+            </div>
+            <div class="workflow-drop">
+              <svg viewBox="0 0 24 24"><path d="M12 16V5m0 0L8 9m4-4 4 4M5 14v5h14v-5"/></svg>
+              <strong>Drop your file</strong>
+              <span>Compress, convert, then download</span>
+            </div>
+            <div class="workflow-mini-steps">
+              <span class="is-on">Upload</span>
+              <span>Process</span>
+              <span>Download</span>
+            </div>
+          </div>
+        </div>
+        <div class="workflow-rail">
+          <div class="rail-card"><svg viewBox="0 0 24 24"><path d="M12 16V5m0 0L8 9m4-4 4 4M5 14v5h14v-5"/></svg><span><b>Upload</b><em>Your file is secure and private</em></span></div>
+          <div class="rail-card"><svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg><span><b>Processing</b><em>Our tool works its magic</em></span></div>
+          <div class="rail-card"><svg viewBox="0 0 24 24"><path d="M12 5v10m0 0 4-4m-4 4-4-4M5 19h14"/></svg><span><b>Download</b><em>Get your file instantly</em></span></div>
+        </div>
+        <div class="workflow-cta">
+          <div><h3>Work smarter, not harder.</h3><p>Powerful tools, simple workflow, useful results.</p></div>
+          <a class="btn" href="workflows/">Start Using Workflow</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-section home-wrap">
+    <div class="section-head">
+      <span class="eyebrow">Templates</span>
+      <h2>Start from a useful template.</h2>
+      <p>Reusable Vootkit tools for common documents, planning tasks and small business work.</p>
+    </div>
+    <div class="template-grid" id="home-templates"></div>
+    <div class="center-actions"><a class="btn btn-secondary" href="templates/">View Templates</a></div>
+  </section>
+
+  <section class="section wrap" id="safety">
+    <div class="section-head">
+      <span class="eyebrow">Product safety</span>
+      <h2>How your files are handled.</h2>
+      <p>Every tool but two does its work inside the browser tab. When a tool needs the internet, the page says so.</p>
+    </div>
+    <div class="saf">
+      <a class="saf-box" href="about.html">
+        <span class="saf-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.6 4.6 5.8v5.7c0 4.7 3.2 9.1 7.4 10.3 4.2-1.2 7.4-5.6 7.4-10.3V5.8z"/><path d="m8.8 12.2 2.3 2.3 4.4-4.6"/></svg></span>
+        <h3>Most tools run locally</h3>
+        <p>PDF, image, video and many everyday tools process in your browser, using your device rather than a server queue.</p>
+        <span class="saf-go">How Vootkit works</span>
+      </a>
+      <a class="saf-box" href="privacy.html">
+        <span class="saf-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9.5 7V5.2c0-.7.5-1.2 1.2-1.2h2.6c.7 0 1.2.5 1.2 1.2V7"/><path d="M6.2 7.6 7 19.2c0 .9.8 1.6 1.7 1.6h6.6c.9 0 1.7-.7 1.7-1.6l.8-11.6"/></svg></span>
+        <h3>Nothing is stored by default</h3>
+        <p>Local tools do not give Vootkit a copy to keep. Preferences such as theme, recent tools and favorites live in your browser storage.</p>
+        <span class="saf-go">Read the privacy policy</span>
+      </a>
+      <a class="saf-box" href="cookies.html">
+        <span class="saf-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="9.4" cy="9.6" r="1.1"/><circle cx="14.8" cy="13.4" r="1.1"/><circle cx="9.8" cy="15.4" r="1.1"/></svg></span>
+        <h3>Cookies and ads, plainly</h3>
+        <p>Vootkit is free and supported by advertising on non-workspace pages. Tool pages keep advertising away from the active work area.</p>
+        <span class="saf-go">Read the cookie policy</span>
+      </a>
+    </div>
+    <p class="safety-note">The two network-backed tools are the <a href="tools/finance/currency-converter/">Currency Converter</a>, which fetches live rates, and the <a href="tools/seo/url-shortener/">URL Shortener</a>, which registers the short link.</p>
+  </section>
+
+  <section class="home-section home-wrap">
+    <div class="premium-band">
+      <div>
+        <span class="eyebrow">Premium</span>
+        <h2>Get more room with Vootkit Pro.</h2>
+        <p>Vootkit stays free. Upgrade when you want unlimited daily usage, fewer distractions, priority support and more room for heavier work.</p>
+        <div class="premium-actions"><a class="btn" href="pricing.html">Explore Plans</a><a class="btn btn-secondary" href="tools/">Keep Using Free</a></div>
+      </div>
+      <div class="plan-mini-grid">
+        <div class="plan-mini"><h3>Creator Pro</h3><b>$8 <span>/month</span></b><ul><li>Unlimited daily usage</li><li>Higher file-size limits</li><li>Priority support</li></ul></div>
+        <div class="plan-mini"><h3>Creator Teams</h3><b>$20 <span>/month</span></b><ul><li>Everything in Pro</li><li>Shared team workspace</li><li>Centralized billing</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-section home-wrap">
+    <div class="final-cta">
+      <h2>One platform. Hundreds of tools. Start getting more done.</h2>
+      <p>Open Vootkit, search for the task, and use the right free online tool in seconds.</p>
+      <div class="final-actions"><a class="btn btn-primary" href="tools/">Open The Toolbox</a><a class="btn btn-secondary" href="auth/sign-up/">Get Started Free</a></div>
+    </div>
+  </section>
+
+  <section class="home-wrap ecosystem-reach" aria-labelledby="ecosystem-title">
+    <div class="ecosystem-card">
+      <div class="ecosystem-strip" aria-labelledby="ecosystem-title">
+        <h3 id="ecosystem-title">Part of a powerful technology ecosystem</h3>
+        <div class="brand-strip" aria-label="Technologies and services used by or compatible with Vootkit">
+          <a class="brand-logo" href="https://www.cloudflare.com/" target="_blank" rel="nofollow noopener" aria-label="Cloudflare"><img src="public/images/brands/cloudflare.svg" width="28" height="28" alt="" loading="lazy" decoding="async"><span>Cloudflare</span></a>
+          <a class="brand-logo" href="https://www.netlify.com/" target="_blank" rel="nofollow noopener" aria-label="Netlify"><img src="public/images/brands/netlify.svg" width="28" height="28" alt="" loading="lazy" decoding="async"><span>Netlify</span></a>
+          <a class="brand-logo" href="https://supabase.com/" target="_blank" rel="nofollow noopener" aria-label="Supabase"><img src="public/images/brands/supabase.svg" width="28" height="28" alt="" loading="lazy" decoding="async"><span>Supabase</span></a>
+          <a class="brand-logo" href="https://stripe.com/" target="_blank" rel="nofollow noopener" aria-label="Stripe"><img src="public/images/brands/stripe.svg" width="28" height="28" alt="" loading="lazy" decoding="async"><span>Stripe</span></a>
+          <a class="brand-logo" href="https://www.google.com/" target="_blank" rel="nofollow noopener" aria-label="Google"><img src="public/images/brands/google.svg" width="28" height="28" alt="" loading="lazy" decoding="async"><span>Google</span></a>
+          <a class="brand-logo" href="https://github.com/" target="_blank" rel="nofollow noopener" aria-label="GitHub"><img src="public/images/brands/github.svg" width="28" height="28" alt="" loading="lazy" decoding="async"><span>GitHub</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-newsletter home-wrap" aria-labelledby="home-newsletter-title">
+    <div class="newsletter-card">
+      <div class="newsletter-copy">
+        <span class="eyebrow">Stay updated</span>
+        <h2 id="home-newsletter-title">Stay in the loop with <span class="grad-text">Vootkit</span> updates.</h2>
+        <p>Get the latest tool releases, helpful tips, productivity workflows and exclusive offers straight to your inbox.</p>
+        <div class="newsletter-form-slot" data-newsletter="homepage_newsletter" data-nl-placeholder="Enter your email address" data-nl-button="Subscribe Free"></div>
+        <p class="newsletter-safe"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.4 7.7 8 8 4.6-.3 8-3 8-8V6z"/><path d="m9 12 2 2 4-4"/></svg>No spam. Unsubscribe anytime.</p>
+      </div>
+      <div class="newsletter-visual">
+        <img src="public/images/home/newsletter/newsletter-workspace.webp" width="1280" height="800" alt="A smiling woman using a laptop in a bright home office." loading="lazy" decoding="async">
+        <div class="newsletter-float float-new">
+          <span><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 7h18s-3 0-3-7"/><path d="M10 19a2 2 0 0 0 4 0"/></svg></span>
+          <b>New Tools</b>
+          <em>Be the first to try</em>
+        </div>
+        <div class="newsletter-float float-offers">
+          <span><svg viewBox="0 0 24 24"><path d="M20 12v9H4v-9"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 1 1 2.1-3.9L12 7Zm0 0h4.5a2.5 2.5 0 1 0-2.1-3.9L12 7Z"/></svg></span>
+          <b>Exclusive Offers</b>
+          <em>Special deals for you</em>
+        </div>
+        <div class="newsletter-float float-tips">
+          <span><svg viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></svg></span>
+          <b>Pro Tips</b>
+          <em>Work smarter daily</em>
+        </div>
+        <span class="newsletter-send" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4Z"/></svg></span>
+      </div>
+    </div>
+  </section>
 </main>
 
-<!-- Mirrors foot() in build.js. The homepage is hand-authored, so these two
-     have to be kept in step by hand; test/seo.test.js asserts that every link
-     in one appears in the other, because a footer that differs between the
-     home page and every other page is the kind of drift nobody spots. -->
 <footer class="ftr">
   <div class="wrap">
     <div class="ftr-top">
       <div class="ftr-cols">
-        <div class="ftr-col">
-          <h4>Tools</h4>
-          <a href="tools/pdf/">PDF</a><a href="tools/images/">Images</a><a href="tools/video/">Video</a><a href="tools/audio/">Audio</a><a href="tools/text/">Text</a><a href="tools/finance/">Finance</a>
-        </div>
-        <div class="ftr-col">
-          <h4>More tools</h4>
-          <a href="tools/seo/">SEO</a><a href="tools/developer/">Developer</a><a href="tools/design/">Design</a><a href="tools/privacy/">Privacy</a><a href="tools/data/">Data</a><a href="tools/">All 21 categories</a>
-        </div>
-        <div class="ftr-col">
-          <h4>Vootkit</h4>
-          <a href="tools/">All tools</a><a href="workflows/">Workflows <span class="ftr-pro">Pro</span></a><a href="blog/file-upload-size-limits/">Upload size limits</a><a href="pricing.html">Pricing</a><a href="about.html">About</a><a href="blog/">Blog</a><a href="contact.html">Contact &amp; support</a>
-        </div>
-        <div class="ftr-col">
-          <h4>Legal</h4>
-          <a href="privacy.html">Privacy policy</a><a href="cookies.html">Cookie policy</a><a href="terms.html">Terms</a><a href="disclaimer.html">Disclaimer</a>
-        </div>
+      <div class="ftr-col">
+        <h4>Tools</h4>
+        <a href="tools/pdf/">PDF</a><a href="tools/images/">Images</a><a href="tools/video/">Video</a><a href="tools/finance/">Finance</a><a href="tools/business/">Business</a><a href="tools/developer/">Developer</a>
+      </div>
+      <div class="ftr-col">
+        <h4>Vootkit</h4>
+        <a href="tools/">All tools</a><a href="workflows/">Workflow <span class="ftr-pro">Pro</span></a><a href="templates/">Templates</a><a href="pricing.html">Pricing</a><a href="about.html">About</a><a href="blog/">Blog</a>
+      </div>
+      <div class="ftr-col">
+        <h4>Support</h4>
+        <a href="contact.html">Contact &amp; support</a><a href="blog/file-upload-size-limits/">Upload size limits</a><a href="blog/reduce-pdf-file-size/">PDF size guide</a><a href="blog/compress-images-without-losing-quality/">Image compression guide</a><a href="tools/">All 21 categories</a>
+      </div>
+      <div class="ftr-col">
+        <h4>Legal</h4>
+        <a href="privacy.html">Privacy policy</a><a href="cookies.html">Cookie policy</a><a href="terms.html">Terms</a><a href="disclaimer.html">Disclaimer</a>
+      </div>
       </div>
       <div class="ftr-brand">
         <span class="ftr-mark">
-          <svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="17.5" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-width="1.3" stroke-dasharray="17 7"/><path d="M12.5 14.5 21.5 30 31.5 13.5" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="33.5" cy="10.5" r="2.7" fill="#22d3ee"/></svg>
+          <svg class="brand-v" viewBox="0 0 44 44" aria-hidden="true"><circle class="brand-ring" cx="22" cy="22" r="17.5"/><path class="brand-check" d="M12.5 14.5 21.5 30 31.5 13.5"/><circle class="brand-orb" cx="33.5" cy="10.5" r="2.7"/></svg>
           vootkit
         </span>
-        <p>250+ free tools for PDF, images, video, finance and more.</p>
+        <p><span data-count="live-rounded">250</span>+ free tools for PDF, images, video, finance and more, built for <span data-stat="users">1M+</span> users across <span data-stat="countries">120+</span> countries.</p>
         <p class="ftr-trust">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4.5 6.2v5.4c0 4.6 3.2 8.9 7.5 10.2 4.3-1.3 7.5-5.6 7.5-10.2V6.2z"/><path d="m9 12 2.2 2.2L15.4 10"/></svg>
-          Most tools run on your device. Your files are never uploaded.
+          Most file tools process on your device. Network-backed tools are labelled on their pages.
         </p>
       </div>
     </div>
+    <div class="ftr-nl" data-newsletter="footer"></div>
     <div class="ftr-bar">
-      <p class="ftr-copy">&copy; <span id="yr"></span> Vootkit — every digital task, done in your browser.</p>
+      <p class="ftr-copy">&copy; <span id="yr"></span> Vootkit - every digital task, done in your browser.</p>
     </div>
   </div>
 </footer>
 
-<script src="data/catalog.js?v=20260727perf"></script>
-<!-- Per-tool icon answers, generated by build.js. The popular row and the
-     search results are rendered in the browser, and without this they fall
-     back to the category glyph — ten identical squares on the first page
-     anyone sees. -->
-<script src="data/tool-icons.js?v=20260727perf"></script>
-<script src="assets/js/home.js?v=20260727perf" defer></script>
-<script src="assets/js/ui.js?v=20260727perf" defer></script>
-<script src="assets/js/supabase-config.js?v=20260727perf" defer></script>
-<!-- Builds every [data-newsletter] slot on the page. The homepage carries one
-     and this tag was missing, so the band rendered as an empty box — the form
-     had never appeared in production. Must come after supabase-config.js,
-     which it needs to submit. -->
-<script src="assets/js/newsletter.js?v=20260727perf" defer></script>
-<script src="assets/js/usage.js?v=20260727perf" defer></script>
-<script src="assets/js/auth.js?v=20260727perf" defer></script>
+<script src="data/catalog.js?v=d2f5c59ee0"></script>
+<script src="data/stats.js?v=d2f5c59ee0"></script>
+<script src="data/tool-icons.js?v=d2f5c59ee0"></script>
+<script src="assets/js/home.js?v=d2f5c59ee0" defer></script>
+<script src="assets/js/ui.js?v=d2f5c59ee0" defer></script>
+<script src="assets/js/supabase-config.js?v=d2f5c59ee0" defer></script>
+<script src="assets/js/newsletter.js?v=d2f5c59ee0" defer></script>
+<script src="assets/js/usage.js?v=d2f5c59ee0" defer></script>
+<script src="assets/js/auth.js?v=d2f5c59ee0" defer></script>
 <script>
 document.getElementById('yr').textContent = new Date().getFullYear();
 (function () {

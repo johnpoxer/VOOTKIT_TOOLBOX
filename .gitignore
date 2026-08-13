@@ -24,6 +24,7 @@ Thumbs.db
 
 # Generated route directories
 /tools/
+/templates/
 /auth/
 /account/
 /components/

@@ -1,7 +1,7 @@
 ---
 title: "File Upload Size Limits (2026)"
 slug: "file-upload-size-limits"
-date: "2026-08-11"
+date: "2026-08-12"
 description: "A practical 2026 reference for Gmail, Outlook, Discord, WhatsApp, Slack, YouTube, Google Drive, OneDrive and Dropbox upload limits."
 thumbnail: "/assets/blog/compress-video-discord.jpg"
 author: "The Vootkit team"
@@ -11,7 +11,7 @@ Most upload errors are badly explained. A service says a file is "too large", bu
 
 This guide is the practical version: the limits people hit most often, what they mean in real work, and which Vootkit tool to use when you need to get under the cap without handing a private file to a random upload server.
 
-Last checked: August 11, 2026.
+Last checked: August 12, 2026.
 
 ![A video upload limit warning on a creator workspace, with compression settings beside it.](/assets/blog/compress-video-discord.jpg)
 
@@ -28,7 +28,7 @@ Last checked: August 11, 2026.
 | YouTube | 256 GB or 12 hours, whichever is lower | Unverified channels are limited to shorter uploads. |
 | Google Drive | 750 GB uploaded/copied per day; files up to 5 TB in Workspace docs | Daily transfer caps matter before the theoretical file cap for most people. |
 | OneDrive / SharePoint / Teams | 250 GB individual file limit | Microsoft recommends the sync app for files larger than a few GB. |
-| Dropbox | 350 GB on dropbox.com, 2 TB with desktop/mobile apps | Very large browser uploads are more fragile than synced uploads. |
+| Dropbox | 375 GB on dropbox.com, 2 TB with desktop/mobile apps | Very large browser uploads are more fragile than synced uploads. |
 
 ## The Two Rules That Prevent Most Failed Uploads
 
@@ -108,7 +108,7 @@ The useful takeaway is simple: if a file is too big for Outlook, do not keep try
 
 ## Dropbox
 
-Dropbox currently lists 350 GB for uploads through dropbox.com and 2 TB through the desktop or mobile apps. For very large files, the desktop app is the safer path because it can resume and sync more reliably than a browser tab.
+Dropbox currently lists 375 GB for uploads through dropbox.com and 2 TB through the desktop or mobile apps. For very large files, the desktop app is the safer path because it can resume and sync more reliably than a browser tab.
 
 For video teams, that means you normally should not compress a master file just to store it. Compress the copy you send for review, upload or chat, and keep the original untouched.
 

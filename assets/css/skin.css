@@ -134,19 +134,29 @@ body::before {
 /* ---------- SaaS nav: prominent "Get Pro" CTA ---------- */
 .hdr-cta {
   display: inline-flex; align-items: center; gap: 6px;
-  font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .05em;
-  font-size: var(--t-xs); font-weight: 700;
-  padding: 9px 16px; border-radius: var(--r-pill);
+  font-family: var(--font-sans); text-transform: none; letter-spacing: 0;
+  font-size: var(--t-sm); font-weight: 700;
+  padding: 9px 18px; border-radius: var(--r-sm);
   color: #fff; text-decoration: none; white-space: nowrap;
-  background: linear-gradient(120deg, var(--accent), #c62a92 55%, #c0186a);
+  background: linear-gradient(120deg, #6d28d9, #4f46e5);
   box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 40%, transparent), inset 0 1px 0 rgb(255 255 255 / .25);
   transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease), filter var(--dur-fast) var(--ease);
 }
+.hdr-cta .cta-short { display: none; }
 .hdr-cta:hover { filter: saturate(1.08) brightness(1.03); box-shadow: 0 6px 20px color-mix(in srgb, var(--accent) 52%, transparent), inset 0 1px 0 rgb(255 255 255 / .3); }
 @media (prefers-reduced-motion: no-preference) { .hdr-cta:hover { transform: translateY(-1px); } .hdr-cta:active { transform: translateY(1px); } }
 .nav a[aria-current="page"] { color: var(--accent); }
+.nav a {
+  font-family: var(--font-sans);
+  text-transform: none;
+  letter-spacing: 0;
+}
 /* keep the CTA visible on small screens even when the text nav collapses */
 @media (max-width: 720px) { .hdr-cta { padding: 8px 13px; } }
+@media (max-width: 500px) {
+  .hdr-cta .cta-full { display: none; }
+  .hdr-cta .cta-short { display: inline; }
+}
 
 /* ---------- glassmorphism: reserved for hero/pricing focal points (fast) ---------- */
 .plan--featured, #q, .vk-cmd, .hero-search, .cta-band {

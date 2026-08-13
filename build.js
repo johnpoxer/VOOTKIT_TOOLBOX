@@ -13,6 +13,7 @@ const path = require("path");
 const { marked } = require("marked");
 const ROOT = __dirname;
 const VK = require("./data/catalog.js");
+const STATS = require("./data/stats.js");
 const TOOLCONTENT = require("./data/tool-content.js");
 const TOOLFACTS = require("./data/tool-facts.js");
 const MONEY = Object.assign({}, require("./assets/js/tools-money.js"), require("./assets/js/tools-money2.js"));
@@ -77,6 +78,10 @@ const OG_DEFAULT = SITE + "/assets/og-default.png";
 const ADS = CFG.ads || { enabled: false, client: "", slots: {} };
 const CONSENT = CFG.consent || { enabled: true };
 const PUB = ADS.client || "ca-pub-5906583727409402";
+const AUDIENCE = STATS.audience || {};
+const USER_DISPLAY = (AUDIENCE.users && AUDIENCE.users.display) || "1M+";
+const COUNTRY_DISPLAY = (AUDIENCE.countries && AUDIENCE.countries.display) || "120+";
+const TOOL_ROUND_TO = (STATS.tools && STATS.tools.roundTo) || 50;
 
 /* One AdSense display unit.
  *
@@ -188,12 +193,21 @@ function adUnit(slotKey, label) {
 const V = "?v=" + (function () {
   const crypto = require("crypto");
   const h = crypto.createHash("sha1");
-  const css = ["tokens", "base", "pages", "newsletter", "skin"].map((n) => "assets/css/" + n + ".css");
+  const css = ["tokens", "base", "pages", "newsletter", "skin", "home"].map((n) => "assets/css/" + n + ".css");
+  const dataAssets = ["data/catalog.js", "data/tool-icons.js", "data/site.config.js", "data/stats.js"];
   let js = [];
   try { js = fs.readdirSync(path.join(ROOT, "assets/js")).filter((f) => f.endsWith(".js")).sort().map((f) => "assets/js/" + f); } catch (e) {}
-  css.concat(js).forEach((rel) => { try { h.update(fs.readFileSync(path.join(ROOT, rel))); } catch (e) {} });
+  css.concat(dataAssets, js).forEach((rel) => { try { h.update(fs.readFileSync(path.join(ROOT, rel))); } catch (e) {} });
   return h.digest("hex").slice(0, 10);
 })();
+
+function refreshHomepageAssetVersions() {
+  const file = path.join(ROOT, "index.html");
+  if (!fs.existsSync(file)) return;
+  let html = fs.readFileSync(file, "utf8");
+  html = html.replace(/((?:href|src)="(?:assets\/css\/(?:tokens|base|newsletter|skin|home)\.css|data\/(?:catalog|stats|tool-icons)\.js|assets\/js\/(?:home|ui|supabase-config|newsletter|usage|auth)\.js))\?v=[^"]*(")/g, `$1${V}$2`);
+  fs.writeFileSync(file, html);
+}
 
 const esc = (v) => String(v == null ? "" : v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
@@ -249,10 +263,32 @@ function langSwitcher(alts, lang) {
   return `<details class="lang-switch"><summary title="Language">🌐 ${esc(langLabel(lang))}</summary><div class="lang-menu">${items}</div></details>`;
 }
 
+function brandLogo() {
+  return `<svg class="brand-v" viewBox="0 0 44 44" aria-hidden="true">
+        <circle class="brand-ring" cx="22" cy="22" r="17.5"/>
+        <path class="brand-check" d="M12.5 14.5 21.5 30 31.5 13.5"/>
+        <circle class="brand-orb" cx="33.5" cy="10.5" r="2.7"/>
+      </svg>`;
+}
+
 function head(o) {
   // depth = how many ../ to reach site root
   const up = "../".repeat(o.depth) || "./";
   const lang = o.lang || "en";
+  const bodyAttrs = [
+    o.bodyClass ? ` class="${esc(o.bodyClass)}"` : "",
+    o.cat ? ` data-cat="${o.cat}"` : ""
+  ].join("");
+  const here = o.url || "";
+  const active = o.active
+    || (here === SITE + "/" ? "home" : "")
+    || (here.indexOf("/tools/") > -1 ? "tools" : "")
+    || (here.indexOf("/workflows/") > -1 ? "workflow" : "")
+    || (here.indexOf("/templates/") > -1 ? "templates" : "")
+    || (here.indexOf("/blog/") > -1 ? "blog" : "")
+    || (here.indexOf("/pricing.html") > -1 ? "pricing" : "")
+    || (here.indexOf("/about.html") > -1 ? "about" : "");
+  const cur = (name) => active === name ? ' aria-current="page"' : "";
   return `<!doctype html>
 <html lang="${lang}"${o.dir === "rtl" ? ' dir="rtl"' : ""}>
 <head>
@@ -283,31 +319,30 @@ ${o.ads ? adLoader() : "<!-- no ads inside an active tool workspace -->"}
 <script async src="https://www.googletagmanager.com/gtag/js?id=${GA4}"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA4}');</script>
 </head>
-<body${o.cat ? ` data-cat="${o.cat}"` : ""}>
+<body${bodyAttrs}>
 <a class="skip" href="#main">Skip to content</a>
 <header class="hdr">
   <div class="wrap hdr-in">
     <a class="brand" href="${up}" aria-label="Vootkit home">
-      <svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="17.5" fill="none" stroke="var(--accent)" stroke-opacity=".45" stroke-width="1.3" stroke-dasharray="17 7"/><path d="M12.5 14.5 21.5 30 31.5 13.5" fill="none" stroke="var(--accent)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="33.5" cy="10.5" r="2.7" fill="#06b6d4"/></svg>
+      ${brandLogo()}
       vootkit
     </a>
     <nav class="nav" id="nav" aria-label="Main">
-      <a href="${up}tools/">Tools</a>
-      <a href="${up}pricing.html">Pricing</a>
-      <a href="${up}#features">Features</a>
-      <a href="${up}blog/">Blog</a>
-      <a href="${up}about.html">About</a>
-      <a href="${up}contact.html">Contact</a>
+      <a href="${up}"${cur("home")}>Home</a>
+      <a href="${up}tools/"${cur("tools")}>Tools</a>
+      <a href="${up}workflows/"${cur("workflow")}>Workflow</a>
+      <a href="${up}templates/"${cur("templates")}>Templates</a>
+      <a href="${up}blog/"${cur("blog")}>Blog</a>
+      <a href="${up}pricing.html"${cur("pricing")}>Pricing</a>
+      <a href="${up}about.html"${cur("about")}>About</a>
     </nav>
     <div class="hdr-act">
-      <a class="icon-btn" href="${up}tools/" aria-label="Search tools">
-        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
-      </a>
       ${langSwitcher(o.alts, lang)}
       <button class="icon-btn" id="theme" type="button" aria-label="Switch theme">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.5M12 19v2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M2.5 12H5M19 12h2.5M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M21 13.1A8.4 8.4 0 1 1 10.9 3a6.6 6.6 0 0 0 10.1 10.1Z"/></svg>
       </button>
-      <a class="hdr-cta" href="${up}pricing.html">Get Pro</a>
+      <span id="vk-auth-slot" class="vk-auth-slot"><a class="btn btn-sm hdr-login" href="${up}auth/sign-in/">Login</a></span>
+      <a class="hdr-cta" href="${up}auth/sign-up/"><span class="cta-full">Get Started Free</span><span class="cta-short">Start Free</span></a>
       <button class="icon-btn" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav">
         <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
       </button>
@@ -358,15 +393,15 @@ function footCols(up) {
   return `
       <div class="ftr-col">
         <h4>Tools</h4>
-        ${cat("pdf", "PDF")}${cat("images", "Images")}${cat("video", "Video")}${cat("audio", "Audio")}${cat("text", "Text")}${cat("finance", "Finance")}
-      </div>
-      <div class="ftr-col">
-        <h4>More tools</h4>
-        ${cat("seo", "SEO")}${cat("developer", "Developer")}${cat("design", "Design")}${cat("privacy", "Privacy")}${cat("data", "Data")}<a href="${up}tools/">All ${VK.CATEGORIES.length} categories</a>
+        ${cat("pdf", "PDF")}${cat("images", "Images")}${cat("video", "Video")}${cat("finance", "Finance")}${cat("business", "Business")}${cat("developer", "Developer")}
       </div>
       <div class="ftr-col">
         <h4>Vootkit</h4>
-        <a href="${up}tools/">All tools</a><a href="${up}workflows/">Workflows <span class="ftr-pro">Pro</span></a><a href="${up}blog/file-upload-size-limits/">Upload size limits</a><a href="${up}pricing.html">Pricing</a><a href="${up}about.html">About</a><a href="${up}blog/">Blog</a><a href="${up}contact.html">Contact &amp; support</a>
+        <a href="${up}tools/">All tools</a><a href="${up}workflows/">Workflow <span class="ftr-pro">Pro</span></a><a href="${up}templates/">Templates</a><a href="${up}pricing.html">Pricing</a><a href="${up}about.html">About</a><a href="${up}blog/">Blog</a>
+      </div>
+      <div class="ftr-col">
+        <h4>Support</h4>
+        <a href="${up}contact.html">Contact &amp; support</a><a href="${up}blog/file-upload-size-limits/">Upload size limits</a><a href="${up}blog/reduce-pdf-file-size/">PDF size guide</a><a href="${up}blog/compress-images-without-losing-quality/">Image compression guide</a><a href="${up}tools/">All ${VK.CATEGORIES.length} categories</a>
       </div>
       <div class="ftr-col">
         <h4>Legal</h4>
@@ -382,13 +417,13 @@ function footBrand() {
   return `
       <div class="ftr-brand">
         <span class="ftr-mark">
-          <svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="17.5" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-width="1.3" stroke-dasharray="17 7"/><path d="M12.5 14.5 21.5 30 31.5 13.5" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="33.5" cy="10.5" r="2.7" fill="#22d3ee"/></svg>
+          ${brandLogo()}
           vootkit
         </span>
-        <p>${floorTo(VK.counts.live, 50)}+ free tools for PDF, images, video, finance and more.</p>
+        <p>${floorTo(VK.counts.live, TOOL_ROUND_TO)}+ free tools for PDF, images, video, finance and more, built for ${USER_DISPLAY} users across ${COUNTRY_DISPLAY} countries.</p>
         <p class="ftr-trust">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4.5 6.2v5.4c0 4.6 3.2 8.9 7.5 10.2 4.3-1.3 7.5-5.6 7.5-10.2V6.2z"/><path d="m9 12 2.2 2.2L15.4 10"/></svg>
-          Most tools run on your device. Your files are never uploaded.
+          Most file tools process on your device. Network-backed tools are labelled on their pages.
         </p>
       </div>`;
 }
@@ -396,6 +431,18 @@ function footBrand() {
 function foot(depth, extraScripts, opts) {
   const up = "../".repeat(depth) || "./";
   const o = opts || {};
+  const convertScript = o.workspaceScripts === false ? "" : `<script src="${up}assets/js/convert.js${V}" defer></script>`;
+  const workspaceTailScripts = o.workspaceScripts === false ? "" : `
+<script src="${up}assets/js/usage.js${V}" defer></script>
+<script src="${up}assets/js/deliver.js${V}" defer></script>
+<!-- Tool chaining. tool-flow.js says what each tool accepts, tool-icons.js
+     gives the next-step buttons the same per-tool icons as everywhere else,
+     and handoff.js parks the finished file on the device between the two
+     pages. All three are optional: without them a tool simply downloads. -->
+<script src="${up}data/tool-flow.js${V}" defer></script>
+<script src="${up}data/tool-icons.js${V}" defer></script>
+<script src="${up}assets/js/handoff.js${V}" defer></script>
+<script src="${up}assets/js/gate.js${V}" defer></script>`;
   return `</main>
 <footer class="ftr">
   <div class="wrap">
@@ -427,19 +474,10 @@ t.addEventListener('click',function(){var c=document.documentElement.getAttribut
 <script src="${up}assets/js/recent.js${V}" defer></script>
 <script src="${up}assets/js/supabase-config.js${V}" defer></script>
 <script src="${up}assets/js/errors.js${V}" defer></script>
-<script src="${up}assets/js/convert.js${V}" defer></script>
+${convertScript}
 <script src="${up}assets/js/newsletter.js${V}" defer></script>
 <script src="${up}assets/js/auth.js${V}" defer></script>
-<script src="${up}assets/js/usage.js${V}" defer></script>
-<script src="${up}assets/js/deliver.js${V}" defer></script>
-<!-- Tool chaining. tool-flow.js says what each tool accepts, tool-icons.js
-     gives the next-step buttons the same per-tool icons as everywhere else,
-     and handoff.js parks the finished file on the device between the two
-     pages. All three are optional: without them a tool simply downloads. -->
-<script src="${up}data/tool-flow.js${V}" defer></script>
-<script src="${up}data/tool-icons.js${V}" defer></script>
-<script src="${up}assets/js/handoff.js${V}" defer></script>
-<script src="${up}assets/js/gate.js${V}" defer></script>
+${workspaceTailScripts}
 ${(extraScripts||[]).map(function(x){return '<script src="'+up+x+V+'" defer></script>';}).join("\n")}
 </body>
 </html>
@@ -776,13 +814,20 @@ function icon(name) {
     type: '<path d="M4 6h16M4 12h16M4 18h10"/>',
     palette: '<circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><path d="M12 22a3 3 0 0 0 3-3 2 2 0 0 0-2-2h-1.5a1.5 1.5 0 0 1 0-3H14a5 5 0 1 0-5-5"/>',
     code: '<path d="m8 8-4 4 4 4M16 8l4 4-4 4"/>',
+    sync: '<path d="M4 8h13l-3-3"/><path d="M20 16H7l3 3"/>',
+    audio: '<path d="M4 10v4M8 6v12M12 3v18M16 7v10M20 10v4"/>',
+    calculator: '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8"/><path d="M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/>',
+    dots: '<path d="M6 12h.01M12 12h.01M18 12h.01"/>',
     clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
     table: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 4v16"/>',
+    grid: '<rect x="4" y="4" width="6" height="6" rx="1.2"/><rect x="14" y="4" width="6" height="6" rx="1.2"/><rect x="4" y="14" width="6" height="6" rx="1.2"/><rect x="14" y="14" width="6" height="6" rx="1.2"/>',
+    list: '<path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6h.01M4 12h.01M4 18h.01"/>',
     sparkles: '<path d="M12 3l1.8 4.7L18.5 9l-4.7 1.8L12 15l-1.8-4.2L5.5 9l4.7-1.3z"/><path d="M18 15l.9 2.3L21 18l-2.1.7L18 21l-.9-2.3L15 18l2.1-.7z"/>',
     heart: '<path d="M12 20s-6.5-4.3-9-8.3A4.7 4.7 0 0 1 12 6a4.7 4.7 0 0 1 9 5.7c-2.5 4-9 8.3-9 8.3z"/>',
     plane: '<path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/>',
     mic: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/>',
-    book: '<path d="M12 6c-2-1.2-5-1.2-7 0v12c2-1.2 5-1.2 7 0 2-1.2 5-1.2 7 0V6c-2-1.2-5-1.2-7 0z"/><path d="M12 6v12"/>'
+    book: '<path d="M12 6c-2-1.2-5-1.2-7 0v12c2-1.2 5-1.2 7 0 2-1.2 5-1.2 7 0V6c-2-1.2-5-1.2-7 0z"/><path d="M12 6v12"/>',
+    "arrow-right": '<path d="M5 12h14"/><path d="m13 6 6 6-6 6"/>'
   };
   return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (p[name] || p.file) + '</svg>';
 }
@@ -797,6 +842,24 @@ const NEW = new Set([
   "trim-video", "vertical-reframe", "mute-video", "extract-audio", "frame-grabber",
   "csv-to-chart", "markdown-editor", "schema-generator"
 ]);
+
+const DIR_FEATURED_ORDER = [
+  "word-to-pdf", "merge-pdf", "compress-image", "trim-video",
+  "remove-background", "jpg-to-png", "convert-video", "compress-pdf",
+  "jpg-to-pdf", "crop-image", "remove-pdf-password", "audio-converter"
+];
+const DIR_GROUPS = [
+  { slug: "all", name: "All Tools", icon: "grid", cats: [] },
+  { slug: "pdf", name: "PDF Tools", icon: "file", cats: ["pdf"] },
+  { slug: "video", name: "Video Tools", icon: "play", cats: ["video"] },
+  { slug: "images", name: "Image Tools", icon: "image", cats: ["images", "design", "ai"] },
+  { slug: "converter", name: "Converter Tools", icon: "sync", cats: ["pdf", "images", "video", "audio", "data"] },
+  { slug: "developer", name: "Developer Tools", icon: "code", cats: ["developer", "data", "seo", "privacy", "accessibility"] },
+  { slug: "text", name: "Text Tools", icon: "type", cats: ["text", "education"] },
+  { slug: "audio", name: "Audio Tools", icon: "audio", cats: ["audio"] },
+  { slug: "calculation", name: "Unit & Calculation", icon: "calculator", cats: ["finance", "tax", "insurance", "realestate", "health", "travel"] },
+  { slug: "other", name: "Other Tools", icon: "dots", cats: ["business", "everyday"] }
+];
 
 /* which script bundle a tool page loads — shared by English + localised pages */
 function toolScripts(t) {
@@ -873,8 +936,204 @@ function toolCard(t, up) {
   </a>`;
 }
 
+function dirCountLabel(n) {
+  return `${n} ${n === 1 ? "tool" : "tools"}`;
+}
+
+function dirSearchText(t, cat) {
+  const aliases = {
+    "compress-pdf": "make pdf smaller reduce pdf file size shrink pdf email limit",
+    "merge-pdf": "join pdf combine pdf put pdfs together",
+    "remove-background": "remove image background cut out background transparent png background remover",
+    "jpg-to-png": "jpg into png jpeg to png convert jpg png",
+    "png-to-jpg": "png into jpg convert png jpeg",
+    "compress-image": "make image smaller reduce photo size image compressor",
+    "resize-image": "change image size dimensions scale photo",
+    "compress-video": "make video smaller reduce video size shrink video",
+    "video-to-gif": "make gif from video convert video gif",
+    "json-formatter": "format json pretty print json beautify json validate json",
+    "sql-formatter": "format sql pretty sql",
+    "word-counter": "count words character counter essay limit",
+    "qr-generator": "make qr code create qr",
+    "mortgage-calculator": "calculate house loan home loan mortgage payment",
+    "loan-calculator": "calculate loan payment personal loan",
+    "currency-converter": "exchange rate fx convert money",
+    "invoice-generator": "create invoice bill client",
+    "password-generator": "make password secure password",
+    "password-strength": "check password strength",
+    "pdf-to-jpg": "pdf to image convert pdf jpg",
+    "jpg-to-pdf": "image to pdf photos to pdf",
+    "pdf-to-text": "extract text from pdf copy pdf text",
+    "url-cleaner": "remove tracking parameters clean url"
+  };
+  return esc([t.id, t.name, t.desc, t.kw || "", cat.name || "", aliases[t.id] || ""].join(" "));
+}
+
+function dirDirectoryDesc(t) {
+  const base = String(t.desc || "").replace(/\s+/g, " ").trim();
+  const clean = base.replace(/[.!?]+$/, "");
+  const suffix = {
+    pdf: "Finish in your browser and download the updated PDF.",
+    images: "Preview the change and download the finished image.",
+    video: "Process the clip and export the new video.",
+    finance: "Enter your numbers to get a clear result.",
+    insurance: "Estimate your needs before you compare options.",
+    realestate: "Run the property numbers before you commit.",
+    tax: "Calculate pay, tax or cost from simple inputs.",
+    business: "Create a clean business result you can use right away.",
+    seo: "Generate, preview or audit the item in seconds.",
+    accessibility: "Check the page or asset against practical accessibility rules.",
+    privacy: "Clean private data before you share the file or link.",
+    text: "Paste text, process it instantly and copy the result.",
+    design: "Tune the visual value and copy the CSS or result.",
+    developer: "Format, validate or generate developer data quickly.",
+    everyday: "Run the everyday calculation or conversion instantly.",
+    data: "Open, convert or chart data without a spreadsheet app.",
+    health: "Enter your body or activity details for a quick estimate.",
+    travel: "Plan costs, dates or travel details with simple inputs.",
+    audio: "Convert, trim or capture audio and save the result.",
+    education: "Build a study resource you can keep using.",
+    ai: "Use an on-device AI helper for media or text."
+  }[t.cat] || "Use the tool in your browser and get a clean result.";
+  if (!clean) return suffix;
+  if (clean.length > 76) return base;
+  return `${clean}. ${suffix}`;
+}
+
+function dirToolDisplay(t) {
+  const map = {
+    "word-to-pdf": { name: "Word to PDF", desc: "Convert DOCX files into clean PDF documents in your browser.", glyph: "W", kind: "doc", hue: 216 },
+    "merge-pdf": { name: "Merge PDF", desc: "Combine several PDF files into one document in the order you choose.", glyph: "PDF", kind: "pdf", hue: 350 },
+    "compress-image": { name: "Image Compressor", desc: "Reduce JPG, PNG or WebP file size while keeping quality balanced.", kind: "image", hue: 145 },
+    "trim-video": { name: "Video Trimmer", desc: "Cut, trim and export video clips directly in your browser.", kind: "play", hue: 316 },
+    "remove-background": { name: "Background Remover", desc: "Remove an image background and export a clean cutout.", kind: "checker", hue: 260 },
+    "jpg-to-png": { name: "JPG to PNG", desc: "Convert JPG or JPEG images into PNG files for cleaner exports.", kind: "image-doc", hue: 42 },
+    "convert-video": { name: "Video Converter", desc: "Convert videos to MP4, AVI, MOV and other useful formats.", kind: "sync", hue: 216 },
+    "compress-pdf": { name: "Compress PDF", desc: "Shrink a PDF for email, upload limits or faster sharing.", glyph: "PDF", kind: "download", hue: 350 },
+    "jpg-to-pdf": { name: "Image to PDF", desc: "Turn JPG or PNG images into a single downloadable PDF.", kind: "image-doc", hue: 42 },
+    "crop-image": { name: "Crop Image", desc: "Crop photos to an exact size, ratio or clean visual frame.", kind: "crop", hue: 204 },
+    "remove-pdf-password": { name: "PDF Unlock", desc: "Unlock a permitted PDF by removing password restrictions.", kind: "lock", hue: 145 },
+    "audio-converter": { name: "Audio Converter", desc: "Convert audio files between MP3, WAV, AAC and more.", kind: "speaker", hue: 216 }
+  };
+  const fallback = toolIcon(t) || {};
+  return map[t.id] || {
+    name: t.name,
+    desc: dirDirectoryDesc(t),
+    kind: "tool",
+    hue: fallback.hue || 250,
+    path: GLYPH[fallback.g] || GLYPH.page
+  };
+}
+
+function dirLogoIcon(t) {
+  const d = dirToolDisplay(t);
+  const hue = d.hue || 250;
+  const label = d.glyph ? `<b>${esc(d.glyph)}</b>` : "";
+  const shapes = {
+    doc: '<path d="M8 5h7l3 3v11H8z"/><path d="M15 5v4h4"/>',
+    pdf: '<path d="M7 5h10v14H7z"/><path d="M9 10h6M9 14h4"/>',
+    image: '<rect x="5" y="6" width="14" height="12" rx="3"/><circle cx="10" cy="10" r="1.3"/><path d="m6 17 4-4 3 2.6 2.4-2.4L19 17"/>',
+    play: '<path d="m9 7 8 5-8 5z"/>',
+    checker: '<path d="M6 6h12v12H6z"/><path d="M6 6h4v4H6zM14 6h4v4h-4zM10 10h4v4h-4zM6 14h4v4H6zM14 14h4v4h-4z"/>',
+    "image-doc": '<path d="M8 5h8l3 3v11H8z"/><path d="M16 5v4h3"/><path d="m9.5 16 2.2-2.3 1.5 1.5 1.8-2.1 2.4 2.9"/>',
+    sync: '<path d="M7 10a5 5 0 0 1 8.5-3.5L17 8"/><path d="M17 6v2h-2"/><path d="M17 14a5 5 0 0 1-8.5 3.5L7 16"/><path d="M7 18v-2h2"/>',
+    download: '<path d="M12 5v9"/><path d="m8 10 4 4 4-4"/><path d="M7 18h10"/>',
+    crop: '<path d="M7 3v14h14"/><path d="M3 7h14v14"/><path d="M7 7h10v10"/>',
+    lock: '<rect x="6" y="10" width="12" height="9" rx="2"/><path d="M9 10V8a3 3 0 0 1 6 0v2"/>',
+    speaker: '<path d="M5 10h3l4-3v10l-4-3H5z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18 6a8 8 0 0 1 0 12"/>',
+    tool: d.path || (toolIcon(t) && GLYPH[toolIcon(t).g]) || GLYPH.page || '<path d="M7 5h10v14H7z"/>'
+  };
+  return `<span class="dir-logo dir-logo-${esc(d.kind)}" style="--logo-h:${hue};--logo-bg:${hueFill(hue)}">${label}<svg viewBox="0 0 24 24" aria-hidden="true">${shapes[d.kind] || shapes.generic}</svg></span>`;
+}
+
+function categoryTile(c, count, active, cats) {
+  const slug = c.slug || "all";
+  const groupCats = cats || (slug === "all" ? "" : slug);
+  return `<a class="dir-cat-link${active ? " is-active" : ""}" href="${slug === "all" ? "../tools/" : `../tools/?cat=${esc(slug)}`}" data-dir-cat="${esc(slug)}" data-dir-cats="${esc(groupCats)}">
+    <span class="dir-cat-ic">${icon(c.icon || "file")}</span>
+    <span>${esc(c.name)}</span>
+    <b>${count}</b>
+  </a>`;
+}
+
+function directoryToolCard(t, up, idx) {
+  const c = CATBY[t.cat] || {};
+  const d = dirToolDisplay(t);
+  const soon = t.status !== "live";
+  const pop = !soon && POPULAR.has(t.id);
+  const isNew = !soon && NEW.has(t.id);
+  const popRank = pop ? Array.from(POPULAR).indexOf(t.id) : 9999;
+  const dirRank = DIR_FEATURED_ORDER.indexOf(t.id);
+  const catOrder = VK.CATEGORIES.findIndex((cat) => cat.slug === t.cat);
+  const badges = (pop ? '<span class="pill pill-pop">Popular</span>' : "")
+    + (isNew ? '<span class="pill pill-new">New</span>' : "")
+    + (soon ? '<span class="pill pill-soon">Soon</span>' : "");
+  return `<a class="dir-card tool-card${soon ? " is-soon" : ""}${pop ? " is-popular" : ""}${isNew ? " is-new" : ""}"
+    data-tool-card data-id="${esc(t.id)}" data-cat="${esc(t.cat)}" data-status="${esc(t.status)}"
+    data-name="${esc(d.name)}" data-rank="${idx}" data-catorder="${catOrder > -1 ? catOrder : 999}" data-dirrank="${dirRank > -1 ? dirRank : 9999}" data-poprank="${popRank}" data-popular="${pop ? "1" : "0"}" data-new="${isNew ? "1" : "0"}"
+    data-search="${dirSearchText(t, c)}" href="${up}tools/${t.cat}/${t.id}/">
+    <span class="dir-card-icon">${dirLogoIcon(t)}</span>
+    <span class="dir-card-copy">
+      <span class="dir-card-head"><h3>${esc(d.name)}${soon ? ' <span class="soon">soon</span>' : ""}</h3>${badges ? `<span class="tc-tags">${badges}</span>` : ""}</span>
+      <p>${esc(d.desc)}</p>
+      <span class="dir-card-meta"><span>${esc(c.name || t.cat)}</span>${t.processing === "network" ? "<span>Network-backed</span>" : "<span>Browser-first</span>"}</span>
+    </span>
+    <span class="dir-card-arrow" aria-hidden="true">${icon("arrow-right")}</span>
+  </a>`;
+}
+
+function dirHeroVisual() {
+  const picks = ["trim-video", "compress-image", "word-to-pdf", "jpg-to-png"]
+    .map((id) => VK.find(id)).filter(Boolean);
+  return `<aside class="dir-hero-card" aria-label="Vootkit toolkit preview">
+    <div class="dir-hero-copy">
+      <h2>Everything you need<br>in one toolkit</h2>
+      <p>Powerful, fast and easy-to-use tools for creators, students and professionals.</p>
+    </div>
+    <div class="dir-toolbox" aria-hidden="true">
+      <span class="dir-toolbox-lid"></span>
+      <span class="dir-toolbox-body"></span>
+      ${picks.map((t, i) => `<span class="dir-float dir-float-${i + 1}">${dirLogoIcon(t)}</span>`).join("")}
+      <span class="dir-type-tile">T</span>
+    </div>
+  </aside>`;
+}
+
+function dirTrustStrip() {
+  const items = [
+    ["coins", "100% Free", ""],
+    ["lock", "No Sign Up", ""],
+    ["grid", "Unlimited Use", ""],
+    ["shield", "Secure", ""]
+  ];
+  return `<div class="dir-trust" aria-label="Vootkit benefits">${items.map((it) => `<div class="dir-trust-item">
+    <span>${icon(it[0])}</span><strong>${esc(it[1])}</strong>${it[2] ? `<small>${esc(it[2])}</small>` : ""}
+  </div>`).join("")}</div>`;
+}
+
+function dirLowerContent() {
+  return `<section class="dir-guide" aria-labelledby="tools-guide-title">
+    <div>
+      <p class="eyebrow">Tool discovery</p>
+      <h2 id="tools-guide-title">Find the right tool without digging through menus.</h2>
+      <p>Search by the job you want done, filter by category, then open the matching tool directly. The directory is generated from the same catalog that builds the tool pages, so new tools and category counts update here automatically.</p>
+    </div>
+    <div class="dir-guide-grid">
+      <article><h3>Search by intent</h3><p>Queries like "make pdf smaller", "join pdf" and "format json" map to the right tools even when the words do not match the title exactly.</p></article>
+      <article><h3>Browse by category</h3><p>Use the sidebar on desktop or swipeable category chips on mobile to move through PDF, images, video, finance, developer and more.</p></article>
+      <article><h3>Know what is ready</h3><p>Live tools open as normal. Planned tools are marked as coming soon instead of being presented as finished features.</p></article>
+    </div>
+  </section>
+  <section class="dir-faq faq" aria-labelledby="tools-faq-title">
+    <h2 id="tools-faq-title" class="h-sm">All Tools questions</h2>
+    <details><summary>Are all Vootkit tools free?</summary><p>Vootkit has a free plan for everyday use. The directory avoids claiming unlimited free use because limits and Pro features belong to the product rules in the repository.</p></details>
+    <details><summary>Do my files upload to Vootkit?</summary><p>Most file tools process in your browser on your device. Any network-backed tool is labelled on its own page so you know what changes before you use it.</p></details>
+    <details><summary>Why are some cards marked soon?</summary><p>Those tools exist in the product catalog but are not yet live. They are visible for discovery and roadmap context, but not described as usable.</p></details>
+  </section>`;
+}
+
 /* ---------- /tools/ ---------- */
-function allToolsPage() {
+function legacyAllToolsPage() {
   const url = SITE + "/tools/";
   const ld = [
     { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
@@ -911,7 +1170,7 @@ function allToolsPage() {
      * Rounded DOWN to the nearest fifty: keeps the number that helps
      * click-through, loses the churn, and stays honest — "250+" is never a
      * claim to more tools than exist. */
-    title: `All ${floorTo(VK.TOOLS.length, 50)}+ Free Online Tools — Vootkit`,
+    title: `All ${floorTo(VK.counts.live, TOOL_ROUND_TO)}+ Free Online Tools — Vootkit`,
     ogTitle: "All Vootkit tools",
     desc: `Browse all ${VK.TOOLS.length} Vootkit tools across ${VK.CATEGORIES.length} categories. Most run entirely in your browser — no upload, no watermark, 5 free uses a day.` }) +
 `<div class="wrap section">
@@ -945,6 +1204,102 @@ function allToolsPage() {
   },90);});
 })();
 </script>` + foot(1);
+}
+
+function allToolsPage() {
+  const url = SITE + "/tools/";
+  const allTools = VK.TOOLS.slice();
+  const liveCount = VK.counts.live;
+  const cats = VK.CATEGORIES.map((c) => {
+    const count = VK.byCategory(c.slug).length;
+    return Object.assign({}, c, { count });
+  }).filter((c) => c.count);
+  const groupCount = (group) => group.slug === "all"
+    ? allTools.length
+    : allTools.filter((t) => group.cats.indexOf(t.cat) > -1).length;
+  const groups = DIR_GROUPS.map((group) => Object.assign({}, group, { count: groupCount(group) }))
+    .filter((group) => group.slug === "all" || group.count);
+  const ld = [
+    { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE + "/" },
+      { "@type": "ListItem", position: 2, name: "Tools", item: url }
+    ]},
+    { "@context": "https://schema.org", "@type": "CollectionPage", name: "All Vootkit tools", url,
+      description: "Every Vootkit tool, searchable by task and category.",
+      mainEntity: { "@type": "ItemList", numberOfItems: allTools.length,
+        itemListElement: allTools.map((t, i) => ({ "@type": "ListItem", position: i + 1, name: t.name, url: `${SITE}/tools/${t.cat}/${t.id}/` })) } }
+  ];
+  const sidebar = groups.map((group) => categoryTile(group, group.count, group.slug === "all", group.cats.join(","))).join("");
+  const chips = groups.map((group) => `<a class="chip${group.slug === "all" ? " is-active" : ""}" href="${group.slug === "all" ? "../tools/" : `../tools/?cat=${esc(group.slug)}`}" data-dir-cat="${esc(group.slug)}" data-dir-cats="${esc(group.cats.join(","))}">${esc(group.name)} <span>${group.count}</span></a>`).join("");
+  const cards = allTools.map((t, i) => directoryToolCard(t, "../", i)).join("");
+  const planned = allTools.length - liveCount;
+
+  return head({ depth: 1, url, ads: true, ld, active: "tools", bodyClass: "tools-page",
+    title: `All ${floorTo(VK.counts.live, TOOL_ROUND_TO)}+ Free Online Tools - Vootkit`,
+    ogTitle: "All Vootkit tools",
+    desc: `Browse ${allTools.length} Vootkit tools across ${VK.CATEGORIES.length} categories. Search by task, filter by category and launch the right online tool in seconds.` }) +
+`<div class="tools-dir" data-tools-dir data-total="${allTools.length}" data-live="${liveCount}">
+  <section class="dir-hero wrap section">
+    <div class="dir-hero-main">
+      <nav class="crumb" aria-label="Breadcrumb"><a href="../">Home</a> <span aria-hidden="true">&gt;</span> <span aria-current="page">Tools</span></nav>
+      <h1 class="page-h1">All Tools</h1>
+      <p class="page-lede">Explore ${floorTo(VK.counts.live, TOOL_ROUND_TO)}+ free online tools to edit, convert, create and optimize files, media, code and more. <strong>100% free.</strong> No sign up required.</p>
+      <p class="dir-live-note">${liveCount} live tools now${planned ? `, with ${planned} planned tools marked clearly as coming soon` : ""}.</p>
+    </div>
+    ${dirHeroVisual()}
+  </section>
+
+  <section class="dir-search-section wrap" aria-label="Search all tools">
+    <form class="dir-search" role="search" data-dir-search autocomplete="off">
+      <label class="sr-only" for="tools-search">Search tools</label>
+      ${icon("search")}
+      <input id="tools-search" type="search" placeholder="Search tools - e.g. PDF to Word, Image Compressor..." aria-controls="tools-results tools-suggestions" aria-autocomplete="list" autocomplete="off" data-dir-q>
+      <button class="btn btn-primary" type="submit">Search</button>
+      <div class="dir-suggestions" id="tools-suggestions" role="listbox" aria-label="Tool suggestions" data-dir-suggestions hidden></div>
+    </form>
+    ${dirTrustStrip()}
+  </section>
+
+  <section class="dir-content wrap">
+    <div class="dir-mobile-cats" aria-label="Categories">${chips}</div>
+    <aside class="dir-side" aria-label="Tool categories">
+      <h2>Categories</h2>
+      <nav class="dir-cat-list">${sidebar}</nav>
+      <div class="dir-side-promo">
+        <span>${icon("sparkles")}</span>
+        <strong>Build repeat workflows</strong>
+        <p>Chain PDF, image and video tools when one step is not enough.</p>
+        <a class="btn btn-sm" href="../workflows/">Explore Workflow</a>
+      </div>
+    </aside>
+
+    <div class="dir-results" id="tools-results">
+      <div class="dir-toolbar">
+        <p data-dir-count role="status" aria-live="polite">Showing all ${allTools.length} tools</p>
+        <div class="dir-tools">
+          <label for="tools-sort">Sort by</label>
+          <select id="tools-sort" data-dir-sort>
+            <option value="category">Category</option>
+            <option value="popular">Most popular</option>
+            <option value="az">A-Z</option>
+            <option value="new">Newest</option>
+          </select>
+          <div class="dir-view" aria-label="View mode">
+            <button type="button" class="is-active" data-dir-view="boxes" aria-label="Boxes view">${icon("grid")}<span>Boxes</span></button>
+            <button type="button" data-dir-view="grid" aria-label="Grid view">${icon("list")}<span>Grid</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="dir-grid" data-dir-grid>${cards}</div>
+      <div class="dir-empty" data-dir-empty hidden>
+        <h2>No tools found</h2>
+        <p>Try a broader search, remove a category filter, or browse all tools.</p>
+        <button class="btn btn-primary" type="button" data-dir-clear>Reset filters</button>
+      </div>
+    </div>
+  </section>
+  <div class="wrap">${dirLowerContent()}</div>
+</div>` + foot(1, ["assets/js/tools-directory.js"], { workspaceScripts: false });
 }
 
 /* ---------- /tools/<category>/ ---------- */
@@ -1510,72 +1865,272 @@ function componentsPage() {
 }
 
 /* ---------- auth pages ---------- */
-function authShell(kind, title, desc, inner) {
-  const url = `${SITE}/auth/${kind}/`;
-  const ld = { "@context": "https://schema.org", "@type": "WebPage", name: title, url };
-  return head({ depth: 2, url, ads: false, ld, title: `${title} — Vootkit`, desc })
-    .replace("</head>", '<meta name="robots" content="noindex">\n</head>') +
-`<div class="wrap auth-wrap">
-  <div class="auth-card" data-auth="${kind === "sign-in" ? "signin" : kind === "sign-up" ? "signup" : kind === "reset" ? "reset" : kind === "update-password" ? "update" : "callback"}">
-    <a class="auth-brand" href="../../" aria-label="Vootkit home"><svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="17.5" fill="none" stroke="var(--accent)" stroke-opacity=".45" stroke-width="1.3" stroke-dasharray="17 7"/><path d="M12.5 14.5 21.5 30 31.5 13.5" fill="none" stroke="var(--accent)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg> vootkit</a>
-    ${inner}
-    <p class="auth-msg note" role="status" hidden></p>
-  </div>
-  <p class="auth-foot note">The tools are free and need no account. Sign in only to sync favorites and history. <a href="../../pricing.html">See plans</a></p>
-</div>` + foot(2, ["assets/js/authforms.js"]);
+function authTopAction(kind) {
+  if (kind === "sign-up") return '<span>Already have an account?</span> <a href="../sign-in/">Sign In</a>';
+  if (kind === "sign-in") return '<span>Don\'t have an account?</span> <a href="../sign-up/">Create Account</a>';
+  if (kind === "reset") return '<span>Remembered it?</span> <a href="../sign-in/">Sign In</a>';
+  if (kind === "update-password") return '<span>Need a new link?</span> <a href="../reset/">Reset Password</a>';
+  return '<a href="../sign-in/">Back to Sign In</a>';
 }
-const OAUTH = `<div class="auth-oauth">
-    <button class="btn btn-block" type="button" data-oauth="google"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#4285F4" d="M22.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h6c-.3 1.4-1 2.6-2.3 3.4v2.8h3.6c2.1-1.9 3.3-4.8 3.3-8z"/><path fill="#34A853" d="M12 23c3 0 5.6-1 7.4-2.8l-3.6-2.8c-1 .7-2.3 1.1-3.8 1.1-2.9 0-5.4-2-6.3-4.6H1.9v2.9C3.7 20.5 7.5 23 12 23z"/><path fill="#FBBC05" d="M5.7 13.9c-.2-.7-.4-1.4-.4-2.1s.1-1.4.4-2.1V6.8H1.9C1.1 8.3.7 10.1.7 11.8s.4 3.5 1.2 5z"/><path fill="#EA4335" d="M12 4.7c1.6 0 3.1.6 4.2 1.7l3.1-3.1C17.6 1.5 15 .5 12 .5 7.5.5 3.7 3 1.9 6.8l3.8 2.9C6.6 6.7 9.1 4.7 12 4.7z"/></svg> Continue with Google</button>
+function authHead(kind, title, desc, ld) {
+  const url = `${SITE}/auth/${kind}/`;
+  return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="google-adsense-account" content="${PUB}">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#fbfcfe" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)">
+<title>${esc(title)} - Vootkit</title>
+<meta name="description" content="${esc(desc)}">
+<link rel="canonical" href="${url}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Vootkit">
+<meta property="og:title" content="${esc(title)} - Vootkit">
+<meta property="og:description" content="${esc(desc)}">
+<meta property="og:url" content="${url}">
+<meta property="og:image" content="${OG_DEFAULT}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Vootkit - browser tools for files, media and everyday work">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${esc(title)} - Vootkit">
+<meta name="twitter:description" content="${esc(desc)}">
+<meta name="twitter:image" content="${OG_DEFAULT}">
+<script type="application/ld+json">${JSON.stringify(ld || { "@context": "https://schema.org", "@type": "WebPage", name: title, url })}</script>
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../apple-touch-icon.png">
+<link rel="manifest" href="../../site.webmanifest">
+<link rel="stylesheet" href="../../assets/css/app.css${V}">
+${consentHead()}
+<!-- no ads on authentication pages -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=${GA4}"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA4}');</script>
+<meta name="robots" content="noindex">
+</head>
+<body class="auth-page auth-${kind}">
+<a class="skip" href="#main">Skip to content</a>
+<header class="auth-top">
+  <div class="auth-top-in">
+    <a class="brand auth-logo" href="../../" aria-label="Vootkit home">${brandLogo()}<span>vootkit</span></a>
+    <div class="auth-top-actions">
+      <button class="icon-btn auth-theme" id="theme" type="button" aria-label="Switch theme">
+        <svg viewBox="0 0 24 24"><path d="M21 13.1A8.4 8.4 0 1 1 10.9 3a6.6 6.6 0 0 0 10.1 10.1Z"/></svg>
+      </button>
+      <p class="auth-switch">${authTopAction(kind)}</p>
+    </div>
   </div>
-  <div class="auth-or"><span>or</span></div>`;
-
+</header>
+<main id="main" class="auth-main" tabindex="-1">`;
+}
+function authFootLite() {
+  return `</main>
+<script>
+(function(){var t=document.getElementById('theme'),s=null;try{s=localStorage.getItem('vk-theme');}catch(e){}
+if(s)document.documentElement.setAttribute('data-theme',s);
+if(t)t.addEventListener('click',function(){var c=document.documentElement.getAttribute('data-theme'),x=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',x);try{localStorage.setItem('vk-theme',x);}catch(e){}});})();
+</script>
+<script src="../../assets/js/track.js${V}" defer></script>
+<script src="../../assets/js/consent-ui.js${V}" defer></script>
+<script src="../../assets/js/supabase-config.js${V}" defer></script>
+<script src="../../assets/js/auth.js${V}" defer></script>
+<script src="../../assets/js/authforms.js${V}" defer></script>
+</body>
+</html>
+`;
+}
+function authGlyph(g, h) {
+  return `<span class="auth-ic" style="--ic-h:${h};--ic-bg:${hueFill(h)}" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${GLYPH[g]}</svg></span>`;
+}
+function authFloat(g, h, text, cls) {
+  return `<span class="auth-float ${cls}" style="--ic-h:${h};--ic-bg:${hueFill(h)}" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${GLYPH[g]}</svg><b>${esc(text)}</b></span>`;
+}
+function authAvatarStack() {
+  return `<span class="avatar-stack auth-avatar-stack" aria-hidden="true">
+    ${["01","02","03","04","05"].map((n) => `<picture class="avatar-stack__item"><source srcset="../../public/images/avatars/avatar-${n}.avif" type="image/avif"><img src="../../public/images/avatars/avatar-${n}.webp" width="40" height="40" alt="" loading="lazy" decoding="async"></picture>`).join("")}
+  </span>`;
+}
+function authBenefit(g, h, title, text) {
+  return `<div class="auth-benefit">${authGlyph(g, h)}<div><b>${esc(title)}</b><span>${esc(text)}</span></div></div>`;
+}
+function authAudience(slug, g, h, title, text) {
+  return `<a class="auth-audience-card" href="../../tools/${slug}/">${authGlyph(g, h)}<b>${esc(title)}</b><span>${esc(text)}</span></a>`;
+}
+function authStory(kind) {
+  const badge = kind === "sign-in" ? "Welcome back to Vootkit" : "Join people using Vootkit worldwide";
+  return `<section class="auth-story auth-story-main" aria-labelledby="auth-story-title">
+    <div class="auth-decor" aria-hidden="true">
+      ${authFloat("page", 4, "PDF", "float-pdf")}
+      ${authFloat("square", 152, "Data", "float-data")}
+      ${authFloat("image", 216, "Image", "float-image")}
+      ${authFloat("code", 268, "Code", "float-code")}
+      ${authFloat("calc", 32, "Calc", "float-calc")}
+    </div>
+    <span class="auth-badge">${authGlyph("wand", 284)}<span>${badge}</span></span>
+    <h1 id="auth-story-title">Powerful tools.<br>Limitless <span>possibilities.</span></h1>
+    <p>Create, convert, calculate, automate and get more done with Vootkit's growing collection of online tools.</p>
+    <div class="auth-benefits">
+      ${authBenefit("shield", 142, "Free tools", "Start without Premium.")}
+      ${authBenefit("lock", 4, "Private", "Most files process on-device.")}
+      ${authBenefit("timer", 340, "Fast", "No extra software needed.")}
+      ${authBenefit("wallet", 152, "No card", "Start without payment.")}
+    </div>
+  </section>
+  <section class="auth-story auth-story-support" aria-labelledby="auth-audience-title">
+    <h2 id="auth-audience-title">Built for everyone</h2>
+    <div class="auth-audience-grid">
+      ${authAudience("education", "book", 190, "Students", "Study, calculate, convert files and organize work.")}
+      ${authAudience("business", "wallet", 216, "Businesses", "Create documents, calculate costs and improve workflows.")}
+      ${authAudience("finance", "money", 152, "Finance", "Calculate, compare and make informed financial decisions.")}
+      ${authAudience("travel", "plane", 190, "Travel & Tourism", "Plan trips, calculate travel costs and organize itineraries.")}
+      ${authAudience("pdf", "page", 4, "PDF & Documents", "Convert, merge, compress and edit documents.")}
+      ${authAudience("images", "image", 216, "Images & Media", "Convert, resize, compress and improve media.")}
+      ${authAudience("developer", "code", 268, "Developers", "Format, test, encode and work with developer utilities.")}
+      ${authAudience("everyday", "timer", 340, "Productivity", "Complete everyday digital tasks faster.")}
+    </div>
+    <div class="auth-proof">
+      <div class="auth-proof-copy">
+        <span class="auth-quote" aria-hidden="true">"</span>
+        <p>Vootkit gives everyday work a cleaner place to happen, from quick file fixes to repeat workflows.</p>
+        <div>${authAvatarStack()}<span>${USER_DISPLAY} users across ${COUNTRY_DISPLAY} countries</span></div>
+      </div>
+      <div class="auth-proof-card">
+        ${authGlyph("shield", 142)}
+        <b>Free to start</b>
+        <span>Access useful tools in seconds.</span>
+      </div>
+    </div>
+  </section>`;
+}
+function googleButton() {
+  return `<div class="auth-oauth">
+    <button class="auth-google" type="button" data-oauth="google">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="#4285F4" d="M22.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h6c-.3 1.4-1 2.6-2.3 3.4v2.8h3.6c2.1-1.9 3.3-4.8 3.3-8z"/><path fill="#34A853" d="M12 23c3 0 5.6-1 7.4-2.8l-3.6-2.8c-1 .7-2.3 1.1-3.8 1.1-2.9 0-5.4-2-6.3-4.6H1.9v2.9C3.7 20.5 7.5 23 12 23z"/><path fill="#FBBC05" d="M5.7 13.9c-.2-.7-.4-1.4-.4-2.1s.1-1.4.4-2.1V6.8H1.9C1.1 8.3.7 10.1.7 11.8s.4 3.5 1.2 5z"/><path fill="#EA4335" d="M12 4.7c1.6 0 3.1.6 4.2 1.7l3.1-3.1C17.6 1.5 15 .5 12 .5 7.5.5 3.7 3 1.9 6.8l3.8 2.9C6.6 6.7 9.1 4.7 12 4.7z"/></svg>
+      <span>Continue with Google</span>
+    </button>
+  </div>`;
+}
+function authDivider(label) {
+  return `<div class="auth-or"><span>${esc(label)}</span></div>`;
+}
+function authInput(id, type, label, placeholder, autocomplete, iconName, required) {
+  return `<label class="auth-field" for="${id}"><span>${esc(label)}</span><span class="auth-input">${authGlyph(iconName, 216)}<input id="${id}" type="${type}" placeholder="${esc(placeholder)}" autocomplete="${autocomplete}"${required ? " required" : ""}></span></label>`;
+}
+function authPassword(id, label, autocomplete) {
+  const placeholder = autocomplete === "current-password" ? "Enter your password" : "Create a strong password";
+  return `<label class="auth-field" for="${id}"><span>${esc(label)}</span><span class="auth-input auth-password">${authGlyph("lock", 4)}<input id="${id}" type="password" placeholder="${esc(placeholder)}" autocomplete="${autocomplete}" required aria-describedby="password-rules"><button type="button" class="auth-eye" data-toggle-password aria-label="Show password" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button></span></label>`;
+}
+function passwordRules() {
+  return `<ul class="auth-password-rules" id="password-rules">
+    <li data-pass-rule="length">${authGlyph("shield", 142)}<span>8+ characters</span></li>
+    <li data-pass-rule="number">${authGlyph("shield", 142)}<span>One number</span></li>
+    <li data-pass-rule="letter">${authGlyph("shield", 142)}<span>One letter</span></li>
+  </ul>`;
+}
+function authWhy() {
+  return `<div class="auth-why" aria-label="Why create a Vootkit account">
+    <b>Why sign up?</b>
+    <div>
+      <span>${authGlyph("shield", 142)}<em>Save preferences</em></span>
+      <span>${authGlyph("clock", 340)}<em>Access recent activity</em></span>
+      <span>${authGlyph("globe", 190)}<em>Use across devices</em></span>
+      <span>${authGlyph("heart", 340)}<em>Free account available</em></span>
+    </div>
+  </div>`;
+}
+function authBottomTrust() {
+  return `<div class="auth-bottom-trust" aria-label="Vootkit account trust">
+    <span>${authGlyph("timer", 340)} Fast account setup</span>
+    <span>${authGlyph("shield", 142)} Most file tools run on your device</span>
+    <span>${authGlyph("globe", 190)} Works on any device</span>
+    <span>${authGlyph("lock", 4)} Your data stays protected</span>
+  </div>`;
+}
+function authPanel(kind, inner) {
+  const dataAuth = kind === "sign-in" ? "signin" : kind === "sign-up" ? "signup" : kind === "reset" ? "reset" : kind === "update-password" ? "update" : "callback";
+  return `<section class="auth-panel" aria-label="${esc(kind)} form">
+    <div class="auth-card" data-auth="${dataAuth}">
+      ${inner}
+      <p class="auth-msg note" role="status" aria-live="polite" hidden></p>
+    </div>
+  </section>`;
+}
+function authShell(kind, title, desc, card) {
+  const ld = { "@context": "https://schema.org", "@type": "WebPage", name: title, url: `${SITE}/auth/${kind}/` };
+  return authHead(kind, title, desc, ld) +
+`<div class="auth-shell">
+  ${authStory(kind)}
+  ${authPanel(kind, card)}
+</div>
+${authBottomTrust()}` + authFootLite();
+}
 function pageSignIn() {
   return authShell("sign-in", "Sign in", "Sign in to your Vootkit account to sync favorites and history.", `
-    <h1>Welcome back</h1>
-    ${OAUTH}
-    <form novalidate>
-      <label class="wfield"><span class="wlab">Email</span><input class="field" id="email" type="email" autocomplete="email" required></label>
-      <label class="wfield"><span class="wlab">Password</span><input class="field" id="password" type="password" autocomplete="current-password" required></label>
+    <header class="auth-card-head"><h1>Welcome back</h1><p>Sign in to continue using Vootkit.</p></header>
+    ${googleButton()}
+    ${authDivider("or sign in with email")}
+    <form class="auth-form" novalidate>
+      ${authInput("email", "email", "Email Address", "Enter your email address", "email", "mail", true)}
+      ${authPassword("password", "Password", "current-password")}
       <div class="auth-row"><a href="../reset/">Forgot password?</a></div>
-      <button class="btn btn-primary btn-block" type="submit">Sign in</button>
+      <button class="auth-submit" type="submit">Sign In</button>
     </form>
-    <p class="auth-alt">New to Vootkit? <a href="../sign-up/">Create an account</a></p>`);
+    <p class="auth-alt">New to Vootkit? <a href="../sign-up/">Create an account</a></p>
+    ${authWhy()}`);
 }
 function pageSignUp() {
   return authShell("sign-up", "Create account", "Create a free Vootkit account to sync favorites and history across devices.", `
-    <h1>Create your account</h1>
-    ${OAUTH}
-    <form novalidate>
-      <label class="wfield"><span class="wlab">Name</span><input class="field" id="name" type="text" autocomplete="name"></label>
-      <label class="wfield"><span class="wlab">Email</span><input class="field" id="email" type="email" autocomplete="email" required></label>
-      <label class="wfield"><span class="wlab">Password</span><input class="field" id="password" type="password" autocomplete="new-password" required></label>
-      <button class="btn btn-primary btn-block" type="submit">Create account</button>
+    <header class="auth-card-head"><h1>Create your Vootkit account</h1><p>Start using Vootkit's ${floorTo(VK.counts.live, TOOL_ROUND_TO)}+ online tools in seconds.</p></header>
+    ${googleButton()}
+    ${authDivider("or sign up with email")}
+    <form class="auth-form" novalidate>
+      ${authInput("name", "text", "Full Name", "Enter your full name", "name", "user", false)}
+      ${authInput("email", "email", "Email Address", "Enter your email address", "email", "mail", true)}
+      ${authPassword("password", "Password", "new-password")}
+      ${passwordRules()}
+      <button class="auth-submit" type="submit">Create Account</button>
     </form>
-    <p class="auth-alt">Already have an account? <a href="../sign-in/">Sign in</a></p>`);
+    <p class="auth-terms">By creating an account, you agree to our <a href="../../terms.html">Terms of Service</a> and <a href="../../privacy.html">Privacy Policy</a>.</p>
+    <div class="auth-success" data-success="verify" hidden>
+      ${authGlyph("mail", 268)}
+      <h2>Verify your email</h2>
+      <p>We sent a confirmation link. Open it to finish creating your Vootkit account.</p>
+      <a class="btn btn-primary" href="../sign-in/">Back to Sign In</a>
+    </div>
+    <p class="auth-alt">Already have an account? <a href="../sign-in/">Sign in</a></p>
+    ${authWhy()}`);
 }
 function pageReset() {
   return authShell("reset", "Reset password", "Reset your Vootkit account password.", `
-    <h1>Reset your password</h1>
-    <p class="note">Enter your email and we'll send a reset link.</p>
-    <form novalidate>
-      <label class="wfield"><span class="wlab">Email</span><input class="field" id="email" type="email" autocomplete="email" required></label>
-      <button class="btn btn-primary btn-block" type="submit">Send reset link</button>
+    <header class="auth-card-head"><h1>Reset your password</h1><p>Enter your email and we'll send you a password reset link.</p></header>
+    <form class="auth-form" novalidate>
+      ${authInput("email", "email", "Email Address", "Enter your email address", "email", "mail", true)}
+      <button class="auth-submit" type="submit">Send Reset Link</button>
     </form>
-    <p class="auth-alt"><a href="../sign-in/">Back to sign in</a></p>`);
+    <div class="auth-success" data-success="reset" hidden>
+      ${authGlyph("mail", 268)}
+      <h2>Check your inbox</h2>
+      <p>If an account exists for that email, we sent password reset instructions.</p>
+      <a class="btn btn-primary" href="../sign-in/">Back to Sign In</a>
+    </div>
+    <p class="auth-alt"><a href="../sign-in/">Back to Sign In</a></p>`);
 }
 function pageUpdatePassword() {
   return authShell("update-password", "Set new password", "Set a new password for your Vootkit account.", `
-    <h1>Set a new password</h1>
-    <form novalidate>
-      <label class="wfield"><span class="wlab">New password</span><input class="field" id="password" type="password" autocomplete="new-password" required></label>
-      <button class="btn btn-primary btn-block" type="submit">Save new password</button>
+    <header class="auth-card-head"><h1>Set a new password</h1><p>Choose a new password for your Vootkit account.</p></header>
+    <form class="auth-form" novalidate>
+      ${authPassword("password", "New Password", "new-password")}
+      ${passwordRules()}
+      <button class="auth-submit" type="submit">Save New Password</button>
     </form>`);
 }
 function pageCallback() {
   return authShell("callback", "Signing you in", "Completing sign-in.", `
-    <h1>Signing you in…</h1>
-    <p class="note">One moment while we confirm your account.</p>
-    <div class="vk-skeleton" style="height:48px;margin-top:var(--s-4)"></div>`);
+    <header class="auth-card-head"><h1>Signing you in...</h1><p>One moment while we confirm your account.</p></header>
+    <div class="auth-loading" aria-hidden="true"><span></span><span></span><span></span></div>
+    <p class="auth-alt"><a href="../sign-in/">Back to Sign In</a></p>`);
 }
 
 /* ---------- account / dashboard ---------- */
@@ -1656,7 +2211,7 @@ function proHero() {
   <div class="wrap pro-hero-grid">
     <div class="pro-hero-copy">
       <h1>Unlock the full Vootkit toolkit</h1>
-      <p class="pro-lede">Every one of the ${floorTo(VK.counts.live, 50)}+ tools, without the daily cap and without ads.
+      <p class="pro-lede">Every one of the ${floorTo(VK.counts.live, TOOL_ROUND_TO)}+ tools, without the daily cap and without ads.
       The same browser-based processing, running as fast as your machine will go.</p>
       <a class="btn btn-primary pro-cta" href="#plans" data-vk-track="upgrade_click">Upgrade to Vootkit Pro</a>
       <p class="pro-note">Cancel any time. The free plan keeps working either way.</p>
@@ -1791,9 +2346,45 @@ proHero() +
 </div>` + foot(0, ["assets/js/pricing.js"]);
 }
 
+function templatesPage() {
+  const url = SITE + "/templates/";
+  const ids = [
+    "invoice-generator", "resume-builder", "proposal-generator",
+    "business-card-maker", "swot-generator", "packing-list"
+  ];
+  const cards = ids.map((id) => VK.find(id)).filter(Boolean).map((t) => {
+    const c = VK.category(t.cat) || { name: t.cat };
+    return `<a class="card tool-card" data-cat="${t.cat}" href="../tools/${t.cat}/${t.id}/">
+      <span class="tc-top">${toolIconHtml(t)}<span class="tc-tags"><span class="pill pill-new">Template</span></span></span>
+      <h3>${esc(t.name)}</h3>
+      <p>${esc(t.desc)}</p>
+      <span class="card-foot"><span class="tc-cat">${esc(c.name)}</span></span>
+    </a>`;
+  }).join("");
+  const ld = [
+    { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Vootkit", item: SITE + "/" },
+      { "@type": "ListItem", position: 2, name: "Templates", item: url }
+    ]},
+    { "@context": "https://schema.org", "@type": "CollectionPage", name: "Vootkit templates", url,
+      description: "Ready-to-use template tools for invoices, resumes, proposals, business cards, packing lists and planning." }
+  ];
+  return head({ depth: 1, url, ads: true, ld,
+    title: "Templates - Vootkit",
+    ogTitle: "Vootkit Templates",
+    desc: "Start from practical Vootkit templates for invoices, resumes, proposals, business cards, packing lists and planning." }) +
+`<div class="wrap section">
+  <nav class="crumb" aria-label="Breadcrumb"><a href="../">Vootkit</a> <span aria-hidden="true">/</span> <span aria-current="page">Templates</span></nav>
+  <h1 class="page-h1">Templates</h1>
+  <p class="page-lede">Reusable starting points powered by real Vootkit tools. Pick one, fill it in, and download the result in your browser.</p>
+  <div class="grid">${cards}</div>
+</div>` + foot(1);
+}
+
 const LAST_UPDATED = "22 July 2026";
 
 write("pricing.html", pricingPage());
+write("templates/index.html", templatesPage());
 write("auth/sign-in/index.html", pageSignIn());
 write("auth/sign-up/index.html", pageSignUp());
 write("auth/reset/index.html", pageReset());
@@ -2220,7 +2811,7 @@ function workflowPage() {
     ${C.faqHtml}
 
     <p class="note">Looking for a single tool instead?
-      <a href="../tools/">Browse all ${floorTo(VK.counts.live, 50)}+</a>, or start with
+      <a href="../tools/">Browse all ${floorTo(VK.counts.live, TOOL_ROUND_TO)}+</a>, or start with
       <a href="../tools/pdf/">PDF</a>,
       <a href="../tools/images/">images</a> or
       <a href="../tools/video/">video</a>.</p>
@@ -2310,7 +2901,7 @@ console.log(`generated ${pages} pages (${localizedPages} localised)`);
  * so Google can still reach and cluster them through the alternates on every
  * English page. This only changes what we actively ask it to prioritise.
  * Revisit once English pages hold real positions. */
-const enUrls = ["/", "/tools/", "/workflows/", "/pricing.html", "/about.html", "/contact.html", "/privacy.html", "/terms.html", "/cookies.html", "/disclaimer.html"]
+const enUrls = ["/", "/tools/", "/workflows/", "/templates/", "/pricing.html", "/about.html", "/contact.html", "/privacy.html", "/terms.html", "/cookies.html", "/disclaimer.html"]
   .concat(POSTS.length ? ["/blog/"] : [])                       // only list blog when it has posts
   .concat(POSTS.map((p) => `/blog/${p.slug}/`))
   .concat(VK.CATEGORIES.map((c) => `/tools/${c.slug}/`))
@@ -2729,6 +3320,7 @@ const cssBundle = CSS_PARTS
 
 fs.writeFileSync(path.join(ROOT, "assets", "css", "app.css"), cssBundle);
 console.log(`app.css: ${CSS_PARTS.length} files -> ${(cssBundle.length / 1024).toFixed(1)} KB`);
+refreshHomepageAssetVersions();
 
 fs.writeFileSync(path.join(ROOT, "_headers"), hlines.join("\n") + "\n");
 console.log(`_headers: ${fxIds.length} isolated tool paths`);

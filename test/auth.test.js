@@ -15,6 +15,12 @@ eq(A.upPrefix("/account/"), "../", "account depth -> ../");
 ok(A.validateEmail("a@b.co") && !A.validateEmail("nope") && !A.validateEmail("a@b"), "email validation");
 ok(A.passwordProblem("short") && A.passwordProblem("allletters") && !A.passwordProblem("gooddpass1"), "password rules");
 eq(A.passwordProblem("abcd1234"), null, "8+ with letter+number passes");
+eq(A.safeReturnUrl("/tools/pdf/merge-pdf/?x=1"), "/tools/pdf/merge-pdf/?x=1", "internal return URL passes");
+eq(A.safeReturnUrl("https://evil.test/phish"), null, "external return URL blocked");
+eq(A.safeReturnUrl("//evil.test/phish"), null, "protocol-relative return URL blocked");
+eq(A.safeReturnUrl("/auth/callback/"), null, "callback return URL blocked");
+eq(A.authMessage({ message: "Invalid login credentials" }).text, "Email or password is incorrect.", "raw signin error translated");
+eq(A.authMessage({ message: "User already registered" }).signin, true, "existing account error suggests sign-in");
 
 /* DOM: header state via a mock supabase client (no network) */
 async function domTests() {

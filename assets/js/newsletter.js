@@ -158,6 +158,9 @@
     var wrap = doc.createElement('form');
     wrap.className = 'nl' + (compact ? ' nl-compact' : '');
     wrap.setAttribute('novalidate', 'novalidate');
+    var host = doc.querySelector('[data-newsletter="' + source + '"]');
+    var placeholder = host && host.getAttribute('data-nl-placeholder') || 'you@example.com';
+    var buttonText = host && host.getAttribute('data-nl-button') || 'Subscribe';
     wrap.innerHTML =
       (compact ? '' : '<h3 class="nl-title">New tools, now and then</h3>') +
       '<p class="nl-lede">A short email when we ship something worth knowing about. ' +
@@ -165,8 +168,8 @@
       '<div class="nl-row">' +
         '<label class="nl-lab" for="nl-e-' + source + '">Email address</label>' +
         '<input class="field nl-input" type="email" id="nl-e-' + source + '" name="email" ' +
-               'autocomplete="email" placeholder="you@example.com" required>' +
-        '<button class="btn btn-primary nl-btn" type="submit">Subscribe</button>' +
+               'autocomplete="email" placeholder="' + placeholder.replace(/"/g, '&quot;') + '" required>' +
+        '<button class="btn btn-primary nl-btn" type="submit">' + buttonText.replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }) + '</button>' +
       '</div>' +
       '<label class="nl-consent">' +
         '<input type="checkbox" class="nl-check" required> ' +

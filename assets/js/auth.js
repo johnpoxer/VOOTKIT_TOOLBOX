@@ -30,6 +30,47 @@
     if (!/[a-z]/i.test(pw) || !/[0-9]/.test(pw)) return 'Mix in at least one letter and one number.';
     return null;
   }
+  function safeReturnUrl(raw) {
+    if (!raw) return null;
+    try {
+      var base = loc().origin || 'https://www.vootkit.com';
+      var u = new URL(String(raw), base);
+      if (u.origin !== base) return null;
+      if (!u.pathname || /^\/\//.test(u.pathname) || /\\/.test(u.pathname)) return null;
+      if (/^\/auth\/callback\/?$/i.test(u.pathname)) return null;
+      return u.pathname + u.search + u.hash;
+    } catch (e) { return null; }
+  }
+  function authRedirect(path, returnTo) {
+    var target = safeReturnUrl(returnTo);
+    return (loc().origin || 'https://www.vootkit.com') + path + (target ? '?next=' + encodeURIComponent(target) : '');
+  }
+  function authMessage(error) {
+    if (!error) return { ok: true, text: '' };
+    var m = String(error.message || error.error_description || error.error || '').toLowerCase();
+    if (/already registered|already exists|user already|duplicate/.test(m)) {
+      return { ok: false, text: 'That email already has an account. Sign in instead.', signin: true };
+    }
+    if (/invalid login|invalid credentials|email not confirmed/.test(m)) {
+      return { ok: false, text: 'Email or password is incorrect.' };
+    }
+    if (/popup|cancel|closed|denied|access_denied/.test(m)) {
+      return { ok: false, text: 'Google sign-in was cancelled. You can try again or use email.' };
+    }
+    if (/password/.test(m) && /short|least|weak|length/.test(m)) {
+      return { ok: false, text: 'Use at least 8 characters with a letter and a number.' };
+    }
+    if (/rate|too many|limit/.test(m)) {
+      return { ok: false, text: 'Too many attempts. Please wait a moment and try again.' };
+    }
+    if (/network|failed to fetch|connection|timeout/.test(m)) {
+      return { ok: false, text: "We couldn't connect. Check your connection and try again." };
+    }
+    if (/email|address/.test(m) && /invalid/.test(m)) {
+      return { ok: false, text: 'Enter a valid email address.' };
+    }
+    return { ok: false, text: 'That did not work. Please try again in a moment.' };
+  }
 
   function loc() { return root.location || { pathname: '/', href: '', origin: '' }; }
   function up() { return doc ? upPrefix(loc().pathname) : ''; }
@@ -59,9 +100,9 @@
   }
 
   /* ---- auth actions ---- */
-  async function signUp(email, password, displayName) {
+  async function signUp(email, password, displayName, returnTo) {
     var c = await client();
-    var r = await c.auth.signUp({ email: email, password: password, options: { data: { display_name: displayName || '' }, emailRedirectTo: root.location.origin + '/auth/callback/' } });
+    var r = await c.auth.signUp({ email: email, password: password, options: { data: { display_name: displayName || '' }, emailRedirectTo: authRedirect('/auth/callback/', returnTo) } });
     /* Only on success, and carrying NO identity — not the email, not the name,
        not the user id. The event says "an account was created"; who created it
        is Supabase's business and nobody else's. */
@@ -69,8 +110,8 @@
     return r;
   }
   async function signIn(email, password) { var c = await client(); return c.auth.signInWithPassword({ email: email, password: password }); }
-  async function signInOAuth(provider) { var c = await client(); return c.auth.signInWithOAuth({ provider: provider, options: { redirectTo: root.location.origin + '/auth/callback/' } }); }
-  async function sendReset(email) { var c = await client(); return c.auth.resetPasswordForEmail(email, { redirectTo: root.location.origin + '/auth/update-password/' }); }
+  async function signInOAuth(provider, returnTo) { var c = await client(); return c.auth.signInWithOAuth({ provider: provider, options: { redirectTo: authRedirect('/auth/callback/', returnTo) } }); }
+  async function sendReset(email, returnTo) { var c = await client(); return c.auth.resetPasswordForEmail(email, { redirectTo: authRedirect('/auth/update-password/', returnTo) }); }
   async function updatePassword(newPassword) { var c = await client(); return c.auth.updateUser({ password: newPassword }); }
   async function signOut() { var c = await client(); await c.auth.signOut(); loc().href = up() || './'; }
   async function getUser() { if (!ENABLED) return null; var c = await client(); var r = await c.auth.getUser(); return r && r.data ? r.data.user : null; }
@@ -145,6 +186,7 @@
 
   var VKAuth = {
     enabled: ENABLED, upPrefix: upPrefix, validateEmail: validateEmail, passwordProblem: passwordProblem,
+    safeReturnUrl: safeReturnUrl, authMessage: authMessage,
     favInit: favInit,
     client: client, signUp: signUp, signIn: signIn, signInOAuth: signInOAuth, sendReset: sendReset,
     updatePassword: updatePassword, signOut: signOut, getUser: getUser, onChange: onChange,
