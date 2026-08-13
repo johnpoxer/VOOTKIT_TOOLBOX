@@ -937,7 +937,7 @@
     function redo() { if (!future.length) return; past.push(snap()); restore(future.pop()); }
     var NODE_W = 176, NODE_H = 132, STEP_GAP = 205;
 
-    var IN_X = 54, IN_Y = 188;
+    var IN_X = 54, IN_Y = 188, MOBILE_X = 32;
 
     /* --- shell ------------------------------------------------------------ */
     var edges = doc.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -1018,7 +1018,7 @@
 
     /* --- helpers ---------------------------------------------------------- */
     function startKind() { return files.length ? kindOfFile(files[0].name, files[0].type) : draftKind; }
-    function byUid(u) { return u === 'in' ? { uid: 'in', x: IN_X, y: IN_Y } : nodes.filter(function (n) { return n.uid === u; })[0]; }
+    function byUid(u) { return u === 'in' ? { uid: 'in', x: mobileNodeX(), y: IN_Y } : nodes.filter(function (n) { return n.uid === u; })[0]; }
     function parentOf(u) { var l = links.filter(function (x) { return x.to === u; })[0]; return l ? l.from : null; }
     function linkedFrom(u) { return links.filter(function (x) { return x.from === u; })[0]; }
     function toolInfo(id) {
@@ -1241,10 +1241,16 @@
     function isNarrow() {
       return !!(root.matchMedia && root.matchMedia('(max-width: 700px)').matches);
     }
+    function mobileNodeX() { return isNarrow() ? MOBILE_X : IN_X; }
+    function clampNodeX(x) {
+      if (!isNarrow()) return x;
+      var max = Math.max(MOBILE_X, (canvas.clientWidth || 390) - NODE_W - MOBILE_X);
+      return Math.max(MOBILE_X, Math.min(max, x));
+    }
 
     function templatePos(i) {
       return isNarrow()
-        ? { x: 54, y: IN_Y + 168 + i * 156 }
+        ? { x: MOBILE_X, y: IN_Y + 168 + i * 156 }
         : { x: 260 + i * STEP_GAP, y: IN_Y };
     }
 
@@ -1255,12 +1261,18 @@
       var selected = sel && byUid(sel);
       var auto = selected && clickAdd
         ? (isNarrow()
-          ? { x: Math.max(54, selected.x), y: selected.y + 156 }
+          ? { x: clampNodeX(Math.max(MOBILE_X, selected.x)), y: selected.y + 156 }
           : { x: selected.x + STEP_GAP, y: selected.y })
         : (isNarrow()
-          ? { x: 220, y: IN_Y + nodes.length * 128 }
+          ? { x: MOBILE_X, y: IN_Y + 168 + nodes.length * 156 }
           : { x: 330 + nodes.length * 40, y: IN_Y + nodes.length * 18 });
-      var n = { uid: uid, id: id, opts: {}, x: x == null ? auto.x : x, y: y == null ? auto.y : y };
+      var n = {
+        uid: uid,
+        id: id,
+        opts: {},
+        x: clampNodeX(x == null ? auto.x : x),
+        y: Math.max(24, y == null ? auto.y : y)
+      };
       nodes.push(n);
       if (!files.length) {
         var flow = D.flow[id] || {};
@@ -1311,7 +1323,7 @@
 
     /* --- drawing ---------------------------------------------------------- */
     function outputNodePos() {
-      if (isNarrow()) return { x: IN_X, y: IN_Y + (nodes.length + 1) * 156 };
+      if (isNarrow()) return { x: MOBILE_X, y: IN_Y + (nodes.length + 1) * 156 };
       var last = nodes.length ? nodes[nodes.length - 1] : { x: IN_X, y: IN_Y };
       return { x: last.x + STEP_GAP, y: last.y };
     }
@@ -1325,20 +1337,25 @@
       var all = visualLinks.map(function (l) { return { a: portPos(l.from, 'out'), b: portPos(l.to, 'in'), l: l }; });
       var parts = all.map(function (e, i) {
         var mx = (e.a.x + e.b.x) / 2;
-        return '<path class="wfc-edge' + (e.l.visual ? ' is-output' : '') + '" data-i="' + i + '" d="M' + e.a.x + ',' + e.a.y +
-          ' C' + mx + ',' + e.a.y + ' ' + mx + ',' + e.b.y + ' ' + e.b.x + ',' + e.b.y +
+        var d = isNarrow()
+          ? 'M' + e.a.x + ',' + e.a.y + ' C' + (e.a.x + 36) + ',' + e.a.y + ' ' + (e.a.x + 36) + ',' + e.b.y + ' ' + e.b.x + ',' + e.b.y
+          : 'M' + e.a.x + ',' + e.a.y + ' C' + mx + ',' + e.a.y + ' ' + mx + ',' + e.b.y + ' ' + e.b.x + ',' + e.b.y;
+        return '<path class="wfc-edge' + (e.l.visual ? ' is-output' : '') + '" data-i="' + i + '" d="' + d +
           '" fill="none" stroke="currentColor" stroke-width="2"/>';
       });
       if (temp) {
         var m2 = (temp.a.x + temp.b.x) / 2;
-        parts.push('<path class="wfc-edge is-temp" d="M' + temp.a.x + ',' + temp.a.y +
-          ' C' + m2 + ',' + temp.a.y + ' ' + m2 + ',' + temp.b.y + ' ' + temp.b.x + ',' + temp.b.y +
+        var tempD = isNarrow()
+          ? 'M' + temp.a.x + ',' + temp.a.y + ' C' + (temp.a.x + 36) + ',' + temp.a.y + ' ' + (temp.a.x + 36) + ',' + temp.b.y + ' ' + temp.b.x + ',' + temp.b.y
+          : 'M' + temp.a.x + ',' + temp.a.y + ' C' + m2 + ',' + temp.a.y + ' ' + m2 + ',' + temp.b.y + ' ' + temp.b.x + ',' + temp.b.y;
+        parts.push('<path class="wfc-edge is-temp" d="' + tempD +
           '" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="5 4"/>');
       }
       var out = outputNodePos();
-      var xs = [IN_X + NODE_W, out.x + NODE_W].concat(nodes.map(function (n) { return n.x + NODE_W; }));
+      var start = byUid('in');
+      var xs = [start.x + NODE_W, out.x + NODE_W].concat(nodes.map(function (n) { return n.x + NODE_W; }));
       var ys = [IN_Y, out.y].concat(nodes.map(function (n) { return n.y; }));
-      var maxX = Math.max.apply(null, xs) + 160, minY = Math.min.apply(null, ys) - 100, maxY = Math.max.apply(null, ys) + NODE_H + 140;
+      var maxX = Math.max.apply(null, xs) + (isNarrow() ? 72 : 160), minY = Math.min.apply(null, ys) - 100, maxY = Math.max.apply(null, ys) + NODE_H + 140;
       edges.setAttribute('viewBox', '0 ' + minY + ' ' + maxX + ' ' + (maxY - minY));
       edges.setAttribute('width', maxX); edges.setAttribute('height', maxY - minY);
       edges.style.top = minY + 'px';
@@ -1405,7 +1422,7 @@
         if (!moving) return;
         var dx = (e.clientX - sx) / view.k, dy = (e.clientY - sy) / view.k;
         if (Math.abs(dx) + Math.abs(dy) > 3) el2.dataset.dragged = '1';
-        n.x = ox + dx; n.y = oy + dy;
+        n.x = clampNodeX(ox + dx); n.y = Math.max(24, oy + dy);
         el2.style.left = n.x + 'px'; el2.style.top = n.y + 'px';
         drawEdges();
       });
@@ -1446,7 +1463,7 @@
         var src = byUid(sel);
         pushHistory();
         var uid = 'n' + (++uidN);
-        nodes.push({ uid: uid, id: src.id, opts: Object.assign({}, src.opts), x: src.x + 30, y: src.y + 50 });
+        nodes.push({ uid: uid, id: src.id, opts: Object.assign({}, src.opts), x: clampNodeX(src.x + 30), y: src.y + 50 });
         sel = uid; draw();
       }
     });
@@ -1455,7 +1472,8 @@
       [].slice.call(pan.querySelectorAll('.wfc-node, .wfc-connector-add, .wfc-add-step, .wfc-output-preview, .wfc-picker')).forEach(function (n) { n.remove(); });
       hint.hidden = nodes.length > 0;
 
-      var inNode = h('div', { class: 'wfc-node is-start' + (sel === 'in' ? ' is-sel' : ''), style: 'left:' + IN_X + 'px;top:' + IN_Y + 'px', 'data-uid': 'in', tabindex: '0', role: 'button', 'aria-label': 'Input step' }, [
+      var startPos = byUid('in');
+      var inNode = h('div', { class: 'wfc-node is-start' + (sel === 'in' ? ' is-sel' : ''), style: 'left:' + startPos.x + 'px;top:' + startPos.y + 'px', 'data-uid': 'in', tabindex: '0', role: 'button', 'aria-label': 'Input step' }, [
         h('span', { class: 'wfc-stepno', text: '1' }),
         h('div', { class: 'wfc-ic', html: '<span class="ic ic-tool" style="--ic-bg:#eef2ff;--ic-h:250;color:#5b21e9"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V5m0 0L8 9m4-4 4 4M5 14v5h14v-5"/></svg></span>' }),
         h('div', { class: 'wfc-tx' }, [
@@ -1518,11 +1536,13 @@
       if (nodes.length) connLinks.push({ from: nodes[nodes.length - 1].uid, to: 'out' });
       connLinks.forEach(function (l) {
         var a = portPos(l.from, 'out'), b = portPos(l.to, 'in');
-        var plus = h('button', { class: 'wfc-connector-add', type: 'button', text: '+', 'aria-label': 'Insert a step here', style: 'left:' + ((a.x + b.x) / 2 - 12) + 'px;top:' + (a.y - 12) + 'px' });
+        var plusX = (a.x + b.x) / 2 - 12;
+        var plusY = isNarrow() ? ((a.y + b.y) / 2 - 12) : (a.y - 12);
+        var plus = h('button', { class: 'wfc-connector-add', type: 'button', text: '+', 'aria-label': 'Insert a step here', style: 'left:' + plusX + 'px;top:' + plusY + 'px' });
         plus.addEventListener('click', function () { openPicker(l.from, { x: (a.x + b.x) / 2 - 12, y: a.y + 16 }); });
         pan.appendChild(plus);
       });
-      var addPos = isNarrow() ? { x: IN_X, y: outputNodePos().y + 170 } : { x: Math.max(430, IN_X + 260), y: IN_Y + 210 };
+      var addPos = isNarrow() ? { x: MOBILE_X, y: outputNodePos().y + 170 } : { x: Math.max(430, IN_X + 260), y: IN_Y + 210 };
       var addBox = h('button', { class: 'wfc-add-step', type: 'button', style: 'left:' + addPos.x + 'px;top:' + addPos.y + 'px' }, [
         h('strong', { text: '+ Add Step' }),
         h('span', { text: 'Drag tools here or click to add' })
@@ -1532,6 +1552,36 @@
         openPicker(tail, addPos);
       });
       pan.appendChild(addBox);
+
+      /* COLUMN ORDER FOR SMALL SCREENS.
+       *
+       * On desktop the chain is an absolutely positioned canvas you can pan,
+       * which is right for a graph. On a phone that same canvas had to be
+       * given a fixed 980px height to contain the stack — so a two-step
+       * workflow left half a screen of dead grid, and a long one clipped.
+       *
+       * The nodes are already in the DOM in chain order, but every connector
+       * is appended after all of them, so flex alone would drop the whole row
+       * of + buttons below the chain. Assigning an explicit order interleaves
+       * them: node, connector, node, connector. `order` has no effect on
+       * absolutely positioned boxes, so desktop is untouched and the mobile
+       * rule can simply switch the pan to a flex column and let its height
+       * come from its contents. */
+      (function columnOrder() {
+        var seq = ['in'];
+        nodes.forEach(function (n) { seq.push(n.uid); });
+        seq.push('out');
+        var slot = {};
+        seq.forEach(function (uid, i) { slot[uid] = i * 2; });
+        [].slice.call(pan.querySelectorAll('.wfc-node')).forEach(function (el) {
+          var uid = el.getAttribute('data-uid');
+          if (slot[uid] != null) el.style.order = String(slot[uid]);
+        });
+        [].slice.call(pan.querySelectorAll('.wfc-connector-add')).forEach(function (el, j) {
+          el.style.order = String(j * 2 + 1);
+        });
+        addBox.style.order = '9999';
+      })();
 
       drawEdges();
       drawPanel();

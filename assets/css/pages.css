@@ -2284,20 +2284,49 @@ video.wcode { padding: 0; }
   .wf-preview-shell { grid-template-columns: 1fr; }
 }
 @media (max-width: 700px) {
+  .wf-builder-shell { padding-inline: var(--gutter); }
+  .wf-builder-wrap { width: 100%; }
   .wf-builder-intro, .wf-marketplace, .wf-template-preview { width: min(100% - var(--gutter) * 2, 100%); }
   .wf-builder-intro h1, .wf-builder-intro h2 { font-size: var(--t-xl); }
+  .wf-mount .wfc { border-radius: 16px; }
+  .wf-mount .wfc-pal { padding: 16px; overflow: visible; }
+  .wfc-recommended, .wf-mount .wfc-pal-list {
+    grid-auto-flow: row;
+    grid-auto-columns: auto;
+    grid-template-columns: 1fr;
+    overflow-x: visible;
+    width: 100%;
+  }
+  .wfc-cats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .wfc-cat { min-width: 0; padding: 8px; }
+  .wfc-center { grid-template-rows: auto auto auto auto; }
   .wfc-top, .wfc-bar { align-items: stretch; flex-direction: column; height: auto; padding: 14px; }
   .wfc-title-edit, .wfc-top-actions, .wfc-summary { flex-wrap: wrap; }
+  .wfc-title-edit { align-items: flex-start; }
+  .wfc-title-stack { flex: 1 1 100%; }
   .wfc-name { width: 100%; }
-  .wfc-run-main { width: 100%; }
-  .wfc-pan { min-width: 390px; min-height: 980px; }
-  .wf-mount .wfc-canvas { min-height: 860px; overflow-x: hidden; }
+  .wfc-saved-status { margin-left: 44px; white-space: normal; }
+  .wfc-top-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .wfc-top-actions .btn, .wfc-top-actions .icon-btn { width: 100%; }
+  .wfc-run-main { grid-column: span 2; min-width: 0; width: 100%; }
+  .wfc-summary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .wfc-summary span { align-items: flex-start; flex-direction: column; gap: 2px; padding: 8px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+  .wfc-pan { width: 100%; min-width: 100%; min-height: 980px; }
+  .wf-mount .wfc-canvas { min-height: 900px; overflow-x: hidden; overflow-y: auto; touch-action: pan-y; }
   .wfc-add-step { width: 250px; }
   .wf-filterbar, .wf-market-grid, .wf-preview-actions { grid-template-columns: 1fr; }
   .wf-market-heading, .wf-filterbar, .wf-market-tabs, .wf-market-grid { padding-left: 16px; padding-right: 16px; }
+  .wf-market-heading h1 { font-size: clamp(2rem, 14vw, 3.2rem); }
+  .wf-market-tabs { flex-wrap: wrap; overflow: visible; gap: 8px; }
+  .wf-market-tabs button { padding: 7px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-size: 11px; }
+  .wf-market-tabs .is-on { padding: 7px 12px; }
   .wf-preview-shell { padding: 18px; }
-  .wf-preview-chain { overflow-x: auto; align-items: stretch; }
-  .wf-preview-node { min-width: 110px; }
+  .wf-preview-main header h2 { display: block; font-size: 22px; line-height: 1.15; }
+  .wf-preview-main header span { display: inline-block; margin: 8px 0 0; }
+  .wf-preview-chain { display: grid; grid-template-columns: 1fr; overflow: visible; align-items: stretch; }
+  .wf-preview-chain > i { display: grid; place-items: center; width: 100%; height: 18px; justify-self: center; transform: none; font-size: 0; }
+  .wf-preview-chain > i::before { content: "\2193"; color: var(--ink-mute); font-size: 16px; font-weight: 900; }
+  .wf-preview-node { grid-template-columns: auto minmax(0, 1fr); justify-items: start; align-items: center; min-width: 0; text-align: left; }
   .wf-before-after picture, .wf-before-after img { height: 210px; }
 }
 /* --- blog index -------------------------------------------------------------
@@ -2363,4 +2392,105 @@ video.wcode { padding: 0; }
   .bl-lead { grid-template-columns: 1fr; }
   .bl-lead-img img { min-height: 0; height: 210px; }
   .bl-lead-b { padding: var(--s-5); }
+}
+
+/* ===========================================================================
+   WORKFLOW BUILDER — SMALL SCREENS
+   ---------------------------------------------------------------------------
+   The desktop builder is a pannable graph canvas with absolutely positioned
+   nodes. That is the right model for a graph and the wrong one for a phone:
+   it needed a hardcoded 980px canvas height to contain the stack, so a short
+   workflow left half a screen of empty grid and a long one ran past the end.
+
+   Below this breakpoint the same DOM becomes an ordinary vertical column.
+   Nothing is hidden and no second markup path exists — the nodes stop being
+   absolute, the pan surface becomes a flex column, and its height comes from
+   its contents like any other block. draw() supplies the flex order so the
+   + inserters land between the steps instead of after them.
+   =========================================================================== */
+@media (max-width: 700px) {
+  /* The canvas stops being a viewport onto a larger surface. Panning and
+     zooming a column is just a way to lose your place, so both are disabled
+     and vertical touch scrolling is handed back to the page. */
+  .wf-mount .wfc-canvas {
+    min-height: 0;
+    height: auto;
+    overflow: visible;
+    cursor: default;
+    touch-action: pan-y;
+    background-image: none;
+  }
+  .wf-mount .wfc-pan {
+    position: static;
+    inset: auto;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    height: auto;
+    transform: none !important;   /* beats the inline pan/zoom transform */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+  }
+
+  /* Inline left/top come from draw(), so these have to outrank them. */
+  .wf-mount .wfc-node {
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    width: 100% !important;
+    min-height: 0;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+  }
+
+  /* A short vertical rail instead of a drawn edge, with the + sitting on it.
+     44px keeps the tap target at the accessible minimum even though the
+     drawn button is smaller. */
+  .wf-mount .wfc-connector-add {
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    width: 44px;
+    height: 44px;
+    margin: 2px auto;
+    font-size: 1.1rem;
+    flex: 0 0 auto;
+  }
+  .wf-mount .wfc-connector-add::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    width: 2px;
+    height: 44px;
+    background: var(--line);
+  }
+
+  /* The SVG edge layer draws between absolute coordinates that no longer
+     describe anything. The rails above replace it. */
+  .wf-mount .wfc-pan > svg { display: none; }
+
+  .wf-mount .wfc-add-step {
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    width: 100%;
+    margin-top: 12px;
+  }
+
+  /* Zoom controls have nothing left to act on. */
+  .wf-mount .wfc-zoom { display: none; }
+
+  /* The inspector is a sheet at the end of the column rather than a third
+     panel squeezed beside two others. */
+  .wf-mount .wfc-panel {
+    position: static;
+    width: 100%;
+    max-height: none;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
 }

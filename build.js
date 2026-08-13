@@ -2971,8 +2971,7 @@ function workflowCopy() {
       <div class="wf-market-shell">
         <div class="wf-market-heading">
           <p class="eyebrow">Templates</p>
-          <!-- h2, not h1: the builder above owns the page's single h1 now. -->
-          <h2 id="wf-market-title">Workflow Templates</h2>
+          <h1 id="wf-market-title">Workflow Templates</h1>
           <p>Start with a proven workflow and save hours of manual work.</p>
         </div>
         <div class="wf-filterbar" aria-label="Workflow template filters">
@@ -3048,15 +3047,12 @@ function workflowPage() {
     active: "workflow",
     bodyClass: "wf-page"
   }) + C.ld + `
-  <!-- ORDER. The builder leads, the template gallery follows, the prose sits
-       last. It used to be the other way round: someone arriving at /workflows/
-       met a wall of template marketing and had to scroll past four sections of
-       copy to reach the thing the page is named after. The prose still earns
-       its keep for search, but it is support material, not the entrance. -->
+  ${C.groups}
+
   <section class="wrap wf-builder-intro" aria-labelledby="wf-builder-title">
     <div>
       <p class="eyebrow">Workflow Builder</p>
-      <h1 id="wf-builder-title">Build and customize your workflow</h1>
+      <h2 id="wf-builder-title">Build and customize your workflow</h2>
       <p>Drag tools onto the canvas, adjust each step, and run a real browser-based chain.</p>
     </div>
   </section>
@@ -3066,8 +3062,6 @@ function workflowPage() {
       <div id="wf" class="wf-mount"></div>
     </div>
   </section>
-
-  ${C.groups}
 
   <section class="wrap section prose wf-prose" aria-labelledby="wf-questions">
     <h2 id="wf-questions">How Vootkit Workflow Works</h2>
