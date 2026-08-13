@@ -394,12 +394,27 @@
 
     function renderResult(out) {
       result.innerHTML = '';
+      result.classList.remove('is-complete');
+      var page = host.closest && host.closest('.tool-page');
+      if (page) page.classList.remove('tool-has-result');
       if (!out) return;
+      result.classList.add('is-complete');
+      if (page) page.classList.add('tool-has-result');
+      var toolName = host.getAttribute('data-tool-name') || 'Your file';
+      var panel = el('section', { class: 'ut-result-panel', role: 'status', 'aria-live': 'polite' });
+      panel.appendChild(el('div', { class: 'ut-result-head' }, [
+        el('span', { class: 'ut-result-check', html: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>' }),
+        el('span', { class: 'ut-result-title' }, [
+          el('strong', { text: toolName + ' is complete' }),
+          el('small', { text: 'Download your finished result below.' })
+        ])
+      ]));
+      var body = el('div', { class: 'ut-result-body' });
       if (out.previewUrl) {
-        result.appendChild(el('img', { class: 'ft-preview', src: out.previewUrl, alt: out.previewAlt || 'Result preview' }));
+        body.appendChild(el('img', { class: 'ft-preview', src: out.previewUrl, alt: out.previewAlt || 'Result preview' }));
       }
       if (out.stats && out.stats.length) {
-        result.appendChild(el('div', { class: 'calc-stats', html: out.stats.map(function (s) {
+        body.appendChild(el('div', { class: 'calc-stats', html: out.stats.map(function (s) {
           return '<div class="calc-stat"><span>' + s.label + '</span><b>' + s.value + '</b></div>';
         }).join('') }));
       }
@@ -414,16 +429,21 @@
               download(dl.blob, dl.name, { toolId: host.getAttribute('data-tool'), host: host });
             } }));
         });
-        result.appendChild(row);
+        body.appendChild(row);
       }
-      if (out.note) result.appendChild(el('p', { class: 'note', html: out.note }));
+      if (out.note) body.appendChild(el('p', { class: 'note', html: out.note }));
+      panel.appendChild(body);
+      result.appendChild(panel);
     }
 
     function reset() {
       urls.free(); files = []; input.value = '';
       fileList.innerHTML = ''; fileList.hidden = true;
       drop.querySelector('strong').textContent = DROP_LABEL;
-      controls.hidden = true; result.innerHTML = ''; status.textContent = ''; clearErr(); setProgress(null);
+      controls.hidden = true; result.innerHTML = ''; result.classList.remove('is-complete');
+      var page = host.closest && host.closest('.tool-page');
+      if (page) page.classList.remove('tool-has-result');
+      status.textContent = ''; clearErr(); setProgress(null);
       drop.focus();
     }
 

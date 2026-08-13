@@ -109,7 +109,7 @@
     'meta-tag-generator': function (host, W) {
       var title = inp(W, 'Page title'), desc = area(W, 'Meta description (~155 chars)', 3), url = inp(W, 'https://example.com/page'), img = inp(W, 'https://example.com/og.jpg');
       title.value = 'Free Online PDF Tools | Vootkit';
-      desc.value = 'Merge, split and compress PDFs in your browser — no upload, no sign-up, no watermark.';
+      desc.value = 'Merge, split and compress PDFs in your browser - private, fast, and watermark-free.';
       url.value = 'https://vootkit.com/tools/pdf/';
       var out = roArea(W, 12);
       var counts = W.el('div', { class: 'calc-stats' });
@@ -130,7 +130,7 @@
       var title = inp(W, 'Page title'), url = inp(W, 'https://example.com/page'), desc = area(W, 'Meta description', 3);
       title.value = 'Free Online Tools That Run in Your Browser | Vootkit';
       url.value = 'https://vootkit.com/tools/';
-      desc.value = 'PDF, image, video and finance tools that process files on your device — no upload, no sign-up, no daily limit.';
+      desc.value = 'PDF, image, video and finance tools that process files on your device with a clean Vootkit workflow.';
       var preview = W.el('div', { class: 'wserp' });
       function upd() {
         var t = truncatePx(title.value, 600), d = truncatePx(desc.value, 920);

@@ -81,6 +81,7 @@ const PUB = ADS.client || "ca-pub-5906583727409402";
 const AUDIENCE = STATS.audience || {};
 const USER_DISPLAY = (AUDIENCE.users && AUDIENCE.users.display) || "1M+";
 const COUNTRY_DISPLAY = (AUDIENCE.countries && AUDIENCE.countries.display) || "120+";
+const TASKS_DISPLAY = (AUDIENCE.tasksCompleted && AUDIENCE.tasksCompleted.display) || "10M+";
 const TOOL_ROUND_TO = (STATS.tools && STATS.tools.roundTo) || 50;
 
 /* One AdSense display unit.
@@ -822,6 +823,17 @@ function icon(name) {
     table: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 4v16"/>',
     grid: '<rect x="4" y="4" width="6" height="6" rx="1.2"/><rect x="14" y="4" width="6" height="6" rx="1.2"/><rect x="4" y="14" width="6" height="6" rx="1.2"/><rect x="14" y="14" width="6" height="6" rx="1.2"/>',
     list: '<path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6h.01M4 12h.01M4 18h.01"/>',
+    upload: '<path d="M12 16V5"/><path d="m8 9 4-4 4 4"/><path d="M5 15v4h14v-4"/>',
+    download: '<path d="M12 5v11"/><path d="m8 12 4 4 4-4"/><path d="M5 19h14"/>',
+    check: '<path d="m5 12 4 4L19 6"/>',
+    star: '<path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.8 1-6.1-4.4-4.3 6.1-.9z"/>',
+    crown: '<path d="M4 8l4 4 4-7 4 7 4-4v11H4z"/><path d="M4 19h16"/>',
+    users: '<path d="M16 19a4 4 0 0 0-8 0"/><circle cx="12" cy="9" r="3"/><path d="M20 19a3.4 3.4 0 0 0-3-3.3"/><path d="M4 19a3.4 3.4 0 0 1 3-3.3"/>',
+    globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/>',
+    sliders: '<path d="M4 7h10"/><path d="M18 7h2"/><circle cx="16" cy="7" r="2"/><path d="M4 17h2"/><path d="M10 17h10"/><circle cx="8" cy="17" r="2"/>',
+    share: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.6 6.8-4.2"/><path d="m8.6 13.4 6.8 4.2"/>',
+    zap: '<path d="M13 2 4 14h7l-1 8 10-13h-7z"/>',
+    laptop: '<path d="M5 5h14v10H5z"/><path d="M3 19h18"/>',
     sparkles: '<path d="M12 3l1.8 4.7L18.5 9l-4.7 1.8L12 15l-1.8-4.2L5.5 9l4.7-1.3z"/><path d="M18 15l.9 2.3L21 18l-2.1.7L18 21l-.9-2.3L15 18l2.1-.7z"/>',
     heart: '<path d="M12 20s-6.5-4.3-9-8.3A4.7 4.7 0 0 1 12 6a4.7 4.7 0 0 1 9 5.7c-2.5 4-9 8.3-9 8.3z"/>',
     plane: '<path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/>',
@@ -969,9 +981,54 @@ function dirSearchText(t, cat) {
   return esc([t.id, t.name, t.desc, t.kw || "", cat.name || "", aliases[t.id] || ""].join(" "));
 }
 
+/* Per-tool closing sentences for the PDF cards.
+
+   The category suffix below gave all 28 PDF tools the same second sentence,
+   "Finish in your browser and download the updated PDF." Two problems with
+   that: 28 identical trailing sentences is the duplicate-content pattern the
+   site was rejected for, and on seven of them it was simply untrue — PDF to
+   JPG, PDF to PNG, PDF to WebP, PDF Text Extractor, PDF & Image OCR and
+   Compare PDFs do not output a PDF at all, and PDF Form Filler said
+   "download" twice in one description.
+
+   Each ending here states what that specific tool actually gives back. */
+const PDF_CARD_ENDINGS = {
+  "split-pdf": "The pages you pick come out as their own file.",
+  "rotate-pdf": "The new orientation is saved into the file, not just the view.",
+  "delete-pdf-pages": "The pages that remain keep their original quality.",
+  "reorder-pdf": "The order you drag them into is written into the file.",
+  "pdf-to-jpg": "You get one JPG per page, ready to save.",
+  "pdf-to-text": "Copy it straight out or save it as a text file.",
+  "pdf-page-numbers": "Choose the corner, the starting number and the style.",
+  "pdf-watermark": "Set the wording, the angle and how faint it sits.",
+  "protect-pdf": "The password is applied to the file itself.",
+  "pdf-redact": "Mark what should not be shared and save a flattened copy.",
+  "compare-pdf": "Differences between the two versions are highlighted for you.",
+  "text-to-pdf": "Set the page size and margins before you save.",
+  "markdown-to-pdf": "Headings, lists and code blocks keep their formatting.",
+  "crop-pdf": "Set the margin once and it applies to every page.",
+  "duplicate-pdf-pages": "Useful for booklets, tickets and print runs.",
+  "png-to-pdf": "Transparent areas are flattened onto a white page.",
+  "webp-to-pdf": "Each image becomes its own page, in the order you add them.",
+  "pdf-to-png": "You get one lossless PNG per page.",
+  "pdf-to-webp": "Smaller files than PNG at the same visible quality.",
+  "pdf-creator": "Handy as a template or a printable blank.",
+  "extract-pdf-pages": "Every page you pick is saved on its own.",
+  "pdf-repair": "Worth trying before you give up on a file that will not open.",
+  "scan-to-pdf": "Shoot the pages one by one and save them as one document.",
+  "pdf-signature": "Place it where you want it and save the signed copy.",
+  "pdf-form-filler": "Typed values are saved into the form fields themselves.",
+  "html-to-pdf": "Inline styles are applied as they would appear on screen.",
+  "excel-to-pdf": "Each sheet flows onto its own set of pages.",
+  "pdf-ocr": "Reads scans and photos and hands back selectable text."
+};
+
 function dirDirectoryDesc(t) {
   const base = String(t.desc || "").replace(/\s+/g, " ").trim();
   const clean = base.replace(/[.!?]+$/, "");
+  /* A per-tool ending always wins over the shared category sentence. */
+  const own = PDF_CARD_ENDINGS[t.id];
+  if (own) return clean ? `${clean}. ${own}` : own;
   const suffix = {
     pdf: "Finish in your browser and download the updated PDF.",
     images: "Preview the change and download the finished image.",
@@ -1102,8 +1159,8 @@ function dirHeroVisual() {
 function dirTrustStrip() {
   const items = [
     ["coins", "100% Free", ""],
-    ["lock", "No Sign Up", ""],
-    ["grid", "Unlimited Use", ""],
+    ["laptop", "Browser Based", ""],
+    ["grid", "250+ Tools", ""],
     ["shield", "Secure", ""]
   ];
   return `<div class="dir-trust" aria-label="Vootkit benefits">${items.map((it) => `<div class="dir-trust-item">
@@ -1243,7 +1300,7 @@ function allToolsPage() {
     <div class="dir-hero-main">
       <nav class="crumb" aria-label="Breadcrumb"><a href="../">Home</a> <span aria-hidden="true">&gt;</span> <span aria-current="page">Tools</span></nav>
       <h1 class="page-h1">All Tools</h1>
-      <p class="page-lede">Explore ${floorTo(VK.counts.live, TOOL_ROUND_TO)}+ free online tools to edit, convert, create and optimize files, media, code and more. <strong>100% free.</strong> No sign up required.</p>
+      <p class="page-lede">Explore ${floorTo(VK.counts.live, TOOL_ROUND_TO)}+ free online tools to edit, convert, create and optimize files, media, code and more. <strong>100% free.</strong> Built for quick everyday work.</p>
       <p class="dir-live-note">${liveCount} live tools now${planned ? `, with ${planned} planned tools marked clearly as coming soon` : ""}.</p>
     </div>
     ${dirHeroVisual()}
@@ -1253,7 +1310,7 @@ function allToolsPage() {
     <form class="dir-search" role="search" data-dir-search autocomplete="off">
       <label class="sr-only" for="tools-search">Search tools</label>
       ${icon("search")}
-      <input id="tools-search" type="search" placeholder="Search tools - e.g. PDF to Word, Image Compressor..." aria-controls="tools-results tools-suggestions" aria-autocomplete="list" autocomplete="off" data-dir-q>
+      <input id="tools-search" type="search" placeholder="Search tools - e.g. Word to PDF, Image Compressor..." aria-controls="tools-results tools-suggestions" aria-autocomplete="list" autocomplete="off" data-dir-q>
       <button class="btn btn-primary" type="submit">Search</button>
       <div class="dir-suggestions" id="tools-suggestions" role="listbox" aria-label="Tool suggestions" data-dir-suggestions hidden></div>
     </form>
@@ -1341,6 +1398,215 @@ function categoryPage(c) {
 }
 
 /* ---------- /tools/<category>/<tool>/ — the 9 required blocks ---------- */
+function toolRuntimeSpec(t) {
+  return VIDEOFX[t.id] || IMAGE[t.id] || IMAGE2[t.id] || PDF[t.id] ||
+    MONEY[t.id] || CALC2[t.id] || VIDEO[t.id] || null;
+}
+
+function toolArchetype(t) {
+  if (VIDEOFX[t.id] || IMAGE[t.id] || IMAGE2[t.id] || PDF[t.id]) return "file";
+  if (MONEY[t.id] || CALC2[t.id] || VIDEO[t.id]) return "calculator";
+  if (LINKTOOLS.indexOf(t.id) !== -1) return "network";
+  if (widgetScriptsFor(t.id)) {
+    if (t.cat === "developer" || t.cat === "data" || t.cat === "seo") return "developer";
+    if (t.cat === "text") return "text";
+    if (/generator|maker|creator|builder|invoice|quote|receipt|proposal|contract|resume|card/i.test(t.id + " " + t.name)) return "generator";
+    return "widget";
+  }
+  return "tool";
+}
+
+function toolShellTitle(t) {
+  const n = String(t.name || "").trim();
+  if (!n) return "Vootkit Tool";
+  if (/\b(?:converter|calculator|generator|compressor|editor|maker|builder|viewer|counter|tester|validator|checker|scanner|recorder|trimmer|formatter|encoder|decoder|solver|estimator|tracker|auditor|creator)\b/i.test(n)) return n;
+  if (/^(?:compress|merge|split|rotate|delete|reorder|protect|unlock|crop|resize|trim|mute|extract|remove|compare|redact|format|convert|scan|sign|watermark)\b/i.test(n)) return n;
+  if (/\bto\b/i.test(n) && /pdf|image|video|audio|convert|doc|word|excel|jpg|jpeg|png|webp|csv|json/i.test(t.id + " " + n + " " + t.cat)) return `${n} Converter`;
+  return n;
+}
+
+function toolStepSet(t, archetype) {
+  if (archetype === "file") return [
+    { icon: "upload", label: "Upload", desc: "Add your file from your device." },
+    { icon: "sliders", label: "Choose options", desc: "Pick the output settings you need." },
+    { icon: "zap", label: "Process", desc: "Run the tool in your browser." },
+    { icon: "download", label: "Download", desc: "Save the finished result." }
+  ];
+  if (archetype === "calculator") return [
+    { icon: "calculator", label: "Enter details", desc: "Add the numbers for your scenario." },
+    { icon: "zap", label: "Calculate", desc: "Vootkit updates the result instantly." },
+    { icon: "table", label: "Review", desc: "Check totals, notes and breakdowns." },
+    { icon: "share", label: "Use result", desc: "Copy the answer into your workflow." }
+  ];
+  if (archetype === "developer" || archetype === "text") return [
+    { icon: archetype === "developer" ? "code" : "type", label: "Paste input", desc: "Add the text, code or data." },
+    { icon: "sliders", label: "Adjust", desc: "Choose formatting or generation options." },
+    { icon: "zap", label: "Run", desc: "Process everything in the browser." },
+    { icon: "check", label: "Copy", desc: "Copy or download the clean result." }
+  ];
+  if (archetype === "network") return [
+    { icon: "link", label: "Enter details", desc: "Paste the link or lookup value." },
+    { icon: "globe", label: "Fetch", desc: "Use the required online service." },
+    { icon: "check", label: "Review", desc: "Check the generated result." },
+    { icon: "share", label: "Use", desc: "Copy it where you need it." }
+  ];
+  return [
+    { icon: "sparkles", label: "Choose tool", desc: "Open the Vootkit workspace." },
+    { icon: "sliders", label: "Add input", desc: "Provide the content or settings." },
+    { icon: "zap", label: "Process", desc: "Let the browser do the work." },
+    { icon: "check", label: "Finish", desc: "Copy, download or continue." }
+  ];
+}
+
+function toolHeroBadges(t, local, archetype) {
+  const labels = ["100% Free", "No watermark"];
+  if (archetype === "file") labels.splice(1, 0, local ? "Browser-based" : "Online lookup");
+  else labels.splice(1, 0, "Runs instantly");
+  return labels.map((x) => `<span class="badge">${esc(x)}</span>`).join("");
+}
+
+function toolOutputLabel(t, archetype) {
+  const id = t.id, name = t.name;
+  if (/\bto-pdf\b|to pdf/i.test(id + " " + name)) return "PDF document";
+  if (/pdf-to-(?:jpg|png|webp)|image-to-text|ocr/i.test(id)) return "Image or text export";
+  if (/(?:jpg|jpeg|png|webp|heic|image|photo|favicon|thumbnail|collage)/i.test(id + " " + t.cat)) return "Image file";
+  if (/video|gif|clip|frame/i.test(id + " " + t.cat)) return "Video or media file";
+  if (/audio|voice|speech/i.test(id + " " + t.cat)) return "Audio or transcript";
+  if (archetype === "calculator") return "Calculated result";
+  if (archetype === "developer") return "Formatted output";
+  if (archetype === "text") return "Clean text";
+  return "Tool result";
+}
+
+function toolOptionRows(t, facts, local, archetype) {
+  const rows = [];
+  if (facts && facts.rows && facts.rows.length) {
+    facts.rows.slice(0, 4).forEach((r) => rows.push([r.label, r.value]));
+  }
+  if (!rows.length) {
+    rows.push(["Output", toolOutputLabel(t, archetype)]);
+    rows.push(["Processing", local ? "On your device" : "Online service"]);
+    rows.push(["Install", "No app install needed"]);
+    rows.push(["Plan", "Free core access"]);
+  }
+  return `<dl class="tool-option-list">${rows.map((r) => `<div><dt>${esc(r[0])}</dt><dd>${esc(r[1])}</dd></div>`).join("")}</dl>`;
+}
+
+function toolMiniCard(t, up) {
+  const c = CATBY[t.cat] || {};
+  return `<a class="tool-mini-card" data-cat="${esc(t.cat)}" href="${up}tools/${t.cat}/${t.id}/">
+    ${toolIconHtml(t)}
+    <span class="tool-mini-copy"><strong>${esc(t.name)}</strong><small>${esc(dirDirectoryDesc(t))}</small></span>
+    <span class="tool-mini-arrow" aria-hidden="true">${icon("arrow-right")}</span>
+    <span class="sr-only">${esc(c.name || t.cat)}</span>
+  </a>`;
+}
+
+function toolRelatedStrip(t, c, related) {
+  if (!related.length) return "";
+  return `<section class="tool-related-section" aria-labelledby="related-title">
+    <div class="tool-section-head">
+      <h2 id="related-title">Explore more ${esc(c.name)} tools</h2>
+      <a href="../">View all ${esc(c.name)} tools ${icon("arrow-right")}</a>
+    </div>
+    <div class="tool-mini-row">${related.map((r) => toolMiniCard(r, "../../../")).join("")}</div>
+  </section>`;
+}
+
+function toolHowToCards(t, steps) {
+  return `<section class="tool-how-section" aria-labelledby="tool-how-title">
+    <h2 id="tool-how-title">How to use ${esc(toolShellTitle(t))}</h2>
+    <div class="tool-how-grid">${steps.map((s, i) => `<article>
+      <span class="tool-how-icon">${icon(s.icon)}</span>
+      <strong>${esc(s.label)}</strong>
+      <p>${esc(s.desc)}</p>
+      <em>${String(i + 1).padStart(2, "0")}</em>
+    </article>`).join("")}</div>
+  </section>`;
+}
+
+function toolPremiumCard(spec, archetype) {
+  const batch = spec && (spec.multiple || spec.maxFiles);
+  const benefits = [
+    archetype === "file" ? (batch ? "Batch process multiple files" : "Higher file-size limits") : "Unlimited daily runs",
+    "Faster processing",
+    "Premium tools",
+    "Priority support"
+  ];
+  return `<section class="tool-side-card tool-upgrade-card">
+    <span class="tool-side-icon">${icon("crown")}</span>
+    <h2>Upgrade for more power</h2>
+    <p>Unlock higher limits, faster processing and premium Vootkit features.</p>
+    <ul>${benefits.map((b) => `<li>${icon("check")}<span>${esc(b)}</span></li>`).join("")}</ul>
+    <a class="btn btn-primary" href="../../../pricing.html">Creator Pro - $8 / month</a>
+    <a class="btn" href="../../../pricing.html">Creator Teams - $20 / month</a>
+  </section>`;
+}
+
+function toolStatsCard() {
+  const tools = `${floorTo(VK.counts.live, TOOL_ROUND_TO)}+`;
+  const stats = [
+    ["users", USER_DISPLAY, "Users"],
+    ["grid", tools, "Tools"],
+    ["zap", TASKS_DISPLAY, "Tasks"],
+    ["globe", COUNTRY_DISPLAY, "Countries"]
+  ];
+  return `<section class="tool-side-card tool-stat-card" aria-label="Vootkit platform statistics">
+    ${stats.map((s) => `<div><span>${icon(s[0])}</span><strong>${esc(s[1])}</strong><small>${esc(s[2])}</small></div>`).join("")}
+  </section>`;
+}
+
+function toolSidebar(t, c, related, local, spec, archetype) {
+  return `<aside class="tool-sidebar">
+    ${toolPremiumCard(spec, archetype)}
+    ${toolStatsCard()}
+    ${related.length ? `<section class="tool-side-card">
+      <div class="tool-side-head"><h2>Popular ${esc(c.name)} tools</h2><a href="../">View all ${icon("arrow-right")}</a></div>
+      <div class="tool-side-list">${related.slice(0, 5).map((r) => toolMiniCard(r, "../../../")).join("")}</div>
+    </section>` : ""}
+    <section class="tool-side-card tool-safe-card">
+      <span class="tool-side-icon">${icon("shield")}</span>
+      <h2>Your files are safe with us</h2>
+      <p>${local
+        ? "Most of the work happens inside your browser on your own device. Vootkit does not add an upload step to this tool."
+        : "This tool uses an online service for the lookup it performs. We label network-backed tools clearly before you use them."}</p>
+      <a href="../../../privacy.html">Learn about privacy ${icon("arrow-right")}</a>
+    </section>
+  </aside>`;
+}
+
+function toolWorkspaceShell(t, c, live, local, facts, archetype, steps) {
+  if (!live) return `<section class="tool-workbench tool-workbench-soon">
+    <div class="ws ws-soon">
+      <strong>Not built yet</strong>
+      <p class="note">${esc(t.name)} is on the roadmap. The page below explains what it will do, and finished ${esc(c.name)} tools are available today.</p>
+      <a class="btn" href="../">Browse ${esc(c.name)} tools</a>
+    </div>
+  </section>`;
+  return `<section class="tool-workbench" aria-label="${esc(t.name)} workspace">
+    <ol class="tool-stepper" aria-label="Tool steps">${steps.slice(0, 3).map((s, i) => `<li${i === 0 ? ' aria-current="step"' : ""}>
+      <span>${i + 1}</span><strong>${esc(s.label)}</strong><small>${esc(s.desc)}</small>
+    </li>`).join("")}</ol>
+    <div class="tool-workgrid">
+      <div class="tool-input-pane">
+        <div class="ws" id="workspace" data-tool="${esc(t.id)}" data-tool-name="${esc(t.name)}" data-tool-cat="${esc(c.name)}" data-tool-archetype="${esc(archetype)}">
+          <noscript><p class="note">This tool needs JavaScript because the work happens in your browser.</p></noscript>
+        </div>
+      </div>
+      <aside class="tool-options-pane">
+        <div class="tool-options-title">${icon("sliders")}<h2>${archetype === "calculator" ? "Calculation details" : "Tool options"}</h2></div>
+        ${toolOptionRows(t, facts, local, archetype)}
+      </aside>
+    </div>
+    <div class="tool-trust-strip">
+      <div>${icon("shield")}<span><strong>Private by design</strong><small>${local ? "Processed on your device where possible." : "Network use is clearly labelled."}</small></span></div>
+      <div>${icon("laptop")}<span><strong>Works on any device</strong><small>Desktop, tablet and mobile browsers.</small></span></div>
+      <div>${icon("download")}<span><strong>No installation</strong><small>Open the page and start working.</small></span></div>
+      <div>${icon("star")}<span><strong>Always free core</strong><small>Use the free plan for everyday tasks.</small></span></div>
+    </div>
+  </section>`;
+}
+
 function toolPage(t) {
   const c = VK.category(t.cat);
   const url = `${SITE}/tools/${t.cat}/${t.id}/`;
@@ -1367,11 +1633,14 @@ function toolPage(t) {
      Accurate by construction and it cannot drift — change a tool's options and
      its page updates on the next build. Tools that declare nothing readable get
      neither, and keep the generic template rather than a padded one. */
-  const facts = deep ? null : TOOLFACTS.factsFor(
-    VIDEOFX[t.id] || IMAGE[t.id] || IMAGE2[t.id] || PDF[t.id] || MONEY[t.id] || null);
+  const spec = toolRuntimeSpec(t);
+  const facts = deep ? null : TOOLFACTS.factsFor(spec);
+  const archetype = toolArchetype(t);
+  const steps = toolStepSet(t, archetype);
+  const shellTitle = toolShellTitle(t);
 
   const faqs = (deep ? deep.faqs : []).concat([
-    { q: `Is ${t.name} free?`, a: `Yes. The Vootkit free plan includes 5 tool runs a day, with no account and no watermark. Upgrade to Vootkit Pro for unlimited daily use, faster processing and premium tools.` },
+    { q: `Is ${t.name} free?`, a: `Yes. The Vootkit free plan includes 5 tool runs a day for conversion and processing tasks, plus core tools for everyday work. Upgrade to Vootkit Pro for unlimited daily use, faster processing and premium tools.` },
     { q: "Are my files uploaded?", a: local
         ? `No. ${t.name} runs entirely in your browser — your file is processed on your own device and never sent to a server. There is nothing for us to store or delete.`
         : `${t.name} needs the internet to work, so it calls an external service to fetch data. It does not require an account and does not track you.` },
@@ -1393,123 +1662,111 @@ function toolPage(t) {
       mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) }
   ];
 
-  const hasCalc = !!MONEY[t.id] || !!VIDEO[t.id];
-  const hasFile = !!IMAGE[t.id];
-  const hasPdf = !!PDF[t.id];
-  const hasVideo = !!VIDEO[t.id];
   const hasVideoFx = !!VIDEOFX[t.id];
-  const hasLink = LINKTOOLS.indexOf(t.id) !== -1;
-  const widgetScripts = widgetScriptsFor(t.id);
-  const workspace = live
-    ? `<div class="ws" id="workspace" data-tool="${t.id}">
-         <noscript><p class="note">This tool needs JavaScript — it runs the calculation in your browser rather than on a server.</p></noscript>
-       </div>`
-    : `<div class="ws ws-soon">
-         <strong>Not built yet</strong>
-         <p class="note">${esc(t.name)} is on the roadmap. The page below explains what it will do — we publish the tool before we promote it.</p>
-         <a class="btn" href="../">Browse ${esc(c.name)} tools that work today</a>
-       </div>`;
+  const workspace = toolWorkspaceShell(t, c, live, local, facts, archetype, steps);
+  const side = toolSidebar(t, c, related, local, spec, archetype);
+  const relatedShell = toolRelatedStrip(t, c, related);
+  const howShell = toolHowToCards(t, steps);
 
   let pageHead = head({ depth: 3, url, ads: true, ld, cat: t.cat, lang: "en", alts: altsForTool(t),
     title: toolTitle(t.name, c.name),
-    ogTitle: t.name,
+    ogTitle: shellTitle,
     desc: `${t.desc} ${local ? "Runs in your browser" : "No install needed"}, no watermark, 5 free uses a day.` });
   // under-construction ("soon") tools are thin — keep them out of the index (AdSense quality)
   if (!live) pageHead = pageHead.replace("</head>", '<meta name="robots" content="noindex,follow">\n</head>');
   return pageHead +
 `<div class="wrap section tool-page">
-  <nav class="crumb" aria-label="Breadcrumb"><a href="../../../">Vootkit</a> <span aria-hidden="true">›</span> <a href="../../">Tools</a> <span aria-hidden="true">›</span> <a href="../">${esc(c.name)}</a> <span aria-hidden="true">›</span> <span aria-current="page">${esc(t.name)}</span></nav>
+  <nav class="crumb" aria-label="Breadcrumb"><a href="../../../">Vootkit</a> <span aria-hidden="true">&rsaquo;</span> <a href="../../">Tools</a> <span aria-hidden="true">&rsaquo;</span> <a href="../">${esc(c.name)}</a> <span aria-hidden="true">&rsaquo;</span> <span aria-current="page">${esc(t.name)}</span></nav>
 
-  <!-- 1. workspace -->
-  <header class="tool-head">
-    <h1 class="page-h1">${esc(t.name)}</h1>
-    <p class="page-lede">${esc(t.desc)}</p>
-    <div class="trust"><span class="badge">no watermark</span><span class="badge">5 free a day</span></div>
-  </header>
-  ${workspace}
+  <div class="tool-shell-layout">
+    <main class="tool-main-column">
+      <header class="tool-hero tool-head">
+        <div class="tool-hero-icon">${toolIconHtml(t)}</div>
+        <div class="tool-hero-copy">
+          <div class="tool-hero-kicker"><span>${esc(c.name)} tool</span><span>${esc(toolOutputLabel(t, archetype))}</span></div>
+          <h1 class="page-h1">${esc(shellTitle)}</h1>
+          <p class="page-lede">${esc(t.desc)}</p>
+          <div class="trust">${toolHeroBadges(t, local, archetype)}</div>
+        </div>
+      </header>
 
-  <!-- 2-4. explanation, benefits, how it works -->
-  ${deep ? `<section class="prose">
-    <p class="tool-intro">${esc(deep.intro)}</p>
+      <!-- 1. workspace -->
+      ${workspace}
+      ${relatedShell}
+      ${howShell}
 
-    <h2>What ${esc(t.name)} does</h2>
-    ${deep.what.map((p) => `<p>${p}</p>`).join("\n    ")}
+      <div class="tool-reading-flow">
+        ${deep ? `<section class="prose">
+          <p class="tool-intro">${esc(deep.intro)}</p>
 
-    <h2>${esc(deep.specs.caption)}</h2>
-    <div class="table-wrap"><table class="spec-table">
-      <tbody>
-      ${deep.specs.rows.map((r) => `<tr><th scope="row">${esc(r[0])}</th><td>${esc(r[1])}</td></tr>`).join("\n      ")}
-      </tbody>
-    </table></div>
+          <h2>What ${esc(t.name)} does</h2>
+          ${deep.what.map((p) => `<p>${p}</p>`).join("\n          ")}
 
-    <h2>How to use it</h2>
-    <ol>
-      ${deep.steps.map((s) => `<li>${s}</li>`).join("\n      ")}
-    </ol>
+          <h2>${esc(deep.specs.caption)}</h2>
+          <div class="table-wrap"><table class="spec-table">
+            <tbody>
+            ${deep.specs.rows.map((r) => `<tr><th scope="row">${esc(r[0])}</th><td>${esc(r[1])}</td></tr>`).join("\n            ")}
+            </tbody>
+          </table></div>
 
-    <h2>Worth knowing</h2>
-    <p>${esc(deep.tip)}</p>
-  </section>` : `<section class="prose">
-    <h2>What ${esc(t.name)} does</h2>
-    <p>${esc(t.desc)} It's one of ${VK.TOOLS.length} tools in the Vootkit ecosystem, built to do a single job properly — open it, get your result, move on.</p>
-${facts ? `
-    <h2>Settings and limits</h2>
-    <div class="table-wrap"><table class="spec-table"><tbody>
-      ${facts.rows.map((r) => `<tr><th scope="row">${esc(r.label)}</th><td>${esc(r.value)}</td></tr>`).join("\n      ")}
-    </tbody></table></div>
-` : ""}
-    <h2>Why use this one</h2>
-    <ul>
-      <li><strong>${local ? "Nothing is uploaded." : "Ready straight away."}</strong> ${local ? "Your file is processed on your own device, so it never travels to a server." : "Open the page and start — there is nothing to install and nothing to configure."}</li>
-      <li><strong>5 free uses a day.</strong> The free plan includes 5 tool runs a day — <a href="../../../pricing.html">upgrade to Pro</a> for unlimited daily use.</li>
-      <li><strong>No watermark.</strong> What you get out is what you made.</li>
-      <li><strong>Works on mobile.</strong> Same tool, thumb-friendly.</li>
-    </ul>
+          <h2>Detailed steps</h2>
+          <ol>
+            ${deep.steps.map((s) => `<li>${s}</li>`).join("\n            ")}
+          </ol>
 
-    <h2>How it works</h2>
-    <ol>
-      <li>Open ${esc(t.name)} — nothing to install.</li>
-      <li>${local ? "Add your file or input. It stays on your device." : "Enter what you want to look up."}</li>
-      <li>Adjust the options to suit the result you need.</li>
-      <li>Download or copy your result.</li>
-    </ol>
+          <h2>Worth knowing</h2>
+          <p>${esc(deep.tip)}</p>
+        </section>` : `<section class="prose">
+          <h2>What ${esc(t.name)} does</h2>
+          <p>${esc(t.desc)} It's one of ${VK.TOOLS.length} tools in the Vootkit ecosystem, built to do a single job properly: open it, get your result, move on.</p>
+      ${facts ? `
+          <h2>Settings and limits</h2>
+          <div class="table-wrap"><table class="spec-table"><tbody>
+            ${facts.rows.map((r) => `<tr><th scope="row">${esc(r.label)}</th><td>${esc(r.value)}</td></tr>`).join("\n            ")}
+          </tbody></table></div>
+      ` : ""}
+          <h2>Why use this one</h2>
+          <ul>
+            <li><strong>${local ? "Nothing is uploaded." : "Ready straight away."}</strong> ${local ? "Your file is processed on your own device, so it never travels to a server." : "Open the page and start. There is nothing to install and nothing to configure."}</li>
+            <li><strong>Free core access.</strong> Use Vootkit for everyday tasks and <a href="../../../pricing.html">upgrade to Pro</a> when you need higher limits.</li>
+            <li><strong>No watermark.</strong> What you get out is what you made.</li>
+            <li><strong>Works on mobile.</strong> Same tool, thumb-friendly.</li>
+          </ul>
 
-    <h2>Example</h2>
-    <p>${esc(exampleFor(t, c))}</p>
-  </section>`}
+          <h2>Example</h2>
+          <p>${esc(exampleFor(t, c))}</p>
+        </section>`}
 
-  <!-- in-content ad: below the article body, far from the tool controls -->
-  ${adUnit("inContent")}
+        <!-- in-content ad: below the article body, far from the tool controls -->
+        ${adUnit("inContent")}
 
-  <!-- 5. FAQ -->
-  <section class="prose faq">
-    <h2>Questions</h2>
-    ${faqs.map((f) => `<details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join("\n    ")}
-  </section>
+        <!-- 5. FAQ -->
+        <section class="prose faq">
+          <h2>Frequently Asked Questions</h2>
+          ${faqs.map((f) => `<details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join("\n          ")}
+        </section>
 
-  <!-- footer ad: end of the reading flow, before the onward links -->
-  ${adUnit("footer")}
+        <!-- footer ad: end of the reading flow, before the onward links -->
+        ${adUnit("footer")}
 
-  <!-- 6. related tools — never a dead end -->
-  ${related.length ? `<section class="section">
-    <h2 class="h-sm">Next in ${esc(c.name)}</h2>
-    <div class="grid">${related.map((r) => toolCard(r, "../../../")).join("")}</div>
-  </section>` : ""}
+        <section class="section" id="recent-wrap" hidden>
+          <h2 class="h-sm">Recently viewed</h2>
+          <div class="chips" id="recent"></div>
+        </section>
 
-  <!-- 7. recently viewed -->
-  <section class="section" id="recent-wrap" hidden>
-    <h2 class="h-sm">Recently viewed</h2>
-    <div class="chips" id="recent"></div>
-  </section>
+        <!-- 8. trust -->
+        <section class="trust-note">
+          <p class="note">${hasVideoFx
+            ? "Your video is processed entirely in your browser. The video engine downloads once from a CDN the first time you run a tool, then works from cache. Large files are memory-bound, so keep clips reasonable."
+            : local
+            ? "This tool processes everything locally in your browser. You can disconnect from the internet after the page loads and it will still work."
+            : "This tool calls an external service to fetch live data. It does not require an account and does not track you."}</p>
+        </section>
+      </div>
+    </main>
 
-  <!-- 8. trust -->
-  <section class="trust-note">
-    <p class="note">${hasVideoFx
-      ? "Your video is processed entirely in your browser — it's never uploaded. The video engine (ffmpeg) downloads once from a CDN the first time you run a tool, then works from cache. Large files are memory-bound, so keep clips reasonable."
-      : local
-      ? "This tool processes everything locally in your browser. You can disconnect from the internet after the page loads and it will still work."
-      : "This tool calls an external service to fetch live data. It does not require an account and does not track you."}</p>
-  </section>
+    ${side}
+  </div>
 </div>` + foot(3, toolScripts(t));
 }
 
@@ -2255,7 +2512,7 @@ proHero() +
 
   <div class="bill-toggle" role="group" aria-label="Billing period">
     <button class="bt-opt is-on" type="button" data-bill="month" aria-pressed="true">Monthly</button>
-    <button class="bt-opt" type="button" data-bill="year" aria-pressed="false">Annual <span class="bt-save">2 months free</span></button>
+    <button class="bt-opt" type="button" data-bill="year" aria-pressed="false">Annual <span class="bt-save">Save yearly</span></button>
   </div>
 
   <div class="plans">
@@ -2268,7 +2525,7 @@ proHero() +
         ${feat(true, "Access to all " + VK.counts.live + " tools")}
         ${feat(true, "5 tool runs per day")}
         ${feat(true, "Core tools &amp; downloaders unlimited")}
-        ${feat(true, "No login required")}
+        ${feat(true, "Use core tools instantly")}
         ${feat(true, "No watermarks")}
         ${feat(false, "Faster, premium processing")}
       </ul>
@@ -2543,7 +2800,7 @@ write("disclaimer.html", legalPage({
 write("about.html", infoPage({
   slug: "about.html", title: "About", eyebrow: "About",   // infoPage appends " — Vootkit"
   h1: "One home for every digital task.",
-  desc: "Vootkit is a growing ecosystem of fast, private, browser-based tools — PDF, image, video, finance, developer and more. No installs, no accounts required.",
+  desc: "Vootkit is a growing ecosystem of fast, private, browser-based tools — PDF, image, video, finance, developer and more. No installs needed.",
   lede: `Vootkit puts <strong>${VK.counts.live} tools</strong> in one place, most of them running entirely in your browser so your files never leave your device.`,
   body: `
   <section class="prose">
@@ -2553,7 +2810,7 @@ write("about.html", infoPage({
     <h2>What we believe</h2>
     <ul>
       <li><strong>Privacy by default.</strong> Nearly every tool processes your files locally in the browser. Only two need the internet at all — the Currency Converter and the URL Shortener — and each says so on its own page.</li>
-      <li><strong>Fast and frictionless.</strong> No installs, and no account required to use the tools. Open a tool and go.</li>
+      <li><strong>Fast and frictionless.</strong> No installs, no bloated setup. Open a tool and go.</li>
       <li><strong>A generous free core.</strong> The essential tools stay free, and downloaders are always unlimited. Pro simply adds convenience for people who live in these tools.</li>
       <li><strong>Built to grow.</strong> New tools ship constantly, each with its own identity inside the Vootkit ecosystem.</li>
     </ul>
@@ -2694,8 +2951,8 @@ function workflowCopy() {
      + "hiccup, an engine that did not load — you get a button to retry from "
      + "that step rather than from the beginning."],
     ["Can I save a workflow and use it again?",
-     "Yes, with its settings intact. Saved workflows are stored on your device, "
-     + "so no account is needed to keep one."],
+     "Yes, with its settings intact. Saved workflows are stored on your device "
+     + "for quick reuse on the same browser."],
     ["Which tools can be workflow steps?",
      `${Object.keys(FLOW.flow).filter((id) => FLOW.flow[id].w).length} of them today — the PDF, image and video sets. `
      + "Some tools build their controls and their logic together and cannot yet "
@@ -2845,14 +3102,14 @@ write("unsubscribe/index.html", infoPage({
   depth: 1, slug: "unsubscribe/", title: "Unsubscribe", eyebrow: "Email", noindex: true, noNewsletter: true,
   h1: "Unsubscribing you now\u2026",
   desc: "Remove your email address from the Vootkit mailing list.",
-  lede: "One click, no account needed. This takes a second.",
+  lede: "One click and this takes a second.",
   body: `
   <p data-unsubscribe class="nl-status" role="status" aria-live="polite">Working\u2026</p>
   <p class="note" style="margin-top:var(--s-4)">If this page does not confirm within a few seconds, the link may have been
   broken by your email client. Reply to any email from us and we will remove you by hand.</p>
   <div class="cta-band" style="margin-top:var(--s-6);padding:var(--s-6);border:1px solid var(--line);border-radius:var(--r-lg);text-align:center">
     <h2 style="margin:0 0 var(--s-2)">The tools stay free either way</h2>
-    <p class="page-lede" style="margin:0 auto var(--s-4)">No account, no email address, no limits on the ones that run in your browser.</p>
+    <p class="page-lede" style="margin:0 auto var(--s-4)">Your email preferences are separate from the tools, and the tools stay available either way.</p>
     <a class="btn btn-primary" href="../tools/">Browse all tools</a>
   </div>`
 }));

@@ -3,6 +3,7 @@ node_modules/
 .DS_Store
 Thumbs.db
 *.log
+.codex/
 
 # ---------------------------------------------------------------------------
 # Generated build output — produced by `npm run build` (build.js) and
