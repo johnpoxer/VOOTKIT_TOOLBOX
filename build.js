@@ -3788,12 +3788,12 @@ function workflowCopy() {
       <div class="wf-card-flow" aria-hidden="true">${cardSteps(t)}</div>`;
   };
   const templateCards = ordered.map((t) => `
-      <article class="wf-market-card wf-cover-${esc((coverAsset(t).overlayVariant || "center").toLowerCase())}" data-wf-market-card data-wf-template-card="${esc(t.id)}" data-category="${esc((t.category || t.kind).toLowerCase())}" data-plan="${esc((t.plan || "Free").toLowerCase())}" data-featured="${t.featured ? "true" : "false"}" tabindex="0" role="button" aria-label="Open ${esc(t.name)} template preview">
+      <article class="wf-market-card wf-cover-${esc((coverAsset(t).overlayVariant || "center").toLowerCase())}" data-wf-market-card data-wf-template-card="${esc(t.id)}" data-category="${esc((t.category || t.kind).toLowerCase())}" data-plan="${esc((t.plan || "Pro").toLowerCase())}" data-featured="${t.featured ? "true" : "false"}" tabindex="0" role="button" aria-label="Open ${esc(t.name)} template preview">
         <div class="wf-market-cover">${cover(t)}</div>
         <div class="wf-market-body">
           <h3>${esc(t.name)}</h3>
           <p>${esc(t.why)}</p>
-          <div class="wf-market-meta"><span>${t.steps.length} steps</span><span>${esc(t.input || kindLabel(t.kind))} -> ${esc(t.output || "Output")}</span><b>${esc(t.plan || "Free")}</b></div>
+          <div class="wf-market-meta"><span>${t.steps.length} steps</span><span>${esc(t.input || kindLabel(t.kind))} -> ${esc(t.output || "Output")}</span><b>${esc(t.plan || "Pro")}</b></div>
         </div>
       </article>`).join("");
   const tabNames = ["All", "Featured"].concat(allKinds.map(kindLabel));
@@ -3817,7 +3817,7 @@ function workflowCopy() {
           <select data-wf-template-filter="category" aria-label="All Categories"><option value="all">All Categories</option>${allKinds.map((k) => `<option value="${esc(k.toLowerCase())}">${esc(kindLabel(k))}</option>`).join("")}</select>
           <select aria-label="All Inputs"><option>All Inputs</option><option>PDF</option><option>Images</option><option>Video</option></select>
           <select aria-label="All Outputs"><option>All Outputs</option><option>PDF</option><option>WebP</option><option>GIF</option></select>
-          <select data-wf-template-filter="plan" aria-label="Free and Pro"><option value="all">Free &amp; Pro</option><option value="free">Free</option><option value="pro">Pro</option></select>
+          
         </div>
         <div class="wf-market-tabs" role="tablist" aria-label="Template categories">
           ${tabNames.map((x, i) => `<button type="button" class="${i === 0 ? "is-on" : ""}" data-wf-template-tab="${esc(x.toLowerCase())}">${esc(x)}</button>`).join("")}

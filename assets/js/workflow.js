@@ -370,7 +370,7 @@
    */
   var TEMPLATES = [
     { id: 'website-image-optimizer', name: 'Website Image Optimizer', kind: 'image',
-      category: 'Image', featured: true, plan: 'Free', asset: 'website-image-optimizer',
+      category: 'Image', featured: true, plan: 'Pro', asset: 'website-image-optimizer',
       why: 'Resize, compress and convert images for faster websites.',
       about: 'Perfect for website owners, developers and marketers who need faster loading images.',
       input: 'JPG, PNG, WebP images', output: 'WebP images', time: '2-3 min',
@@ -384,7 +384,7 @@
         'convert-image': { format: 'image/webp', quality: 92 }
       } },
     { id: 'pdf-document-workflow', name: 'PDF Document Workflow', kind: 'pdf',
-      category: 'PDF', featured: true, plan: 'Free', asset: 'pdf-document-workflow',
+      category: 'PDF', featured: true, plan: 'Pro', asset: 'pdf-document-workflow',
       why: 'Prepare PDF documents with real browser-based PDF steps.',
       about: 'A practical PDF workflow using the document steps currently available in Vootkit Workflow.',
       input: 'PDF documents', output: 'Protected PDF', time: '1-2 min',
@@ -402,7 +402,7 @@
       summaries: ['Combine PDFs', 'Page numbers', 'Lock final file'],
       steps: ['merge-pdf', 'pdf-page-numbers', 'protect-pdf'] },
     { id: 'video-social-workflow', name: 'Video Social Workflow', kind: 'video',
-      category: 'Video', plan: 'Free', asset: 'video-social-workflow',
+      category: 'Video', plan: 'Pro', asset: 'video-social-workflow',
       why: 'Trim a clip and convert the shareable moment into a GIF.',
       about: 'A lightweight media workflow for short clips, social posts and quick visual updates.',
       input: 'MP4, MOV, WebM video', output: 'GIF image', time: '3-5 min',
@@ -411,43 +411,43 @@
       summaries: ['Trim clip', 'GIF output'],
       steps: ['trim-video', 'video-to-gif'] },
     { id: 'photo-batch-cleanup', name: 'Photo Batch Cleanup', kind: 'image',
-      category: 'Image', plan: 'Free', asset: 'photo-batch-cleanup',
+      category: 'Image', plan: 'Pro', asset: 'photo-batch-cleanup',
       why: 'Crop photos to one shape, then compress them for sharing.',
       input: 'JPG, PNG, WebP images', output: 'Compressed images',
       what: ['Crop to a consistent ratio.', 'Compress for sharing.'],
       steps: ['crop-image', 'compress-image'] },
     { id: 'print-ready-images', name: 'Print Ready Images', kind: 'image',
-      category: 'Document', plan: 'Free', asset: 'print-ready-images',
+      category: 'Document', plan: 'Pro', asset: 'print-ready-images',
       why: 'Resize images, then bind them into one downloadable PDF.',
       input: 'Images', output: 'PDF document',
       what: ['Resize images consistently.', 'Convert images to a PDF.'],
       steps: ['resize-image', 'jpg-to-pdf'] },
     { id: 'pdf-share-safe', name: 'Safe PDF Share', kind: 'pdf',
-      category: 'PDF', plan: 'Free', asset: 'pdf-share-safe',
+      category: 'PDF', plan: 'Pro', asset: 'pdf-share-safe',
       why: 'Watermark a PDF, then protect it before sharing.',
       input: 'PDF document', output: 'Protected PDF',
       what: ['Add a watermark.', 'Apply password protection.'],
       steps: ['pdf-watermark', 'protect-pdf'] },
     { id: 'pdf-report-builder', name: 'PDF Report Builder', kind: 'pdf',
-      category: 'Document', plan: 'Free', asset: 'pdf-report-builder',
+      category: 'Document', plan: 'Pro', asset: 'pdf-report-builder',
       why: 'Combine PDFs in order, then number the finished report.',
       input: 'Multiple PDFs', output: 'Numbered PDF',
       what: ['Merge PDF files.', 'Add page numbers.'],
       steps: ['merge-pdf', 'pdf-page-numbers'] },
     { id: 'video-thumbnail-workflow', name: 'Video Thumbnail Workflow', kind: 'video',
-      category: 'Video', plan: 'Free', asset: 'video-thumbnail-workflow',
+      category: 'Video', plan: 'Pro', asset: 'video-thumbnail-workflow',
       why: 'Grab a frame from a video, then resize it for use as a thumbnail.',
       input: 'Video file', output: 'Image thumbnail',
       what: ['Extract a frame.', 'Resize the image.'],
       steps: ['frame-grabber', 'resize-image'] },
     { id: 'social-image-pack', name: 'Social Image Pack', kind: 'image',
-      category: 'Image', featured: true, plan: 'Free', asset: 'social-image-pack',
+      category: 'Image', featured: true, plan: 'Pro', asset: 'social-image-pack',
       why: 'Resize, crop and compress images for social posts.',
       input: 'JPG, PNG, WebP images', output: 'Compressed social images',
       what: ['Resize for social layouts.', 'Crop to the right frame.', 'Compress for sharing.'],
       steps: ['social-media-image', 'crop-image', 'compress-image'] },
     { id: 'profile-photo-polish', name: 'Profile Photo Polish', kind: 'image',
-      category: 'Image', plan: 'Free', asset: 'profile-photo-polish',
+      category: 'Image', plan: 'Pro', asset: 'profile-photo-polish',
       why: 'Crop a portrait into a clean circular profile image.',
       input: 'Portrait image', output: 'Rounded profile image',
       what: ['Crop to a circular avatar.', 'Round the corners.', 'Compress the result.'],
@@ -459,19 +459,19 @@
       what: ['Bulk resize product photos.', 'Sharpen details.', 'Batch compress output.'],
       steps: ['bulk-resize', 'image-sharpen', 'batch-compress'] },
     { id: 'blog-image-ready', name: 'Blog Image Ready', kind: 'image',
-      category: 'Image', plan: 'Free', asset: 'blog-image-ready',
+      category: 'Image', plan: 'Pro', asset: 'blog-image-ready',
       why: 'Create lightweight WebP images for blog articles.',
       input: 'Article images', output: 'WebP images',
       what: ['Resize wide images.', 'Convert to WebP.', 'Compress for faster pages.'],
       steps: ['resize-image', 'convert-image', 'compress-image'] },
     { id: 'photo-touchup-export', name: 'Photo Touchup Export', kind: 'image',
-      category: 'Image', plan: 'Free', asset: 'photo-touchup-export',
+      category: 'Image', plan: 'Pro', asset: 'photo-touchup-export',
       why: 'Adjust brightness, sharpen and export a smaller photo.',
       input: 'Photo image', output: 'Polished photo',
       what: ['Adjust brightness and contrast.', 'Sharpen the image.', 'Compress the export.'],
       steps: ['image-brightness', 'image-sharpen', 'compress-image'] },
     { id: 'thumbnail-export-pack', name: 'Thumbnail Export Pack', kind: 'image',
-      category: 'Image', plan: 'Free', asset: 'thumbnail-export-pack',
+      category: 'Image', plan: 'Pro', asset: 'thumbnail-export-pack',
       why: 'Create smaller thumbnails from larger source images.',
       input: 'Large images', output: 'Thumbnails',
       what: ['Resize the source image.', 'Create a thumbnail.', 'Convert for web use.'],
@@ -483,43 +483,43 @@
       what: ['Merge PDFs together.', 'Add page numbers.', 'Protect the packet.'],
       steps: ['merge-pdf', 'pdf-page-numbers', 'protect-pdf'] },
     { id: 'pdf-page-cleanup', name: 'PDF Page Cleanup', kind: 'pdf',
-      category: 'PDF', plan: 'Free', asset: 'pdf-page-cleanup',
+      category: 'PDF', plan: 'Pro', asset: 'pdf-page-cleanup',
       why: 'Rotate, reorder and protect a PDF before sharing.',
       input: 'PDF document', output: 'Clean protected PDF',
       what: ['Rotate pages.', 'Organize page order.', 'Protect the final PDF.'],
       steps: ['rotate-pdf', 'reorder-pdf', 'protect-pdf'] },
     { id: 'pdf-review-extract', name: 'PDF Review Extract', kind: 'pdf',
-      category: 'PDF', plan: 'Free', asset: 'pdf-review-extract',
+      category: 'PDF', plan: 'Pro', asset: 'pdf-review-extract',
       why: 'Split a PDF and protect the pages you need.',
       input: 'PDF document', output: 'Extracted PDF files',
       what: ['Split the PDF.', 'Extract selected pages.', 'Protect the results.'],
       steps: ['split-pdf', 'extract-pdf-pages', 'protect-pdf'] },
     { id: 'pdf-archive-lock', name: 'PDF Archive Lock', kind: 'pdf',
-      category: 'PDF', plan: 'Free', asset: 'pdf-archive-lock',
+      category: 'PDF', plan: 'Pro', asset: 'pdf-archive-lock',
       why: 'Repair, number and protect an archive PDF.',
       input: 'PDF document', output: 'Protected archive PDF',
       what: ['Repair the PDF where possible.', 'Add page numbers.', 'Apply protection.'],
       steps: ['pdf-repair', 'pdf-page-numbers', 'protect-pdf'] },
     { id: 'pdf-watermark-delivery', name: 'PDF Watermark Delivery', kind: 'pdf',
-      category: 'PDF', featured: true, plan: 'Free', asset: 'pdf-watermark-delivery',
+      category: 'PDF', featured: true, plan: 'Pro', asset: 'pdf-watermark-delivery',
       why: 'Watermark a PDF and lock it before delivery.',
       input: 'PDF document', output: 'Watermarked protected PDF',
       what: ['Add a watermark.', 'Add page numbers.', 'Protect the output.'],
       steps: ['pdf-watermark', 'pdf-page-numbers', 'protect-pdf'] },
     { id: 'quick-pdf-trim', name: 'Quick PDF Trim', kind: 'pdf',
-      category: 'PDF', plan: 'Free', asset: 'quick-pdf-trim',
+      category: 'PDF', plan: 'Pro', asset: 'quick-pdf-trim',
       why: 'Delete unwanted pages and protect the final document.',
       input: 'PDF document', output: 'Trimmed PDF',
       what: ['Delete pages.', 'Crop if needed.', 'Protect the final PDF.'],
       steps: ['delete-pdf-pages', 'crop-pdf', 'protect-pdf'] },
     { id: 'video-compress-export', name: 'Video Compress Export', kind: 'video',
-      category: 'Video', featured: true, plan: 'Free', asset: 'video-compress-export',
+      category: 'Video', featured: true, plan: 'Pro', asset: 'video-compress-export',
       why: 'Trim, compress and export a shareable video.',
       input: 'MP4, MOV, WebM video', output: 'Compressed video',
       what: ['Trim the useful clip.', 'Compress the video.', 'Convert if needed.'],
       steps: ['trim-video', 'compress-video', 'convert-video'] },
     { id: 'muted-preview-gif', name: 'Muted Preview GIF', kind: 'video',
-      category: 'Video', plan: 'Free', asset: 'muted-preview-gif',
+      category: 'Video', plan: 'Pro', asset: 'muted-preview-gif',
       why: 'Make a silent looping preview and GIF version.',
       input: 'Video file', output: 'GIF preview',
       what: ['Mute the clip.', 'Loop the result.', 'Convert to GIF.'],
@@ -531,49 +531,49 @@
       what: ['Reframe to vertical.', 'Trim the clip.', 'Compress output.'],
       steps: ['vertical-reframe', 'trim-video', 'compress-video'] },
     { id: 'training-clip-package', name: 'Training Clip Package', kind: 'video',
-      category: 'Video', plan: 'Free', asset: 'training-clip-package',
+      category: 'Video', plan: 'Pro', asset: 'training-clip-package',
       why: 'Resize, adjust volume and compress a training clip.',
       input: 'Video lesson', output: 'Compressed training video',
       what: ['Resize the video.', 'Adjust volume.', 'Compress for sharing.'],
       steps: ['resize-video', 'adjust-volume', 'compress-video'] },
     { id: 'audio-extract-pack', name: 'Audio Extract Pack', kind: 'video',
-      category: 'Video', plan: 'Free', asset: 'audio-extract-pack',
+      category: 'Video', plan: 'Pro', asset: 'audio-extract-pack',
       why: 'Trim a video and extract the audio track.',
       input: 'Video file', output: 'Audio file',
       what: ['Trim to the needed section.', 'Extract audio.', 'Download the audio output.'],
       steps: ['trim-video', 'extract-audio'] },
     { id: 'scan-pack-builder', name: 'Scan Pack Builder', kind: 'image',
-      category: 'Document', featured: true, plan: 'Free', asset: 'scan-pack-builder',
+      category: 'Document', featured: true, plan: 'Pro', asset: 'scan-pack-builder',
       why: 'Turn scans into a numbered protected PDF packet.',
       input: 'Scanned images', output: 'Protected PDF',
       what: ['Convert scans to PDF.', 'Add page numbers.', 'Protect the packet.'],
       steps: ['jpg-to-pdf', 'pdf-page-numbers', 'protect-pdf'] },
     { id: 'image-report-pdf', name: 'Image Report PDF', kind: 'image',
-      category: 'Document', plan: 'Free', asset: 'image-report-pdf',
+      category: 'Document', plan: 'Pro', asset: 'image-report-pdf',
       why: 'Resize report images and bind them into one PDF.',
       input: 'Report images', output: 'PDF report',
       what: ['Resize images.', 'Convert images to PDF.', 'Add page numbers.'],
       steps: ['resize-image', 'jpg-to-pdf', 'pdf-page-numbers'] },
     { id: 'document-watermark-lock', name: 'Document Watermark Lock', kind: 'pdf',
-      category: 'Document', plan: 'Free', asset: 'document-watermark-lock',
+      category: 'Document', plan: 'Pro', asset: 'document-watermark-lock',
       why: 'Watermark and protect an important PDF document.',
       input: 'PDF document', output: 'Protected PDF',
       what: ['Add watermark text.', 'Add page numbers.', 'Protect the PDF.'],
       steps: ['pdf-watermark', 'pdf-page-numbers', 'protect-pdf'] },
     { id: 'page-numbered-archive', name: 'Page Numbered Archive', kind: 'pdf',
-      category: 'Document', plan: 'Free', asset: 'page-numbered-archive',
+      category: 'Document', plan: 'Pro', asset: 'page-numbered-archive',
       why: 'Merge documents, add page numbers and protect the archive.',
       input: 'PDF documents', output: 'Numbered archive PDF',
       what: ['Merge files.', 'Add page numbers.', 'Protect the archive.'],
       steps: ['merge-pdf', 'pdf-page-numbers', 'protect-pdf'] },
     { id: 'signature-ready-pdf', name: 'Signature Ready PDF', kind: 'pdf',
-      category: 'Document', plan: 'Free', asset: 'signature-ready-pdf',
+      category: 'Document', plan: 'Pro', asset: 'signature-ready-pdf',
       why: 'Prepare a PDF for safe sharing.',
       input: 'PDF document', output: 'Share-ready PDF',
       what: ['Rotate pages if needed.', 'Add page numbers.', 'Protect the output.'],
       steps: ['rotate-pdf', 'pdf-page-numbers', 'protect-pdf'] },
     { id: 'receipt-archive', name: 'Receipt Archive', kind: 'pdf',
-      category: 'Business', plan: 'Free', asset: 'receipt-archive',
+      category: 'Business', plan: 'Pro', asset: 'receipt-archive',
       why: 'Merge receipts into a numbered secure archive.',
       input: 'Receipt PDFs', output: 'Receipt archive PDF',
       what: ['Merge receipts.', 'Add page numbers.', 'Protect the archive.'],
@@ -585,31 +585,31 @@
       what: ['Add a watermark.', 'Add page numbers.', 'Protect before sharing.'],
       steps: ['pdf-watermark', 'pdf-page-numbers', 'protect-pdf'] },
     { id: 'contract-send-ready', name: 'Contract Send Ready', kind: 'pdf',
-      category: 'Business', plan: 'Free', asset: 'contract-send-ready',
+      category: 'Business', plan: 'Pro', asset: 'contract-send-ready',
       why: 'Prepare contracts with numbering and protection.',
       input: 'Contract PDF', output: 'Protected contract PDF',
       what: ['Rotate pages if needed.', 'Apply page numbers.', 'Protect the contract.'],
       steps: ['rotate-pdf', 'pdf-page-numbers', 'protect-pdf'] },
     { id: 'billing-image-packet', name: 'Billing Image Packet', kind: 'image',
-      category: 'Business', plan: 'Free', asset: 'billing-image-packet',
+      category: 'Business', plan: 'Pro', asset: 'billing-image-packet',
       why: 'Turn billing screenshots into a protected PDF packet.',
       input: 'Billing images', output: 'Billing PDF',
       what: ['Resize images.', 'Convert to PDF.', 'Protect the output.'],
       steps: ['resize-image', 'jpg-to-pdf', 'protect-pdf'] },
     { id: 'web-thumbnail-set', name: 'Web Thumbnail Set', kind: 'image',
-      category: 'Developer', featured: true, plan: 'Free', asset: 'web-thumbnail-set',
+      category: 'Developer', featured: true, plan: 'Pro', asset: 'web-thumbnail-set',
       why: 'Create consistent thumbnails for website UI.',
       input: 'Website images', output: 'Optimized thumbnails',
       what: ['Resize image assets.', 'Create thumbnails.', 'Compress output.'],
       steps: ['resize-image', 'thumbnail-maker', 'compress-image'] },
     { id: 'app-icon-export', name: 'App Icon Export', kind: 'image',
-      category: 'Developer', plan: 'Free', asset: 'app-icon-export',
+      category: 'Developer', plan: 'Pro', asset: 'app-icon-export',
       why: 'Resize and round app icons for product pages.',
       input: 'Icon image', output: 'Rounded icon image',
       what: ['Resize the icon.', 'Round corners.', 'Compress for delivery.'],
       steps: ['resize-image', 'round-corners', 'compress-image'] },
     { id: 'docs-asset-webp', name: 'Docs Asset WebP', kind: 'image',
-      category: 'Developer', plan: 'Free', asset: 'docs-asset-webp',
+      category: 'Developer', plan: 'Pro', asset: 'docs-asset-webp',
       why: 'Convert documentation images into lighter WebP assets.',
       input: 'Documentation images', output: 'WebP assets',
       what: ['Resize docs assets.', 'Convert to WebP.', 'Compress output.'],
@@ -621,31 +621,31 @@
       what: ['Trim the clip.', 'Convert to GIF.', 'Compress the GIF image.'],
       steps: ['trim-video', 'video-to-gif', 'compress-image'] },
     { id: 'svg-export-pack', name: 'SVG Export Pack', kind: 'image',
-      category: 'Developer', plan: 'Free', asset: 'svg-export-pack',
+      category: 'Developer', plan: 'Pro', asset: 'svg-export-pack',
       why: 'Convert SVG artwork into compressed PNG assets.',
       input: 'SVG or image asset', output: 'PNG asset',
       what: ['Convert SVG to PNG.', 'Resize output.', 'Compress the file.'],
       steps: ['svg-to-png', 'resize-image', 'compress-image'] },
     { id: 'study-handout-pack', name: 'Study Handout Pack', kind: 'pdf',
-      category: 'Education', featured: true, plan: 'Free', asset: 'study-handout-pack',
+      category: 'Education', featured: true, plan: 'Pro', asset: 'study-handout-pack',
       why: 'Merge class PDFs, number them and protect the handout.',
       input: 'Class PDFs', output: 'Numbered handout PDF',
       what: ['Merge handouts.', 'Add page numbers.', 'Protect for download.'],
       steps: ['merge-pdf', 'pdf-page-numbers', 'protect-pdf'] },
     { id: 'assignment-pdf-lock', name: 'Assignment PDF Lock', kind: 'pdf',
-      category: 'Education', plan: 'Free', asset: 'assignment-pdf-lock',
+      category: 'Education', plan: 'Pro', asset: 'assignment-pdf-lock',
       why: 'Watermark and protect assignment PDFs before sharing.',
       input: 'Assignment PDF', output: 'Protected assignment PDF',
       what: ['Add a watermark.', 'Add page numbers.', 'Protect the file.'],
       steps: ['pdf-watermark', 'pdf-page-numbers', 'protect-pdf'] },
     { id: 'presentation-image-optimizer', name: 'Presentation Image Optimizer', kind: 'image',
-      category: 'Education', plan: 'Free', asset: 'presentation-image-optimizer',
+      category: 'Education', plan: 'Pro', asset: 'presentation-image-optimizer',
       why: 'Resize and compress images for slides or handouts.',
       input: 'Presentation images', output: 'Compressed images',
       what: ['Resize images.', 'Sharpen where needed.', 'Compress output.'],
       steps: ['resize-image', 'image-sharpen', 'compress-image'] },
     { id: 'lecture-clip-gif', name: 'Lecture Clip GIF', kind: 'video',
-      category: 'Education', plan: 'Free', asset: 'lecture-clip-gif',
+      category: 'Education', plan: 'Pro', asset: 'lecture-clip-gif',
       why: 'Turn a short lecture clip into a GIF preview.',
       input: 'Lecture video', output: 'GIF preview',
       what: ['Trim the clip.', 'Convert to GIF.', 'Download the preview.'],
@@ -906,6 +906,7 @@
 
     var files = [];
     var lastResults = [];
+    var lastRunMs = 0;
     var nodes = [];            // [{uid, id, opts, x, y}]
     var links = [];            // [{from, to}]  ids are uid | 'in'
     var sel = null;            // selected uid
@@ -993,10 +994,13 @@
     var summarySteps = h('strong', { text: '0' });
     var summaryRoutes = h('strong', { text: 'No route' });
     var summaryStatus = h('strong', { text: 'Choose files' });
+    /* Measured or absent. A time we invented is worse than no time at all. */
+    var summaryFiles = h('strong', { text: 'None yet' });
+    var summaryTime = h('strong', { text: 'Not run yet' });
     var runSummary = h('div', { class: 'wfc-summary' }, [
       h('span', {}, [summarySteps, h('small', { text: 'steps' })]),
-      h('span', {}, [h('strong', { text: '12 files' }), h('small', { text: 'input ready' })]),
-      h('span', {}, [h('strong', { text: '~15 seconds' }), h('small', { text: 'estimated' })]),
+      h('span', {}, [summaryFiles, h('small', { text: 'input' })]),
+      h('span', {}, [summaryTime, h('small', { text: 'last run' })]),
       h('span', {}, [summaryRoutes, h('small', { text: 'actions' })]),
       h('span', {}, [summaryStatus, h('small', { text: 'privacy' })])
     ]);
@@ -1682,6 +1686,8 @@
       runBtn.disabled = !(files.length && paths.length);
       saveBtn.disabled = !nodes.length;
       summarySteps.textContent = String(nodes.length + 2);
+      summaryFiles.textContent = files.length ? (files.length === 1 ? '1 file' : files.length + ' files') : 'None yet';
+      summaryTime.textContent = lastRunMs ? (lastRunMs < 1000 ? '<1s' : Math.round(lastRunMs / 1000) + 's') : 'Not run yet';
       summaryRoutes.textContent = nodes.length ? String(nodes.length + 1) : 'No actions';
       /* Locality is a property of the steps, not of whether they are wired up.
          An unconnected chain is "Connect steps"; a connected one reports where
@@ -1753,15 +1759,22 @@
         });
         return realGrid;
       }
-      var photos = templatesFor(D).slice(0, 7).map(function (t) { return t.asset || t.id; });
-      if (!photos.length) photos = ['website-image-optimizer'];
+      /* Nothing has run. Show the real inputs if there are any, otherwise show
+         nothing -- finished-looking thumbnails before a run are the same lie as
+         an invented stat. */
+      if (!files.length) {
+        return h('p', { class: 'note', text: 'Choose files and run the workflow to see results here.' });
+      }
       var grid = h('div', { class: 'wfc-preview-grid' });
-      photos.forEach(function (name, i) {
-        grid.appendChild(h('picture', { class: 'wfc-preview-tile' + (i === photos.length - 1 ? ' is-more' : '') }, [
-          h('source', { srcset: '../public/images/workflows/templates/' + name + '.avif', type: 'image/avif' }),
-          h('img', { src: '../public/images/workflows/templates/' + name + '.webp', alt: '', loading: 'lazy', decoding: 'async' }),
-          i === photos.length - 1 ? h('span', { text: '+8' }) : null
-        ]));
+      files.slice(0, 8).forEach(function (f, i) {
+        var tile = h('span', { class: 'wfc-preview-tile' + (i === 7 && files.length > 8 ? ' is-more' : '') });
+        if (String(f.type || '').indexOf('image/') === 0 && root.URL && root.URL.createObjectURL) {
+          tile.appendChild(h('img', { src: root.URL.createObjectURL(f), alt: '', loading: 'lazy', decoding: 'async' }));
+        } else {
+          tile.appendChild(h('span', { text: String(f.name || 'file').split('.').pop().toUpperCase() }));
+        }
+        if (i === 7 && files.length > 8) tile.appendChild(h('span', { text: '+' + (files.length - 7) }));
+        grid.appendChild(tile);
       });
       return grid;
     }
@@ -1779,7 +1792,7 @@
         ]));
         panel.appendChild(h('div', { class: 'wfc-overview' }, [
           h('span', {}, [h('strong', { text: String(nodes.length + 2) }), h('small', { text: 'Steps incl. input/output' })]),
-          h('span', {}, [h('strong', { text: files.length ? (files.length === 1 ? '1 file' : files.length + ' files') : '12 files' }), h('small', { text: files.length ? startKind() : 'sample input' })]),
+          h('span', {}, [h('strong', { text: files.length ? (files.length === 1 ? '1 file' : files.length + ' files') : 'None yet' }), h('small', { text: files.length ? startKind() : 'Input' })]),
           h('span', {}, [h('strong', { text: pathsFrom(nodes, links, 'in').length ? 'Connected' : 'Draft' }), h('small', { text: 'Chain status' })])
         ]));
         var temps = templatesFor(D, startKind());
@@ -1849,10 +1862,14 @@
         panel.appendChild(h('p', { class: 'note', text: 'This step has no settings. It uses the tool default.' }));
       }
       panel.appendChild(h('details', { class: 'wfc-advanced' }, [h('summary', { text: 'Advanced Settings' }), h('p', { class: 'note', text: 'Optional fine tuning is available when a tool exposes more controls.' })]));
-      panel.appendChild(h('h3', { class: 'wfc-h wfc-subh', text: 'Output Preview (12 files)' }));
+      panel.appendChild(h('h3', { class: 'wfc-h wfc-subh', text: lastResults.length
+        ? 'Output Preview (' + lastResults.length + ')'
+        : (files.length ? 'Input Preview (' + files.length + ')' : 'Output Preview') }));
       panel.appendChild(previewTiles());
-      var total = files.reduce(function (sum, f) { return sum + (f.size || 0); }, 0);
-      panel.appendChild(h('p', { class: 'wfc-estimate', html: 'Estimated size: <strong>' + (total ? fmtBytes(total) : '2.4 MB') + '</strong>' + (files.length ? '' : ' <span>(sample)</span>') }));
+      var outTotal = lastResults.reduce(function (sum, r) { return sum + ((r.blob && r.blob.size) || 0); }, 0);
+      var inTotal = files.reduce(function (sum, f) { return sum + (f.size || 0); }, 0);
+      if (outTotal) panel.appendChild(h('p', { class: 'wfc-estimate', html: 'Output size: <strong>' + fmtBytes(outTotal) + '</strong>' }));
+      else if (inTotal) panel.appendChild(h('p', { class: 'wfc-estimate', html: 'Input size: <strong>' + fmtBytes(inTotal) + '</strong>' }));
       panel.appendChild(h('div', { class: 'wfc-panacts' }, [
         h('button', { class: 'btn btn-sm', type: 'button', text: 'Disconnect', onclick: function () { links = links.filter(function (l) { return l.to !== n.uid; }); draw(); } }),
         h('button', { class: 'btn btn-sm', type: 'button', text: 'Duplicate', onclick: function () { pushHistory(); var uid = 'n' + (++uidN); nodes.push({ uid: uid, id: n.id, opts: Object.assign({}, n.opts), x: n.x + 34, y: n.y + 52 }); sel = uid; draw(); } }),
@@ -1968,6 +1985,7 @@
       runBtn.disabled = true; saveBtn.disabled = true;
       cancelBtn.hidden = false; cancelBtn.disabled = false; cancelBtn.textContent = 'Cancel';
       lastResults = [];
+      var runStarted = Date.now();
       log.innerHTML = '';
       [].forEach.call(pan.querySelectorAll('.wfc-node.is-step'), function (n) { n.classList.remove('is-run', 'is-done', 'is-fail'); });
       var results = [];
@@ -2039,6 +2057,7 @@
       }
       if (!results.length) { log.appendChild(h('p', { class: 'note err', text: 'Nothing came out. Your originals are untouched and nothing was uploaded.' })); return; }
       lastResults = results.slice();
+      lastRunMs = Date.now() - runStarted;
       drawPanel();
       log.appendChild(h('p', { class: 'note', text: results.length + ' file(s) produced from ' + files.length + ' input(s) over ' + paths.length + ' route(s).' }));
       results.forEach(function (r, i) {
