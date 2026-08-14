@@ -911,6 +911,7 @@
     var sel = null;            // selected uid
     var draftKind = 'image';    // template/input kind used before files are chosen
     var palCat = 'all';
+    var pickQ = '', pickCat = 'all', recentTools = [];
     var toastTimer = 0;
     var view = { x: 0, y: 0, k: 1 };
     var uidN = 0;
@@ -1122,53 +1123,145 @@
         canvas.classList.add('is-target');
       });
       b.addEventListener('dragend', function () { canvas.classList.remove('is-target'); });
-      b.addEventListener('click', function () { addNode(it.id, null, null); });
+      b.addEventListener('click', function () { noteRecent(it.id); addNode(it.id, null, null); });
       return b;
     }
 
+    /* Every compatible step, not a slice of eight. The sheet does its own
+       filtering, so truncating here would hide tools the search can reach. */
     function pickerItems(fromUid) {
       var kind = kindAfter(fromUid || sel || 'in');
       var picks = stepChoices(D, kind || startKind(), null);
-      if (!picks.length) {
+      var compatible = picks.length > 0;
+      if (!compatible) {
         picks = Object.keys(D.flow).filter(function (id) { return D.flow[id].w; }).map(function (id) {
           return { id: id, name: (D.names && D.names[id]) || id, rank: D.flow[id].p || 999 };
         }).sort(function (a, b) { return a.rank - b.rank || a.name.localeCompare(b.name); });
       }
-      return picks.slice(0, 8).map(function (p) {
+      return { compatible: compatible, items: picks.map(function (p) {
         var info = toolInfo(p.id);
-        return { id: p.id, name: info.name, desc: info.desc, cat: info.cat };
-      });
+        return { id: p.id, name: info.name, desc: info.desc, cat: info.cat, rank: p.rank || 999 };
+      }) };
     }
 
+    function noteRecent(id) {
+      recentTools = [id].concat(recentTools.filter(function (r) { return r !== id; })).slice(0, 5);
+    }
+
+    /* One picker, two presentations. Desktop keeps the anchored popover next
+       to the "+" you pressed; below 700px CSS turns the same element into a
+       bottom sheet and hides the 62-item palette, so you see your workflow
+       instead of scrolling a tool list to reach it. */
     function openPicker(fromUid, anchor) {
       closePicker();
       sel = fromUid === 'in' ? 'in' : fromUid;
-      var box = h('div', { class: 'wfc-picker', role: 'dialog', 'aria-label': 'Add workflow step' }, [
+      pickQ = ''; pickCat = 'all';
+
+      var data = pickerItems(fromUid);
+      var searchIn = h('input', { type: 'search', class: 'field wfc-picker-search',
+        placeholder: 'Search steps...', 'aria-label': 'Search steps to add' });
+      var chips = h('div', { class: 'wfc-picker-cats', 'aria-label': 'Step categories' });
+      var list = h('div', { class: 'wfc-picker-list' });
+      var note = h('p', { class: 'note wfc-picker-note' });
+
+      var box = h('div', { class: 'wfc-picker', role: 'dialog', 'aria-modal': 'true',
+        'aria-label': 'Add workflow step' }, [
+        h('div', { class: 'wfc-picker-grip', 'aria-hidden': 'true' }),
         h('div', { class: 'wfc-picker-head' }, [
           h('strong', { text: 'Add Step' }),
           h('button', { type: 'button', text: 'x', 'aria-label': 'Close step picker', onclick: closePicker })
-        ])
+        ]),
+        searchIn, chips, note, list
       ]);
-      pickerItems(fromUid).forEach(function (it) {
-        var row = h('button', { class: 'wfc-picker-row', type: 'button' }, [
+
+      function row(it) {
+        var b = h('button', { class: 'wfc-picker-row', type: 'button' }, [
           h('span', { class: 'wfc-pickic', html: toolIcon(it.id) }),
           h('span', { class: 'wfc-picktx' }, [h('strong', { text: it.name }), h('small', { text: it.desc })]),
           h('span', { class: 'wfc-addmark', text: '+' })
         ]);
-        row.addEventListener('click', function () { closePicker(); addNode(it.id, null, null); });
-        box.appendChild(row);
-      });
+        b.addEventListener('click', function () {
+          noteRecent(it.id);
+          closePicker();
+          addNode(it.id, null, null);
+        });
+        return b;
+      }
+
+      function render() {
+        list.innerHTML = '';
+        chips.innerHTML = '';
+        var q = (pickQ || '').trim().toLowerCase();
+
+        note.textContent = data.compatible
+          ? ''
+          : 'Nothing accepts that output, so every tool is listed.';
+        note.hidden = data.compatible;
+
+        var counts = { all: data.items.length };
+        data.items.forEach(function (it) { counts[it.cat] = (counts[it.cat] || 0) + 1; });
+        ['all'].concat(Object.keys(counts).filter(function (c) { return c !== 'all'; })
+          .sort(function (a, b) { return counts[b] - counts[a] || catName(a).localeCompare(catName(b)); }))
+          .forEach(function (c) {
+            var chip = h('button', { class: 'wfc-cat' + (pickCat === c ? ' is-on' : ''), type: 'button' }, [
+              h('span', { text: c === 'all' ? 'All' : catName(c) }),
+              h('em', { text: String(counts[c]) })
+            ]);
+            chip.addEventListener('click', function () { pickCat = c; render(); });
+            chips.appendChild(chip);
+          });
+
+        var shown = data.items.filter(function (it) {
+          var hay = (it.name + ' ' + it.desc + ' ' + it.id + ' ' + catName(it.cat)).toLowerCase();
+          return (pickCat === 'all' || it.cat === pickCat) && (!q || hay.indexOf(q) > -1);
+        });
+
+        /* Recents first, but only the ones that survive the current filter --
+           a recent tool that cannot accept this output is not an option. */
+        var recent = [], rest = [];
+        shown.forEach(function (it) {
+          (recentTools.indexOf(it.id) > -1 ? recent : rest).push(it);
+        });
+        recent.sort(function (a, b) { return recentTools.indexOf(a.id) - recentTools.indexOf(b.id); });
+        rest.sort(function (a, b) { return a.rank - b.rank || a.name.localeCompare(b.name); });
+
+        if (!shown.length) {
+          list.appendChild(h('p', { class: 'note', text: 'Nothing matches.' }));
+          return;
+        }
+        if (recent.length && !q) {
+          list.appendChild(h('h4', { class: 'wfc-picker-group', text: 'Recent' }));
+          recent.forEach(function (it) { list.appendChild(row(it)); });
+          if (rest.length) list.appendChild(h('h4', { class: 'wfc-picker-group', text: 'All steps' }));
+        } else {
+          recent.forEach(function (it) { list.appendChild(row(it)); });
+        }
+        rest.forEach(function (it) { list.appendChild(row(it)); });
+      }
+
+      searchIn.addEventListener('input', function () { pickQ = searchIn.value; render(); });
+      render();
+
       var p = anchor || byUid(fromUid || 'in') || { x: IN_X, y: IN_Y };
       box.style.left = Math.max(20, Math.min(p.x + 42, 900)) + 'px';
       box.style.top = Math.max(20, p.y + NODE_H + 18) + 'px';
-      pan.appendChild(box);
-      var first = box.querySelector('button.wfc-picker-row');
-      if (first) first.focus();
+
+      /* Mounted on the stage, not the pan: the pan carries the zoom transform,
+         and a transformed ancestor turns position:fixed back into absolute --
+         which would leave the sheet floating mid-canvas on a phone. */
+      var back = h('div', { class: 'wfc-picker-backdrop' });
+      back.addEventListener('click', closePicker);
+      stage.appendChild(back);
+      stage.appendChild(box);
+
+      if (searchIn.focus) searchIn.focus();
     }
 
     function closePicker() {
-      var old = pan.querySelector('.wfc-picker');
-      if (old && old.parentNode) old.parentNode.removeChild(old);
+      [].slice.call(stage.querySelectorAll('.wfc-picker, .wfc-picker-backdrop'))
+        .forEach(function (n) { if (n.parentNode) n.parentNode.removeChild(n); });
+      var stale = pan.querySelector('.wfc-picker');
+      if (stale && stale.parentNode) stale.parentNode.removeChild(stale);
     }
 
     doc.addEventListener('keydown', function (e) {
@@ -1469,7 +1562,7 @@
     });
 
     function draw() {
-      [].slice.call(pan.querySelectorAll('.wfc-node, .wfc-connector-add, .wfc-add-step, .wfc-output-preview, .wfc-picker')).forEach(function (n) { n.remove(); });
+      [].slice.call(pan.querySelectorAll('.wfc-node, .wfc-connector-add, .wfc-add-step, .wfc-output-preview')).forEach(function (n) { n.remove(); });
       hint.hidden = nodes.length > 0;
 
       var startPos = byUid('in');
