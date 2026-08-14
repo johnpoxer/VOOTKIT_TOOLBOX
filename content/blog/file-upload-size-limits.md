@@ -3,7 +3,7 @@ title: "File Upload Size Limits (2026)"
 slug: "file-upload-size-limits"
 date: "2026-08-12"
 description: "A practical 2026 reference for Gmail, Outlook, Discord, WhatsApp, Slack, YouTube, Google Drive, OneDrive and Dropbox upload limits."
-thumbnail: "/assets/blog/compress-video-discord.jpg"
+thumbnail: "/assets/blog/file-upload-size-limits.jpg"
 author: "The Vootkit team"
 ---
 
@@ -13,7 +13,7 @@ This guide is the practical version: the limits people hit most often, what they
 
 Last checked: August 12, 2026.
 
-![A video upload limit warning on a creator workspace, with compression settings beside it.](/assets/blog/compress-video-discord.jpg)
+![Printed documents beside a laptop, representing files prepared for upload or sharing.](/assets/blog/file-upload-size-limits.jpg)
 
 ## Quick Reference Table
 

@@ -342,6 +342,9 @@ ${o.ads ? adLoader() : "<!-- no ads inside an active tool workspace -->"}
       <button class="icon-btn" id="theme" type="button" aria-label="Switch theme">
         <svg viewBox="0 0 24 24"><path d="M21 13.1A8.4 8.4 0 1 1 10.9 3a6.6 6.6 0 0 0 10.1 10.1Z"/></svg>
       </button>
+      <button class="icon-btn" type="button" data-open-search aria-label="Search tools">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+      </button>
       <span id="vk-auth-slot" class="vk-auth-slot"><a class="btn btn-sm hdr-login" href="${up}auth/sign-in/">Login</a></span>
       <a class="hdr-cta" href="${up}auth/sign-up/"><span class="cta-full">Get Started Free</span><span class="cta-short">Start Free</span></a>
       <button class="icon-btn" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav">
@@ -809,6 +812,10 @@ function icon(name) {
     home: '<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>',
     receipt: '<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/>',
     briefcase: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>',
+    mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/>',
+    message: '<path d="M5 5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-5 4v-4H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/>',
+    bug: '<path d="M8 8a4 4 0 0 1 8 0v7a4 4 0 0 1-8 0z"/><path d="M9 4 7 2M15 4l2-2M4 12h4M16 12h4M5 18l3-2M19 18l-3-2"/>',
+    tag: '<path d="M20 12 12 20 4 12V4h8z"/><circle cx="8.5" cy="8.5" r="1.5"/>',
     search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/>',
     eye: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>',
     lock: '<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
@@ -872,6 +879,93 @@ const DIR_GROUPS = [
   { slug: "calculation", name: "Unit & Calculation", icon: "calculator", cats: ["finance", "tax", "insurance", "realestate", "health", "travel"] },
   { slug: "other", name: "Other Tools", icon: "dots", cats: ["business", "everyday"] }
 ];
+
+const CATEGORY_DEPTH = {
+  pdf: {
+    focus: "PDF work is usually private by nature: contracts, invoices, forms, statements, scans and signed documents. The safest flow is to keep the file on the device, make the smallest change needed, then download a clean result.",
+    choose: ["Use merge, split, reorder and delete tools when the page structure is the problem.", "Use compress and convert tools when the file has to fit an upload limit or move into another format.", "Use protect, unlock and redact tools when the question is access, sharing or sensitive information."]
+  },
+  images: {
+    focus: "Image tasks normally fail at the edges: files are too large, the format is wrong for a platform, or dimensions do not match where the image will be used. These tools keep that work quick and visual.",
+    choose: ["Resize before compression when a photo is much larger than the final display size.", "Convert to WebP or AVIF for web delivery, and keep PNG when transparency matters.", "Use crop and rotate tools before optimizing so you are not polishing pixels you will throw away."]
+  },
+  video: {
+    focus: "Video files get large quickly, so the useful tools are the ones that reduce duration, resolution or bitrate before you upload. Vootkit keeps those operations in the browser where possible.",
+    choose: ["Trim first if the clip has dead time at the beginning or end.", "Compress when the destination has a strict size limit like chat, email or a creator platform.", "Use format conversion only when a receiving app refuses the file you already have."]
+  },
+  finance: {
+    focus: "Finance calculators are best used for comparison, not guesswork. Change one number at a time and watch how rate, term, deposit, extra payments and fees move the result.",
+    choose: ["Use loan and mortgage calculators before comparing offers so each quote is measured on the same assumptions.", "Use debt and payoff tools to see the cost of waiting.", "Use savings and investment calculators for planning scenarios, not as financial advice."]
+  },
+  insurance: {
+    focus: "Insurance choices are trade-offs between premium, deductible, cover amount and risk. The tools here make those trade-offs visible before you speak to an insurer or broker.",
+    choose: ["Estimate the cover gap first, then compare premiums.", "Run deductible scenarios with realistic claim amounts, not best-case assumptions.", "Treat results as planning support and check local policy terms before buying."]
+  },
+  realestate: {
+    focus: "Property decisions mix cash flow, debt, fees, time horizon and risk. These calculators separate those pieces so you can see what is driving the answer.",
+    choose: ["Use affordability and closing-cost tools before viewing properties.", "Use rent-vs-buy when time horizon is uncertain.", "Use yield and cap-rate tools when comparing rental or investment properties."]
+  },
+  tax: {
+    focus: "Tax and payroll numbers change by location, employment type and deductions. Vootkit tools help you model the structure clearly, then compare it with your local rules.",
+    choose: ["Use salary and hourly converters when comparing offers.", "Use payroll and employee-cost tools when the question is total employer cost.", "Use tax estimators for planning only, then verify with the correct local tax authority or accountant."]
+  },
+  business: {
+    focus: "Small-business work often needs a clean document or a quick pricing answer, not a full accounting system. These tools help freelancers and teams move from estimate to invoice to margin check.",
+    choose: ["Use generators for customer-facing documents you want to download or send.", "Use margin, fee and break-even calculators before setting a price.", "Use inventory and business-card tools for quick operating tasks that do not need a separate app."]
+  },
+  seo: {
+    focus: "SEO and marketing tools are about reducing publishing mistakes: bad titles, messy tracking links, invalid schema, blocked pages and snippets that are too long.",
+    choose: ["Preview metadata before publishing a page.", "Use schema and robots helpers when you need valid machine-readable output.", "Use UTM and slug tools to keep campaigns and URLs consistent."]
+  },
+  accessibility: {
+    focus: "Accessibility checks catch issues that are easy to miss visually: weak contrast, tiny tap targets, skipped headings, missing captions and unhelpful alt text.",
+    choose: ["Check contrast before committing a palette.", "Audit headings and tap targets before publishing a page.", "Validate captions and alt text when media or images carry important meaning."]
+  },
+  privacy: {
+    focus: "Privacy tasks are most useful before a file or link leaves your hands. Strip hidden data, redact visible details and clean tracking parameters before sharing.",
+    choose: ["Use metadata and redaction tools before publishing screenshots or documents.", "Use password and passphrase tools for new credentials, not reused ones.", "Use checksum tools to verify a file has not changed."]
+  },
+  text: {
+    focus: "Text utilities help when the problem is structure: word limits, formatting, casing, duplicate lines, markdown previews or comparing two versions.",
+    choose: ["Use counters and readability tools before submitting or publishing.", "Use case and line tools for cleanup work that would be slow by hand.", "Use diff and markdown tools when the exact wording matters."]
+  },
+  design: {
+    focus: "Design helpers are for quick visual decisions: color conversion, palette building, gradients and shadows. Each gives a live preview so you can copy CSS with confidence.",
+    choose: ["Start with contrast when text legibility matters.", "Convert colors when moving between design tools and CSS.", "Use gradient and shadow generators for repeatable values instead of guessing."]
+  },
+  developer: {
+    focus: "Developer utilities should be fast, predictable and local. Format data, decode tokens, generate IDs or test patterns without pasting sensitive work into a heavy external tool.",
+    choose: ["Use formatters before committing structured data.", "Use encoders, hashers and validators for quick checks while debugging.", "Avoid pasting secrets into any web tool unless the page clearly runs locally."]
+  },
+  everyday: {
+    focus: "Everyday tools cover small jobs that interrupt real work: converting units, checking dates, timing sessions, generating QR codes or picking a random option.",
+    choose: ["Use converters when you need an answer without opening a full calculator app.", "Use timers and pickers for repeatable daily routines.", "Use QR and barcode tools when you need a shareable code immediately."]
+  },
+  data: {
+    focus: "Data tools are for quick inspection and conversion when opening a spreadsheet app would be slower than the job itself. They are useful for checking exports, spotting obvious issues and turning small tables into charts.",
+    choose: ["Use the CSV viewer to sort and filter a file before sharing it.", "Use charting for a fast visual check of two-column data.", "Use JSON to CSV when moving data between developer tools and spreadsheet workflows."]
+  },
+  health: {
+    focus: "Health and fitness calculators turn personal numbers into planning estimates. They are useful for setting targets, but they are not a diagnosis or medical advice.",
+    choose: ["Use calorie, macro and hydration tools as starting estimates.", "Use pace and heart-rate tools for training planning.", "Check with a professional for medical conditions, injuries or major diet changes."]
+  },
+  travel: {
+    focus: "Travel planning has many small numbers: fuel, distance, tips, shared costs, mileage and packing. These tools keep those details clear before the trip starts.",
+    choose: ["Use fuel and distance tools before setting a budget.", "Use split and tipping tools when costs are shared across people or countries.", "Use packing lists to avoid rebuilding the same checklist every trip."]
+  },
+  audio: {
+    focus: "Audio files need the same practical cleanup as video: trimming, compressing, converting, recording and transcription. The goal is to get a usable file quickly.",
+    choose: ["Trim before compressing when the recording has silence or mistakes.", "Choose MP3 for broad sharing and WAV when quality matters more than size.", "Use recorder and speech tools for quick notes, drafts and captions."]
+  },
+  education: {
+    focus: "Study tools work best when they turn messy material into something active: flashcards, quizzes, citations, diagrams, mind maps and study schedules.",
+    choose: ["Use flashcards and quizzes for recall practice.", "Use citations and diagrams when preparing assignments.", "Use planners and trackers when the hard part is keeping study time visible."]
+  },
+  ai: {
+    focus: "On-device AI tools are planned for jobs where privacy matters: OCR, background removal and transcription. When a model can run locally, the file stays under your control.",
+    choose: ["Use OCR for screenshots, scans and photos with readable text.", "Use background removal when you need a transparent subject image.", "Use transcription when the audio is clear enough for browser-based speech recognition."]
+  }
+};
 
 /* which script bundle a tool page loads — shared by English + localised pages */
 function toolScripts(t) {
@@ -1359,6 +1453,49 @@ function allToolsPage() {
 </div>` + foot(1, ["assets/js/tools-directory.js"], { workspaceScripts: false });
 }
 
+function categoryDepthSection(c, list) {
+  const depth = CATEGORY_DEPTH[c.slug] || {
+    focus: `${c.name} tools help with focused browser tasks where a full app would slow you down.`,
+    choose: ["Start with the tool that matches the file or number you already have.", "Check the tool page for local or network-backed processing before you begin.", "Use related tools when the task needs more than one step."]
+  };
+  const live = list.filter((t) => t.status === "live");
+  const examples = (live.length ? live : list).slice(0, 6);
+  const exampleCards = examples.map((t) => `<article>
+    <span class="cat-depth-icon">${toolIconHtml(t)}</span>
+    <h3>${esc(t.name)}</h3>
+    <p>${esc(t.desc)}</p>
+  </article>`).join("");
+  const question = c.slug === "ai" ? `Are ${esc(c.name)} tools available now?` : `Are ${esc(c.name)} tools private?`;
+  const answer = c.slug === "ai"
+    ? "Some AI tools are planned while the browser models are tested for quality and performance. Planned tools are marked clearly, and live tools open normally."
+    : "Most Vootkit tools run in your browser, and each individual page says when a tool needs a network request. Files handled locally never leave your device.";
+
+  return `<section class="cat-depth section" aria-labelledby="cat-depth-title">
+    <div class="cat-depth-head">
+      <span class="eyebrow">Category guide</span>
+      <h2 id="cat-depth-title">How to use ${esc(c.name)} tools well</h2>
+      <p>${esc(depth.focus)}</p>
+    </div>
+    <div class="cat-depth-grid">${exampleCards}</div>
+    <div class="cat-depth-advice">
+      <div>
+        <h2>Choosing the right tool</h2>
+        <ul>${depth.choose.map((item) => `<li>${esc(item)}</li>`).join("")}</ul>
+      </div>
+      <div class="cat-depth-note">
+        <h2>Before you start</h2>
+        <p>Open the tool page, read the short limits section, then run a small file or simple example first. That keeps the job predictable and makes the final download easier to trust.</p>
+      </div>
+    </div>
+    <section class="cat-depth-faq faq" aria-labelledby="cat-faq-title">
+      <h2 id="cat-faq-title">Common ${esc(c.name)} questions</h2>
+      <details><summary>${question}</summary><p>${answer}</p></details>
+      <details><summary>Do I need to install anything?</summary><p>No. Vootkit tools are built for modern browsers, so you can open the page, complete the task and download the result without installing desktop software.</p></details>
+      <details><summary>Why do some tools say coming soon?</summary><p>Vootkit keeps planned tools visible for roadmap context, but they are not presented as finished features. Live tools have working pages and are included in the sitemap.</p></details>
+    </section>
+  </section>`;
+}
+
 /* ---------- /tools/<category>/ ---------- */
 function categoryPage(c) {
   const list = VK.byCategory(c.slug);
@@ -1389,6 +1526,7 @@ function categoryPage(c) {
   <p class="page-lede">${esc(c.blurb)}</p>
   <p class="res-cat" style="margin-bottom:var(--s-5)">${list.length} tools · no watermark · 5 free a day</p>
   <div class="grid">${list.map((t) => toolCard(t, "../../")).join("")}</div>
+  ${categoryDepthSection(c, list)}
 
   <section class="section">
     <h2 class="h-sm">Other categories</h2>
@@ -2041,6 +2179,509 @@ function blogIndexPage(posts) {
 </div>` + foot(1);
 }
 
+/* ---------- blog editorial rebuild (canonical definitions) ---------- */
+const BLOG_AUTHORS = {
+  "The Vootkit team": {
+    name: "The Vootkit team",
+    role: "Product and editorial team",
+    bio: "Practical guides from the people building Vootkit's browser-based PDF, image, video and productivity tools.",
+    initials: "VK",
+    type: "Organization"
+  },
+  "Mr John Prosper": {
+    name: "Mr John Prosper",
+    role: "Founder, Vootkit",
+    bio: "John writes practical finance, file and productivity guides based on the everyday problems Vootkit tools are built to solve.",
+    initials: "JP",
+    type: "Person"
+  }
+};
+const BLOG_CATEGORY_INFO = {
+  all: { label: "All Posts", title: "All Vootkit guides", intro: "Practical tutorials, tool guides and updates from Vootkit." },
+  tutorial: { label: "Tutorials", title: "Vootkit tutorials", intro: "Step-by-step guides for getting clean results from browser tools." },
+  guide: { label: "Guides", title: "Vootkit guides", intro: "Deeper practical guides for choosing settings, formats and workflows." },
+  news: { label: "News", title: "Vootkit news", intro: "Relevant updates from Vootkit and the productivity-tool ecosystem." },
+  tools: { label: "Tools", title: "Tool guides", intro: "How to choose the right Vootkit tool and use it well." },
+  productivity: { label: "Productivity", title: "Productivity guides", intro: "Smarter ways to finish file, content and document work faster." },
+  business: { label: "Business", title: "Business guides", intro: "Guides for freelancers, small teams and people managing work files." },
+  finance: { label: "Finance", title: "Finance guides", intro: "Plain-English finance explainers with calculators and examples." },
+  education: { label: "Education", title: "Education guides", intro: "Study, document and learning workflows for students and teachers." },
+  travel: { label: "Travel", title: "Travel guides", intro: "Planning, file and trip tools for travel workflows." },
+  developer: { label: "Developer", title: "Developer guides", intro: "Browser utilities, web formats and technical workflows." },
+  security: { label: "Security", title: "Security guides", intro: "Privacy, safe sharing and file-protection guidance." },
+  pdf: { label: "PDF", title: "PDF guides", intro: "Compress, convert, split, merge and clean PDF files without handing them to a server." },
+  images: { label: "Images", title: "Image guides", intro: "Resize, compress and convert images while keeping quality under control." },
+  video: { label: "Video", title: "Video guides", intro: "Compress, trim and prepare clips for upload, chat and social platforms." },
+  updates: { label: "Updates", title: "Vootkit updates", intro: "Product notes and new ways to use the Vootkit toolkit." }
+};
+const BLOG_CATEGORY_ORDER = ["all", "tutorial", "guide", "news", "tools", "productivity", "finance", "pdf", "images", "video", "security", "business", "developer", "updates", "education", "travel"];
+
+function blogCategoryDepth(current, posts, allPosts) {
+  if (current === "all") return "";
+  const info = BLOG_CATEGORY_INFO[current] || BLOG_CATEGORY_INFO.all;
+  const related = allPosts.filter((p) => p.categorySlug !== current && (p.tags || []).some((tag) => {
+    const n = String(tag).toLowerCase();
+    return n === current || n === info.label.toLowerCase();
+  })).slice(0, 3);
+  const postLinks = posts.slice(0, 4).map((p) => `<li><a href="/blog/${esc(p.slug)}/">${esc(p.title)}</a></li>`).join("");
+  const relatedLinks = related.map((p) => `<li><a href="/blog/${esc(p.slug)}/">${esc(p.title)}</a></li>`).join("");
+  return `<section class="bl-cat-depth" aria-labelledby="bl-cat-depth-title">
+    <div>
+      <span class="eyebrow">Reading guide</span>
+      <h2 id="bl-cat-depth-title">What this ${esc(info.label)} section covers</h2>
+      <p>${esc(info.intro)} This archive is kept focused so readers can move from a broad topic to a specific tool, setting or workflow without landing on a thin tag page.</p>
+      <p>Each article is written to answer a practical question: what to use, which setting matters, what the limits are, and how to avoid wasting time or damaging a file.</p>
+    </div>
+    <div class="bl-cat-depth-links">
+      <h3>Start here</h3>
+      <ul>${postLinks || '<li><a href="/blog/">Browse all Vootkit guides</a></li>'}</ul>
+      ${relatedLinks ? `<h3>Related reading</h3><ul>${relatedLinks}</ul>` : ""}
+    </div>
+  </section>`;
+}
+const BLOG_META = {
+  "file-upload-size-limits": {
+    type: "Guide", category: "Tools", featured: true, featureRank: 1,
+    thumbnail: "/assets/blog/file-upload-size-limits.jpg",
+    coverAlt: "Printed documents beside a laptop, representing files prepared for upload or sharing.",
+    tags: ["Productivity", "PDF", "Video", "Business"],
+    relatedTools: ["compress-pdf", "compress-image", "compress-video", "trim-video"],
+    relatedWorkflow: "video-compress-export"
+  },
+  "reduce-pdf-file-size": {
+    type: "Tutorial", category: "PDF", featured: true, featureRank: 2,
+    coverAlt: "PDF compression settings shown on a clean Vootkit-style workspace.",
+    tags: ["Tools", "Security", "Productivity"],
+    relatedTools: ["compress-pdf", "delete-pdf-pages", "extract-pdf-pages", "merge-pdf"],
+    relatedWorkflow: "pdf-page-cleanup"
+  },
+  "compress-video-for-discord": {
+    type: "Tutorial", category: "Video", featured: true, featureRank: 3,
+    coverAlt: "Video editing workspace used to prepare a clip for online sharing.",
+    tags: ["Tools", "Productivity"],
+    relatedTools: ["compress-video", "trim-video", "video-to-gif", "upload-time"],
+    relatedWorkflow: "video-compress-export"
+  },
+  "compress-images-without-losing-quality": {
+    type: "Guide", category: "Images", featured: true, featureRank: 4,
+    coverAlt: "Image compression comparison on a laptop workspace.",
+    tags: ["Tools", "Developer", "Productivity"],
+    relatedTools: ["compress-image", "resize-image", "convert-image", "jpg-to-webp"],
+    relatedWorkflow: "website-image-optimizer"
+  },
+  "which-image-format-should-i-use": {
+    type: "Guide", category: "Images",
+    coverAlt: "Comparison graphic showing common image formats and when to use them.",
+    tags: ["Tools", "Developer"],
+    relatedTools: ["convert-image", "jpg-to-webp", "png-to-webp", "svg-to-png"],
+    relatedWorkflow: "docs-asset-webp"
+  },
+  "apr-vs-interest-rate": {
+    type: "Guide", category: "Finance",
+    coverAlt: "Loan documents and calculator used to compare APR and interest rate.",
+    tags: ["Business"],
+    relatedTools: ["loan-calculator", "auto-loan-calculator", "mortgage-calculator", "refinance-calculator"]
+  },
+  "debt-to-income-ratio": {
+    type: "Guide", category: "Finance",
+    coverAlt: "Finance planning workspace for calculating debt-to-income ratio.",
+    tags: ["Business"],
+    relatedTools: ["debt-to-income", "mortgage-calculator", "loan-calculator", "budget-calculator"]
+  },
+  "insurance-deductible-break-even": {
+    type: "Guide", category: "Finance",
+    coverAlt: "Insurance deductible planning graphic with break-even comparison.",
+    tags: ["Business"],
+    relatedTools: ["deductible-calculator", "auto-insurance-estimator", "life-insurance-needs", "budget-calculator"]
+  },
+  "interest-rate-trap-loan-cost": {
+    type: "Guide", category: "Finance",
+    coverAlt: "Loan cost comparison graphic showing how rates change total repayment.",
+    tags: ["Business"],
+    relatedTools: ["loan-calculator", "auto-loan-calculator", "mortgage-calculator", "simple-interest"]
+  },
+  "welcome-to-vootkit": {
+    type: "Update", category: "Updates",
+    coverAlt: "Vootkit blog launch graphic.",
+    tags: ["Tools", "Productivity"],
+    relatedTools: ["compress-pdf", "compress-image", "compress-video", "word-counter"],
+    relatedWorkflow: "website-image-optimizer"
+  }
+};
+function slugifyText(s) {
+  return String(s || "").toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+function stripHtml(s) {
+  return String(s || "").replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();
+}
+function plainTextFromMarkdown(body) {
+  return String(body || "")
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/!\[[^\]]*\]\([^)]+\)/g, " ")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/[#>*_`~|:-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+function enhanceArticleHtml(html) {
+  const seen = {};
+  const toc = [];
+  const out = String(html || "").replace(/<h([23])>([\s\S]*?)<\/h\1>/g, (m, level, inner) => {
+    const text = stripHtml(inner);
+    let id = slugifyText(text) || "section";
+    seen[id] = (seen[id] || 0) + 1;
+    if (seen[id] > 1) id += "-" + seen[id];
+    toc.push({ id, level: Number(level), text });
+    return `<h${level} id="${id}">${inner}</h${level}>`;
+  });
+  return { html: out, toc };
+}
+function splitList(v) {
+  if (Array.isArray(v)) return v;
+  return String(v || "").split(",").map((x) => x.trim()).filter(Boolean);
+}
+function blogCatSlug(label) {
+  const s = slugifyText(label);
+  if (s === "image") return "images";
+  if (s === "update") return "updates";
+  if (s === "pdfs") return "pdf";
+  return s || "tools";
+}
+function parseFrontmatter(raw) {
+  const m = /^---\s*\r?\n([\s\S]*?)\r?\n---\s*\r?\n?([\s\S]*)$/.exec(raw);
+  if (!m) return { data: {}, body: raw };
+  const data = {};
+  const lines = m[1].split(/\r?\n/);
+  for (let i = 0; i < lines.length; i++) {
+    const mm = /^([A-Za-z0-9_]+)\s*:\s*(.*)$/.exec(lines[i]);
+    if (!mm) continue;
+    let v = mm[2].trim();
+    const q = v.charAt(0);
+    if ((q === '"' || q === "'") && v.slice(-1) !== q) {
+      while (i + 1 < lines.length && !/^[A-Za-z0-9_]+\s*:/.test(lines[i + 1])) {
+        i++;
+        v += " " + lines[i].trim();
+        if (v.slice(-1) === q) break;
+      }
+    }
+    if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) v = v.slice(1, -1);
+    data[mm[1]] = v.startsWith("[") && v.endsWith("]")
+      ? v.slice(1, -1).split(",").map((x) => x.trim().replace(/^['"]|['"]$/g, "")).filter(Boolean)
+      : v.replace(/\s+/g, " ");
+  }
+  return { data, body: m[2] };
+}
+function inferBlogMeta(slug, title) {
+  const hay = (slug + " " + title).toLowerCase();
+  if (/pdf/.test(hay)) return { type: "Guide", category: "PDF", tags: ["Tools"], relatedTools: ["compress-pdf", "merge-pdf", "split-pdf"] };
+  if (/image|jpg|png|webp|photo/.test(hay)) return { type: "Guide", category: "Images", tags: ["Tools"], relatedTools: ["compress-image", "resize-image", "convert-image"] };
+  if (/video|discord|clip/.test(hay)) return { type: "Tutorial", category: "Video", tags: ["Tools"], relatedTools: ["compress-video", "trim-video", "convert-video"] };
+  if (/loan|rate|debt|deductible|interest|apr|finance/.test(hay)) return { type: "Guide", category: "Finance", tags: ["Business"], relatedTools: ["loan-calculator", "budget-calculator", "debt-to-income"] };
+  return { type: "Guide", category: "Tools", tags: ["Productivity"], relatedTools: ["compress-pdf", "compress-image", "word-counter"] };
+}
+function blogImageVariants(src) {
+  if (!src || /^https?:\/\//i.test(src)) return { src, webp: "", avif: "" };
+  const clean = String(src).split("?")[0];
+  const base = clean.replace(/\.(jpe?g|png|webp)$/i, "");
+  const exists = (p) => p && fs.existsSync(path.join(ROOT, p.replace(/^\//, "")));
+  const avif = base + ".avif";
+  const webp = base + ".webp";
+  return { src, avif: exists(avif) ? avif : "", webp: exists(webp) ? webp : "" };
+}
+function blogPicture(post, cls, loading) {
+  const v = blogImageVariants(post.thumbnail || "");
+  if (!v.src) return "";
+  return `<picture class="${cls}">
+    ${v.avif ? `<source srcset="${esc(v.avif)}" type="image/avif">` : ""}
+    ${v.webp ? `<source srcset="${esc(v.webp)}" type="image/webp">` : ""}
+    <img src="${esc(v.src)}" alt="${esc(post.coverAlt || post.title)}" width="1200" height="675" loading="${loading || "lazy"}" decoding="async">
+  </picture>`;
+}
+function loadPosts() {
+  const dir = path.join(ROOT, "content", "blog");
+  let files = [];
+  try {
+    files = fs.readdirSync(dir).filter((f) =>
+      f.endsWith(".md") && f.charAt(0) !== "_" && !/^readme\.md$/i.test(f));
+  } catch (e) { return []; }
+  const posts = files.map((f) => {
+    const { data, body } = parseFrontmatter(fs.readFileSync(path.join(dir, f), "utf8"));
+    const slug = (data.slug || f.replace(/\.md$/, "")).toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "");
+    const inferred = inferBlogMeta(slug, data.title || slug);
+    const extra = Object.assign({}, inferred, BLOG_META[slug] || {});
+    const plain = plainTextFromMarkdown(body);
+    const enhanced = enhanceArticleHtml(marked.parse(body));
+    const type = data.type || extra.type || "Guide";
+    const category = data.category || extra.category || "Tools";
+    const tags = Array.from(new Set(splitList(data.tags).concat(extra.tags || []).map((x) => String(x).trim()).filter(Boolean)));
+    const filters = Array.from(new Set([type, category].concat(tags).map(blogCatSlug).filter(Boolean)));
+    const words = plain.split(/\s+/).filter(Boolean).length;
+    return {
+      slug, title: data.title || slug, date: data.date || "",
+      description: data.description || plain.slice(0, 160),
+      thumbnail: extra.thumbnail || data.thumbnail || "",
+      author: data.author || "The Vootkit team",
+      type, typeSlug: blogCatSlug(type), category, categorySlug: blogCatSlug(category), tags, filters,
+      featured: String(data.featured) === "true" || !!extra.featured,
+      featureRank: Number(data.featureRank || extra.featureRank || 99),
+      coverAlt: data.coverAlt || extra.coverAlt || data.title || slug,
+      relatedTools: (extra.relatedTools || []).filter((id) => VK.find(id)),
+      relatedWorkflow: extra.relatedWorkflow || "",
+      words, minutes: Math.max(1, Math.round(words / 220)),
+      bodyText: plain, draft: String(data.draft) === "true",
+      html: enhanced.html, toc: enhanced.toc
+    };
+  }).filter((p) => !p.draft && p.slug);
+  posts.sort((a, b) => String(b.date).localeCompare(String(a.date)));
+  return posts;
+}
+function blogAuthor(post) {
+  return BLOG_AUTHORS[post.author] || { name: post.author || "The Vootkit team", role: "Author", bio: "Practical Vootkit guidance.", initials: "VK", type: "Person" };
+}
+function blogAuthorMark(author, small) {
+  if (author.initials === "VK") {
+    return `<span class="bl-author-mark${small ? " is-small" : ""}" aria-hidden="true">${brandLogo()}</span>`;
+  }
+  return `<span class="bl-author-mark${small ? " is-small" : ""}" aria-hidden="true">${esc(author.initials || "VK")}</span>`;
+}
+function blogMetaLine(post) {
+  const a = blogAuthor(post);
+  return `<span class="bl-byline">${blogAuthorMark(a, true)}<span>${esc(a.name)}</span></span>
+    ${post.date ? `<span aria-hidden="true">&middot;</span><time datetime="${esc(post.date)}">${esc(fmtDate(post.date))}</time>` : ""}
+    <span aria-hidden="true">&middot;</span><span>${post.minutes} min read</span>`;
+}
+function blogBadge(post, kind) {
+  const label = kind === "category" ? post.category : post.type;
+  return `<span class="bl-badge">${esc(label)}</span>`;
+}
+function blogOverlayCard(post, cls, loading) {
+  return `<a class="bl-feature-card ${cls}" href="/blog/${esc(post.slug)}/" data-track="blog_feature_click">
+    ${blogPicture(post, "bl-feature-media", loading)}
+    <span class="bl-feature-shade"></span>
+    <span class="bl-feature-body">
+      ${cls.indexOf("main") > -1 ? `<span class="bl-featured-pill">Featured</span>` : ""}
+      ${blogBadge(post)}
+      <strong>${esc(post.title)}</strong>
+      ${cls.indexOf("main") > -1 ? `<span class="bl-feature-excerpt">${esc(post.description)}</span>` : ""}
+      <span class="bl-feature-meta">${blogMetaLine(post)}</span>
+    </span>
+  </a>`;
+}
+function blogArticleCard(post, index) {
+  const search = [post.title, post.description, post.category, post.type].concat(post.tags).join(" ");
+  return `<article class="bl-card" data-blog-card data-title="${esc(post.title)}" data-date="${esc(post.date || "")}" data-filters="${esc(post.filters.join(" "))}" data-search="${esc(search.toLowerCase())}" data-index="${index}">
+    <a href="/blog/${esc(post.slug)}/" class="bl-card-link">
+      ${blogPicture(post, "bl-card-img", index < 3 ? "eager" : "lazy")}
+      <span class="bl-card-b">
+        ${blogBadge(post)}
+        <h3>${esc(post.title)}</h3>
+        <p>${esc(post.description)}</p>
+        <span class="bl-meta">${blogMetaLine(post)}</span>
+      </span>
+    </a>
+  </article>`;
+}
+function blogSmallPost(post) {
+  return `<a class="bl-side-post" href="/blog/${esc(post.slug)}/">
+    ${blogPicture(post, "bl-side-thumb", "lazy")}
+    <span><strong>${esc(post.title)}</strong>${post.date ? `<time datetime="${esc(post.date)}">${esc(fmtDate(post.date))}</time>` : ""}</span>
+  </a>`;
+}
+function blogCategoryCounts(posts) {
+  const counts = { all: posts.length };
+  posts.forEach((p) => p.filters.forEach((f) => { counts[f] = (counts[f] || 0) + 1; }));
+  return counts;
+}
+function blogCategoryTabs(posts, current) {
+  const counts = blogCategoryCounts(posts);
+  return BLOG_CATEGORY_ORDER.filter((slug) => counts[slug]).map((slug) => {
+    const info = BLOG_CATEGORY_INFO[slug] || { label: slug };
+    const href = slug === "all" ? "/blog/" : `/blog/${slug}/`;
+    return `<a class="bl-chip${slug === current ? " is-active" : ""}" href="${href}" data-blog-filter="${slug}">${esc(info.label)} <span>${counts[slug]}</span></a>`;
+  }).join("");
+}
+function relatedBlogPosts(post, all, limit) {
+  return all.filter((p) => p.slug !== post.slug).map((p) => {
+    const overlap = p.filters.filter((f) => post.filters.indexOf(f) !== -1).length;
+    return { post: p, score: overlap * 10 + (p.categorySlug === post.categorySlug ? 8 : 0) + (p.typeSlug === post.typeSlug ? 2 : 0) };
+  }).filter((x) => x.score > 0).sort((a, b) => b.score - a.score || String(b.post.date).localeCompare(String(a.post.date))).slice(0, limit || 3).map((x) => x.post);
+}
+function articleTools(post, depth) {
+  if (!post.relatedTools || !post.relatedTools.length) return "";
+  const up = "../".repeat(depth) || "./";
+  const cards = post.relatedTools.map((id) => {
+    const t = VK.find(id);
+    if (!t) return "";
+    return `<a class="bl-tool-card" href="${up}tools/${esc(t.cat)}/${esc(t.id)}/" data-track="article_tool_click">
+      ${toolIconHtml(t)}
+      <span><strong>${esc(t.name)}</strong><small>${esc(t.desc)}</small></span>
+      <b aria-hidden="true">-&gt;</b>
+    </a>`;
+  }).join("");
+  return `<section class="bl-tool-rec" aria-labelledby="tool-rec-title">
+    <div><span class="eyebrow">Vootkit tools</span><h2 id="tool-rec-title">Try the tools from this guide</h2></div>
+    <div class="bl-tool-grid">${cards}</div>
+  </section>`;
+}
+function workflowCard(post, depth) {
+  if (!post.relatedWorkflow) return "";
+  const up = "../".repeat(depth) || "./";
+  return `<aside class="bl-workflow-rec">
+    <span class="eyebrow">Workflow</span>
+    <h2>Want to do this automatically?</h2>
+    <p>Use a Vootkit workflow to chain compatible tools and keep the work moving without rebuilding the steps every time.</p>
+    <a class="btn btn-primary" href="${up}workflows/#wf-market" data-track="article_workflow_click">Explore workflows</a>
+  </aside>`;
+}
+function articleToc(post) {
+  if (!post.toc || post.toc.length < 3) return "";
+  return `<aside class="bl-toc" aria-label="Table of contents">
+    <strong>On this page</strong>
+    ${post.toc.slice(0, 10).map((h) => `<a class="lv${h.level}" href="#${esc(h.id)}">${esc(h.text)}</a>`).join("")}
+  </aside>`;
+}
+function blogJsonData(posts) {
+  return JSON.stringify(posts.map((p) => ({
+    slug: p.slug, title: p.title, date: p.date, filters: p.filters,
+    search: [p.title, p.description, p.category, p.type].concat(p.tags).join(" ").toLowerCase()
+  }))).replace(/</g, "\\u003c");
+}
+function blogPostPage(post, allPosts) {
+  const url = `${SITE}/blog/${post.slug}/`;
+  const img = post.thumbnail ? (post.thumbnail.startsWith("http") ? post.thumbnail : SITE + post.thumbnail) : "";
+  const author = blogAuthor(post);
+  const related = relatedBlogPosts(post, allPosts || [], 3);
+  const ld = [
+    { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Vootkit", item: SITE + "/" },
+      { "@type": "ListItem", position: 2, name: "Blog", item: SITE + "/blog/" },
+      { "@type": "ListItem", position: 3, name: post.category, item: SITE + "/blog/" + post.categorySlug + "/" },
+      { "@type": "ListItem", position: 4, name: post.title, item: url }
+    ]},
+    { "@context": "https://schema.org", "@type": "BlogPosting", headline: post.title, description: post.description,
+      datePublished: post.date, dateModified: post.date, image: img || undefined,
+      author: { "@type": author.type || "Person", name: author.name },
+      publisher: { "@type": "Organization", name: "Vootkit", url: SITE + "/" },
+      mainEntityOfPage: url, url }
+  ];
+  return head({ depth: 2, url, ads: true, ld, title: `${post.title} - Vootkit Blog`, ogTitle: post.title, desc: post.description, image: img || undefined }) +
+`<div class="wrap section bl-article-page">
+  <nav class="crumb" aria-label="Breadcrumb"><a href="../../">Home</a> <span aria-hidden="true">/</span> <a href="../">Blog</a> <span aria-hidden="true">/</span> <a href="../${esc(post.categorySlug)}/">${esc(post.category)}</a> <span aria-hidden="true">/</span> <span aria-current="page">${esc(post.title)}</span></nav>
+  <div class="bl-article-layout">
+    ${articleToc(post)}
+    <article class="bl-article">
+      <header class="bl-article-head">
+        <span class="bl-badge">${esc(post.type)}</span>
+        <h1>${esc(post.title)}</h1>
+        <p>${esc(post.description)}</p>
+        <div class="bl-article-meta">${blogMetaLine(post)}</div>
+      </header>
+      ${blogPicture(post, "bl-article-hero", "eager")}
+      <div class="prose blog-body">${post.html}</div>
+      ${articleTools(post, 2)}
+      ${workflowCard(post, 2)}
+      ${adUnit("footer")}
+      ${related.length ? `<section class="bl-related" aria-labelledby="related-title"><h2 id="related-title">Keep reading</h2><div class="bl-related-grid">${related.map((p, i) => blogArticleCard(p, i)).join("")}</div></section>` : ""}
+      <section class="bl-article-newsletter">
+        <div><span class="eyebrow">Stay updated</span><h2>Work smarter with Vootkit</h2><p>Get practical guides, new tools and useful workflows in your inbox.</p></div>
+        <div data-newsletter="blog" data-nl-compact data-nl-placeholder="Enter your email" data-nl-button="Subscribe"></div>
+      </section>
+    </article>
+    <aside class="bl-author-card">
+      ${blogAuthorMark(author)}
+      <h2>${esc(author.name)}</h2>
+      <p>${esc(author.bio)}</p>
+      <div class="bl-share">
+        <strong>Share</strong>
+        <a href="https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(post.title)}" rel="noopener" target="_blank">X</a>
+        <a href="https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(url)}&title=${encodeURIComponent(post.title)}" rel="noopener" target="_blank">LinkedIn</a>
+        <a href="mailto:?subject=${encodeURIComponent(post.title)}&body=${encodeURIComponent(url)}">Email</a>
+      </div>
+    </aside>
+  </div>
+</div>` + foot(2, null, { noNewsletter: true });
+}
+function blogIndexPage(posts, opts) {
+  const o = opts || {};
+  const allPosts = o.allPosts || posts;
+  const current = o.category || "all";
+  const info = BLOG_CATEGORY_INFO[current] || BLOG_CATEGORY_INFO.all;
+  const url = current === "all" ? SITE + "/blog/" : SITE + "/blog/" + current + "/";
+  const depth = current === "all" ? 1 : 2;
+  const hasPosts = posts.length > 0;
+  const featured = (current === "all" ? allPosts : posts).slice().filter((p) => p.featured).sort((a, b) => a.featureRank - b.featureRank || String(b.date).localeCompare(String(a.date)));
+  const heroPosts = (featured.length >= 3 ? featured.slice(0, 3) : posts.slice(0, 3));
+  const lead = heroPosts[0] || posts[0] || null;
+  const side = heroPosts.slice(1, 3);
+  const popular = allPosts.slice().filter((p) => p.featured || p.categorySlug === "pdf" || p.categorySlug === "images").sort((a, b) => a.featureRank - b.featureRank || String(b.date).localeCompare(String(a.date))).slice(0, 5);
+  const ld = { "@context": "https://schema.org", "@type": "Blog", name: "Vootkit Blog", url,
+    description: "Guides, tips and product updates for Vootkit's browser-based tools.",
+    blogPost: posts.slice(0, 20).map((p) => ({ "@type": "BlogPosting", headline: p.title, url: SITE + "/blog/" + p.slug + "/", datePublished: p.date })) };
+  let hd = head({ depth, url, ads: true, ld,
+    title: current === "all" ? "Vootkit Blog - Guides, tutorials and updates" : `${info.title} - Vootkit Blog`,
+    ogTitle: current === "all" ? "Vootkit Blog" : `${info.title} - Vootkit Blog`,
+    desc: current === "all" ? "Practical Vootkit guides on PDF, image, video, finance and productivity tools." : info.intro });
+  if (!hasPosts) hd = hd.replace("</head>", '<meta name="robots" content="noindex,follow">\n</head>');
+  const cards = posts.map((p, i) => blogArticleCard(p, i)).join("\n");
+  const empty = `<div class="bl-empty" data-blog-empty hidden><h2>No articles found</h2><p>Try another search or browse the latest Vootkit guides.</p><div><a class="btn" href="/blog/">Browse all posts</a><a class="btn btn-primary" href="/tools/">Explore tools</a></div></div>`;
+  return hd + `<div class="bl-page" data-blog-page data-current-filter="${esc(current)}">
+  ${current === "all" ? `<section class="wrap bl-hero">
+    <div class="bl-hero-copy">
+      <span class="eyebrow">Vootkit Blog</span>
+      <h1>Insights, tutorials &amp; <br>news for <span class="grad-text">creators.</span></h1>
+      <p>Actionable tips, tool guides, practical tutorials and the latest updates to help you work smarter and create more.</p>
+      <div class="bl-hero-newsletter" data-newsletter="blog_hero" data-nl-compact data-nl-placeholder="Enter your email" data-nl-button="Subscribe"></div>
+      <p class="bl-newsletter-note">Get useful Vootkit guides and product updates in your inbox.</p>
+    </div>
+    <div class="bl-feature-grid">
+      ${lead ? blogOverlayCard(lead, "is-main", "eager") : ""}
+      <div class="bl-feature-stack">${side.map((p) => blogOverlayCard(p, "is-small", "eager")).join("")}</div>
+    </div>
+  </section>` : `<section class="wrap bl-cat-hero">
+    <nav class="crumb" aria-label="Breadcrumb"><a href="../">Blog</a> <span aria-hidden="true">/</span> <span aria-current="page">${esc(info.label)}</span></nav>
+    <span class="eyebrow">Vootkit Blog</span>
+    <h1>${esc(info.title)}</h1>
+    <p>${esc(info.intro)}</p>
+  </section>`}
+  <section class="wrap bl-board">
+    <div class="bl-filter-row">
+      <div class="bl-tabs" aria-label="Blog categories">${blogCategoryTabs(allPosts, current)}</div>
+      <div class="bl-controls">
+        <label class="sr-only" for="blog-search">Search articles</label>
+        <input class="field bl-search" id="blog-search" type="search" placeholder="Search articles..." data-blog-search>
+        <label class="sr-only" for="blog-sort">Sort articles</label>
+        <select class="field bl-sort" id="blog-sort" data-blog-sort>
+          <option value="latest">Latest First</option>
+          <option value="oldest">Oldest First</option>
+        </select>
+      </div>
+    </div>
+    <div class="bl-content">
+      <div>
+        <p class="bl-count" data-blog-count>${posts.length} ${posts.length === 1 ? "article" : "articles"}</p>
+        <div class="bl-grid" data-blog-grid>${cards}</div>
+        ${blogCategoryDepth(current, posts, allPosts)}
+        ${empty}
+      </div>
+      <aside class="bl-sidebar">
+        <section class="bl-side-card">
+          <h2>About Vootkit Blog</h2>
+          <p>Practical tips, tutorials, tool guides and product updates designed to help creators, students and professionals work smarter.</p>
+          <a href="/about.html">Learn more about Vootkit -&gt;</a>
+        </section>
+        ${popular.length ? `<section class="bl-side-card"><h2>Popular Posts</h2><div class="bl-side-list">${popular.map(blogSmallPost).join("")}</div></section>` : ""}
+        <section class="bl-side-card bl-side-newsletter">
+          <h2>Get the best content in your inbox</h2>
+          <p>Join our newsletter and never miss useful Vootkit guides.</p>
+          <div data-newsletter="blog_sidebar" data-nl-compact data-nl-placeholder="Enter your email" data-nl-button="Subscribe"></div>
+        </section>
+      </aside>
+    </div>
+  </section>
+  <script type="application/json" id="blog-data">${blogJsonData(posts)}</script>
+</div>` + foot(depth, ["assets/js/blog.js"], { noNewsletter: true });
+}
+
 /* ---------- admin Command Center (owner-only, noindex) ---------- */
 function adminConsolePage(posts) {
   const url = SITE + "/admin-console/";
@@ -2635,6 +3276,33 @@ function templatesPage() {
   <h1 class="page-h1">Templates</h1>
   <p class="page-lede">Reusable starting points powered by real Vootkit tools. Pick one, fill it in, and download the result in your browser.</p>
   <div class="grid">${cards}</div>
+  <section class="cat-depth section" aria-labelledby="templates-guide-title">
+    <div class="cat-depth-head">
+      <span class="eyebrow">Template guide</span>
+      <h2 id="templates-guide-title">Use templates when the structure matters</h2>
+      <p>Templates are Vootkit tools with a useful starting structure already in place. They are best for tasks where a blank page slows you down: invoices need line items and totals, resumes need clean sections, proposals need scope and deliverables, and packing lists need categories you can actually check off.</p>
+    </div>
+    <div class="cat-depth-advice">
+      <div>
+        <h2>How to choose a template</h2>
+        <ul>
+          <li>Pick the result you need first: a document, checklist, printable card, business analysis or client-ready file.</li>
+          <li>Open the template tool and replace the sample fields with your own details before downloading.</li>
+          <li>Use related tools after export when you need another step, such as compressing a PDF or turning an image into a shareable format.</li>
+        </ul>
+      </div>
+      <div class="cat-depth-note">
+        <h2>Built from real tools</h2>
+        <p>These are not empty showcase cards. Each template links to an actual Vootkit tool page with its own controls, limits, privacy notes and result handling, so the template page stays useful even as the library grows.</p>
+      </div>
+    </div>
+    <section class="cat-depth-faq faq" aria-labelledby="templates-faq-title">
+      <h2 id="templates-faq-title">Template questions</h2>
+      <details><summary>Are templates different from tools?</summary><p>A template is a tool with a practical starting format. The same browser-based processing rules apply, and each linked page explains what happens to your data.</p></details>
+      <details><summary>Can I edit the result?</summary><p>Yes. Template tools are meant to be filled in, adjusted, previewed and downloaded. If the result is a PDF or image, you can continue with related Vootkit tools afterward.</p></details>
+      <details><summary>Why are there fewer templates than tools?</summary><p>Only tools that naturally benefit from a reusable starting structure belong here. The full directory stays on the All Tools page, while this page focuses on repeatable document, business and planning formats.</p></details>
+    </section>
+  </section>
 </div>` + foot(1);
 }
 
@@ -2825,7 +3493,8 @@ write("about.html", infoPage({
   </div>`
 }));
 
-write("contact.html", infoPage({
+/* Legacy contact markup kept out of the build; contactPage() below is canonical. */
+void infoPage({
   slug: "contact.html", title: "Contact Support", eyebrow: "Contact & Support",
   h1: "Contact support.",
   desc: "Contact the Vootkit support team directly from this page — send us a message about a tool, a bug, billing, a feature idea or a partnership.",
@@ -2875,7 +3544,176 @@ write("contact.html", infoPage({
       </div>
     </aside>
   </div>`
-}));
+});
+
+function contactPage() {
+  const url = SITE + "/contact.html";
+  const desc = "Contact Vootkit support about tools, accounts, billing, bugs, feature requests, workflows, templates, privacy questions and feedback.";
+  const ld = [
+    { "@context": "https://schema.org", "@type": "ContactPage", name: "Contact Vootkit", url, description: desc },
+    { "@context": "https://schema.org", "@type": "Organization", name: "Vootkit", url: SITE + "/", email: SUPPORT }
+  ];
+  const feature = (ic, title, copy) => `
+      <article class="cs-trust-item">
+        <span class="cs-ico" aria-hidden="true">${icon(ic)}</span>
+        <div><h2>${esc(title)}</h2><p>${esc(copy)}</p></div>
+      </article>`;
+  const method = (ic, title, copy, meta, attrs, tag) => {
+    const open = tag === "button"
+      ? `<button class="cs-method" type="button" ${attrs}>`
+      : `<a class="cs-method" ${attrs}>`;
+    const close = tag === "button" ? "</button>" : "</a>";
+    return `${open}
+        <span class="cs-method-ic" aria-hidden="true">${icon(ic)}</span>
+        <span><strong>${esc(title)}</strong><small>${esc(meta)}</small><em>${esc(copy)}</em></span>
+        <i aria-hidden="true">${icon("arrow-right")}</i>
+      ${close}`;
+  };
+  const quick = (ic, title, copy, subject) => `
+        <button class="cs-quick-card" type="button" data-contact-subject="${esc(subject)}">
+          <span aria-hidden="true">${icon(ic)}</span><strong>${esc(title)}</strong><small>${esc(copy)}</small>
+        </button>`;
+  const option = (v) => `<option value="${esc(v)}">${esc(v)}</option>`;
+  return head({
+    depth: 0,
+    url,
+    ads: true,
+    ld,
+    active: "about",
+    bodyClass: "contact-page",
+    title: "Contact Vootkit | Support, Feedback & Help",
+    ogTitle: "Contact Vootkit",
+    desc
+  }) + `
+<div class="contact-support-page">
+  <section class="cs-hero wrap" aria-labelledby="contact-title">
+    <div class="cs-hero-copy">
+      <span class="eyebrow">We're here to help</span>
+      <h1 id="contact-title">Contact Us / <span>Support</span></h1>
+      <p class="cs-hero-lede">Have a question, feedback, or need help with a tool? Our team is here for you. Reach out and we'll get back to you as soon as possible.</p>
+    </div>
+    <div class="cs-hero-art">
+      <picture>
+        <source srcset="public/images/contact/contact-support-hero.avif" type="image/avif">
+        <img src="public/images/contact/contact-support-hero.webp" width="1400" height="850" alt="Smiling support professional wearing headphones while working on a laptop." fetchpriority="high" decoding="async">
+      </picture>
+      <div class="cs-photo-wash" aria-hidden="true"></div>
+      <div class="cs-chip-stack" aria-hidden="true">
+        <span>${icon("message")} Ask</span>
+        <span>${icon("book")} Get help</span>
+        <span>${icon("sparkles")} Find solutions</span>
+        <span>${icon("zap")} Keep creating</span>
+      </div>
+      <p class="cs-handnote" aria-hidden="true">Better<br>Tools.<br>A Smarter<br>You.</p>
+      <p class="cs-photo-tag" aria-hidden="true">Real people.<br>Real support.</p>
+    </div>
+    <div class="cs-trust-grid" aria-label="Support promises">
+      ${feature("zap", "Fast replies", "We review support messages promptly.")}
+      ${feature("shield", "Real people", "Friendly support from our team.")}
+      ${feature("heart", "We care", "Your success is our mission.")}
+      ${feature("globe", "A global community", "Creators from around the world use Vootkit.")}
+    </div>
+  </section>
+
+  <section class="cs-main wrap" aria-label="Contact support options">
+    <aside class="cs-methods" aria-labelledby="contact-methods-title">
+      <h2 id="contact-methods-title">Choose a way to reach us</h2>
+      ${method("mail", "Email Support", "General inquiries, bugs and feedback.", SUPPORT, `href="mailto:${esc(SUPPORT)}"`, "a")}
+      ${method("book", "Help Center", "Browse guides, FAQs and tutorials.", "Vootkit guides", `href="blog/"`, "a")}
+      ${method("users", "Community", "Ask a question or share feedback.", "Contact the team", `data-contact-subject="Other"`, "button")}
+      ${method("message", "Contact Form", "We'll get back to you soon.", "Fill out the form", `data-contact-focus`, "button")}
+    </aside>
+
+    <section class="cs-form-card" id="contact-form-panel" aria-labelledby="contact-form-title">
+      <div class="cs-form-head">
+        <div>
+          <span class="eyebrow">${icon("message")} Send us a message</span>
+          <h2 id="contact-form-title">Let's talk!</h2>
+          <p>Fill out the form below and we'll get back to you as soon as possible.</p>
+        </div>
+        <p class="cs-form-note" aria-hidden="true">Your feedback helps us build a better Vootkit.</p>
+      </div>
+      <p class="cs-regarding" data-contact-regarding hidden></p>
+      <form id="contact-form" class="cs-contact-form" name="contact" method="POST" action="/contact-success/" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+        <input type="hidden" name="form-name" value="contact">
+        <input type="hidden" name="tool" id="cf-tool">
+        <p class="cf-hp" hidden><label>Leave this empty <input name="bot-field" autocomplete="off"></label></p>
+        <div class="cs-form-grid">
+          <div class="cs-field">
+            <label for="cf-name">Full Name <span aria-hidden="true">*</span></label>
+            <div class="cs-input-wrap">${icon("users")}<input class="field" id="cf-name" type="text" name="name" autocomplete="name" required placeholder="e.g. John Prosper" aria-describedby="cf-name-error"></div>
+            <p class="cf-error" id="cf-name-error" data-error-for="name"></p>
+          </div>
+          <div class="cs-field">
+            <label for="cf-email">Email Address <span aria-hidden="true">*</span></label>
+            <div class="cs-input-wrap">${icon("mail")}<input class="field" id="cf-email" type="email" name="email" autocomplete="email" inputmode="email" required placeholder="you@example.com" aria-describedby="cf-email-error"></div>
+            <p class="cf-error" id="cf-email-error" data-error-for="email"></p>
+          </div>
+        </div>
+        <div class="cs-field">
+          <label for="cf-subject">Subject <span aria-hidden="true">*</span></label>
+          <div class="cs-input-wrap">${icon("tag")}<select class="field" id="cf-subject" name="subject" required aria-describedby="cf-subject-error">
+            <option value="">Select a topic</option>
+            ${["General Question","Tool Problem","Account & Billing","Bug Report","Feature Request","Workflow","Templates","Partnership / Business","Privacy / Security","Other"].map(option).join("")}
+          </select></div>
+          <p class="cf-error" id="cf-subject-error" data-error-for="subject"></p>
+        </div>
+        <div class="cs-field">
+          <div class="cs-label-row"><label for="cf-message">Message <span aria-hidden="true">*</span></label><span id="cf-count">0 / 1000</span></div>
+          <div class="cs-input-wrap cs-textarea-wrap">${icon("message")}<textarea class="field" id="cf-message" name="message" rows="7" maxlength="1000" required placeholder="Tell us what's on your mind..." aria-describedby="cf-message-error cf-count"></textarea></div>
+          <p class="cf-error" id="cf-message-error" data-error-for="message"></p>
+        </div>
+        <div class="cs-form-actions">
+          <button class="btn btn-primary cs-send" type="submit" id="cf-submit">${icon("plane")} <span>Send Message</span> ${icon("arrow-right")}</button>
+          <p class="cf-status" id="cf-status" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+      <div class="cs-success" id="cf-success" hidden role="status" aria-live="polite">
+        <span aria-hidden="true">${icon("check")}</span>
+        <h2>Message sent!</h2>
+        <p>Thanks for contacting Vootkit. We've received your message.</p>
+        <div><a class="btn btn-primary" href="./">Back to Vootkit</a><button class="btn" type="button" id="cf-reset">Send another message</button></div>
+      </div>
+    </section>
+
+    <aside class="cs-side" aria-label="Support information">
+      <section class="cs-agent-card">
+        <picture>
+          <source srcset="public/images/contact/contact-support-agent.avif" type="image/avif">
+          <img src="public/images/contact/contact-support-agent.webp" width="800" height="500" alt="Smiling support professional on a phone call while using a laptop." loading="lazy" decoding="async">
+        </picture>
+        <div class="cs-agent-copy">
+          <span class="eyebrow">Need help now?</span>
+          <h2>We're here for you!</h2>
+          <p>Our support team reviews Vootkit questions and replies by email.</p>
+        </div>
+        <dl class="cs-support-facts">
+          <div><dt>${icon("mail")} Support email</dt><dd><a class="contact-email" href="mailto:${esc(SUPPORT)}">${esc(SUPPORT)}</a></dd></div>
+          <div><dt>${icon("clock")} Typical response</dt><dd>We reply by email as soon as we can.</dd></div>
+          <div><dt>${icon("globe")} Language</dt><dd>English support.</dd></div>
+        </dl>
+      </section>
+      <section class="cs-quick">
+        <div class="cs-side-head"><h2>Quick Links</h2><a href="tools/">View all ${icon("arrow-right")}</a></div>
+        <div class="cs-quick-grid">
+          ${quick("sliders", "Troubleshooting", "Fix common issues.", "Tool Problem")}
+          ${quick("users", "Account & Billing", "Manage account or subscription.", "Account & Billing")}
+          ${quick("sparkles", "Feature Requests", "Suggest improvements/new tools.", "Feature Request")}
+          ${quick("bug", "Report a Bug", "Help us improve.", "Bug Report")}
+        </div>
+      </section>
+      <section class="cs-help-card">
+        <span aria-hidden="true">${icon("heart")}</span>
+        <h2>Still need help?</h2>
+        <p>Browse practical Vootkit guides, then send us the details if you still need a hand.</p>
+        <div><a class="btn btn-sm" href="blog/">Browse guides</a><button class="btn btn-sm btn-primary" type="button" data-contact-focus>Use the form</button></div>
+      </section>
+    </aside>
+  </section>
+</div>` + foot(0, ["assets/js/contact.js"]);
+}
+
+write("contact.html", contactPage());
 
 /* ---------- /workflows/ ----------
  *
@@ -3189,8 +4027,10 @@ write("unsubscribe/index.html", infoPage({
 }));
 
 const POSTS = loadPosts();
-POSTS.forEach((p) => write(`blog/${p.slug}/index.html`, blogPostPage(p)));
+const BLOG_USED_CATEGORIES = BLOG_CATEGORY_ORDER.filter((slug) => slug !== "all" && POSTS.some((p) => p.filters.indexOf(slug) !== -1));
+POSTS.forEach((p) => write(`blog/${p.slug}/index.html`, blogPostPage(p, POSTS)));
 write("blog/index.html", blogIndexPage(POSTS));
+BLOG_USED_CATEGORIES.forEach((slug) => write(`blog/${slug}/index.html`, blogIndexPage(POSTS.filter((p) => p.filters.indexOf(slug) !== -1), { category: slug, allPosts: POSTS })));
 write("admin-console/index.html", adminConsolePage(POSTS));
 
 /* ---------- run ---------- */
@@ -3234,6 +4074,7 @@ console.log(`generated ${pages} pages (${localizedPages} localised)`);
  * Revisit once English pages hold real positions. */
 const enUrls = ["/", "/tools/", "/workflows/", "/templates/", "/pricing.html", "/about.html", "/contact.html", "/privacy.html", "/terms.html", "/cookies.html", "/disclaimer.html"]
   .concat(POSTS.length ? ["/blog/"] : [])                       // only list blog when it has posts
+  .concat(BLOG_USED_CATEGORIES.map((slug) => `/blog/${slug}/`))
   .concat(POSTS.map((p) => `/blog/${p.slug}/`))
   .concat(VK.CATEGORIES.map((c) => `/tools/${c.slug}/`))
   .concat(VK.TOOLS.filter((t) => t.status === "live").map((t) => `/tools/${t.cat}/${t.id}/`));  // exclude noindexed under-construction tools

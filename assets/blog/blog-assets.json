@@ -1,0 +1,18 @@
+{
+  "assets": [
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "file-upload-size-limits",
+      "localFiles": [
+        "/assets/blog/file-upload-size-limits.jpg",
+        "/assets/blog/file-upload-size-limits.webp",
+        "/assets/blog/file-upload-size-limits.avif"
+      ],
+      "originalPexelsPageUrl": "https://www.pexels.com/photo/person-holding-a-document-while-using-laptop-5387265/",
+      "photographer": "Karola G / Kaboompics.com",
+      "sourcePlatform": "Pexels",
+      "sourceLicenseNote": "Pexels free-to-use stock photo; downloaded locally, cropped to a 16:9 blog cover and optimized as JPEG, WebP and AVIF.",
+      "alt": "Printed documents beside a laptop, representing files prepared for upload or sharing."
+    }
+  ]
+}

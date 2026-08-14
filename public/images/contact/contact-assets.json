@@ -1,0 +1,34 @@
+[
+  {
+    "id": "contact-support-hero",
+    "role": "large support hero photograph",
+    "sourcePlatform": "Pexels",
+    "sourceUrl": "https://www.pexels.com/photo/smiling-man-in-headphones-talking-on-call-on-laptop-8770667/",
+    "photographer": "Gustavo Fring",
+    "originalFilename": "pexels-photo-8770667.jpeg",
+    "width": 1400,
+    "height": 850,
+    "position": "center",
+    "alt": "Smiling support professional wearing headphones while working on a laptop.",
+    "webp": "/public/images/contact/contact-support-hero.webp",
+    "avif": "/public/images/contact/contact-support-hero.avif",
+    "licenseNote": "Pexels free-to-use stock photo; downloaded locally for production use.",
+    "licenseCheckedAt": "2026-08-14"
+  },
+  {
+    "id": "contact-support-agent",
+    "role": "smaller support-agent card photograph",
+    "sourcePlatform": "Pexels",
+    "sourceUrl": "https://www.pexels.com/photo/smiling-woman-on-phone-with-laptop-in-office-34211770/",
+    "photographer": "Julio Lopez",
+    "originalFilename": "free-photo-of-smiling-woman-on-phone-with-laptop-in-office.jpeg",
+    "width": 800,
+    "height": 500,
+    "position": "center",
+    "alt": "Smiling support professional on a phone call while using a laptop.",
+    "webp": "/public/images/contact/contact-support-agent.webp",
+    "avif": "/public/images/contact/contact-support-agent.avif",
+    "licenseNote": "Pexels free-to-use stock photo; downloaded locally for production use.",
+    "licenseCheckedAt": "2026-08-14"
+  }
+]

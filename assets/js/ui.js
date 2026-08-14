@@ -162,6 +162,9 @@
         e.preventDefault(); openPalette();
       }
     });
+    doc.querySelectorAll('[data-open-search]').forEach(function (button) {
+      button.addEventListener('click', function () { openPalette(); });
+    });
     root.VKUI = root.VKUI || {}; root.VKUI.openPalette = openPalette;
   }
 

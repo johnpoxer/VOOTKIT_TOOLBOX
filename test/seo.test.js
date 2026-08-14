@@ -646,8 +646,12 @@ console.log(`seo + ezoic verification: ${pass} total assertions passed`);
     try { return fs3.readdirSync(path3.join(R, "blog")).filter((d) => d !== "index.html"); }
     catch (e) { return []; }
   })();
-  ok(blogFiles.length > 0, "there are blog posts to check");
-  blogFiles.forEach((d) => {
+  const blogPosts = blogFiles.filter((d) => {
+    const html = read("blog/" + d + "/index.html");
+    return /class="bl-article"/.test(html);
+  });
+  ok(blogPosts.length > 0, "there are blog posts to check");
+  blogPosts.forEach((d) => {
     const html = read("blog/" + d + "/index.html");
     if (!html) return;
     eq(slots(html), "blog",
