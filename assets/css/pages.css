@@ -3083,7 +3083,12 @@ video.wcode { padding: 0; }
 .wfc-saved-box { display: grid; gap: 8px; margin-top: auto; padding-top: var(--s-3); border-top: 1px solid var(--line); }
 .wfc-count { font-size: 11px; color: var(--ink-mute); }
 
-.wfc-center { position: relative; display: grid; grid-template-rows: 64px minmax(0, 1fr) auto auto; min-width: 0; min-height: 0; background: #fbfbff; }
+/* grid-template-COLUMNS matters as much as the rows here. Without it the
+   implicit column is max-content, so .wfc-canvas sized itself to its
+   content (1069px) inside a 493px column: it covered the inspector, and
+   because .wfc is overflow:hidden, any focus() scrolled the grid sideways
+   and stranded the tool palette off-screen with no way to scroll back. */
+.wfc-center { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: 64px minmax(0, 1fr) auto auto; min-width: 0; min-height: 0; background: #fbfbff; }
 .wfc-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; padding: 0 18px; border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--surface) 94%, transparent); }
 .wfc-title-edit { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .wfc-title-stack { display: flex; align-items: center; gap: 6px; min-width: 0; }
