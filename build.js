@@ -3137,36 +3137,33 @@ function pricingPage() {
   ];
   const feat = (on, txt) => `<li class="${on ? "yes" : "no"}"><svg viewBox="0 0 24 24" aria-hidden="true">${on ? '<path d="M20 6 9 17l-5-5"/>' : '<path d="M6 6l12 12M18 6 6 18"/>'}</svg>${txt}</li>`;
   const yn = (v) => v === true ? '<span class="cmp-yes" aria-label="Included">✓</span>' : v === false ? '<span class="cmp-no" aria-label="Not included">—</span>' : v;
-  return head({ depth: 0, url, ads: true, ld, title: "Pricing — Vootkit", ogTitle: "Vootkit Pricing", desc: "Start free with 5 tool runs a day and unlimited core tools. Upgrade to Creator Pro or Teams for unlimited usage, faster processing, premium tools and priority support." }) +
+  return head({ depth: 0, url, ads: true, ld, bodyClass: "pricing-ref", title: "Pricing — Vootkit", ogTitle: "Vootkit Pricing", desc: "Start free with 5 tool runs a day and unlimited core tools. Upgrade to Creator Pro or Teams for unlimited usage, faster processing, premium tools and priority support." }) +
 proHero() +
 `<div class="wrap section" id="plans">
   <header class="sec-head" style="margin-top:var(--s-4)">
-    <span class="eyebrow">Pricing</span>
     <!-- h2, not h1: the Pro hero above now carries the page's only h1. Two of
          them costs the outline for a screen reader and muddles which heading
          Google treats as the page subject. -->
-    <h2 class="page-h1">Simple pricing that scales with you.</h2>
-    <p class="page-lede">Start free — 5 tool runs a day, with core tools and downloaders always unlimited. Upgrade when you want unlimited usage, faster processing and premium tools.</p>
+    <h2 class="page-h1">Simple plans.<br>Useful tools.</h2>
+    <p class="page-lede">Start free. Upgrade when Vootkit becomes part of your everyday work.</p>
   </header>
 
   <div class="bill-toggle" role="group" aria-label="Billing period">
     <button class="bt-opt is-on" type="button" data-bill="month" aria-pressed="true">Monthly</button>
-    <button class="bt-opt" type="button" data-bill="year" aria-pressed="false">Annual <span class="bt-save">Save yearly</span></button>
+    <button class="bt-opt" type="button" data-bill="year" aria-pressed="false">Yearly <span class="bt-save">Save 20%</span></button>
   </div>
 
   <div class="plans">
     <div class="plan">
       <h2>Free</h2>
-      <p class="plan-price"><span class="plan-amt">$0</span><span class="plan-per">forever</span></p>
-      <p class="plan-tag">Everything most people need.</p>
-      <a class="btn btn-block" href="tools/">Start using tools</a>
+      <p class="plan-price"><span class="plan-amt">$0</span></p>
+      <p class="plan-tag">For quick everyday tasks</p>
+      <a class="btn btn-block" href="auth/sign-up/">Start free</a>
       <ul class="plan-feats">
-        ${feat(true, "Access to all " + VK.counts.live + " tools")}
         ${feat(true, "5 tool runs per day")}
-        ${feat(true, "Core tools &amp; downloaders unlimited")}
-        ${feat(true, "Use core tools instantly")}
-        ${feat(true, "No watermarks")}
-        ${feat(false, "Faster, premium processing")}
+        ${feat(true, "Core tools")}
+        ${feat(true, "Local file processing")}
+        ${feat(true, "Standard file limits")}
       </ul>
     </div>
 
@@ -3174,71 +3171,57 @@ proHero() +
       <span class="plan-flag">Most popular</span>
       <h2>Creator Pro</h2>
       <p class="plan-price"><span class="plan-amt" data-price="pro">$${P.creator_pro_monthly.amount}</span><span class="plan-per" data-per="pro">/month</span></p>
-      <p class="plan-tag">For creators who live in these tools.</p>
-      <button class="btn btn-primary btn-block" type="button" data-plan="creator_pro" data-plan-month="creator_pro_monthly" data-plan-year="creator_pro_annual">Upgrade to Pro</button>
+      <p class="plan-tag">For creators, students and professionals</p>
+      <button class="btn btn-primary btn-block" type="button" data-plan="creator_pro" data-plan-month="creator_pro_monthly" data-plan-year="creator_pro_annual">Get Pro</button>
       <ul class="plan-feats">
-        ${feat(true, "Unlimited tool runs — no daily cap")}
-        ${feat(true, "Faster, higher-res processing")}
-        ${feat(true, "Premium &amp; early-access tools")}
-        ${feat(true, "Larger file-size limits")}
-        ${feat(true, "Cloud history across devices")}
-        ${feat(true, "Priority support")}
+        ${feat(true, "Unlimited daily use")}
+        ${feat(true, "Higher file-size limits")}
+        ${feat(true, "No ads in your workspace")}
+        ${feat(true, "Priority processing")}
+        ${feat(true, "Save workflows")}
       </ul>
     </div>
 
     <div class="plan">
       <h2>Creator Teams</h2>
       <p class="plan-price"><span class="plan-amt" data-price="teams">$${P.creator_teams_monthly.amount}</span><span class="plan-per" data-per="teams">/month</span></p>
-      <p class="plan-tag">For studios and teams.</p>
-      <button class="btn btn-block" type="button" data-plan="creator_teams" data-plan-month="creator_teams_monthly" data-plan-year="creator_teams_annual">Start a team</button>
+      <p class="plan-tag">For small teams working together</p>
+      <button class="btn btn-block" type="button" data-plan="creator_teams" data-plan-month="creator_teams_monthly" data-plan-year="creator_teams_annual">Start with Teams</button>
       <ul class="plan-feats">
         ${feat(true, "Everything in Pro")}
         ${feat(true, "Shared team workspace")}
-        ${feat(true, "Highest processing limits")}
-        ${feat(true, "More cloud storage")}
         ${feat(true, "Centralised billing")}
-        ${feat(true, "API access (coming)")}
+        ${feat(true, "Team workflows")}
+        ${feat(true, "Priority support")}
       </ul>
     </div>
   </div>
 
-  <div class="upgrade-note" style="text-align:center;margin-top:var(--s-5);padding:var(--s-4);background:var(--accent-weak);border:1px solid var(--accent-border);border-radius:var(--r-md);max-width:640px;margin-inline:auto">
-    <p style="margin:0;color:var(--ink)"><strong>Reached today's free limit?</strong> Upgrade to Vootkit Pro for unlimited access and faster processing — cancel anytime.</p>
-  </div>
-
-  <p class="note" style="text-align:center;margin-top:var(--s-5)">Prices in USD. Cancel anytime. Core tools and downloaders never require a subscription.</p>
-
   <section style="margin-top:var(--s-8)">
-    <div class="sec-head"><h2>Compare plans</h2></div>
+    <div class="sec-head"><h2>Compare the essentials</h2></div>
     <div class="cmp-wrap">
       <table class="cmp-table">
         <thead><tr><th scope="col" style="text-align:left">Feature</th><th scope="col">Free</th><th scope="col" class="cmp-hi">Creator Pro</th><th scope="col">Creator Teams</th></tr></thead>
         <tbody>
-          <tr><th scope="row">Access to all ${VK.counts.live} tools</th><td>${yn(true)}</td><td class="cmp-hi">${yn(true)}</td><td>${yn(true)}</td></tr>
           <tr><th scope="row">Daily tool runs</th><td>5 / day</td><td class="cmp-hi">Unlimited</td><td>Unlimited</td></tr>
-          <tr><th scope="row">Core tools &amp; downloaders</th><td>Unlimited</td><td class="cmp-hi">Unlimited</td><td>Unlimited</td></tr>
-          <tr><th scope="row">Login required</th><td>No</td><td class="cmp-hi">Optional</td><td>Yes</td></tr>
-          <tr><th scope="row">Processing speed</th><td>Standard</td><td class="cmp-hi">Faster</td><td>Fastest</td></tr>
           <tr><th scope="row">File-size limits</th><td>Standard</td><td class="cmp-hi">Larger</td><td>Highest</td></tr>
-          <tr><th scope="row">Premium &amp; early-access tools</th><td>${yn(false)}</td><td class="cmp-hi">${yn(true)}</td><td>${yn(true)}</td></tr>
-          <tr><th scope="row">Cloud history across devices</th><td>${yn(false)}</td><td class="cmp-hi">${yn(true)}</td><td>${yn(true)}</td></tr>
+          <tr><th scope="row">Saved workflows</th><td>${yn(false)}</td><td class="cmp-hi">${yn(true)}</td><td>${yn(true)}</td></tr>
           <tr><th scope="row">Shared team workspace</th><td>${yn(false)}</td><td class="cmp-hi">${yn(false)}</td><td>${yn(true)}</td></tr>
-          <tr><th scope="row">Centralised billing</th><td>${yn(false)}</td><td class="cmp-hi">${yn(false)}</td><td>${yn(true)}</td></tr>
-          <tr><th scope="row">Support</th><td>Standard</td><td class="cmp-hi">Priority</td><td>Priority + onboarding</td></tr>
+          <tr><th scope="row">Workspace ads</th><td>Yes</td><td class="cmp-hi">No</td><td>No</td></tr>
         </tbody>
       </table>
     </div>
   </section>
 
-  <section class="prose faq" style="margin-top:var(--s-8)">
-    <h2>Questions</h2>
-    <details><summary>Is Vootkit free to use?</summary><p>Yes. The free plan gives you 5 tool runs a day across all ${VK.counts.live} tools, and core tools and downloaders stay unlimited. You only need Pro if you want unlimited daily usage, faster processing and premium tools.</p></details>
-    <details><summary>What counts toward the 5 free runs a day?</summary><p>Heavier processing tasks — like converting or compressing a file. Simple browser-based tools and downloaders don't count and stay unlimited. When you reach the daily limit, you'll see a friendly prompt to upgrade; it resets the next day.</p></details>
-    <details><summary>Do I need an account to use Vootkit?</summary><p>No. You can use the free tier without signing up. An account only exists to sync your history and manage a subscription if you choose to upgrade.</p></details>
-    <details><summary>What do I get with Pro?</summary><p>Unlimited daily usage, faster and higher-resolution processing, premium and early-access tools, larger file-size limits, cloud history across your devices, and priority support.</p></details>
-    <details><summary>Can I cancel?</summary><p>Anytime, from your account. You keep Pro until the end of the period you've paid for, then drop back to the (still fully usable) free tier.</p></details>
-    <details><summary>How do you handle payment?</summary><p>Payments are processed by Stripe. We never see or store your card details.</p></details>
+  <section class="pricing-privacy"><div class="privacy-shield">♢</div><div><h2>Your files stay yours</h2><p>Most tools process files directly on your device, on every plan.</p></div></section>
+  <section class="prose faq pricing-faq" style="margin-top:var(--s-6)">
+    <details><summary>Can I cancel anytime?</summary><p>Yes. You keep your paid plan until the end of the billing period, then return to Free.</p></details>
+    <details><summary>Do I need a card for Free?</summary><p>No. Start with the free plan without adding payment details.</p></details>
+    <details><summary>What counts as a task?</summary><p>A processing action such as converting, compressing or exporting a file counts as one task.</p></details>
+    <details><summary>Are my files uploaded?</summary><p>Most Vootkit tools process files locally on your device. Network-backed tools are clearly labelled.</p></details>
+    <details><summary>Can I change plans later?</summary><p>Yes. You can upgrade, change or cancel your plan when your needs change.</p></details>
   </section>
+  <section class="pricing-cta"><h2>Start free.<br>Upgrade only when you need more.</h2><a class="btn btn-primary" href="tools/">Open Vootkit</a></section>
 </div>` + foot(0, ["assets/js/pricing.js"]);
 }
 
