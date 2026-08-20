@@ -146,7 +146,10 @@ function adLoader() {
   if (!ADS.enabled) return "<!-- ads disabled -->";
   const net = ADS.network || "adsense";
   if (net === "adsense") {
-    const g = `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${PUB}" crossorigin="anonymous"></script>`;
+    /* Inert placeholder: ads.js turns this into a real script only after it has
+       confirmed that the signed-in account is not paid. This prevents Auto Ads
+       as well as manual units from loading for Creator Pro. */
+    const g = `<script type="application/vk-ad" data-vk-ad-src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${PUB}"></script>`;
     /* Verification mode: Ezoic's header scripts present so their dashboard can
        detect the site, while AdSense keeps serving. Deliberately does NOT emit
        showAds placements — Ezoic is not approved yet, so those would render
@@ -1696,7 +1699,7 @@ function toolPremiumCard(spec, archetype) {
   return `<section class="tool-side-card tool-upgrade-card">
     <span class="tool-side-icon">${icon("crown")}</span>
     <h2>Upgrade for more power</h2>
-    <p>Unlock higher limits, faster processing and premium Vootkit features.</p>
+    <p>Unlock unlimited daily runs, an ad-free workspace and saved workflows.</p>
     <ul>${benefits.map((b) => `<li>${icon("check")}<span>${esc(b)}</span></li>`).join("")}</ul>
     <a class="btn btn-primary" href="../../../pricing.html">Creator Pro - $8 / month</a>
     <a class="btn" href="../../../pricing.html">Creator Teams - $20 / month</a>
@@ -1812,7 +1815,7 @@ function toolPage(t) {
   const shellTitle = toolShellTitle(t);
 
   const faqs = (deep ? deep.faqs : []).concat([
-    { q: `Is ${t.name} free?`, a: `Yes. The Vootkit free plan includes 5 tool runs a day for conversion and processing tasks, plus core tools for everyday work. Upgrade to Vootkit Pro for unlimited daily use, faster processing and premium tools.` },
+    { q: `Is ${t.name} free?`, a: `Yes. The Vootkit free plan includes 5 tool runs a day. Upgrade to Vootkit Pro for unlimited daily use, an ad-free workspace and saved workflows.` },
     { q: "Are my files uploaded?", a: local
         ? `No. ${t.name} runs entirely in your browser — your file is processed on your own device and never sent to a server. There is nothing for us to store or delete.`
         : `${t.name} needs the internet to work, so it calls an external service to fetch data. It does not require an account and does not track you.` },
@@ -3173,28 +3176,38 @@ function pricingPage() {
   const url = SITE + "/pricing.html";
   const P = CFG.stripe.plans;
   const ld = [
-    { "@context": "https://schema.org", "@type": "WebPage", name: "Pricing", url, description: "Vootkit pricing — start free with 5 tool runs a day and unlimited core tools. Upgrade to Pro for unlimited usage, faster processing and premium tools." },
+    { "@context": "https://schema.org", "@type": "WebPage", name: "Pricing", url, description: "Vootkit pricing — start free with 5 tool runs a day. Upgrade to Creator Pro for unlimited usage, an ad-free workspace and saved workflows." },
     { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
       { "@type": "ListItem", position: 1, name: "Vootkit", item: SITE + "/" },
       { "@type": "ListItem", position: 2, name: "Pricing", item: url }
-    ]}
+    ]},
+    { "@context": "https://schema.org", "@type": "Product", name: "Vootkit", url,
+      description: "Browser-based productivity tools with Free and Creator Pro plans.",
+      brand: { "@type": "Brand", name: "Vootkit" },
+      offers: [
+        { "@type": "Offer", name: "Free", price: 0, priceCurrency: "USD", availability: "https://schema.org/InStock", url: SITE + "/auth/sign-up/" },
+        { "@type": "Offer", name: "Creator Pro monthly", price: P.creator_pro_monthly.amount, priceCurrency: "USD", availability: "https://schema.org/InStock", url }
+      ] }
   ];
+  const annualSaving = Math.round((1 - P.creator_pro_annual.amount / (P.creator_pro_monthly.amount * 12)) * 100);
   const feat = (on, txt) => `<li class="${on ? "yes" : "no"}"><svg viewBox="0 0 24 24" aria-hidden="true">${on ? '<path d="M20 6 9 17l-5-5"/>' : '<path d="M6 6l12 12M18 6 6 18"/>'}</svg>${txt}</li>`;
   const yn = (v) => v === true ? '<span class="cmp-yes" aria-label="Included">✓</span>' : v === false ? '<span class="cmp-no" aria-label="Not included">—</span>' : v;
-  return head({ depth: 0, url, ads: true, ld, bodyClass: "pricing-ref", title: "Pricing — Vootkit", ogTitle: "Vootkit Pricing", desc: "Start free with 5 tool runs a day and unlimited core tools. Upgrade to Creator Pro or Teams for unlimited usage, faster processing, premium tools and priority support." }) +
-proHero() +
+  return head({ depth: 0, url, ads: true, ld, bodyClass: "pricing-ref", title: "Vootkit Pricing: Free & Creator Pro Plans", ogTitle: "Vootkit Pricing — Free and Creator Pro", desc: "Start free with 5 tool runs a day. Upgrade to Creator Pro for unlimited usage, an ad-free workspace and saved workflows." }) +
 `<div class="wrap section" id="plans">
   <header class="sec-head" style="margin-top:var(--s-4)">
-    <!-- h2, not h1: the Pro hero above now carries the page's only h1. Two of
-         them costs the outline for a screen reader and muddles which heading
-         Google treats as the page subject. -->
-    <h2 class="page-h1">Simple plans.<br>Useful tools.</h2>
+    <h1 class="page-h1">Simple plans.<br>Useful tools.</h1>
     <p class="page-lede">Start free. Upgrade when Vootkit becomes part of your everyday work.</p>
   </header>
 
   <div class="bill-toggle" role="group" aria-label="Billing period">
     <button class="bt-opt is-on" type="button" data-bill="month" aria-pressed="true">Monthly</button>
-    <button class="bt-opt" type="button" data-bill="year" aria-pressed="false">Yearly <span class="bt-save">Save 20%</span></button>
+    <button class="bt-opt" type="button" data-bill="year" aria-pressed="false">Yearly <span class="bt-save">Save ${annualSaving}%</span></button>
+  </div>
+
+  <div class="pricing-highlights" aria-label="Benefits included with Vootkit">
+    <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg><b>No card for Free</b></span>
+    <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.4 7.7 8 8 4.6-.3 8-3 8-8V6z"/></svg><b>Private browser processing</b></span>
+    <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12a6 6 0 1 0 2-4.5M6 4v5h5"/></svg><b>Cancel anytime</b></span>
   </div>
 
   <div class="plans">
@@ -3219,53 +3232,54 @@ proHero() +
       <button class="btn btn-primary btn-block" type="button" data-plan="creator_pro" data-plan-month="creator_pro_monthly" data-plan-year="creator_pro_annual">Get Pro</button>
       <ul class="plan-feats">
         ${feat(true, "Unlimited daily use")}
-        ${feat(true, "Higher file-size limits")}
         ${feat(true, "No ads in your workspace")}
-        ${feat(true, "Priority processing")}
         ${feat(true, "Save workflows")}
+        ${feat(true, "Secure Stripe billing portal")}
+        ${feat(true, "Cancel anytime")}
       </ul>
     </div>
 
     <div class="plan">
       <h2>Creator Teams</h2>
-      <p class="plan-price"><span class="plan-amt" data-price="teams">$${P.creator_teams_monthly.amount}</span><span class="plan-per" data-per="teams">/month</span></p>
-      <p class="plan-tag">For small teams working together</p>
-      <button class="btn btn-block" type="button" data-plan="creator_teams" data-plan-month="creator_teams_monthly" data-plan-year="creator_teams_annual">Start with Teams</button>
+      <p class="plan-price"><span class="plan-amt">Coming soon</span></p>
+      <p class="plan-tag">A real shared workspace for small teams—not just another individual subscription.</p>
+      <a class="btn btn-block" href="contact.html?subject=Creator%20Teams%20waitlist">Join the waitlist</a>
       <ul class="plan-feats">
-        ${feat(true, "Everything in Pro")}
-        ${feat(true, "Shared team workspace")}
-        ${feat(true, "Centralised billing")}
-        ${feat(true, "Team workflows")}
-        ${feat(true, "Priority support")}
+        ${feat(false, "Not available for purchase yet")}
+        ${feat(true, "Planned shared workspace")}
+        ${feat(true, "Planned team workflows")}
+        ${feat(true, "Planned centralised billing")}
       </ul>
     </div>
   </div>
 
-  <section style="margin-top:var(--s-8)">
+  <section class="pricing-compare">
     <div class="sec-head"><h2>Compare the essentials</h2></div>
     <div class="cmp-wrap">
       <table class="cmp-table">
         <thead><tr><th scope="col" style="text-align:left">Feature</th><th scope="col">Free</th><th scope="col" class="cmp-hi">Creator Pro</th><th scope="col">Creator Teams</th></tr></thead>
         <tbody>
           <tr><th scope="row">Daily tool runs</th><td>5 / day</td><td class="cmp-hi">Unlimited</td><td>Unlimited</td></tr>
-          <tr><th scope="row">File-size limits</th><td>Standard</td><td class="cmp-hi">Larger</td><td>Highest</td></tr>
-          <tr><th scope="row">Saved workflows</th><td>${yn(false)}</td><td class="cmp-hi">${yn(true)}</td><td>${yn(true)}</td></tr>
-          <tr><th scope="row">Shared team workspace</th><td>${yn(false)}</td><td class="cmp-hi">${yn(false)}</td><td>${yn(true)}</td></tr>
-          <tr><th scope="row">Workspace ads</th><td>Yes</td><td class="cmp-hi">No</td><td>No</td></tr>
+          <tr><th scope="row">Saved workflows</th><td>${yn(false)}</td><td class="cmp-hi">${yn(true)}</td><td>Planned</td></tr>
+          <tr><th scope="row">Shared team workspace</th><td>${yn(false)}</td><td class="cmp-hi">${yn(false)}</td><td>Planned</td></tr>
+          <tr><th scope="row">Workspace ads</th><td>Yes</td><td class="cmp-hi">No</td><td>Planned</td></tr>
+          <tr><th scope="row">Browser processing</th><td>${yn(true)}</td><td class="cmp-hi">${yn(true)}</td><td>Planned</td></tr>
         </tbody>
       </table>
     </div>
   </section>
 
-  <section class="pricing-privacy"><div class="privacy-shield">♢</div><div><h2>Your files stay yours</h2><p>Most tools process files directly on your device, on every plan.</p></div></section>
+  <section class="pricing-privacy"><div class="privacy-shield" aria-hidden="true"><svg viewBox="0 0 96 96"><path d="M48 10 18 22v23c0 20 12 34 30 41 18-7 30-21 30-41V22z"/><rect x="34" y="43" width="28" height="23" rx="5"/><path d="M40 43v-7a8 8 0 0 1 16 0v7"/></svg></div><div><h2>Your files stay yours</h2><p>Most tools process files directly on your device, on every plan.</p><small>Network-backed tools are clearly labelled before you use them.</small></div></section>
   <section class="prose faq pricing-faq" style="margin-top:var(--s-6)">
+    <h2>Frequently asked questions</h2>
     <details><summary>Can I cancel anytime?</summary><p>Yes. You keep your paid plan until the end of the billing period, then return to Free.</p></details>
     <details><summary>Do I need a card for Free?</summary><p>No. Start with the free plan without adding payment details.</p></details>
     <details><summary>What counts as a task?</summary><p>A processing action such as converting, compressing or exporting a file counts as one task.</p></details>
     <details><summary>Are my files uploaded?</summary><p>Most Vootkit tools process files locally on your device. Network-backed tools are clearly labelled.</p></details>
-    <details><summary>Can I change plans later?</summary><p>Yes. You can upgrade, change or cancel your plan when your needs change.</p></details>
+    <details><summary>Can I cancel later?</summary><p>Yes. Open Subscription in your account, choose Manage billing and cancel securely in Stripe. You keep Pro until the end of the paid period.</p></details>
+    <details><summary>When will Creator Teams launch?</summary><p>Creator Teams is still being built and cannot be purchased yet. Join the waitlist and we’ll announce it when shared workspaces are ready.</p></details>
   </section>
-  <section class="pricing-cta"><h2>Start free.<br>Upgrade only when you need more.</h2><a class="btn btn-primary" href="tools/">Open Vootkit</a></section>
+  <section class="pricing-cta"><span aria-hidden="true">✦</span><h2>Start free.<br>Upgrade only when you need more.</h2><p>No card required for the Free plan.</p><a class="btn btn-primary" href="tools/">Open Vootkit</a></section>
 </div>` + foot(0, ["assets/js/pricing.js"]);
 }
 
