@@ -1180,9 +1180,9 @@
 .wf-ref-featured li { position: relative; display: grid; grid-template-columns: 30px 44px minmax(0,1fr) auto 22px; gap: 10px; align-items: center; min-height: 64px; }
 .wf-ref-number { position: relative; z-index: 1; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--accent-weak); color: var(--accent); font-size: .73rem; }
 .wf-ref-featured .ic-tool { width: 42px; height: 42px; border-radius: 11px; }
-.wf-ref-featured li > span:nth-of-type(2) { display: grid; gap: 2px; min-width: 0; }
-.wf-ref-featured li strong { font-size: .9rem; }
-.wf-ref-featured li small { color: var(--ink-soft); font-size: .7rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wf-ref-featured .wf-ref-copy { display: grid; gap: 3px; min-width: 0; }
+.wf-ref-featured .wf-ref-copy strong { min-width: 0; font-size: .9rem; line-height: 1.2; overflow-wrap: anywhere; }
+.wf-ref-featured .wf-ref-copy small { min-width: 0; color: var(--ink-soft); font-size: .7rem; line-height: 1.35; white-space: normal; overflow-wrap: anywhere; }
 .wf-ref-featured li > b { padding: 4px 7px; border-radius: 999px; background: var(--ok-weak); color: var(--ok); font-size: .62rem; }
 .wf-ref-featured li > button { border: 0; background: transparent; color: var(--ink-soft); font-size: 1rem; cursor: pointer; }
 .wf-ref-download { display: grid; place-items: center; background: #e9f9ee; color: #229c4d; }
@@ -1209,8 +1209,10 @@
 .wf-ref-how li strong { font-size: .85rem; }
 .wf-ref-how li small { color: var(--ink-soft); font-size: .68rem; }
 .wf-ref-how li > i { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 10px; background: var(--accent-weak); color: var(--accent); font-style: normal; }
+.wf-ref-how li > i svg, .wf-ref-folder svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
 .wf-ref-yours > div { margin-top: 12px; display: flex; align-items: center; gap: 14px; padding: 18px; border: 1px solid var(--accent-border); border-radius: 12px; background: linear-gradient(135deg,var(--surface),var(--accent-weak)); }
 .wf-ref-yours > div > span { font-size: 1.6rem; color: var(--accent); }
+.wf-ref-yours .wf-ref-folder { flex: 0 0 auto; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 11px; background: var(--accent-weak); }
 .wf-ref-yours p { flex: 1; margin: 0; font-family: var(--font-display); }
 
 /* Sequential builder replaces the former visible graph editor on phones. */
@@ -1296,11 +1298,21 @@
 .wf-run-actions > :only-child { grid-column: 1 / -1; }
 .wf-run-actions .wf-run-save-template { grid-column: 1 / -1; }
 @media (max-width: 520px) {
-  .wf-ref-featured li { grid-template-columns: 26px 40px minmax(0,1fr) auto 18px; gap: 7px; }
+  .wf-ref-featured > header { display: grid; grid-template-columns: minmax(0,1fr) auto; padding: 18px 16px 10px; }
+  .wf-ref-featured li { grid-template-columns: 26px 40px minmax(0,1fr) 22px; gap: 9px; min-height: 76px; }
   .wf-ref-featured .ic-tool { width: 38px; height: 38px; }
   .wf-ref-featured li > b { display: none; }
-  .wf-ref-popular-row { grid-template-columns: minmax(118px,1fr) auto 10px; }
-  .wf-ref-mini-chain { display: none; }
+  .wf-ref-featured .wf-ref-copy strong { font-size: .84rem; }
+  .wf-ref-featured .wf-ref-copy small { font-size: .67rem; }
+  .wf-ref-popular-row { grid-template-columns: minmax(108px,1fr) auto 10px; grid-template-areas: "copy time arrow" "icons icons icons"; row-gap: 8px; }
+  .wf-ref-popular-row > span:first-child { grid-area: copy; }
+  .wf-ref-popular-row > em { grid-area: time; }
+  .wf-ref-popular-row > b { grid-area: arrow; }
+  .wf-ref-mini-chain { grid-area: icons; display: flex; padding-top: 7px; border-top: 1px solid var(--line); }
+  .wf-ref-mini-chain .ic-tool { width: 27px; height: 27px; }
+  .wf-ref-mini-chain .ic-tool svg { width: 14px; height: 14px; }
+  .wf-ref-featured footer { align-items: stretch; }
+  .wf-ref-featured footer .btn { flex: 0 0 44%; white-space: normal; text-align: center; }
   .wf-ref-yours > div { padding: 14px; }
   .wf-run-view { width: 100%; }
 }
