@@ -17,6 +17,7 @@
   var user, client;
   var LIMIT = (root.VK_CONFIG && root.VK_CONFIG.freeLimit && root.VK_CONFIG.freeLimit.count) || 5;
   var stat = {};       // references to overview stat value nodes
+  var activationChecks = 0;
 
   async function init() {
     user = await A.requireAuth(); if (!user) return; // redirected
@@ -56,7 +57,7 @@
     return el('div', { class: 'acct-upgrade', id: 'acct-upgrade' }, [
       el('div', { class: 'acct-upgrade-tx' }, [
         el('h3', { text: 'Unlock Vootkit Pro' }),
-        el('p', { text: 'Unlimited daily runs, faster processing, premium tools and cloud history that syncs across your devices.' })
+        el('p', { text: 'Unlimited daily runs, an ad-free workspace and reusable saved workflows.' })
       ]),
       el('a', { class: 'acct-upgrade-cta', href: up() + 'pricing.html', text: 'Upgrade' })
     ]);
@@ -125,7 +126,8 @@
   async function loadPlan() {
     var wrap = doc.getElementById('plan-wrap'); if (!wrap) return;
     var plan = 'free';
-    try { var r = await client.from('profiles').select('plan').eq('id', user.id).single(); if (r.data && r.data.plan) plan = r.data.plan; } catch (e) {}
+    var status = 'inactive';
+    try { var r = await client.from('profiles').select('plan,subscription_status').eq('id', user.id).single(); if (r.data && r.data.plan) plan = r.data.plan; if (r.data && r.data.subscription_status) status = r.data.subscription_status; } catch (e) {}
     var isPro = plan !== 'free';
     var label = plan === 'creator_pro' ? 'Creator Pro' : plan === 'creator_teams' ? 'Creator Teams' : 'Free';
     // reflect plan into the overview + toggle the upgrade card / usage meter
@@ -137,8 +139,34 @@
     }
     wrap.innerHTML = '';
     wrap.appendChild(el('div', { class: 'calc-stats' }, [el('div', { class: 'calc-stat' }, [el('span', { text: 'Current plan' }), el('b', { text: label })])]));
-    if (!isPro) wrap.appendChild(el('p', { class: 'note', html: 'You’re on the free plan — 5 tool runs a day, with core tools and downloaders always unlimited. <a href="' + up() + 'pricing.html" style="color:var(--accent);font-weight:600">See Pro</a> for unlimited usage, faster processing and cloud history.' }));
-    else wrap.appendChild(el('p', { class: 'note', text: 'Thanks for supporting Vootkit. Manage billing from the receipt email’s Stripe portal link.' }));
+    if (!isPro) wrap.appendChild(el('p', { class: 'note', html: 'You’re on the free plan — 5 tool runs a day. <a href="' + up() + 'pricing.html" style="color:var(--accent);font-weight:600">See Pro</a> for unlimited usage, an ad-free workspace and saved workflows.' }));
+    else {
+      wrap.appendChild(el('p', { class: 'note', text: 'Your subscription is ' + status + '. You can update payment details, view invoices or cancel securely in Stripe.' }));
+      wrap.appendChild(el('button', { class: 'btn btn-primary', type: 'button', text: 'Manage billing', onClick: openBilling }));
+    }
+    if (new URLSearchParams(location.search).get('checkout') === 'success') {
+      if (isPro) {
+        toast('Creator Pro is active. Welcome to Vootkit Pro!');
+        history.replaceState({}, '', location.pathname);
+      } else if (activationChecks < 5) {
+        activationChecks += 1;
+        wrap.appendChild(el('p', { class: 'note', role: 'status', text: 'Payment received. Activating Creator Pro…' }));
+        setTimeout(loadPlan, 1800);
+      } else {
+        wrap.appendChild(el('p', { class: 'note', role: 'status', text: 'Payment was received, but activation is taking longer than expected. Refresh shortly or contact support if this remains.' }));
+      }
+    }
+  }
+
+  async function openBilling() {
+    try {
+      var session = await A.getSession();
+      if (!session || !session.access_token) throw new Error('Sign in again to manage billing.');
+      var res = await fetch('/.netlify/functions/create-portal', { method: 'POST', headers: { Authorization: 'Bearer ' + session.access_token } });
+      var data = await res.json().catch(function () { return {}; });
+      if (!res.ok || !data.url) throw new Error(data.error || 'Could not open billing.');
+      location.href = data.url;
+    } catch (e) { toast(e.message || 'Could not open billing.', 'warn'); }
   }
 
   /* ---- Settings ---- */
