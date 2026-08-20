@@ -3066,13 +3066,19 @@ function pageCallback() {
 function accountPage() {
   const url = `${SITE}/account/`;
   const ld = { "@context": "https://schema.org", "@type": "WebPage", name: "Your account", url };
-  return head({ depth: 1, url, ads: false, ld, title: "Your account — Vootkit", desc: "Your Vootkit account — favorites, history, subscription and settings." })
+  return head({ depth: 1, url, ads: false, ld, bodyClass: "account-ref", title: "Account & Settings — Vootkit", desc: "Manage your Vootkit profile, subscription, privacy preferences, active sessions and account settings." })
     .replace("</head>", '<meta name="robots" content="noindex">\n</head>') +
 `<div class="wrap section">
   <div id="account" class="acct">
     <div class="vk-skeleton" style="height:80px;max-width:420px"></div>
   </div>
-</div>` + foot(1, ["assets/js/account.js"]);
+</div>
+<nav class="acct-bottom-nav" aria-label="Account navigation">
+  <a href="../"><span aria-hidden="true">⌂</span><small>Home</small></a>
+  <a href="../tools/"><span aria-hidden="true">▦</span><small>Tools</small></a>
+  <a href="../workflows/"><span aria-hidden="true">⌘</span><small>Workflows</small></a>
+  <a class="is-active" href="./" aria-current="page"><span aria-hidden="true">□</span><small>Account</small></a>
+</nav>` + foot(1, ["assets/js/account.js"]);
 }
 
 /* ---------- pricing (static, Stripe-ready) ---------- */
