@@ -29,6 +29,73 @@
     linear-gradient(180deg, var(--surface), var(--surface-soft));
   box-shadow: var(--shadow-sm);
 }
+
+/* Pricing v3 — full-size SaaS plan panels. */
+body.pricing-ref #plans{width:min(100% - 40px,1240px);padding:64px 0 96px}
+body.pricing-ref #plans>.sec-head{max-width:760px}
+body.pricing-ref .pricing-kicker{display:inline-flex;margin-bottom:16px;padding:7px 12px;border:1px solid #ded8ff;border-radius:999px;background:#f6f3ff;color:#5639df;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+body.pricing-ref #plans>.sec-head .page-h1{font-family:var(--font-display);font-size:clamp(48px,6.5vw,76px);line-height:.98;letter-spacing:-.055em}
+body.pricing-ref #plans>.sec-head .page-lede{max-width:610px;margin-top:20px;font-size:17px;line-height:1.6}
+body.pricing-ref .bill-toggle{width:360px;margin:34px auto 24px;padding:5px;border:1px solid #e6e3f2;border-radius:14px;background:#f5f4f8;box-shadow:inset 0 1px 2px rgb(16 19 40/.04)}
+body.pricing-ref .bt-opt{min-height:46px;border-radius:10px;font-size:14px;font-weight:750}
+body.pricing-ref .bt-opt.is-on{box-shadow:0 3px 12px rgb(31 25 74/.09)}
+body.pricing-ref .pricing-highlights{max-width:760px;margin:0 auto 34px;gap:0;border:1px solid #e7e5ed;border-radius:14px;background:#fff;overflow:hidden}
+body.pricing-ref .pricing-highlights span{min-height:52px;border:0;border-right:1px solid #eceaf1;border-radius:0;background:transparent;font-size:12px}
+body.pricing-ref .pricing-highlights span:last-child{border-right:0}
+body.pricing-ref .plans{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;align-items:stretch;max-width:1080px;margin-inline:auto}
+body.pricing-ref .plan,body.pricing-ref .plan--featured{display:flex;flex-direction:column;min-height:720px;padding:46px 42px 38px;border:1px solid #dedfe7;border-radius:28px;background:#fff;box-shadow:0 8px 30px rgb(25 25 55/.055);overflow:visible}
+body.pricing-ref .plan:hover{transform:translateY(-4px);border-color:#c9c3eb;box-shadow:0 22px 55px rgb(45 32 105/.11)}
+body.pricing-ref .plan--featured{border:2px solid #5839e8;background:linear-gradient(180deg,#f8f6ff 0,#fff 34%);box-shadow:0 18px 55px rgb(79 52 190/.16)}
+body.pricing-ref .plan--soon{background:linear-gradient(180deg,#fbfbfd,#fff)}
+body.pricing-ref .plan-flag{top:-14px;left:24px;transform:none;padding:7px 13px;border-radius:999px;box-shadow:0 7px 18px rgb(79 52 190/.24);font-size:11px;letter-spacing:.035em;text-transform:uppercase}
+body.pricing-ref .plan-kicker{display:block;margin:0 0 12px;color:#777f92;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+body.pricing-ref .plan h2{margin:0;font-family:var(--font-body);font-size:34px;line-height:1.12;letter-spacing:-.03em}
+body.pricing-ref .plan-price{min-height:82px;margin:26px 0 8px;align-items:flex-end}
+body.pricing-ref .plan-amt{font-family:var(--font-body);font-size:64px;font-weight:760;line-height:1;letter-spacing:-.055em}
+body.pricing-ref .plan--soon .plan-amt{font-size:36px;letter-spacing:-.035em}
+body.pricing-ref .plan-per{padding-bottom:5px;font-size:13px}
+body.pricing-ref .plan-tag{min-height:70px;max-width:42ch;margin:5px 0 14px;font-size:16px;line-height:1.55}
+body.pricing-ref .plan-detail{min-height:108px;margin:0 0 28px;color:#626a7d;font-size:14px;line-height:1.7}
+body.pricing-ref .plan>.btn{width:100%;max-width:none;min-height:52px;margin:0;justify-self:auto;border-radius:12px;font-size:14px;font-weight:800}
+body.pricing-ref .plan-includes{margin:34px 0 18px;padding-top:28px;border-top:1px solid #ebeaf0;color:#252a3a;font-size:14px;font-weight:800}
+body.pricing-ref .plan-feats{margin:0;gap:17px}
+body.pricing-ref .plan-feats li{gap:11px;font-size:14px;line-height:1.5}
+body.pricing-ref .plan-feats svg{width:19px;height:19px}
+body.pricing-ref .pricing-compare{margin-top:68px}
+body.pricing-ref .pricing-compare>.sec-head h2,body.pricing-ref .pricing-faq>h2{font-size:34px;letter-spacing:-.03em}
+body.pricing-ref .cmp-wrap{border-radius:18px}
+body.pricing-ref .cmp-table{font-size:14px}
+body.pricing-ref .cmp-table th,body.pricing-ref .cmp-table td{padding:17px 18px}
+body.pricing-ref .pricing-privacy{margin-top:34px;padding:32px;border-radius:20px}
+body.pricing-ref .pricing-faq details:first-of-type{border-radius:14px 14px 0 0}
+body.pricing-ref .pricing-faq details:last-child{border-radius:0 0 14px 14px}
+body.pricing-ref .pricing-faq summary{padding:19px 20px;font-size:14px}
+body.pricing-ref .pricing-cta{margin-top:36px;padding:42px;border-radius:20px}
+@media(max-width:900px){body.pricing-ref .plan,body.pricing-ref .plan--featured{padding:38px 30px;min-height:700px}}
+@media(max-width:700px){
+  body.pricing-ref #plans{width:min(100% - 28px,1240px);padding:38px 0 74px}
+  body.pricing-ref #plans>.sec-head .page-h1{font-size:clamp(42px,12vw,58px)}
+  body.pricing-ref #plans>.sec-head .page-lede{max-width:34ch;font-size:14px}
+  body.pricing-ref .bill-toggle{width:100%;max-width:360px;margin-top:26px}
+  body.pricing-ref .pricing-highlights{grid-template-columns:1fr;margin-bottom:28px}
+  body.pricing-ref .pricing-highlights span{justify-content:flex-start;min-height:44px;border-right:0;border-bottom:1px solid #eceaf1}
+  body.pricing-ref .pricing-highlights span:last-child{border-bottom:0}
+  body.pricing-ref .plans{grid-template-columns:1fr;gap:20px}
+  body.pricing-ref .plan,body.pricing-ref .plan--featured{grid-column:auto;display:flex;min-height:0;padding:34px 26px 30px;border-radius:22px}
+  body.pricing-ref .plan--featured{padding-top:38px}
+  body.pricing-ref .plan h2{font-size:27px}
+  body.pricing-ref .plan-price{min-height:auto;margin:20px 0 7px}
+  body.pricing-ref .plan-amt{font-size:50px}
+  body.pricing-ref .plan--soon .plan-amt{font-size:34px}
+  body.pricing-ref .plan-tag{min-height:0;max-width:32ch;margin-bottom:22px;font-size:13px}
+  body.pricing-ref .plan-detail{min-height:0;margin-bottom:24px;font-size:13px;line-height:1.65}
+  body.pricing-ref .plan>.btn{min-height:52px;font-size:14px}
+  body.pricing-ref .plan-includes{margin-top:26px}
+  body.pricing-ref .plan-feats{margin:0;gap:13px}
+  body.pricing-ref .plan-feats li{font-size:13px}
+  body.pricing-ref .pricing-compare{margin-top:48px}
+  body.pricing-ref .pricing-compare>.sec-head h2,body.pricing-ref .pricing-faq>h2{font-size:27px}
+}
 .cat-depth-head { max-width: 76ch; margin-bottom: var(--s-5); }
 .cat-depth-head h2,
 .cat-depth-advice h2,
