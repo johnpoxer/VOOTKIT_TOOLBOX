@@ -1689,12 +1689,11 @@ function toolHowToCards(t, steps) {
 }
 
 function toolPremiumCard(spec, archetype) {
-  const batch = spec && (spec.multiple || spec.maxFiles);
   const benefits = [
-    archetype === "file" ? (batch ? "Batch process multiple files" : "Higher file-size limits") : "Unlimited daily runs",
-    "Faster processing",
-    "Premium tools",
-    "Priority support"
+    "Unlimited daily tool runs",
+    "An ad-free workspace",
+    "Build and save reusable workflows",
+    "Secure billing management"
   ];
   return `<section class="tool-side-card tool-upgrade-card">
     <span class="tool-side-icon">${icon("crown")}</span>
@@ -1702,7 +1701,6 @@ function toolPremiumCard(spec, archetype) {
     <p>Unlock unlimited daily runs, an ad-free workspace and saved workflows.</p>
     <ul>${benefits.map((b) => `<li>${icon("check")}<span>${esc(b)}</span></li>`).join("")}</ul>
     <a class="btn btn-primary" href="../../../pricing.html">Creator Pro - $8 / month</a>
-    <a class="btn" href="../../../pricing.html">Creator Teams - $20 / month</a>
   </section>`;
 }
 
@@ -3195,8 +3193,9 @@ function pricingPage() {
   return head({ depth: 0, url, ads: true, ld, bodyClass: "pricing-ref", title: "Vootkit Pricing: Free & Creator Pro Plans", ogTitle: "Vootkit Pricing — Free and Creator Pro", desc: "Start free with 5 tool runs a day. Upgrade to Creator Pro for unlimited usage, an ad-free workspace and saved workflows." }) +
 `<div class="wrap section" id="plans">
   <header class="sec-head" style="margin-top:var(--s-4)">
-    <h1 class="page-h1">Simple plans.<br>Useful tools.</h1>
-    <p class="page-lede">Start free. Upgrade when Vootkit becomes part of your everyday work.</p>
+    <span class="pricing-kicker">Simple, transparent pricing</span>
+    <h1 class="page-h1">Choose the plan that<br>fits how you work.</h1>
+    <p class="page-lede">Start free, upgrade when you need unlimited access, and manage everything from your account.</p>
   </header>
 
   <div class="bill-toggle" role="group" aria-label="Billing period">
@@ -3212,43 +3211,38 @@ function pricingPage() {
 
   <div class="plans">
     <div class="plan">
+      <span class="plan-kicker">Starter</span>
       <h2>Free</h2>
       <p class="plan-price"><span class="plan-amt">$0</span></p>
-      <p class="plan-tag">For quick everyday tasks</p>
+      <p class="plan-tag">A complete starting point for occasional tasks, quick conversions and everyday calculations.</p>
+      <p class="plan-detail">Use Vootkit without entering payment details. You receive five completed tool runs every day, with the same privacy-first browser processing used across the platform.</p>
       <a class="btn btn-block" href="auth/sign-up/">Start free</a>
+      <p class="plan-includes">Everything you need to get started:</p>
       <ul class="plan-feats">
-        ${feat(true, "5 tool runs per day")}
-        ${feat(true, "Core tools")}
-        ${feat(true, "Local file processing")}
-        ${feat(true, "Standard file limits")}
+        ${feat(true, "5 completed tool runs every day")}
+        ${feat(true, "Access to 250+ browser-based tools")}
+        ${feat(true, "Private on-device processing for most tools")}
+        ${feat(true, "PDF, image, video, finance and developer tools")}
+        ${feat(true, "No credit card required")}
       </ul>
     </div>
 
     <div class="plan plan--featured">
       <span class="plan-flag">Most popular</span>
+      <span class="plan-kicker">For individuals</span>
       <h2>Creator Pro</h2>
       <p class="plan-price"><span class="plan-amt" data-price="pro">$${P.creator_pro_monthly.amount}</span><span class="plan-per" data-per="pro">/month</span></p>
-      <p class="plan-tag">For creators, students and professionals</p>
+      <p class="plan-tag">For creators, students and professionals who rely on Vootkit throughout their workday.</p>
+      <p class="plan-detail">Remove the daily counter, keep your workspace distraction-free and build reusable workflows that connect several tools into one repeatable process.</p>
       <button class="btn btn-primary btn-block" type="button" data-plan="creator_pro" data-plan-month="creator_pro_monthly" data-plan-year="creator_pro_annual">Get Pro</button>
+      <p class="plan-includes">Everything in Free, plus:</p>
       <ul class="plan-feats">
-        ${feat(true, "Unlimited daily use")}
-        ${feat(true, "No ads in your workspace")}
-        ${feat(true, "Save workflows")}
-        ${feat(true, "Secure Stripe billing portal")}
-        ${feat(true, "Cancel anytime")}
-      </ul>
-    </div>
-
-    <div class="plan">
-      <h2>Creator Teams</h2>
-      <p class="plan-price"><span class="plan-amt">Coming soon</span></p>
-      <p class="plan-tag">A real shared workspace for small teams—not just another individual subscription.</p>
-      <a class="btn btn-block" href="contact.html?subject=Creator%20Teams%20waitlist">Join the waitlist</a>
-      <ul class="plan-feats">
-        ${feat(false, "Not available for purchase yet")}
-        ${feat(true, "Planned shared workspace")}
-        ${feat(true, "Planned team workflows")}
-        ${feat(true, "Planned centralised billing")}
+        ${feat(true, "Unlimited tool runs across the platform")}
+        ${feat(true, "Completely ad-free Vootkit workspace")}
+        ${feat(true, "Build and save reusable multi-step workflows")}
+        ${feat(true, "Private browser processing for most tools")}
+        ${feat(true, "Secure Stripe invoices and billing management")}
+        ${feat(true, "Cancel anytime and keep Pro through the paid period")}
       </ul>
     </div>
   </div>
@@ -3257,13 +3251,13 @@ function pricingPage() {
     <div class="sec-head"><h2>Compare the essentials</h2></div>
     <div class="cmp-wrap">
       <table class="cmp-table">
-        <thead><tr><th scope="col" style="text-align:left">Feature</th><th scope="col">Free</th><th scope="col" class="cmp-hi">Creator Pro</th><th scope="col">Creator Teams</th></tr></thead>
+        <thead><tr><th scope="col" style="text-align:left">Feature</th><th scope="col">Free</th><th scope="col" class="cmp-hi">Creator Pro</th></tr></thead>
         <tbody>
-          <tr><th scope="row">Daily tool runs</th><td>5 / day</td><td class="cmp-hi">Unlimited</td><td>Unlimited</td></tr>
-          <tr><th scope="row">Saved workflows</th><td>${yn(false)}</td><td class="cmp-hi">${yn(true)}</td><td>Planned</td></tr>
-          <tr><th scope="row">Shared team workspace</th><td>${yn(false)}</td><td class="cmp-hi">${yn(false)}</td><td>Planned</td></tr>
-          <tr><th scope="row">Workspace ads</th><td>Yes</td><td class="cmp-hi">No</td><td>Planned</td></tr>
-          <tr><th scope="row">Browser processing</th><td>${yn(true)}</td><td class="cmp-hi">${yn(true)}</td><td>Planned</td></tr>
+          <tr><th scope="row">Daily tool runs</th><td>5 / day</td><td class="cmp-hi">Unlimited</td></tr>
+          <tr><th scope="row">Saved workflows</th><td>${yn(false)}</td><td class="cmp-hi">${yn(true)}</td></tr>
+          <tr><th scope="row">Workspace ads</th><td>Included</td><td class="cmp-hi">None</td></tr>
+          <tr><th scope="row">Browser processing</th><td>${yn(true)}</td><td class="cmp-hi">${yn(true)}</td></tr>
+          <tr><th scope="row">Billing management</th><td>${yn(false)}</td><td class="cmp-hi">Stripe portal</td></tr>
         </tbody>
       </table>
     </div>
@@ -3272,12 +3266,10 @@ function pricingPage() {
   <section class="pricing-privacy"><div class="privacy-shield" aria-hidden="true"><svg viewBox="0 0 96 96"><path d="M48 10 18 22v23c0 20 12 34 30 41 18-7 30-21 30-41V22z"/><rect x="34" y="43" width="28" height="23" rx="5"/><path d="M40 43v-7a8 8 0 0 1 16 0v7"/></svg></div><div><h2>Your files stay yours</h2><p>Most tools process files directly on your device, on every plan.</p><small>Network-backed tools are clearly labelled before you use them.</small></div></section>
   <section class="prose faq pricing-faq" style="margin-top:var(--s-6)">
     <h2>Frequently asked questions</h2>
-    <details><summary>Can I cancel anytime?</summary><p>Yes. You keep your paid plan until the end of the billing period, then return to Free.</p></details>
     <details><summary>Do I need a card for Free?</summary><p>No. Start with the free plan without adding payment details.</p></details>
     <details><summary>What counts as a task?</summary><p>A processing action such as converting, compressing or exporting a file counts as one task.</p></details>
     <details><summary>Are my files uploaded?</summary><p>Most Vootkit tools process files locally on your device. Network-backed tools are clearly labelled.</p></details>
     <details><summary>Can I cancel later?</summary><p>Yes. Open Subscription in your account, choose Manage billing and cancel securely in Stripe. You keep Pro until the end of the paid period.</p></details>
-    <details><summary>When will Creator Teams launch?</summary><p>Creator Teams is still being built and cannot be purchased yet. Join the waitlist and we’ll announce it when shared workspaces are ready.</p></details>
   </section>
   <section class="pricing-cta"><span aria-hidden="true">✦</span><h2>Start free.<br>Upgrade only when you need more.</h2><p>No card required for the Free plan.</p><a class="btn btn-primary" href="tools/">Open Vootkit</a></section>
 </div>` + foot(0, ["assets/js/pricing.js"]);
