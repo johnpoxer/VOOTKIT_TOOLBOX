@@ -170,33 +170,10 @@
       downloadLimits: false      // no download limits
     },
 
-    /* Free-tier usage limit.
-     *
-     * ON, but as a NUDGE — `hard:false`. Read the next paragraph before changing
-     * that, because the two flags are not independent.
-     *
-     * CORRECTION, 3 Aug 2026. This previously said a hard block was unsafe
-     * because "every price under stripe.plans is still an empty string". That
-     * was WRONG — those fields are unused, and checkout has been live the whole
-     * time (all four plans verified returning real Checkout URLs).
-     *
-     * So the original objection no longer applies: a user refused by a hard
-     * limit CAN pay. `hard:true` is now a genuine product choice rather than a
-     * broken one. It stays false only because that is a decision about how
-     * aggressive the product should be, and it belongs to the owner.
-     *
-     * But `enabled:false` had its own cost: every page advertises "5 FREE A DAY"
-     * while nothing counts, so there was no upgrade moment anywhere in the
-     * product and no reason a single visitor would ever pay. A nudge resolves
-     * both. The tool always runs; after the fifth completed run the result is
-     * followed by a priced offer. Nobody is trapped, and the funnel exists.
-     *
-     * REMAINING CONDITION FOR `hard:true`: Supabase auth must reliably mark a
-     * paying user as Pro, or a subscriber would be gated despite having paid.
-     * That is the last thing to verify — the payment half is done.
-     *
-     * It is a client-side counter — tools run in the browser — so it was never
-     * enforcement, only a prompt. Treat it as merchandising, not as DRM. */
+    /* Free-tier usage limit. Authenticated Stripe checkout and signed webhooks
+     * now keep the Supabase plan authoritative, so Creator Pro can be exempted
+     * safely. The counter remains client-side because tools run in the browser;
+     * it is product-level rate limiting, not DRM. */
     /* THE SIGNUP GATE.
      *
      * Shown at the moment a result is ready, before the file is handed over.
@@ -221,12 +198,10 @@
     freeLimit: {
       enabled: true,
       count: 5,            // free RUNS per day (completed runs, not page views)
-      hard: false,         // true = block; false = nudge but always allow
-      /* Empty on purpose. Exempting categories was tempting for the SEO landing
-         tools, but with hard:false nothing is ever withheld anywhere, so an
-         exemption would only hide the upgrade offer from the visitors most
-         likely to have found the product useful. Revisit if hard ever goes true:
-         at that point the acquisition categories genuinely should be exempt. */
+      hard: true,          // Pro activation is verified by Stripe webhooks
+      /* Empty on purpose: the five-run allowance applies consistently across
+         categories. Add a category only when there is a deliberate product
+         reason for that group to remain unlimited on Free. */
       exemptCategories: []
     },
 
