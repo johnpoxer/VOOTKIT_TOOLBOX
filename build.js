@@ -709,7 +709,15 @@ const ICON_RULES = [
 
 function toolIcon(t) {
   const hay = (t.id + ' ' + (t.name || '') + ' ' + (t.kw || '')).toLowerCase();
-  for (const [re, g, hue] of ICON_RULES) if (re.test(hay)) return { g, hue };
+  const position = VK.TOOLS.findIndex((item) => item.id === t.id && item.cat === t.cat);
+  for (const [re, g, hue] of ICON_RULES) if (re.test(hay)) {
+    /* Keep the glyph semantic, but give every catalog entry its own colour.
+       This replaces the old 75 repeated glyph/colour combinations with one
+       stable visual identity per tool across cards, search, workflows and
+       the tool page itself. The golden-angle offset avoids adjacent tools
+       collapsing into the same few purple/orange families. */
+    return { g, hue: Number(((hue + Math.max(0, position) * 137.508) % 360).toFixed(3)) };
+  }
   return null;
 }
 
@@ -866,18 +874,9 @@ const DIR_FEATURED_ORDER = [
   "remove-background", "jpg-to-png", "convert-video", "compress-pdf",
   "jpg-to-pdf", "crop-image", "remove-pdf-password", "audio-converter"
 ];
-const DIR_GROUPS = [
-  { slug: "all", name: "All Tools", icon: "grid", cats: [] },
-  { slug: "pdf", name: "PDF Tools", icon: "file", cats: ["pdf"] },
-  { slug: "video", name: "Video Tools", icon: "play", cats: ["video"] },
-  { slug: "images", name: "Image Tools", icon: "image", cats: ["images", "design", "ai"] },
-  { slug: "converter", name: "Converter Tools", icon: "sync", cats: ["pdf", "images", "video", "audio", "data"] },
-  { slug: "developer", name: "Developer Tools", icon: "code", cats: ["developer", "data", "seo", "privacy", "accessibility"] },
-  { slug: "text", name: "Text Tools", icon: "type", cats: ["text", "education"] },
-  { slug: "audio", name: "Audio Tools", icon: "audio", cats: ["audio"] },
-  { slug: "calculation", name: "Unit & Calculation", icon: "calculator", cats: ["finance", "tax", "insurance", "realestate", "health", "travel"] },
-  { slug: "other", name: "Other Tools", icon: "dots", cats: ["business", "everyday"] }
-];
+const DIR_GROUPS = [{ slug: "all", name: "All", icon: "grid", cats: [] }].concat(
+  VK.CATEGORIES.map((c) => ({ slug: c.slug, name: c.name, icon: c.icon, cats: [c.slug] }))
+);
 
 const CATEGORY_DEPTH = {
   pdf: {
@@ -1175,26 +1174,7 @@ function dirToolDisplay(t) {
   };
 }
 
-function dirLogoIcon(t) {
-  const d = dirToolDisplay(t);
-  const hue = d.hue || 250;
-  const label = d.glyph ? `<b>${esc(d.glyph)}</b>` : "";
-  const shapes = {
-    doc: '<path d="M8 5h7l3 3v11H8z"/><path d="M15 5v4h4"/>',
-    pdf: '<path d="M7 5h10v14H7z"/><path d="M9 10h6M9 14h4"/>',
-    image: '<rect x="5" y="6" width="14" height="12" rx="3"/><circle cx="10" cy="10" r="1.3"/><path d="m6 17 4-4 3 2.6 2.4-2.4L19 17"/>',
-    play: '<path d="m9 7 8 5-8 5z"/>',
-    checker: '<path d="M6 6h12v12H6z"/><path d="M6 6h4v4H6zM14 6h4v4h-4zM10 10h4v4h-4zM6 14h4v4H6zM14 14h4v4h-4z"/>',
-    "image-doc": '<path d="M8 5h8l3 3v11H8z"/><path d="M16 5v4h3"/><path d="m9.5 16 2.2-2.3 1.5 1.5 1.8-2.1 2.4 2.9"/>',
-    sync: '<path d="M7 10a5 5 0 0 1 8.5-3.5L17 8"/><path d="M17 6v2h-2"/><path d="M17 14a5 5 0 0 1-8.5 3.5L7 16"/><path d="M7 18v-2h2"/>',
-    download: '<path d="M12 5v9"/><path d="m8 10 4 4 4-4"/><path d="M7 18h10"/>',
-    crop: '<path d="M7 3v14h14"/><path d="M3 7h14v14"/><path d="M7 7h10v10"/>',
-    lock: '<rect x="6" y="10" width="12" height="9" rx="2"/><path d="M9 10V8a3 3 0 0 1 6 0v2"/>',
-    speaker: '<path d="M5 10h3l4-3v10l-4-3H5z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18 6a8 8 0 0 1 0 12"/>',
-    tool: d.path || (toolIcon(t) && GLYPH[toolIcon(t).g]) || GLYPH.page || '<path d="M7 5h10v14H7z"/>'
-  };
-  return `<span class="dir-logo dir-logo-${esc(d.kind)}" style="--logo-h:${hue};--logo-bg:${hueFill(hue)}">${label}<svg viewBox="0 0 24 24" aria-hidden="true">${shapes[d.kind] || shapes.generic}</svg></span>`;
-}
+function dirLogoIcon(t) { return toolIconHtml(t); }
 
 function categoryTile(c, count, active, cats) {
   const slug = c.slug || "all";
@@ -1230,6 +1210,15 @@ function directoryToolCard(t, up, idx) {
     </span>
     <span class="dir-card-arrow" aria-hidden="true">${icon("arrow-right")}</span>
   </a>`;
+}
+
+function directoryFeatureCard(t, up) {
+  const c = CATBY[t.cat] || {};
+  return `<a class="dir-feature-card" href="${up}tools/${t.cat}/${t.id}/">${toolIconHtml(t)}<span><strong>${esc(t.name)}</strong><small>${esc(t.desc)}</small><b>Open →</b></span></a>`;
+}
+
+function directoryPopularRow(t, up) {
+  return `<a class="dir-pop-row" href="${up}tools/${t.cat}/${t.id}/">${toolIconHtml(t)}<span><strong>${esc(t.name)}</strong><small>${esc(t.desc)}</small></span>${t.processing === "local" ? '<em>Private</em>' : ''}<b aria-hidden="true">›</b></a>`;
 }
 
 function dirHeroVisual() {
@@ -1382,6 +1371,9 @@ function allToolsPage() {
   const sidebar = groups.map((group) => categoryTile(group, group.count, group.slug === "all", group.cats.join(","))).join("");
   const chips = groups.map((group) => `<a class="chip${group.slug === "all" ? " is-active" : ""}" href="${group.slug === "all" ? "../tools/" : `../tools/?cat=${esc(group.slug)}`}" data-dir-cat="${esc(group.slug)}" data-dir-cats="${esc(group.cats.join(","))}">${esc(group.name)} <span>${group.count}</span></a>`).join("");
   const cards = allTools.map((t, i) => directoryToolCard(t, "../", i)).join("");
+  const recommended = ["compress-pdf", "resize-image", "invoice-generator"].map((id) => VK.find(id)).filter(Boolean);
+  const popularRows = ["compress-pdf", "pdf-to-text", "compress-video", "loan-calculator", "qr-generator"].map((id) => VK.find(id)).filter(Boolean);
+  const categoryBrowse = cats.map((c) => `<a href="../tools/?cat=${esc(c.slug)}" data-dir-cat="${esc(c.slug)}" data-dir-cats="${esc(c.slug)}"><span>${icon(c.icon)}</span><strong>${esc(c.name)}</strong><small>${c.count} tools</small><b>›</b></a>`).join("");
   const planned = allTools.length - liveCount;
 
   return head({ depth: 1, url, ads: true, ld, active: "tools", bodyClass: "tools-page",
@@ -1392,8 +1384,8 @@ function allToolsPage() {
   <section class="dir-hero wrap section">
     <div class="dir-hero-main">
       <nav class="crumb" aria-label="Breadcrumb"><a href="../">Home</a> <span aria-hidden="true">&gt;</span> <span aria-current="page">Tools</span></nav>
-      <h1 class="page-h1">All Tools</h1>
-      <p class="page-lede">Explore ${floorTo(VK.counts.live, TOOL_ROUND_TO)}+ free online tools to edit, convert, create and optimize files, media, code and more. <strong>100% free.</strong> Built for quick everyday work.</p>
+      <h1 class="page-h1">Find the right tool, fast.</h1>
+      <p class="page-lede">Search ${floorTo(VK.counts.live, TOOL_ROUND_TO)}+ tools by name—or describe what you need.</p>
       <p class="dir-live-note">${liveCount} live tools now${planned ? `, with ${planned} planned tools marked clearly as coming soon` : ""}.</p>
     </div>
     ${dirHeroVisual()}
@@ -1410,7 +1402,17 @@ function allToolsPage() {
     ${dirTrustStrip()}
   </section>
 
-  <section class="dir-content wrap">
+  <section class="dir-ref-sections wrap">
+    <div class="dir-ref-head"><h2>Recommended for you</h2><a href="#all-directory-tools">See all</a></div>
+    <div class="dir-feature-grid">${recommended.map((t) => directoryFeatureCard(t, "../")).join("")}</div>
+    <div class="dir-ref-head"><h2>Browse categories</h2></div>
+    <div class="dir-browse-grid">${categoryBrowse}</div>
+    <div class="dir-ref-head"><h2>Popular right now</h2><a href="#all-directory-tools">See all</a></div>
+    <div class="dir-pop-list">${popularRows.map((t) => directoryPopularRow(t, "../")).join("")}</div>
+    <form class="dir-describe" action="../tools/" method="get"><div><h2>Can’t find it? Describe your task</h2><p>Tell us what you want to do, and we’ll suggest the best tools.</p></div><input name="q" aria-label="Describe your task" placeholder="e.g. merge PDFs, convert JPG to PNG, create invoice"><button class="btn btn-primary" type="submit">Find tools</button></form>
+  </section>
+
+  <section class="dir-content wrap" id="all-directory-tools">
     <div class="dir-mobile-cats" aria-label="Categories">${chips}</div>
     <aside class="dir-side" aria-label="Tool categories">
       <h2>Categories</h2>
@@ -4231,6 +4233,14 @@ const RENAMED = [
   // forum limit, and it competed for the wrong query.
   ["video", "compress-for-discord", "compress-video"]
 ];
+const CATEGORY_MOVES = [
+  ["finance", "realestate", "mortgage-calculator"],
+  ["finance", "realestate", "refinance-calculator"],
+  ["finance", "everyday", "percentage-calculator"],
+  ["finance", "everyday", "tip-split"],
+  ["finance", "everyday", "discount-calculator"],
+  ["everyday", "health", "bmi-calculator"]
+];
 
 const lines = ["# 301s from the previous URL scheme — keep indexed pages alive", "",
   "# Directory URLs are canonical: /x/index.html duplicates /x/ on every page.",
@@ -4249,6 +4259,16 @@ RENAMED.forEach(([cat, oldId, newId]) => {
   [`tools/${cat}/${oldId}`].concat(
     I18N.LOCALES.map((loc) => `${loc.code}/tools/${cat}/${oldId}`)
   ).forEach((dir) => {
+    const p = path.join(ROOT, dir);
+    if (fs.existsSync(p)) { fs.rmSync(p, { recursive: true, force: true }); staleRemoved++; }
+  });
+});
+CATEGORY_MOVES.forEach(([oldCat, newCat, id]) => {
+  lines.push(`# corrected category: ${id}`);
+  lines.push(`/tools/${oldCat}/${id}/   /tools/${newCat}/${id}/   301`);
+  lines.push(`/:lang/tools/${oldCat}/${id}/   /:lang/tools/${newCat}/${id}/   301`);
+  lines.push("");
+  [`tools/${oldCat}/${id}`].concat(I18N.LOCALES.map((loc) => `${loc.code}/tools/${oldCat}/${id}`)).forEach((dir) => {
     const p = path.join(ROOT, dir);
     if (fs.existsSync(p)) { fs.rmSync(p, { recursive: true, force: true }); staleRemoved++; }
   });

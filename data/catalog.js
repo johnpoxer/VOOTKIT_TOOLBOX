@@ -52,10 +52,10 @@
 
   var TOOLS = [
     /* ---------- MONEY: finance (CPC $22.10) ---------- */
-    t("mortgage-calculator","finance","Mortgage Calculator","Monthly payment, total interest and full amortisation schedule.",{tier:"money",status:"live",kw:"home loan repayment amortization"}),
+    t("mortgage-calculator","realestate","Mortgage Calculator","Monthly payment, total interest and full amortisation schedule.",{tier:"money",status:"live",kw:"home loan repayment amortization"}),
     t("loan-calculator","finance","Loan Calculator","Payment, interest and payoff for any personal or business loan.",{tier:"money",status:"live",kw:"personal loan repayment"}),
     t("auto-loan-calculator","finance","Auto Loan Calculator","Car payment, total cost and interest by term and rate.",{tier:"money",status:"live",kw:"car finance payment vehicle"}),
-    t("refinance-calculator","finance","Refinance Break-Even","See how many months until refinancing pays for itself.",{tier:"money",status:"live",kw:"remortgage break even"}),
+    t("refinance-calculator","realestate","Refinance Break-Even","See how many months until refinancing pays for itself.",{tier:"money",status:"live",kw:"remortgage break even"}),
     t("credit-card-payoff","finance","Credit Card Payoff","How long to clear a balance, and what extra payments save.",{tier:"money",status:"live",kw:"debt snowball avalanche interest"}),
     t("compound-interest","finance","Compound Interest","Grow savings with regular contributions over time.",{tier:"money",status:"live",kw:"savings growth investment"}),
     t("savings-goal","finance","Savings Goal Planner","How much to set aside each month to hit a target.",{tier:"money",status:"live",kw:"save monthly target"}),
@@ -63,9 +63,9 @@
     t("crypto-profit","finance","Crypto Profit & DCA","Profit, loss and dollar-cost-average entry across buys.",{tier:"money",status:"live",kw:"bitcoin average cost gain"}),
     t("currency-converter","finance","Currency Converter","Live exchange rates from European Central Bank data.",{tier:"money",status:"live",processing:"network",kw:"fx exchange rate"}),
     t("debt-to-income","finance","Debt-to-Income Calculator","Your DTI ratio the way a lender works it out, front-end and back-end.",{tier:"money",status:"live",kw:"DTI ratio mortgage affordability borrowing"}),
-    t("percentage-calculator","finance","Percentage Calculator","Percent of, is-what-percent, and percentage change.",{tier:"retention",status:"live",kw:"percent increase decrease"}),
-    t("tip-split","finance","Tip & Bill Split","Split a bill with tip across any number of people.",{tier:"retention",status:"live",kw:"restaurant gratuity"}),
-    t("discount-calculator","finance","Discount Calculator","Final sale price and total savings, with stacked coupons and tax.",{tier:"retention",status:"live",kw:"percent off sale price coupon savings deal"}),
+    t("percentage-calculator","everyday","Percentage Calculator","Percent of, is-what-percent, and percentage change.",{tier:"retention",status:"live",kw:"percent increase decrease"}),
+    t("tip-split","everyday","Tip & Bill Split","Split a bill with tip across any number of people.",{tier:"retention",status:"live",kw:"restaurant gratuity"}),
+    t("discount-calculator","everyday","Discount Calculator","Final sale price and total savings, with stacked coupons and tax.",{tier:"retention",status:"live",kw:"percent off sale price coupon savings deal"}),
     t("simple-interest","finance","Simple Interest Calculator","Interest and total value from principal, rate and time.",{tier:"money",status:"live",kw:"simple interest principal rate time"}),
     t("investment-calculator","finance","Investment Growth Calculator","Project an investment with monthly contributions and returns.",{tier:"money",status:"live",kw:"investment return future value contributions portfolio"}),
     t("budget-calculator","finance","50/30/20 Budget Calculator","Split take-home pay into needs, wants and savings.",{tier:"money",status:"live",kw:"budget 50 30 20 needs wants savings monthly"}),
@@ -271,7 +271,7 @@
     t("math-solver","everyday","Math Solver","Evaluate an arithmetic expression with brackets and powers.",{tier:"retention",status:"live",kw:"math solver expression calculator evaluate arithmetic brackets"}),
     t("equation-solver","everyday","Equation Solver","Solve linear and quadratic equations, with complex roots.",{tier:"retention",status:"live",kw:"equation solver quadratic linear roots formula solve x"}),
     t("age-calculator","everyday","Age & Date Difference","Exact age, or the gap between two dates.",{tier:"retention",status:"live",kw:"how old days between"}),
-    t("bmi-calculator","everyday","BMI Calculator","Body mass index and healthy weight range, metric or imperial.",{tier:"retention",status:"live",kw:"body mass index weight height healthy range"}),
+    t("bmi-calculator","health","BMI Calculator","Body mass index and healthy weight range, metric or imperial.",{tier:"retention",status:"live",kw:"body mass index weight height healthy range"}),
     t("fraction-calculator","everyday","Fraction Calculator","Add, subtract, multiply and divide fractions, simplified.",{tier:"retention",status:"live",kw:"fractions add subtract multiply divide simplify"}),
 
     /* ---------- HEALTH & FITNESS ---------- */
@@ -344,7 +344,6 @@
     t("csv-to-chart","data","CSV to Chart","Turn two columns into a bar or line chart.",{tier:"traffic",status:"live",kw:"graph visualise plot"}),
     t("json-csv","data","JSON ↔ CSV","Convert a JSON array to CSV and back.",{tier:"traffic",status:"live",kw:"convert tabular"}),
     t("remove-background","ai","Background Remover","Cut out a background — private, in-browser AI.",{tier:"traffic",status:"planned",kw:"transparent cutout png subject"}),
-    t("image-to-text","ai","Image to Text (OCR)","Extract text from photos, screenshots and scans.",{tier:"traffic",status:"planned",kw:"ocr scan read text"}),
     t("transcribe-audio","ai","Audio to Text","Transcribe speech with on-device Whisper.",{tier:"traffic",status:"planned",kw:"transcription subtitles speech"})
   ];
 
