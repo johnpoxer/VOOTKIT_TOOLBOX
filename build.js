@@ -3913,7 +3913,7 @@ function workflowCopy() {
   const featuredSteps = featured.steps.map((id, i) => `
     <li>
       <span class="wf-ref-number">${i + 2}</span>${icon(id)}
-      <span><strong>${esc(toolName(id))}</strong><small>${esc((featured.summaries && featured.summaries[i]) || "Ready with recommended settings")}</small></span>
+      <span class="wf-ref-copy"><strong>${esc(toolName(id))}</strong><small>${esc((featured.summaries && featured.summaries[i]) || "Ready with recommended settings")}</small></span>
       <b>Ready</b><button type="button" aria-label="Configure ${esc(toolName(id))}" data-wf-template="${esc(featured.id)}">⌄</button>
     </li>`).join("");
   const popularRows = ordered.slice(0, 4).map((t) => `
@@ -3933,9 +3933,9 @@ function workflowCopy() {
       <article class="wf-ref-featured">
         <header><div><h2>${esc(featured.name)}</h2><p>${esc(featured.why)}</p></div><span>● All steps ready</span></header>
         <ol>
-          <li><span class="wf-ref-number">1</span>${inputIcon}<span><strong>Upload files</strong><small>${esc(featured.input || "From your device")}</small></span><b>Ready</b><button type="button" aria-label="Choose input files" data-wf-template="${esc(featured.id)}">⌄</button></li>
+          <li><span class="wf-ref-number">1</span>${inputIcon}<span class="wf-ref-copy"><strong>Upload files</strong><small>${esc(featured.input || "From your device")}</small></span><b>Ready</b><button type="button" aria-label="Choose input files" data-wf-template="${esc(featured.id)}">⌄</button></li>
           ${featuredSteps}
-          <li><span class="wf-ref-number">${featured.steps.length + 2}</span><span class="ic ic-tool wf-ref-download" aria-hidden="true">↓</span><span><strong>Download results</strong><small>${esc(featured.output || "Finished files")}</small></span><b>Ready</b><button type="button" aria-label="Configure download" data-wf-template="${esc(featured.id)}">⌄</button></li>
+          <li><span class="wf-ref-number">${featured.steps.length + 2}</span><span class="ic ic-tool wf-ref-download" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12m0 0 5-5m-5 5-5-5M5 19h14"/></svg></span><span class="wf-ref-copy"><strong>Download results</strong><small>${esc(featured.output || "Finished files")}</small></span><b>Ready</b><button type="button" aria-label="Configure download" data-wf-template="${esc(featured.id)}">⌄</button></li>
         </ol>
         <footer><span>⬟ Runs privately on your device</span><a class="btn btn-primary" href="#wf-builder" data-wf-template="${esc(featured.id)}">Use workflow</a></footer>
       </article>
@@ -3947,10 +3947,10 @@ function workflowCopy() {
 
       <section class="wf-ref-how" aria-labelledby="wf-how-title">
         <h2 id="wf-how-title">How it works</h2>
-        <ol><li><b>1</b><span><strong>Choose tools</strong><small>Pick the tools you want to use in your workflow.</small></span><i>▦</i></li><li><b>2</b><span><strong>Set each step</strong><small>Configure how each tool should work.</small></span><i>☷</i></li><li><b>3</b><span><strong>Run everything together</strong><small>Run all steps in order with one click.</small></span><i>▶</i></li></ol>
+        <ol><li><b>1</b><span><strong>Choose tools</strong><small>Pick the tools you want to use in your workflow.</small></span><i><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg></i></li><li><b>2</b><span><strong>Set each step</strong><small>Configure how each tool should work.</small></span><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></i></li><li><b>3</b><span><strong>Run everything together</strong><small>Run all steps in order with one click.</small></span><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg></i></li></ol>
       </section>
 
-      <section class="wf-ref-yours" aria-labelledby="wf-yours-title"><h2 id="wf-yours-title">Your workflows</h2><div><span>▢</span><p><strong>Sign in to save and reuse your workflows</strong></p><a class="btn btn-primary" href="../auth/sign-in/">Sign in</a></div><div><p><strong>Build your first workflow<br>in minutes</strong></p><a class="btn btn-primary" href="#wf-builder">Start building</a></div></section>
+      <section class="wf-ref-yours" aria-labelledby="wf-yours-title"><h2 id="wf-yours-title">Your workflows</h2><div><span class="wf-ref-folder"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h7l2 3h9v10H3z"/></svg></span><p><strong>Sign in to save and reuse your workflows</strong></p><a class="btn btn-primary" href="../auth/sign-in/">Sign in</a></div><div><p><strong>Build your first workflow<br>in minutes</strong></p><a class="btn btn-primary" href="#wf-builder">Start building</a></div></section>
     </section>`;
 
   const FAQ = [
