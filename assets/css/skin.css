@@ -208,7 +208,6 @@ body::before {
 [data-cat="developer"]    { --accent:#6d28d9; --accent-hover:#5b21b6; }
 [data-cat="everyday"]     { --accent:#b45309; --accent-hover:#92400e; }
 [data-cat="data"]         { --accent:#116e8a; --accent-hover:#0e5c73; }
-[data-cat="ai"]           { --accent:#7c3aed; --accent-hover:#6d28d9; }
 [data-cat="health"]       { --accent:#15803d; --accent-hover:#166534; }
 [data-cat="travel"]       { --accent:#0369a1; --accent-hover:#075985; }
 [data-cat="audio"]        { --accent:#7e22ce; --accent-hover:#6b21a8; }
@@ -231,7 +230,6 @@ body::before {
 [data-theme="dark"] [data-cat="developer"]    { --accent:#a78bfa; }
 [data-theme="dark"] [data-cat="everyday"]     { --accent:#fbbf24; }
 [data-theme="dark"] [data-cat="data"]         { --accent:#22d3ee; }
-[data-theme="dark"] [data-cat="ai"]           { --accent:#a78bfa; }
 [data-theme="dark"] [data-cat="health"]       { --accent:#4ade80; }
 [data-theme="dark"] [data-cat="travel"]       { --accent:#38bdf8; }
 [data-theme="dark"] [data-cat="audio"]        { --accent:#d8b4fe; }

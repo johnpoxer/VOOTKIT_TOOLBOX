@@ -886,7 +886,7 @@ const NEW = new Set([
 
 const DIR_FEATURED_ORDER = [
   "word-to-pdf", "merge-pdf", "compress-image", "trim-video",
-  "remove-background", "jpg-to-png", "convert-video", "compress-pdf",
+  "jpg-to-png", "convert-video", "compress-pdf",
   "jpg-to-pdf", "crop-image", "remove-pdf-password", "audio-converter"
 ];
 const DIR_GROUPS = [{ slug: "all", name: "All", icon: "grid", cats: [] }].concat(
@@ -1064,7 +1064,6 @@ function dirSearchText(t, cat) {
   const aliases = {
     "compress-pdf": "make pdf smaller reduce pdf file size shrink pdf email limit",
     "merge-pdf": "join pdf combine pdf put pdfs together",
-    "remove-background": "remove image background cut out background transparent png background remover",
     "jpg-to-png": "jpg into png jpeg to png convert jpg png",
     "png-to-jpg": "png into jpg convert png jpeg",
     "compress-image": "make image smaller reduce photo size image compressor",
@@ -1171,7 +1170,6 @@ function dirToolDisplay(t) {
     "merge-pdf": { name: "Merge PDF", desc: "Combine several PDF files into one document in the order you choose.", glyph: "PDF", kind: "pdf", hue: 350 },
     "compress-image": { name: "Image Compressor", desc: "Reduce JPG, PNG or WebP file size while keeping quality balanced.", kind: "image", hue: 145 },
     "trim-video": { name: "Video Trimmer", desc: "Cut, trim and export video clips directly in your browser.", kind: "play", hue: 316 },
-    "remove-background": { name: "Background Remover", desc: "Remove an image background and export a clean cutout.", kind: "checker", hue: 260 },
     "jpg-to-png": { name: "JPG to PNG", desc: "Convert JPG or JPEG images into PNG files for cleaner exports.", kind: "image-doc", hue: 42 },
     "convert-video": { name: "Video Converter", desc: "Convert videos to MP4, AVI, MOV and other useful formats.", kind: "sync", hue: 216 },
     "compress-pdf": { name: "Compress PDF", desc: "Shrink a PDF for email, upload limits or faster sharing.", glyph: "PDF", kind: "download", hue: 350 },
@@ -3242,7 +3240,7 @@ function pricingPage() {
   const annualSaving = Math.round((1 - P.creator_pro_annual.amount / (P.creator_pro_monthly.amount * 12)) * 100);
   const feat = (on, txt) => `<li class="${on ? "yes" : "no"}"><svg viewBox="0 0 24 24" aria-hidden="true">${on ? '<path d="M20 6 9 17l-5-5"/>' : '<path d="M6 6l12 12M18 6 6 18"/>'}</svg>${txt}</li>`;
   const yn = (v) => v === true ? '<span class="cmp-yes" aria-label="Included">✓</span>' : v === false ? '<span class="cmp-no" aria-label="Not included">—</span>' : v;
-  return head({ depth: 0, url, ads: true, ld, bodyClass: "pricing-ref", title: "Vootkit Pricing: Free & Creator Pro Plans", ogTitle: "Vootkit Pricing — Free and Creator Pro", desc: "Start free with 5 tool runs a day. Upgrade to Creator Pro for unlimited usage, an ad-free workspace and saved workflows." }) +
+  return head({ depth: 0, url, ads: true, ld, bodyClass: "pricing-ref", title: "Vootkit Pricing: Free, Creator Pro & Teams", ogTitle: "Vootkit Pricing — Free, Pro and Teams", desc: "Start free, upgrade to Creator Pro for unlimited usage, or preview the upcoming Vootkit Teams plan." }) +
 `<div class="wrap section" id="plans">
   <header class="sec-head" style="margin-top:var(--s-4)">
     <span class="pricing-kicker">Simple, transparent pricing</span>
@@ -3297,19 +3295,37 @@ function pricingPage() {
         ${feat(true, "Cancel anytime and keep Pro through the paid period")}
       </ul>
     </div>
+
+    <div class="plan plan--teams plan--soon">
+      <span class="plan-flag plan-flag--soon">Coming soon</span>
+      <span class="plan-kicker">For shared work</span>
+      <h2>Creator Teams</h2>
+      <p class="plan-price"><span class="plan-amt" data-price="teams">$${P.creator_teams_monthly.amount}</span><span class="plan-per" data-per="teams">/month</span></p>
+      <p class="plan-tag">A planned workspace for small teams that need shared access and centralized billing.</p>
+      <p class="plan-detail">Teams is shown for pricing transparency, but checkout remains disabled until member invitations, roles and shared workflow controls are ready.</p>
+      <button class="btn btn-block" type="button" disabled aria-disabled="true">Coming soon</button>
+      <p class="plan-includes">Planned Teams capabilities:</p>
+      <ul class="plan-feats">
+        ${feat(true, "Everything included in Creator Pro")}
+        ${feat(true, "One subscription for a small team")}
+        ${feat(true, "Member invitations and access controls")}
+        ${feat(true, "Shared reusable workflows")}
+        ${feat(true, "Centralized billing management")}
+      </ul>
+    </div>
   </div>
 
   <section class="pricing-compare">
     <div class="sec-head"><h2>Compare the essentials</h2></div>
     <div class="cmp-wrap">
       <table class="cmp-table">
-        <thead><tr><th scope="col" style="text-align:left">Feature</th><th scope="col">Free</th><th scope="col" class="cmp-hi">Creator Pro</th></tr></thead>
+        <thead><tr><th scope="col" style="text-align:left">Feature</th><th scope="col">Free</th><th scope="col" class="cmp-hi">Creator Pro</th><th scope="col">Teams</th></tr></thead>
         <tbody>
-          <tr><th scope="row">Daily tool runs</th><td>5 / day</td><td class="cmp-hi">Unlimited</td></tr>
-          <tr><th scope="row">Saved workflows</th><td>${yn(false)}</td><td class="cmp-hi">${yn(true)}</td></tr>
-          <tr><th scope="row">Workspace ads</th><td>Included</td><td class="cmp-hi">None</td></tr>
-          <tr><th scope="row">Browser processing</th><td>${yn(true)}</td><td class="cmp-hi">${yn(true)}</td></tr>
-          <tr><th scope="row">Billing management</th><td>${yn(false)}</td><td class="cmp-hi">Stripe portal</td></tr>
+          <tr><th scope="row">Daily tool runs</th><td>5 / day</td><td class="cmp-hi">Unlimited</td><td>Unlimited</td></tr>
+          <tr><th scope="row">Saved workflows</th><td>${yn(false)}</td><td class="cmp-hi">${yn(true)}</td><td>Shared · planned</td></tr>
+          <tr><th scope="row">Workspace ads</th><td>Included</td><td class="cmp-hi">None</td><td>None</td></tr>
+          <tr><th scope="row">Browser processing</th><td>${yn(true)}</td><td class="cmp-hi">${yn(true)}</td><td>${yn(true)}</td></tr>
+          <tr><th scope="row">Billing management</th><td>${yn(false)}</td><td class="cmp-hi">Stripe portal</td><td>Centralized · planned</td></tr>
         </tbody>
       </table>
     </div>
@@ -4482,9 +4498,9 @@ const OLD_TO_NEW = {
   "pw-strength":"password-strength","invoice":"invoice-generator","markdown":"markdown-editor",
   "csv-view":"csv-viewer","csv-chart":"csv-to-chart","json-csv":"json-csv","exif":"exif-viewer",
   "meme":"meme-generator","watermark":"image-watermark","encrypt":"text-encrypt","file-hash":"file-checksum",
-  "ai-bg-remove":"remove-background","ai-ocr":"image-to-text","ai-transcribe":"transcribe-audio","base64":"base64"
+  "ai-ocr":"image-to-text","base64":"base64"
 };
-const OLD_CAT = { "ai-on-device":"ai","utilities":"everyday","time":"everyday","fun":"everyday",
+const OLD_CAT = { "utilities":"everyday","time":"everyday","fun":"everyday",
   "science":"everyday","health":"everyday","weather-and-travel":"everyday","downloads":"privacy","media":"everyday" };
 
 /* Directory URLs are canonical. /x/index.html serves 200 un-redirected, which
@@ -4713,7 +4729,7 @@ const cssBundle = CSS_PARTS
     "compress-pdf", "merge-pdf", "split-pdf", "protect-pdf", "pdf-to-jpg",
     "pdf-watermark", "extract-pdf-pages", "pdf-ocr", "rotate-pdf",
     "compress-image", "resize-image", "convert-image", "crop-image",
-    "remove-background", "jpg-to-pdf", "image-to-text",
+    "jpg-to-pdf", "image-to-text",
     "compress-video", "trim-video", "video-to-gif", "extract-audio",
     "audio-compressor", "audio-converter"
   ];

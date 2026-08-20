@@ -34,8 +34,7 @@
     { slug: "health",        name: "Health & Fitness", icon: "heart",    blurb: "Calorie, macro, body and hydration calculators — run the numbers privately, nothing is stored." },
     { slug: "travel",        name: "Travel",           icon: "plane",    blurb: "Fuel, tipping, trip-splitting and distance tools for planning a trip — all offline." },
     { slug: "audio",         name: "Audio & Voice",    icon: "mic",      blurb: "Convert, trim, record and transcribe audio — processed in your browser." },
-    { slug: "education",     name: "Education & Study",icon: "book",     blurb: "Flashcards, citations, mind maps and study tools — saved on your device." },
-    { slug: "ai",            name: "AI (on-device)",   icon: "sparkles", blurb: "Background removal, OCR and transcription. The model downloads once, then runs on your machine." }
+    { slug: "education",     name: "Education & Study",icon: "book",     blurb: "Flashcards, citations, mind maps and study tools — saved on your device." }
   ];
 
   /* t(id, cat, name, desc, opts) */
@@ -342,9 +341,7 @@
     t("iban-validator","developer","IBAN Validator","Validate an IBAN's structure and mod-97 check digits.",{tier:"retention",status:"live",kw:"iban bank account validate mod97 check"}),
     t("csv-viewer","data","CSV Viewer & Sorter","Open a CSV as a sortable, filterable table.",{tier:"traffic",status:"live",kw:"spreadsheet open sort"}),
     t("csv-to-chart","data","CSV to Chart","Turn two columns into a bar or line chart.",{tier:"traffic",status:"live",kw:"graph visualise plot"}),
-    t("json-csv","data","JSON ↔ CSV","Convert a JSON array to CSV and back.",{tier:"traffic",status:"live",kw:"convert tabular"}),
-    t("remove-background","ai","Background Remover","Cut out a background — private, in-browser AI.",{tier:"traffic",status:"planned",kw:"transparent cutout png subject"}),
-    t("transcribe-audio","ai","Audio to Text","Transcribe speech with on-device Whisper.",{tier:"traffic",status:"planned",kw:"transcription subtitles speech"})
+    t("json-csv","data","JSON ↔ CSV","Convert a JSON array to CSV and back.",{tier:"traffic",status:"live",kw:"convert tabular"})
   ];
 
   /* ---------- helpers ---------- */

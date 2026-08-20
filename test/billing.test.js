@@ -30,7 +30,7 @@ const ok = (v, m) => { assert.ok(v, m); pass++; };
   ok(/plan = 'free'/.test(schema), "profile inserts cannot start on a paid plan");
   const build = read("build.js");
   const pricing = build.slice(build.indexOf("function pricingPage"), build.indexOf("function templatesPage"));
-  ok(!/Creator Teams|creator_teams/.test(pricing), "pricing contains only Free and Creator Pro");
+  ok(/Creator Teams|creator_teams/.test(pricing) && /Coming soon/.test(pricing), "pricing previews Teams honestly as coming soon");
   ok(!/data-plan="creator_teams"/.test(build), "Teams has no live checkout control");
   ok(!/Higher file-size limits|Priority processing/.test(pricing), "pricing does not claim unimplemented Pro benefits");
   const ads = require("../assets/js/ads.js");

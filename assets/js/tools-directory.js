@@ -34,7 +34,6 @@
   var intentRules = [
     { re: /make.*pdf.*small|pdf.*small|compress.*pdf|reduce.*pdf|shrink.*pdf/, ids: ["compress-pdf"] },
     { re: /join.*pdf|combine.*pdf|merge.*pdf|put.*pdf.*together/, ids: ["merge-pdf"] },
-    { re: /remove.*background|background.*remov|cut.*background|transparent.*png/, ids: ["remove-background"] },
     { re: /jpg.*png|jpeg.*png|png.*from.*jpg|jpg.*into.*png/, ids: ["jpg-to-png"] },
     { re: /png.*jpg|png.*jpeg|jpg.*from.*png/, ids: ["png-to-jpg"] },
     { re: /image.*small|photo.*small|compress.*image|reduce.*photo|reduce.*image/, ids: ["compress-image"] },
