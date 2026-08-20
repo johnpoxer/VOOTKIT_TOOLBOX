@@ -3288,6 +3288,7 @@ function templatesPage() {
 }
 
 const LAST_UPDATED = "22 July 2026";
+const TRUST_CONTENT_UPDATED = "2026-08-20";
 
 write("pricing.html", pricingPage());
 write("templates/index.html", templatesPage());
@@ -3449,7 +3450,7 @@ write("disclaimer.html", legalPage({
 function aboutPage() {
   const url = SITE + "/about.html";
   const ld = { "@context": "https://schema.org", "@graph": [
-    { "@type": "AboutPage", "@id": url + "#page", name: "About Vootkit", url, description: "Learn why Vootkit was created, how its browser-based tools protect privacy and how founder John Prosper is building a simpler digital workspace.", dateModified: BUILD_DAY, mainEntity: { "@id": SITE + "/#organization" } },
+    { "@type": "AboutPage", "@id": url + "#page", name: "About Vootkit", url, description: "Learn why Vootkit was created, how its browser-based tools protect privacy and how founder John Prosper is building a simpler digital workspace.", dateModified: TRUST_CONTENT_UPDATED, mainEntity: { "@id": SITE + "/#organization" } },
     { "@type": "Organization", "@id": SITE + "/#organization", name: "Vootkit", url: SITE + "/", logo: SITE + "/assets/favicon.svg", founder: { "@id": SITE + "/founder-story.html#john-prosper" }, description: "Vootkit is a multilingual platform of browser-based tools for PDF files, images, video, finance, business, development and everyday digital tasks." },
     { "@type": "Person", "@id": SITE + "/founder-story.html#john-prosper", name: "John Prosper", jobTitle: "Founder and Full Stack Developer", url: SITE + "/founder-story.html" }
   ] };
@@ -3475,7 +3476,7 @@ function founderStoryPage() {
   const url = SITE + "/founder-story.html";
   const image = SITE + "/public/images/about/john-prosper.webp";
   const ld = { "@context": "https://schema.org", "@graph": [
-    { "@type": "ProfilePage", "@id": url + "#page", name: "John Prosper — Founder of Vootkit", url, dateModified: BUILD_DAY, mainEntity: { "@id": url + "#john-prosper" } },
+    { "@type": "ProfilePage", "@id": url + "#page", name: "John Prosper — Founder of Vootkit", url, dateModified: TRUST_CONTENT_UPDATED, mainEntity: { "@id": url + "#john-prosper" } },
     { "@type": "Person", "@id": url + "#john-prosper", name: "John Prosper", image, url, sameAs: ["https://github.com/johnpoxer"], jobTitle: "Founder and Full Stack Developer", worksFor: { "@id": SITE + "/#organization" }, knowsAbout: ["Full-stack web development", "Browser-based tools", "Product development", "Technical SEO", "Web accessibility", "User experience"] },
     { "@type": "Organization", "@id": SITE + "/#organization", name: "Vootkit", url: SITE + "/", founder: { "@id": url + "#john-prosper" } }
   ] };
@@ -3486,7 +3487,7 @@ function founderStoryPage() {
     <img src="public/images/about/john-prosper.webp" alt="John Prosper, founder and full stack developer of Vootkit" width="900" height="1350" fetchpriority="high">
   </header>
   <div class="founder-story-body">
-    <div class="founder-byline"><strong>By John Prosper</strong><span>Founder &amp; Full Stack Developer</span><span>Reviewed and updated ${BUILD_DAY}</span></div>
+    <div class="founder-byline"><strong>By John Prosper</strong><span>Founder &amp; Full Stack Developer</span><span>Reviewed and updated 20 August 2026</span></div>
     <section><h2>Meet John Prosper</h2><p>John Prosper is the founder and full stack developer behind Vootkit. He has independently taken the platform from an idea to a working multilingual product, handling product planning, frontend architecture, browser-based processing, integrations, performance, accessibility, technical SEO and the user experience.</p><p>His approach is practical: technology should solve a real problem before it tries to impress anyone. That principle shapes how Vootkit tools are designed—clear instructions, fast results and a consistent interface that works across phones and computers.</p></section>
     <section><h2>Why he created Vootkit</h2><p>Simple online tasks often become unnecessarily difficult. A person may need one website to compress a PDF, another to resize an image, another for a calculation and yet another account just to download the result. Some services also upload files when local browser processing would be enough.</p><p>John built Vootkit to make that experience simpler. The platform brings practical tools for PDF files, images, video, finance, business, developers, text and everyday productivity into one connected workspace. Most compatible file tools process directly in the browser, helping users keep control of their files while getting work done quickly.</p></section>
     <aside><strong>The Vootkit principle</strong><p>Useful before impressive. Private by design. One connected workspace.</p></aside>
