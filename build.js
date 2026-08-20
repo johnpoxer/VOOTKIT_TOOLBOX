@@ -3907,6 +3907,52 @@ function workflowCopy() {
       </div>
     </section>`;
 
+  /* Mobile-first workflow home. The former marketplace/canvas presentation is
+     intentionally not returned: this is the single visible workflow format. */
+  const featured = byId.get("social-image-pack") || byId.get("website-image-optimizer") || ordered[0];
+  const featuredSteps = featured.steps.map((id, i) => `
+    <li>
+      <span class="wf-ref-number">${i + 2}</span>${icon(id)}
+      <span><strong>${esc(toolName(id))}</strong><small>${esc((featured.summaries && featured.summaries[i]) || "Ready with recommended settings")}</small></span>
+      <b>Ready</b><button type="button" aria-label="Configure ${esc(toolName(id))}" data-wf-template="${esc(featured.id)}">⌄</button>
+    </li>`).join("");
+  const popularRows = ordered.slice(0, 4).map((t) => `
+    <button class="wf-ref-popular-row" type="button" data-wf-template="${esc(t.id)}">
+      <span><strong>${esc(t.name)}</strong><small>${t.steps.length} steps</small></span>
+      <span class="wf-ref-mini-chain" aria-hidden="true">${t.steps.slice(0, 5).map((id) => icon(id)).join("<i>→</i>")}</span>
+      <em>◷ ${esc(t.time || (10 + t.steps.length * 2) + " min")}<small>saved</small></em><b>›</b>
+    </button>`).join("");
+  const newGroups = `
+    <section class="wf-ref-home wrap" id="wf-examples" aria-labelledby="wf-ref-title">
+      <header class="wf-ref-hero">
+        <h1 id="wf-ref-title">Turn several tasks into<br><span>one simple flow.</span></h1>
+        <p>Connect Vootkit tools, save the workflow and run it again whenever you need.</p>
+        <div><a class="btn btn-primary" href="#wf-builder">Create a workflow</a><a class="btn" href="#wf-popular">Browse templates</a></div>
+      </header>
+
+      <article class="wf-ref-featured">
+        <header><div><h2>${esc(featured.name)}</h2><p>${esc(featured.why)}</p></div><span>● All steps ready</span></header>
+        <ol>
+          <li><span class="wf-ref-number">1</span>${inputIcon}<span><strong>Upload files</strong><small>${esc(featured.input || "From your device")}</small></span><b>Ready</b><button type="button" aria-label="Choose input files" data-wf-template="${esc(featured.id)}">⌄</button></li>
+          ${featuredSteps}
+          <li><span class="wf-ref-number">${featured.steps.length + 2}</span><span class="ic ic-tool wf-ref-download" aria-hidden="true">↓</span><span><strong>Download results</strong><small>${esc(featured.output || "Finished files")}</small></span><b>Ready</b><button type="button" aria-label="Configure download" data-wf-template="${esc(featured.id)}">⌄</button></li>
+        </ol>
+        <footer><span>⬟ Runs privately on your device</span><a class="btn btn-primary" href="#wf-builder" data-wf-template="${esc(featured.id)}">Use workflow</a></footer>
+      </article>
+
+      <section class="wf-ref-popular" id="wf-popular" aria-labelledby="wf-popular-title">
+        <header><h2 id="wf-popular-title">Popular workflows</h2><a href="#wf-builder">See all</a></header>
+        <div>${popularRows}</div>
+      </section>
+
+      <section class="wf-ref-how" aria-labelledby="wf-how-title">
+        <h2 id="wf-how-title">How it works</h2>
+        <ol><li><b>1</b><span><strong>Choose tools</strong><small>Pick the tools you want to use in your workflow.</small></span><i>▦</i></li><li><b>2</b><span><strong>Set each step</strong><small>Configure how each tool should work.</small></span><i>☷</i></li><li><b>3</b><span><strong>Run everything together</strong><small>Run all steps in order with one click.</small></span><i>▶</i></li></ol>
+      </section>
+
+      <section class="wf-ref-yours" aria-labelledby="wf-yours-title"><h2 id="wf-yours-title">Your workflows</h2><div><span>▢</span><p><strong>Sign in to save and reuse your workflows</strong></p><a class="btn btn-primary" href="../auth/sign-in/">Sign in</a></div><div><p><strong>Build your first workflow<br>in minutes</strong></p><a class="btn btn-primary" href="#wf-builder">Start building</a></div></section>
+    </section>`;
+
   const FAQ = [
     ["Do my files get uploaded when I run a workflow?", "No. Every workflow-compatible step runs in your browser on your own machine, including the handover between steps."],
     ["How is this different from using the tools one at a time?", "A workflow is one file selection and one run through a reusable chain, instead of opening several pages manually."],
@@ -3916,7 +3962,7 @@ function workflowCopy() {
   const faqLd = { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: FAQ.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })) };
   const appLd = { "@context": "https://schema.org", "@type": "SoftwareApplication", name: "Vootkit Workflows", applicationCategory: "BusinessApplication", operatingSystem: "Any modern web browser", url: CFG.origin + "/workflows/", description: "Chain Vootkit tools into one browser-based run.", featureList: live.map((t) => t.name), offers: { "@type": "Offer", category: "Subscription" } };
 
-  return { groups, faqHtml, count: live.length,
+  return { groups: newGroups, faqHtml, count: live.length,
     ld: `<script type="application/ld+json">${JSON.stringify(appLd)}</script>\n` + `<script type="application/ld+json">${JSON.stringify(faqLd)}</script>` };
 }
 
@@ -4005,10 +4051,15 @@ function workflowPage() {
     if (b) {
       e.preventDefault();
       var id = b.getAttribute('data-wf-template');
+      var tries = 0;
       function load() {
-        if (window.VKWorkflow && window.VKWorkflow.useTemplate && window.VKWorkflow.useTemplate(id)) return;
-        if (window.VKWorkflowUseTemplate && window.VKWorkflowUseTemplate(id)) return;
-        setTimeout(load, 80);
+        if (window.VKWorkflow && window.VKWorkflow.useTemplate) {
+          window.VKWorkflow.useTemplate(id);
+          var mounted = document.getElementById('wf');
+          if (mounted) mounted.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          return;
+        }
+        if (++tries < 50) setTimeout(load, 80);
       }
       load();
       var builder = document.getElementById('wf-builder');
