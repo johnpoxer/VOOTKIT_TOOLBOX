@@ -399,23 +399,18 @@ function socialRow() {
    homepage have to agree — a link that exists in one footer and not the other
    is the sort of drift nobody notices for months. */
 function footCols(up) {
-  const cat = (slug, label) => `<a href="${up}tools/${slug}/">${esc(label)}</a>`;
   return `
       <div class="ftr-col">
-        <h4>Tools</h4>
-        ${cat("pdf", "PDF")}${cat("images", "Images")}${cat("video", "Video")}${cat("finance", "Finance")}${cat("business", "Business")}${cat("developer", "Developer")}
+        <h4>Product</h4>
+        <a href="${up}tools/">All tools</a><a href="${up}workflows/">Workflows</a><a href="${up}pricing.html">Pricing</a><a href="${up}blog/">What’s new</a>
       </div>
       <div class="ftr-col">
-        <h4>Vootkit</h4>
-        <a href="${up}tools/">All tools</a><a href="${up}workflows/">Workflow <span class="ftr-pro">Pro</span></a><a href="${up}templates/">Templates</a><a href="${up}pricing.html">Pricing</a><a href="${up}about.html">About</a><a href="${up}blog/">Blog</a>
+        <h4>Resources</h4>
+        <a href="${up}blog/">Guides</a><a href="${up}blog/">Blog</a><a href="${up}contact.html">Help center</a><a href="${up}contact.html">Contact us</a>
       </div>
       <div class="ftr-col">
-        <h4>Support</h4>
-        <a href="${up}contact.html">Contact &amp; support</a><a href="${up}blog/file-upload-size-limits/">Upload size limits</a><a href="${up}blog/reduce-pdf-file-size/">PDF size guide</a><a href="${up}blog/compress-images-without-losing-quality/">Image compression guide</a><a href="${up}tools/">All ${VK.CATEGORIES.length} categories</a>
-      </div>
-      <div class="ftr-col">
-        <h4>Legal</h4>
-        <a href="${up}privacy.html">Privacy policy</a><a href="${up}cookies.html">Cookie policy</a><a href="${up}terms.html">Terms</a><a href="${up}disclaimer.html">Disclaimer</a>
+        <h4>Company</h4>
+        <a href="${up}about.html">About us</a><a href="${up}privacy.html">Privacy policy</a><a href="${up}cookies.html">Cookie policy</a><a href="${up}terms.html">Terms of service</a><a href="${up}disclaimer.html">Disclaimer</a><a href="${up}privacy.html#security">Security</a>
       </div>`;
 }
 
@@ -423,18 +418,11 @@ function footCols(up) {
    badges. Vootkit has no apps, and a badge for a store listing that does not
    exist is not a design decision, it is a lie in the footer of every page. So
    the space says the truest thing the site has to say instead. */
-function footBrand() {
+function footBrand(up) {
   return `
       <div class="ftr-brand">
-        <span class="ftr-mark">
-          ${brandLogo()}
-          vootkit
-        </span>
-        <p>${floorTo(VK.counts.live, TOOL_ROUND_TO)}+ free tools for PDF, images, video, finance and more, built for ${USER_DISPLAY} users across ${COUNTRY_DISPLAY} countries.</p>
-        <p class="ftr-trust">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4.5 6.2v5.4c0 4.6 3.2 8.9 7.5 10.2 4.3-1.3 7.5-5.6 7.5-10.2V6.2z"/><path d="m9 12 2.2 2.2L15.4 10"/></svg>
-          Most file tools process on your device. Network-backed tools are labelled on their pages.
-        </p>
+        <a class="ftr-mark" href="${up}" aria-label="Vootkit home">vootkit</a>
+        <p class="ftr-copy">&copy; <span id="yr"></span> Vootkit. All rights reserved.</p>
       </div>`;
 }
 
@@ -456,14 +444,14 @@ function foot(depth, extraScripts, opts) {
   return `</main>
 <footer class="ftr">
   <div class="wrap">
+    ${o.noNewsletter ? "" : '<div class="ftr-nl" data-newsletter="footer"></div>'}
     <div class="ftr-top">
       <div class="ftr-cols">${footCols(up)}
-      </div>${footBrand()}
+      </div>
     </div>
-    ${o.noNewsletter ? "" : '<div class="ftr-nl" data-newsletter="footer"></div>'}
     <div class="ftr-bar">
-      ${socialRow()}
-      <p class="ftr-copy">&copy; <span id="yr"></span> Vootkit — every digital task, done in your browser.</p>
+      ${footBrand(up)}
+      <span class="ftr-lang" aria-label="Current language: English">English <span aria-hidden="true">⌄</span></span>
     </div>
   </div>
 </footer>
@@ -3355,6 +3343,9 @@ write("privacy.html", legalPage({
     <h2>The short version</h2>
     <p><strong>Most Vootkit tools never send your files anywhere.</strong> They run inside your browser using your own device's processing power. When a tool is local, your file is not uploaded, not stored, and not seen by us — there is nothing for us to keep or delete.</p>
     <p>Two tools genuinely need the internet and cannot work without it: the <strong>Currency Converter</strong>, which fetches live exchange rates, and the <strong>URL Shortener</strong>, which has to register the short link somewhere. Both say so on their own pages. Every other tool works without sending anything to us.</p>
+
+    <h2 id="security">Security and local processing</h2>
+    <p>Local file tools process compatible files inside your browser tab, which reduces exposure by avoiding a file upload to Vootkit. Keep your browser and device updated, download results only to a device you trust, and use password protection or encryption when a document contains sensitive information.</p>
 
     <h2>What we collect</h2>
     <ul>
