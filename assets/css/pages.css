@@ -1163,6 +1163,148 @@
 @keyframes uw-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .uw-spinner { animation-duration: 1.8s; } }
 
+/* Workflow v3 — one mobile-first product language for home, builder and run. */
+.wf-ref-home { max-width: 720px; padding-block: clamp(26px, 6vw, 54px) 64px; }
+.wf-ref-hero { text-align: center; padding: 0 12px 22px; }
+.wf-ref-hero h1 { margin: 0; font-family: var(--font-display); font-size: clamp(2rem, 8vw, 3.4rem); line-height: .98; letter-spacing: -.035em; }
+.wf-ref-hero h1 span { color: var(--accent); }
+.wf-ref-hero p { max-width: 38ch; margin: 14px auto 18px; color: var(--ink-soft); line-height: 1.55; }
+.wf-ref-hero > div { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+.wf-ref-featured { overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); box-shadow: var(--shadow-sm); }
+.wf-ref-featured > header { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; padding: 18px 18px 8px; }
+.wf-ref-featured h2, .wf-ref-popular h2, .wf-ref-how h2, .wf-ref-yours h2 { margin: 0; font-family: var(--font-display); font-size: 1.45rem; }
+.wf-ref-featured header p { margin: 4px 0 0; color: var(--ink-soft); font-size: .78rem; }
+.wf-ref-featured header > span { flex: 0 0 auto; padding: 6px 9px; border-radius: 999px; background: var(--ok-weak); color: var(--ok); font-size: .66rem; font-weight: 800; }
+.wf-ref-featured ol { position: relative; list-style: none; margin: 0; padding: 4px 18px 10px; }
+.wf-ref-featured ol::before { content: ''; position: absolute; left: 34px; top: 28px; bottom: 30px; width: 1px; background: var(--line-strong); }
+.wf-ref-featured li { position: relative; display: grid; grid-template-columns: 30px 44px minmax(0,1fr) auto 22px; gap: 10px; align-items: center; min-height: 64px; }
+.wf-ref-number { position: relative; z-index: 1; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--accent-weak); color: var(--accent); font-size: .73rem; }
+.wf-ref-featured .ic-tool { width: 42px; height: 42px; border-radius: 11px; }
+.wf-ref-featured li > span:nth-of-type(2) { display: grid; gap: 2px; min-width: 0; }
+.wf-ref-featured li strong { font-size: .9rem; }
+.wf-ref-featured li small { color: var(--ink-soft); font-size: .7rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wf-ref-featured li > b { padding: 4px 7px; border-radius: 999px; background: var(--ok-weak); color: var(--ok); font-size: .62rem; }
+.wf-ref-featured li > button { border: 0; background: transparent; color: var(--ink-soft); font-size: 1rem; cursor: pointer; }
+.wf-ref-download { display: grid; place-items: center; background: #e9f9ee; color: #229c4d; }
+.wf-ref-featured footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 18px; border-top: 1px solid var(--line); }
+.wf-ref-featured footer span { color: var(--ink-soft); font-size: .72rem; }
+.wf-ref-popular, .wf-ref-how, .wf-ref-yours { margin-top: 30px; }
+.wf-ref-popular > header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.wf-ref-popular > header a { color: var(--accent); font-size: .75rem; font-weight: 800; }
+.wf-ref-popular > div { display: grid; gap: 9px; }
+.wf-ref-popular-row { width: 100%; display: grid; grid-template-columns: minmax(128px,1fr) auto auto 10px; align-items: center; gap: 9px; padding: 11px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); text-align: left; cursor: pointer; }
+.wf-ref-popular-row > span:first-child { display: grid; }
+.wf-ref-popular-row strong { font-size: .78rem; }
+.wf-ref-popular-row small { color: var(--ink-soft); font-size: .63rem; }
+.wf-ref-mini-chain { display: flex; align-items: center; gap: 3px; }
+.wf-ref-mini-chain .ic-tool { width: 24px; height: 24px; border-radius: 6px; }
+.wf-ref-mini-chain i { color: var(--ink-mute); font-size: .6rem; font-style: normal; }
+.wf-ref-popular-row em { display: grid; justify-items: center; min-width: 55px; padding: 6px; border-radius: 8px; background: var(--ok-weak); color: var(--ok); font-size: .66rem; font-style: normal; }
+.wf-ref-popular-row em small { color: inherit; }
+.wf-ref-popular-row > b { color: var(--ink-mute); }
+.wf-ref-how > ol { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 12px; }
+.wf-ref-how li { display: grid; grid-template-columns: 28px minmax(0,1fr) 44px; align-items: center; gap: 12px; }
+.wf-ref-how li > b { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--accent-weak); color: var(--accent); }
+.wf-ref-how li > span { display: grid; }
+.wf-ref-how li strong { font-size: .85rem; }
+.wf-ref-how li small { color: var(--ink-soft); font-size: .68rem; }
+.wf-ref-how li > i { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 10px; background: var(--accent-weak); color: var(--accent); font-style: normal; }
+.wf-ref-yours > div { margin-top: 12px; display: flex; align-items: center; gap: 14px; padding: 18px; border: 1px solid var(--accent-border); border-radius: 12px; background: linear-gradient(135deg,var(--surface),var(--accent-weak)); }
+.wf-ref-yours > div > span { font-size: 1.6rem; color: var(--accent); }
+.wf-ref-yours p { flex: 1; margin: 0; font-family: var(--font-display); }
+
+/* Sequential builder replaces the former visible graph editor on phones. */
+@media (max-width: 700px) {
+  .wf-builder-intro { max-width: 720px; padding-top: 4px; }
+  .wf-builder-intro .eyebrow, .wf-builder-intro p { display: none; }
+  .wf-builder-intro h2 { width: 100%; text-align: center; font-family: var(--font-display); font-size: 1.55rem; }
+  .wf-builder-shell { background: transparent; }
+  .wf-mount .wfc { border: 0; box-shadow: none; background: transparent; }
+  .wfc-center { min-height: 0; }
+  .wfc-top { padding: 0 0 14px; border: 0; background: transparent; }
+  .wfc-title-edit { display: grid; grid-template-columns: 36px 1fr auto; width: 100%; align-items: center; }
+  .wfc-title-stack { grid-column: 1 / -1; order: 2; margin-top: 12px; }
+  .wfc-name { min-height: 52px; padding: 0 16px; border-radius: 10px; font-size: .9rem; }
+  .wfc-name::before { content: 'Workflow name'; }
+  .wfc-edit-name { right: 12px; }
+  .wfc-saved-status { margin: 0; justify-self: end; }
+  .wfc-saved-status span { font-size: 0; }
+  .wfc-saved-status span::after { content: 'Save'; font-size: .82rem; color: var(--accent); font-weight: 800; }
+  .wfc-top-actions { display: none; }
+  .wf-mount .wfc-canvas { min-height: 0; height: auto; padding: 0; overflow: visible; background: transparent; touch-action: pan-y; }
+  .wfc-pan { display: flex; flex-direction: column; gap: 14px; width: 100%; min-width: 0; min-height: 0; transform: none !important; }
+  .wfc-edges { display: none; }
+  .wf-mount .wfc-node { position: static !important; width: 100%; min-height: 92px; display: grid; grid-template-columns: 30px 52px minmax(0,1fr) auto; justify-items: stretch; align-items: center; gap: 10px; padding: 16px 14px; border-radius: 12px; text-align: left; transform: none !important; cursor: pointer; }
+  .wf-mount .wfc-node.is-sel { min-height: 108px; }
+  .wf-mount .wfc-node .wfc-stepno { position: static; width: auto; height: auto; background: transparent; color: var(--ink); font-size: 1rem; }
+  .wf-mount .wfc-node .wfc-ic .ic-tool { width: 50px; height: 50px; border-radius: 12px; }
+  .wf-mount .wfc-node .wfc-tx strong { font-family: var(--font-display); font-size: 1rem; }
+  .wf-mount .wfc-node .wfc-tx span { font-size: .76rem; }
+  .wf-mount .wfc-node .wfc-tx small { display: none; }
+  .wf-mount .wfc-node .wfc-status { position: static; align-self: start; padding: 4px 7px; }
+  .wfc-handle { position: static; font-size: 1rem; }
+  .wfc-port { display: none; }
+  .wfc-connector-add { position: static !important; order: initial; align-self: center; width: 27px; height: 27px; margin: -7px 0; border-radius: 50%; }
+  .wfc-add-step { position: static !important; width: 100%; min-height: 50px; border: 1px dashed var(--accent); border-radius: 10px; background: transparent; color: var(--accent); }
+  .wfc-add-step span { display: none; }
+  .wfc-add-step strong { font-size: .9rem; }
+  .wfc-inline-settings { grid-column: 1 / -1; width: 100%; margin-top: 4px; padding: 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+  .wfc-inline-settings .wfc-panel-close, .wfc-inline-settings .wfc-inspector-head { display: none; }
+  .wfc-inline-settings .wfc-opts { display: grid; gap: 10px; }
+  .wfc-inline-settings .wfc-opt { padding: 8px 0; }
+  .wfc-bar { margin-top: 16px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+  .wfc-bar .wfc-summary, .wfc-bar .wfc-privacy, .wfc-bar .wfc-spacer, .wfc-bar .wfc-files { display: none; }
+  .wfc-bar .btn { width: 100%; }
+  .wfc-run-bottom { min-height: 52px; }
+  .wfc-log { border: 0 !important; padding-inline: 0 !important; }
+}
+
+/* Real running, attention and completed states. */
+.wf-run-view { width: min(620px, 100% - var(--gutter) * 2); margin: 0 auto 48px; padding: 8px 0 24px; }
+.wf-run-view[hidden] { display: none !important; }
+.wf-run-head { position: relative; display: grid; place-items: center; min-height: 76px; text-align: center; }
+.wf-run-head > button { position: absolute; left: 0; top: 18px; border: 0; background: transparent; color: var(--accent); font-size: 1.35rem; cursor: pointer; }
+.wf-run-head h2 { margin: 0; font-family: var(--font-display); font-size: 1.55rem; }
+.wf-run-head p { margin: 4px 0 0; color: var(--ink-soft); font-size: .78rem; }
+.wf-run-banner { display: grid; grid-template-columns: 42px 1fr; gap: 12px; align-items: center; padding: 16px; margin-bottom: 10px; border: 1px solid; border-radius: 12px; }
+.wf-run-banner > b { display: grid; place-items: center; width: 38px; height: 38px; border: 2px solid currentColor; border-radius: 50%; font-size: 1.2rem; }
+.wf-run-banner span { display: grid; gap: 3px; }
+.wf-run-banner small { font-size: .7rem; }
+.wf-run-banner.is-ok { border-color: #bee8c9; background: #f0fbf3; color: #228b43; }
+.wf-run-banner.is-err { border-color: #f2c8c8; background: #fff5f5; color: #d13e3e; }
+.wf-run-steps { position: relative; list-style: none; margin: 0; padding: 0; }
+.wf-run-steps::before { content: ''; position: absolute; left: 16px; top: 38px; bottom: 38px; width: 1px; background: var(--line-strong); }
+.wf-run-steps li { position: relative; display: grid; grid-template-columns: 34px 48px minmax(0,1fr) auto; gap: 10px; align-items: center; min-height: 74px; padding: 10px 4px; border-bottom: 1px solid var(--line); }
+.wf-run-steps li.is-run { margin: 4px 0; padding: 15px 10px 22px; border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow-sm); }
+.wf-run-steps li.is-run::after { content: ''; position: absolute; left: 76px; right: 10px; bottom: 9px; height: 4px; border-radius: 99px; background: linear-gradient(90deg,var(--accent) 62%,var(--accent-weak) 62%); }
+.wf-run-steps li.is-fail { margin: 4px 0; padding-inline: 10px; border: 1px solid #f2c8c8; border-radius: 10px; background: #fff7f7; }
+.wf-run-dot { position: relative; z-index: 1; display: grid; place-items: center; width: 20px; height: 20px; border: 1px solid var(--line-strong); border-radius: 50%; background: var(--surface); color: var(--ink-soft); font-style: normal; font-size: .65rem; }
+.is-done .wf-run-dot { border-color: var(--ok); background: var(--ok); color: #fff; }
+.is-run .wf-run-dot { border-color: var(--accent); background: var(--accent); color: #fff; }
+.is-fail .wf-run-dot { border-color: #e54848; background: #e54848; color: #fff; }
+.wf-run-icon .ic-tool, .wf-run-basic { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 10px; }
+.wf-run-basic { background: var(--accent-weak); color: var(--accent); font-size: 1.2rem; font-weight: 900; }
+.wf-run-basic.is-download { background: #e9f9ee; color: #229c4d; }
+.wf-run-copy { display: grid; gap: 3px; }
+.wf-run-copy strong { font-size: .88rem; }
+.wf-run-copy small { color: var(--ink-soft); font-size: .7rem; }
+.wf-run-steps em { padding: 4px 7px; border-radius: 999px; background: var(--surface-sunk); color: var(--ink-soft); font-size: .62rem; font-style: normal; }
+.wf-run-steps .is-done em { background: var(--ok-weak); color: var(--ok); }
+.wf-run-steps .is-fail em { background: #ffe7e7; color: #d13e3e; }
+.wf-run-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; }
+.wf-run-actions .btn-primary:first-child { grid-column: 1 / -1; }
+.wf-run-actions > :only-child { grid-column: 1 / -1; }
+.wf-run-actions .wf-run-save-template { grid-column: 1 / -1; }
+@media (max-width: 520px) {
+  .wf-ref-featured li { grid-template-columns: 26px 40px minmax(0,1fr) auto 18px; gap: 7px; }
+  .wf-ref-featured .ic-tool { width: 38px; height: 38px; }
+  .wf-ref-featured li > b { display: none; }
+  .wf-ref-popular-row { grid-template-columns: minmax(118px,1fr) auto 10px; }
+  .wf-ref-mini-chain { display: none; }
+  .wf-ref-yours > div { padding: 14px; }
+  .wf-run-view { width: 100%; }
+}
+
 /* Category launchers are real destinations, not decorative filters. Their
    icon treatment mirrors the layered app marks used by individual tools. */
 .dir-browse-grid > a {
@@ -4240,4 +4382,34 @@ video.wcode { padding: 0; }
   .bl-card:hover,
   .bl-feature-card:hover .bl-feature-media img,
   .bl-card:hover .bl-card-img img { transform: none; }
+}
+
+/* Keep workflow-v3 builder overrides last in the bundle. */
+@media (max-width: 700px) {
+  body.wf-page .wf-builder-shell { padding-inline: var(--gutter); background: transparent; }
+  body.wf-page .wf-builder-wrap { width: 100%; }
+  body.wf-page .wf-mount .wfc { display: block; min-height: 0; height: auto; border: 0; box-shadow: none; background: transparent; }
+  body.wf-page .wf-mount .wfc-pal, body.wf-page .wf-mount .wfc-panel { display: none; }
+  body.wf-page .wfc-center { min-height: 0; grid-template-rows: auto auto auto auto; }
+  body.wf-page .wfc-top { align-items: stretch; flex-direction: column; height: auto; padding: 0 0 14px; border: 0; background: transparent; }
+  body.wf-page .wfc-title-edit { display: grid; grid-template-columns: 36px 1fr auto; width: 100%; align-items: center; }
+  body.wf-page .wfc-title-stack { grid-column: 1 / -1; order: 2; flex: 1 1 100%; width: 100%; margin-top: 12px; }
+  body.wf-page .wfc-name { width: 100%; min-height: 52px; }
+  body.wf-page .wfc-saved-status { margin: 0; justify-self: end; }
+  body.wf-page .wfc-top-actions, body.wf-page .wfc-summary { display: none; }
+  body.wf-page .wf-mount .wfc-canvas { min-height: 0; height: auto; overflow: visible; background: transparent; touch-action: pan-y; }
+  body.wf-page .wfc-pan { display: flex; flex-direction: column; gap: 14px; width: 100%; min-width: 0; min-height: 0; transform: none !important; }
+  body.wf-page .wfc-edges { display: none; }
+  body.wf-page .wf-mount .wfc-node { position: static !important; width: 100%; min-height: 92px; transform: none !important; }
+  body.wf-page .wfc-connector-add { position: static !important; align-self: center; margin: -7px 0; }
+  body.wf-page .wfc-add-step { position: static !important; width: 100%; min-height: 50px; }
+  body.wf-page .wfc-bar { align-items: stretch; flex-direction: column; height: auto; margin-top: 16px; padding: 14px; }
+  body.wf-page .wfc-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+  body.wf-page .wfc-test-title { grid-column: 1 / -1; font-family: var(--font-display); }
+  body.wf-page .wfc-bar .wfc-privacy { display: block; grid-column: 2; grid-row: 2; align-self: center; padding: 8px; border-radius: 8px; background: var(--ok-weak); color: var(--ok); font-size: .7rem; }
+  body.wf-page .wfc-bar .wfc-spacer, body.wf-page .wfc-bar .wfc-files { display: none; }
+  body.wf-page .wfc-bar > .btn { width: 100%; min-width: 0; }
+  body.wf-page .wfc-run-bottom, body.wf-page .wfc-save-bottom { min-height: 50px; }
+  body.wf-page .wfc-run-bottom { grid-column: 1; }
+  body.wf-page .wfc-save-bottom { grid-column: 2; }
 }
