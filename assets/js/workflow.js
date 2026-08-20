@@ -1572,7 +1572,7 @@
       var startPos = byUid('in');
       var inNode = h('div', { class: 'wfc-node is-start' + (sel === 'in' ? ' is-sel' : ''), style: 'left:' + startPos.x + 'px;top:' + startPos.y + 'px', 'data-uid': 'in', tabindex: '0', role: 'button', 'aria-label': 'Input step' }, [
         h('span', { class: 'wfc-stepno', text: '1' }),
-        h('div', { class: 'wfc-ic', html: '<span class="ic ic-tool" style="--ic-bg:#eef2ff;--ic-h:250;color:#5b21e9"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V5m0 0L8 9m4-4 4 4M5 14v5h14v-5"/></svg></span>' }),
+        h('div', { class: 'wfc-ic', html: '<span class="ic ic-tool" style="--ic-bg:#2974d6;--ic-h:214"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V5m0 0L8 9m4-4 4 4M5 14v5h14v-5"/></svg></span>' }),
         h('div', { class: 'wfc-tx' }, [
           h('strong', { text: 'Input' }),
           h('span', { text: files.length ? (files.length === 1 ? files[0].name : files.length + ' files') : 'Upload Images' }),
@@ -1622,7 +1622,7 @@
       var outPos = outputNodePos();
       var outNode = h('div', { class: 'wfc-node is-output', style: 'left:' + outPos.x + 'px;top:' + outPos.y + 'px', 'data-uid': 'out' }, [
         h('span', { class: 'wfc-stepno', text: String(nodes.length + 2) }),
-        h('div', { class: 'wfc-ic', html: '<span class="ic ic-tool" style="--ic-bg:#eef2ff;--ic-h:250;color:#5b21e9"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v11"/><path d="m8 12 4 4 4-4"/><path d="M5 19h14"/></svg></span>' }),
+        h('div', { class: 'wfc-ic', html: '<span class="ic ic-tool" style="--ic-bg:#1a8647;--ic-h:145"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v11"/><path d="m8 12 4 4 4-4"/><path d="M5 19h14"/></svg></span>' }),
         h('div', { class: 'wfc-tx' }, [h('strong', { text: 'Output' }), h('span', { text: 'Download Images' }), h('small', { text: 'Zipped folder' })]),
         h('span', { class: 'wfc-status', text: 'Ready' })
       ]);

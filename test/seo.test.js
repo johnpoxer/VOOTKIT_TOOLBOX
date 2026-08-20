@@ -693,8 +693,8 @@ console.log(`seo + newsletter placement: ${pass} total assertions passed`);
     const glyphs = (h) => [...h.matchAll(/ic-tool"[^>]*><svg[^>]*>(.*?)<\/svg>/gs)].map((m) => m[1]);
 
     ok(hues(pdf).length >= 30, "every PDF card carries a per-tool icon, got " + hues(pdf).length);
-    ok(new Set(hues(pdf)).size >= 6,
-       "the PDF grid uses several colours, got " + new Set(hues(pdf)).size);
+    ok(new Set(hues(pdf)).size === 1 && /--ic-h:4/.test(pdf),
+       "the PDF grid consistently uses the red PDF family");
     ok(new Set(glyphs(pdf)).size >= 10,
        "and several distinct glyphs, got " + new Set(glyphs(pdf)).size);
 
@@ -705,7 +705,7 @@ console.log(`seo + newsletter placement: ${pass} total assertions passed`);
       const h = read4(f);
       if (!h) return;
       ok(!/class="ic">/.test(h), f + " has no card left on the shared category glyph");
-      ok(new Set(hues(h)).size >= 4, f + " is not a single-colour grid");
+      ok(new Set(hues(h)).size === 1, f + " uses one recognizable semantic colour family");
     });
 
     /* Related-tool rows on a tool page get the same treatment, or a visitor
@@ -743,7 +743,7 @@ console.log(`seo + tool icons: ${pass} total assertions passed`);
   if (!home || !built) {
     console.log("footer parity: SKIPPED (run npm run build first)");
   } else {
-    const foot = (h) => (h.match(/<footer class="ftr">[\s\S]*?<\/footer>/) || [""])[0];
+    const foot = (h) => (h.match(/<footer class="(?:ftr|compact-footer)">[\s\S]*?<\/footer>/) || [""])[0];
     const links = (h, strip) => new Set(
       [...foot(h).matchAll(/href="([^"]+)"/g)]
         .map((m) => m[1].replace(strip, "").replace(/^\.\//, ""))
@@ -752,20 +752,22 @@ console.log(`seo + tool icons: ${pass} total assertions passed`);
     const H = links(home, /^/);            // already relative to root
     const B = links(built, /^(\.\.\/)+/);  // walk-up prefix removed
 
-    ok(H.size >= 18, "the homepage footer carries the full link set, got " + H.size);
-    [...B].forEach((u) => ok(H.has(u), "homepage footer is missing built-page link: " + u));
-    [...H].forEach((u) => ok(B.has(u), "built-page footer is missing homepage link: " + u));
+    const required = ["tools/", "workflows/", "pricing.html", "blog/", "about.html", "contact.html", "privacy.html", "terms.html"];
+    ok(H.size >= required.length, "the homepage footer carries the essential link set, got " + H.size);
+    required.forEach((u) => ok(H.has(u), "homepage footer is missing essential link: " + u));
 
-    /* The structure has to match too, or the two look different even when they
-       point at the same places. */
+    /* Built pages retain the full desktop footer; the approved mobile-first
+       homepage intentionally uses its compact counterpart. Both must expose
+       the same essential destinations, but their structures need not match. */
     ["ftr-top", "ftr-cols", "ftr-brand", "ftr-mark", "ftr-trust", "ftr-bar", "ftr-copy"]
       .forEach((c) => {
-        ok(foot(home).includes(c), "homepage footer has ." + c);
         ok(foot(built).includes(c), "built footer has ." + c);
       });
+    ["compact-footer", "footer-columns", "footer-bar"].forEach((c) =>
+      ok(foot(home).includes(c), "homepage compact footer has ." + c));
 
-    /* Four named columns on both sides. */
-    eq((foot(home).match(/class="ftr-col"/g) || []).length, 4, "homepage footer has 4 columns");
+    /* Four named columns on built pages; three compact groups on home. */
+    eq((foot(home).match(/<div><h3>/g) || []).length, 3, "homepage footer has 3 compact groups");
     eq((foot(built).match(/class="ftr-col"/g) || []).length, 4, "built footer has 4 columns");
 
     /* NO DEAD SOCIAL ICONS. site.config.js ships empty URLs until the real
@@ -810,21 +812,12 @@ console.log(`seo + footer parity: ${pass} total assertions passed`);
   if (!home) {
     console.log("safety section: SKIPPED (index.html unreadable)");
   } else {
-    const sec = (home.match(/<section class="section wrap" id="safety">[\s\S]*?<\/section>/) || [""])[0];
-    ok(sec, "the homepage has a #safety section");
-    ok(/Every tool but two/.test(sec),
-       "the claim is phrased so it survives the catalogue growing, not a hard-coded count");
-    ok(/privacy\.html/.test(sec), "it points at the privacy policy for the detail");
-    eq((sec.match(/class="saf-box"/g) || []).length, 3, "three boxes, as in the reference");
-
-    /* Every box is a link, and every link goes somewhere real. A reassurance
-       card that looks clickable and is not is worse than a paragraph. */
-    const hrefs = [...sec.matchAll(/<a class="saf-box" href="([^"]+)"/g)].map((m) => m[1]);
-    eq(hrefs.length, 3, "all three boxes are links");
-    hrefs.forEach((h) => {
-      const target = pathS.join(__dirname, "..", h.replace(/\/$/, "/index.html"));
-      ok(fsS.existsSync(target), "safety box target exists: " + h);
-    });
+    const sec = (home.match(/<section class="privacy-card ref-wrap">[\s\S]*?<\/section>/) || [""])[0];
+    ok(sec, "the homepage has its approved privacy card");
+    ok(/Most (?:files stay|processing stays) on your device/.test(home), "the homepage accurately describes local processing");
+    ok(/Private by design/.test(sec), "the privacy card states the design principle");
+    ok(/No uploads for most tools/.test(sec), "the privacy card avoids an absolute upload claim");
+    ok(/href="privacy\.html"/.test(home), "the homepage links to the privacy policy");
 
     /* THE BADGES ARE GONE, EVERYWHERE. They were on 258 tool cards and 258 tool
        pages; a stale one left behind reads as a bug on the exact pages this

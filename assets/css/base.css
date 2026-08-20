@@ -106,7 +106,7 @@ a.card:hover, button.card:hover { transform: translateY(-3px); border-color: var
 
 /* tool card — built for variable content length */
 .tool-card { display: flex; flex-direction: column; gap: var(--s-2); min-height: 148px; }
-.tool-card .ic { display: grid; place-items: center; width: 40px; height: 40px; border-radius: var(--r-md); background: var(--accent-weak); color: var(--accent); flex: none; }
+.tool-card .ic:not(.ic-tool) { display: grid; place-items: center; width: 40px; height: 40px; border-radius: var(--r-md); background: var(--accent-weak); color: var(--accent); flex: none; }
 .tool-card .ic svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .tool-card h3 { font-size: var(--t-md); font-weight: 700; }
 .tool-card p { font-size: var(--t-sm); color: var(--ink-soft); line-height: 1.5; flex: 1; }

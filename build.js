@@ -645,6 +645,9 @@ const ICON_RULES = [
   [/resume|cv-|cover-letter/,            'user',     284],
   [/pto|accrual|leave|holiday-entitle/,  'calendar', 340],
   [/name-generator|slogan|brand-name/,   'wand',     284],
+  [/invoice|receipt/,                    'page',     145],
+  [/quiz|flashcard|study|learning|vocabulary|citation/, 'book', 264],
+  [/heart-rate|bmi|bmr|body-fat|ideal-weight|water-intake/, 'heart', 350],
   [/chat|overlay|caption/,               'chat',     340],
   [/merge|combine|join/,                 'merge',    250],
   [/split|extract-pages|extract-pdf/,    'split',    32],
@@ -663,10 +666,10 @@ const ICON_RULES = [
   [/convert|to-pdf|pdf-to|to-jpg|to-png|to-webp|format/, 'convert', 216],
   [/video|gif|trim|mute|loop|frame/,     'video',    340],
   [/audio|mp3|wav|volume/,               'audio',    340],
-  [/speech|transcribe|voice|tts/,        'mic',      340],
-  [/ocr|image-to-text|scan/,             'search',   216],
   [/qr/,                                 'qr',       268],
   [/barcode/,                            'barcode',  268],
+  [/ocr|image-to-text|\bscan\b/,         'search',   216],
+  [/speech|transcribe|\bvoice\b|\btts\b/, 'mic',    340],
   /* Developer tools split by what they actually do, not by being developer
      tools. Twelve of fifteen used to land on one glyph and one hue, which is
      the same uniform-grid problem this whole system exists to remove. */
@@ -684,7 +687,7 @@ const ICON_RULES = [
   [/exif|metadata|viewer|preview|inspect/, 'eye',    190],
   [/chart|graph|visuali/,                'chart',    152],
   [/percent|ratio|discount|vat|tax|gst/, 'percent',  32],
-  [/loan|mortgage|interest|salary|invoice|budget|savings|retire|crypto|profit|margin|cac|fba|currency|money|price|cost|tip|hourly|rate|dti|debt/, 'money', 152],
+  [/loan|mortgage|interest|salary|budget|savings|retire|crypto|profit|margin|cac|fba|currency|money|price|cost|tip|hourly|\brate\b|dti|debt/, 'money', 152],
   /* Dates and times BEFORE the generic calculator rule — 'date-calculator'
      otherwise resolves on the word 'calculator' before anything notices
      what it calculates. */
@@ -709,14 +712,18 @@ const ICON_RULES = [
 
 function toolIcon(t) {
   const hay = (t.id + ' ' + (t.name || '') + ' ' + (t.kw || '')).toLowerCase();
-  const position = VK.TOOLS.findIndex((item) => item.id === t.id && item.cat === t.cat);
   for (const [re, g, hue] of ICON_RULES) if (re.test(hay)) {
-    /* Keep the glyph semantic, but give every catalog entry its own colour.
-       This replaces the old 75 repeated glyph/colour combinations with one
-       stable visual identity per tool across cards, search, workflows and
-       the tool page itself. The golden-angle offset avoids adjacent tools
-       collapsing into the same few purple/orange families. */
-    return { g, hue: Number(((hue + Math.max(0, position) * 137.508) % 360).toFixed(3)) };
+    const familyHue = {
+      pdf: 4, images: 205, video: 268, finance: 40, insurance: 145,
+      realestate: 222, tax: 278, business: 214, seo: 24,
+      accessibility: 12, privacy: 148, text: 282, design: 326,
+      developer: 145, everyday: 38, data: 198, health: 350,
+      travel: 194, audio: 286, education: 264, ai: 228
+    }[t.cat];
+    const standardHue = /invoice|receipt/.test(t.id) ? 145
+      : /^qr-/.test(t.id) ? 145
+      : familyHue;
+    return { g, hue: standardHue == null ? hue : standardHue };
   }
   return null;
 }
@@ -1373,7 +1380,13 @@ function allToolsPage() {
   const cards = allTools.map((t, i) => directoryToolCard(t, "../", i)).join("");
   const recommended = ["compress-pdf", "resize-image", "invoice-generator"].map((id) => VK.find(id)).filter(Boolean);
   const popularRows = ["compress-pdf", "pdf-to-text", "compress-video", "loan-calculator", "qr-generator"].map((id) => VK.find(id)).filter(Boolean);
-  const categoryBrowse = cats.map((c) => `<a href="../tools/?cat=${esc(c.slug)}" data-dir-cat="${esc(c.slug)}" data-dir-cats="${esc(c.slug)}"><span>${icon(c.icon)}</span><strong>${esc(c.name)}</strong><small>${c.count} tools</small><b>›</b></a>`).join("");
+  const categoryBrowse = cats.map((c) => {
+    const hue = ({ pdf:4, images:205, video:268, finance:40, insurance:145, realestate:222,
+      tax:278, business:214, seo:24, accessibility:12, privacy:148, text:282,
+      design:326, developer:145, everyday:38, data:198, health:350, travel:194,
+      audio:286, education:264, ai:228 })[c.slug] || 214;
+    return `<a href="../tools/?cat=${esc(c.slug)}" data-dir-cat="${esc(c.slug)}" data-dir-cats="${esc(c.slug)}"><span style="--cat-icon-bg:${hueFill(hue)};--cat-icon-h:${hue}">${icon(c.icon)}</span><strong>${esc(c.name)}</strong><small>${c.count} tools</small><b>›</b></a>`;
+  }).join("");
   const planned = allTools.length - liveCount;
 
   return head({ depth: 1, url, ads: true, ld, active: "tools", bodyClass: "tools-page",
@@ -3809,7 +3822,7 @@ function workflowCopy() {
   const tabNames = ["All", "Featured"].concat(allKinds.map(kindLabel));
   const previewT = ordered[0] || live[0];
   const previewAsset = coverAsset(previewT);
-  const inputIcon = `<span class="ic ic-tool" style="--ic-h:250;--ic-bg:#eef2ff;color:#5b21e9"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V5m0 0L8 9m4-4 4 4M5 14v5h14v-5"/></svg></span>`;
+  const inputIcon = `<span class="ic ic-tool" style="--ic-h:214;--ic-bg:#2974d6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V5m0 0L8 9m4-4 4 4M5 14v5h14v-5"/></svg></span>`;
   const previewNodes = [{ html: inputIcon, name: "Upload Images", summary: "JPG, PNG, WebP" }]
     .concat(previewT.steps.map((id, i) => ({ html: icon(id), name: toolName(id), summary: (previewT.summaries && previewT.summaries[i]) || "Ready" })));
   const previewChain = previewNodes.map((n) => `
