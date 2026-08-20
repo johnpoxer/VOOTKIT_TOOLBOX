@@ -693,8 +693,8 @@ console.log(`seo + newsletter placement: ${pass} total assertions passed`);
     const glyphs = (h) => [...h.matchAll(/ic-tool[^\"]*"[^>]*><svg[^>]*>(.*?)<\/svg>/gs)].map((m) => m[1]);
 
     ok(hues(pdf).length >= 30, "every PDF card carries a per-tool icon, got " + hues(pdf).length);
-    ok(new Set(hues(pdf)).size === 1 && /--ic-h:4/.test(pdf),
-       "the PDF grid consistently uses the red PDF family");
+    ok(new Set(hues(pdf)).size >= 28,
+       "the PDF grid gives individual tools distinct colours, got " + new Set(hues(pdf)).size);
     ok(new Set(glyphs(pdf)).size >= 10,
        "and several distinct glyphs, got " + new Set(glyphs(pdf)).size);
 
@@ -705,7 +705,8 @@ console.log(`seo + newsletter placement: ${pass} total assertions passed`);
       const h = read4(f);
       if (!h) return;
       ok(!/class="ic">/.test(h), f + " has no card left on the shared category glyph");
-      ok(new Set(hues(h)).size === 1, f + " uses one recognizable semantic colour family");
+      ok(new Set(hues(h)).size >= Math.min(4, (hues(h).length || 0)),
+         f + " does not collapse its tools into one category colour");
     });
 
     /* Related-tool rows on a tool page get the same treatment, or a visitor

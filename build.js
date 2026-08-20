@@ -712,18 +712,12 @@ const ICON_RULES = [
 
 function toolIcon(t) {
   const hay = (t.id + ' ' + (t.name || '') + ' ' + (t.kw || '')).toLowerCase();
+  const position = VK.TOOLS.findIndex((item) => item.id === t.id && item.cat === t.cat);
   for (const [re, g, hue] of ICON_RULES) if (re.test(hay)) {
-    const familyHue = {
-      pdf: 4, images: 205, video: 268, finance: 40, insurance: 145,
-      realestate: 222, tax: 278, business: 214, seo: 24,
-      accessibility: 12, privacy: 148, text: 282, design: 326,
-      developer: 145, everyday: 38, data: 198, health: 350,
-      travel: 194, audio: 286, education: 264, ai: 228
-    }[t.cat];
-    const standardHue = /invoice|receipt/.test(t.id) ? 145
-      : /^qr-/.test(t.id) ? 145
-      : familyHue;
-    return { g, hue: standardHue == null ? hue : standardHue };
+    /* Every tool owns a stable colour instead of borrowing its category's
+       colour. The golden-angle step distributes neighbouring cards across
+       the full wheel, while the action glyph keeps the meaning explicit. */
+    return { g, hue: Number(((hue + Math.max(0, position) * 137.508) % 360).toFixed(3)) };
   }
   return null;
 }
