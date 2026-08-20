@@ -3063,13 +3063,14 @@ function pageCallback() {
 }
 
 /* ---------- account / dashboard ---------- */
-function accountPage() {
-  const url = `${SITE}/account/`;
+function accountPage(isPreview) {
+  const preview = isPreview === true;
+  const url = `${SITE}/${preview ? "account-preview" : "account"}/`;
   const ld = { "@context": "https://schema.org", "@type": "WebPage", name: "Your account", url };
   return head({ depth: 1, url, ads: false, ld, bodyClass: "account-ref", title: "Account & Settings — Vootkit", desc: "Manage your Vootkit profile, subscription, privacy preferences, active sessions and account settings." })
     .replace("</head>", '<meta name="robots" content="noindex">\n</head>') +
 `<div class="wrap section">
-  <div id="account" class="acct">
+  <div id="account" class="acct"${preview ? ' data-account-preview="true"' : ""}>
     <div class="vk-skeleton" style="height:80px;max-width:420px"></div>
   </div>
 </div>
@@ -3341,7 +3342,8 @@ write("auth/sign-up/index.html", pageSignUp());
 write("auth/reset/index.html", pageReset());
 write("auth/update-password/index.html", pageUpdatePassword());
 write("auth/callback/index.html", pageCallback());
-write("account/index.html", accountPage());
+write("account/index.html", accountPage(false));
+write("account-preview/index.html", accountPage(true));
 write("privacy.html", legalPage({
   file: "privacy.html", title: "Privacy Policy", updated: LAST_UPDATED,
   desc: "How Vootkit handles your data. Most tools process files entirely in your browser and never upload them.",
