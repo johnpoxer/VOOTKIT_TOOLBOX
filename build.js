@@ -2900,11 +2900,11 @@ function authStory(kind) {
     </div>
   </section>`;
 }
-function googleButton() {
+function googleButton(label = "Continue with Google") {
   return `<div class="auth-oauth">
     <button class="auth-google" type="button" data-oauth="google">
       <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="#4285F4" d="M22.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h6c-.3 1.4-1 2.6-2.3 3.4v2.8h3.6c2.1-1.9 3.3-4.8 3.3-8z"/><path fill="#34A853" d="M12 23c3 0 5.6-1 7.4-2.8l-3.6-2.8c-1 .7-2.3 1.1-3.8 1.1-2.9 0-5.4-2-6.3-4.6H1.9v2.9C3.7 20.5 7.5 23 12 23z"/><path fill="#FBBC05" d="M5.7 13.9c-.2-.7-.4-1.4-.4-2.1s.1-1.4.4-2.1V6.8H1.9C1.1 8.3.7 10.1.7 11.8s.4 3.5 1.2 5z"/><path fill="#EA4335" d="M12 4.7c1.6 0 3.1.6 4.2 1.7l3.1-3.1C17.6 1.5 15 .5 12 .5 7.5.5 3.7 3 1.9 6.8l3.8 2.9C6.6 6.7 9.1 4.7 12 4.7z"/></svg>
-      <span>Continue with Google</span>
+      <span>${esc(label)}</span>
     </button>
   </div>`;
 }
@@ -2964,39 +2964,39 @@ ${authBottomTrust()}` + authFootLite();
 }
 function pageSignIn() {
   return authShell("sign-in", "Sign in", "Sign in to your Vootkit account to sync favorites and history.", `
-    <header class="auth-card-head"><h1>Welcome back</h1><p>Sign in to continue using Vootkit.</p></header>
+    <header class="auth-card-head"><h1>Welcome back</h1><p>Sign in to your account</p></header>
     ${googleButton()}
     ${authDivider("or sign in with email")}
     <form class="auth-form" novalidate>
       ${authInput("email", "email", "Email Address", "Enter your email address", "email", "mail", true)}
       ${authPassword("password", "Password", "current-password")}
-      <div class="auth-row"><a href="../reset/">Forgot password?</a></div>
+      <div class="auth-row"><label class="auth-remember"><input type="checkbox" id="remember"> <span>Remember me</span></label><a href="../reset/">Forgot password?</a></div>
       <button class="auth-submit" type="submit">Sign In</button>
     </form>
-    <p class="auth-alt">New to Vootkit? <a href="../sign-up/">Create an account</a></p>
-    ${authWhy()}`);
+    <p class="auth-alt">Don't have an account? <a href="../sign-up/">Create account</a></p>`);
 }
 function pageSignUp() {
   return authShell("sign-up", "Create account", "Create a free Vootkit account to sync favorites and history across devices.", `
-    <header class="auth-card-head"><h1>Create your Vootkit account</h1><p>Start using Vootkit's ${floorTo(VK.counts.live, TOOL_ROUND_TO)}+ online tools in seconds.</p></header>
-    ${googleButton()}
+    <header class="auth-card-head"><h1>Create your<br>free account</h1><p>Start organizing, compressing and sharing in minutes.</p></header>
+    ${googleButton("Sign up with Google")}
     ${authDivider("or sign up with email")}
     <form class="auth-form" novalidate>
       ${authInput("name", "text", "Full Name", "Enter your full name", "name", "user", false)}
       ${authInput("email", "email", "Email Address", "Enter your email address", "email", "mail", true)}
       ${authPassword("password", "Password", "new-password")}
       ${passwordRules()}
+      <label class="auth-agree"><input type="checkbox" required> <span>I agree to the <a href="../../terms.html">Terms of Service</a> and <a href="../../privacy.html">Privacy Policy</a></span></label>
       <button class="auth-submit" type="submit">Create Account</button>
     </form>
-    <p class="auth-terms">By creating an account, you agree to our <a href="../../terms.html">Terms of Service</a> and <a href="../../privacy.html">Privacy Policy</a>.</p>
     <div class="auth-success" data-success="verify" hidden>
       ${authGlyph("mail", 268)}
-      <h2>Verify your email</h2>
-      <p>We sent a confirmation link. Open it to finish creating your Vootkit account.</p>
+      <h2>Check your email</h2>
+      <p>We've sent a verification link to your email address.</p>
+      <div class="auth-privacy-note">Your privacy is important.<br><small>We'll never share your email with anyone.</small></div>
       <a class="btn btn-primary" href="../sign-in/">Back to Sign In</a>
     </div>
     <p class="auth-alt">Already have an account? <a href="../sign-in/">Sign in</a></p>
-    ${authWhy()}`);
+    <div class="auth-free-badge">🎁 <span>5 free tasks every day</span></div>`);
 }
 function pageReset() {
   return authShell("reset", "Reset password", "Reset your Vootkit account password.", `
@@ -3007,7 +3007,7 @@ function pageReset() {
     </form>
     <div class="auth-success" data-success="reset" hidden>
       ${authGlyph("mail", 268)}
-      <h2>Check your inbox</h2>
+      <h2>Email sent!</h2>
       <p>If an account exists for that email, we sent password reset instructions.</p>
       <a class="btn btn-primary" href="../sign-in/">Back to Sign In</a>
     </div>
