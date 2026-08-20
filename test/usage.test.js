@@ -46,17 +46,18 @@ eq(F.count, 5, "five free runs, matching the '5 FREE A DAY' badge every page ren
  * now labelled unused in site.config.js, and this test no longer keys off it.
  *
  * What remains true is the PRINCIPLE — never gate a user behind a payment path
- * that cannot complete. But that is now a runtime property of the Netlify
- * function, not something a unit test can read, so it is asserted where it can
- * be: hard:true requires a deliberate choice, and the default stays soft. */
+ * that cannot complete. Authenticated checkout and the signed Stripe webhook
+ * now provide that path, so the advertised limit is enforced. */
 ok(typeof F.hard === "boolean", "the hard/soft choice is explicit, not undefined");
-ok(!F.hard, "the limit currently nudges rather than blocks — a product decision, not a broken-checkout workaround");
+ok(F.hard, "the advertised five-run limit is enforced now that Pro activation is wired");
 
-/* With a soft limit, no count can ever produce a block. */
+/* At the limit, Free blocks while Pro remains exempt. */
 [5, 6, 20, 500].forEach((n) => {
   eq(U.decide({ enabled: true, pro: false, exempt: false, count: n, count_limit: F.count, hard: F.hard }),
-     "nudge", "a soft limit nudges at " + n + " runs and never blocks");
+     "block", "Free blocks at " + n + " runs");
 });
+eq(U.decide({ enabled: true, pro: true, exempt: false, count: 500, count_limit: F.count, hard: F.hard }),
+   "allow", "Creator Pro stays unlimited");
 
 console.log(`usage + shipped config: ${pass} total assertions passed`);
 
