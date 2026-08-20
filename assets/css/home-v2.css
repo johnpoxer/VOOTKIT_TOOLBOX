@@ -14,3 +14,51 @@
 @media(min-width:760px){.vk-home-ref{padding-bottom:0}.bottom-nav{display:none}.mobile-header{height:72px}.drawer{position:static;display:flex;padding:0;border:0;box-shadow:none;background:transparent}.drawer a{padding:9px 12px;font-size:13px}.header-actions #burger{display:none}.hero{padding-top:65px;display:grid;grid-template-columns:1fr 1fr;column-gap:40px}.hero h1,.hero>p,.searchbox,.primary-action,.trust-strip,.results{grid-column:1}.hero:after{content:"";grid-column:2;grid-row:1/7;min-height:350px;border-radius:24px;background:linear-gradient(135deg,#f5f2ffdd,#fff8),url('../images/home/home-about-workspace.webp') center/cover;box-shadow:0 30px 70px #392b7820}.hero h1{font-size:58px}.hero>p{font-size:17px}.category-rail{margin-top:42px}.tool-grid{grid-template-columns:repeat(3,1fr)}.tool-card{min-height:102px}.action-layout{grid-template-columns:32% 68%}.privacy-card{min-height:310px}.privacy-copy{padding:55px}.privacy-copy h2{font-size:38px}.privacy-copy ul{font-size:14px}.guides{display:grid;grid-template-columns:1fr 1fr;gap:14px}.guides .section-title{grid-column:1/-1}.guide-card{min-height:170px}.audience-list{grid-template-columns:repeat(3,1fr)}.audience-list article{grid-template-columns:1fr;grid-template-rows:140px 150px}.audience-list img{grid-row:1}.audience-copy{grid-row:2}.workflow-card{min-height:370px}.workflow-copy{padding:45px}.workflow-copy h3{font-size:22px}.workflow-copy li{font-size:14px}.reason-grid b{font-size:15px}.reason-grid small{font-size:12px}.price-grid article{min-height:190px}.price-grid h3{font-size:30px}.price-grid p{font-size:13px}.price-art{font-size:72px}.toolbox-cta{min-height:120px}.toolbox-cta h2{font-size:30px}.newsletter{padding-block:30px}.newsletter h2{font-size:26px}.newsletter p{font-size:13px}.footer-columns h3{font-size:13px}.footer-columns a{font-size:12px}}
 @media(max-width:430px){.ref-wrap{width:min(100% - 24px,1120px)}.tool-card{padding:10px;gap:8px}.tool-visual{flex-basis:38px;width:38px;height:44px}.tool-card b{font-size:11px}.tool-card small{font-size:9.5px}.privacy-copy{padding:14px 10px}.privacy-copy h2{font-size:17px}.toolbox-cta{grid-template-columns:45px 1fr auto;padding-inline:10px}.toolbox-art{font-size:34px}.toolbox-cta h2{font-size:16px}.toolbox-cta a{min-width:105px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+
+/* The reference homepage is intentionally light-only. Keep legacy theme tokens
+   from washing out text when a visitor's device is set to dark mode. */
+.vk-home-ref{
+  --ink:#11152d!important;
+  --text:#11152d!important;
+  --muted:#555d73!important;
+  --line:#e4e5ec!important;
+  --wash:#f7f5ff!important;
+  --surface:#fff!important;
+  --card:#fff!important;
+  background:#fff!important;
+  color:#11152d!important;
+  color-scheme:light;
+}
+.vk-home-ref .mobile-header,
+.vk-home-ref .tool-card,
+.vk-home-ref .category-rail,
+.vk-home-ref .file-row,
+.vk-home-ref .price-grid article,
+.vk-home-ref .searchbox,
+.vk-home-ref .results{background-color:#fff!important;border-color:#e4e5ec!important}
+.vk-home-ref .hero h1,
+.vk-home-ref .ref-section h2,
+.vk-home-ref .section-title h2,
+.vk-home-ref .tool-card b,
+.vk-home-ref .tool-card small,
+.vk-home-ref .category-rail b,
+.vk-home-ref .action-steps b,
+.vk-home-ref .action-steps small,
+.vk-home-ref .file-row b,
+.vk-home-ref .file-row small,
+.vk-home-ref .audience-copy b,
+.vk-home-ref .audience-copy small,
+.vk-home-ref .workflow-copy h3,
+.vk-home-ref .workflow-copy li,
+.vk-home-ref .price-grid h3,
+.vk-home-ref .price-grid p,
+.vk-home-ref .newsletter h2,
+.vk-home-ref .footer-columns h3{color:#11152d!important}
+.vk-home-ref .hero h1 em,
+.vk-home-ref .privacy-copy h2 em,
+.vk-home-ref .toolbox-cta h2 em,
+.vk-home-ref .section-title a,
+.vk-home-ref .guide-copy em{color:#4f35e8!important}
+.vk-home-ref .trust-strip b{color:#22283c!important}
+.vk-home-ref .searchbox input{color:#11152d!important;-webkit-text-fill-color:#11152d!important}
+.vk-home-ref .searchbox input::placeholder{color:#999eaf!important;-webkit-text-fill-color:#999eaf!important;opacity:1}
