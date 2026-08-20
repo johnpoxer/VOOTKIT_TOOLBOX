@@ -313,6 +313,18 @@ console.log(`workflow + cancel + retry: ${pass} total assertions passed`);
        "the mobile-first workflow home is rendered in HTML");
     ok(/class="wf-ref-featured"/.test(html) && /class="wf-ref-popular"/.test(html),
        "the featured and popular workflow sections use the new format");
+    const featured = html.match(/<article class="wf-ref-featured">[\s\S]*?<\/article>/);
+    ok(featured && (featured[0].match(/class="wf-ref-copy"/g) || []).length >= 3,
+       "every featured workflow step has a dedicated title/description wrapper");
+    ok(featured && (featured[0].match(/class="ic ic-tool/g) || []).length >= 4,
+       "the featured workflow retains a visible icon for every stage");
+    ok(/class="wf-ref-mini-chain"[\s\S]*?class="ic ic-tool/.test(html),
+       "popular workflows include their individual tool-icon chains");
+    ok(/wf-ref-how[\s\S]*?<svg viewBox="0 0 24 24"/.test(html),
+       "how-it-works uses proper SVG icons instead of missing text placeholders");
+    const pageCss = fsW.readFileSync(pathW.join(__dirname, "..", "assets/css/pages.css"), "utf8");
+    ok(!/\.wf-ref-mini-chain\s*\{\s*display:\s*none/.test(pageCss),
+       "mobile CSS never hides the popular workflow logos");
     ok(!/class="wf-marketplace"/.test(html) && !/class="wf-template-preview"/.test(html),
        "the former marketplace and preview formats are no longer rendered");
     const client = fsW.readFileSync(pathW.join(__dirname, "..", "assets/js/workflow.js"), "utf8");
