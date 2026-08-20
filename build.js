@@ -3446,33 +3446,24 @@ write("disclaimer.html", legalPage({
   `
 }));
 
-write("about.html", infoPage({
-  slug: "about.html", title: "About", eyebrow: "About",   // infoPage appends " — Vootkit"
-  h1: "One home for every digital task.",
-  desc: "Vootkit is a growing ecosystem of fast, private, browser-based tools — PDF, image, video, finance, developer and more. No installs needed.",
-  lede: `Vootkit puts <strong>${VK.counts.live} tools</strong> in one place, most of them running entirely in your browser so your files never leave your device.`,
-  body: `
-  <section class="prose">
-    <h2>Why Vootkit exists</h2>
-    <p>The web is full of single-purpose tool sites — one for merging PDFs, another for resizing an image, a third for a quick calculation — each buried in ads and pop-ups. Vootkit brings them together into one clean, fast ecosystem you can trust, with a consistent experience across every tool.</p>
-
-    <h2>What we believe</h2>
-    <ul>
-      <li><strong>Privacy by default.</strong> Nearly every tool processes your files locally in the browser. Only two need the internet at all — the Currency Converter and the URL Shortener — and each says so on its own page.</li>
-      <li><strong>Fast and frictionless.</strong> No installs, no bloated setup. Open a tool and go.</li>
-      <li><strong>A generous free core.</strong> The essential tools stay free, and downloaders are always unlimited. Pro simply adds convenience for people who live in these tools.</li>
-      <li><strong>Built to grow.</strong> New tools ship constantly, each with its own identity inside the Vootkit ecosystem.</li>
-    </ul>
-
-    <h2>The ecosystem today</h2>
-    <p>Vootkit spans ${VK.CATEGORIES.length} categories — from PDF and image editing to video, finance, real estate, developer utilities and everyday helpers. Explore them all on the <a href="tools/">Tools</a> page, or see what Pro adds on <a href="pricing.html">Pricing</a>.</p>
+function aboutPage() {
+  const url = SITE + "/about.html";
+  const ld = { "@context": "https://schema.org", "@type": "AboutPage", name: "About Vootkit", url };
+  return head({ depth: 0, url, ads: true, ld, bodyClass: "about-ref", title: "About — Vootkit", desc: "Why Vootkit exists, what we believe and how John Prosper is building a simpler home for everyday digital tools." }) + `
+<div class="about-main">
+  <section class="about-hero">
+    <div class="about-hero-copy"><h1>Useful technology<br>should feel simple.</h1><p>Vootkit brings everyday digital tools into one fast, private and approachable workspace.</p><a class="btn btn-primary" href="tools/">Explore Vootkit</a></div>
+    <img src="assets/images/home/home-community-team.webp" alt="A team using digital tools together" width="900" height="600" fetchpriority="high">
   </section>
-  <div class="cta-band" style="margin-top:var(--s-7);padding:var(--s-6);border:1px solid var(--line);border-radius:var(--r-lg);text-align:center">
-    <h2 style="margin:0 0 var(--s-2)">Find the tool you need</h2>
-    <p class="page-lede" style="margin:0 auto var(--s-4)">Every digital task, done in your browser.</p>
-    <a class="btn btn-primary" href="tools/">Browse all tools</a>
-  </div>`
-}));
+  <section class="about-why"><div><h2>Why Vootkit exists</h2><p>People should not need ten websites, five accounts and complicated software to finish a simple task.</p></div><div class="about-results"><span><b>PDF</b><small>Report.pdf<br>1.4 MB</small><i>Converted</i></span><span><b>Image</b><small>Photo.jpg<br>2.6 MB</small><i>Resized</i></span><span><b>Video</b><small>Clip.mp4<br>18.7 MB</small><i>Compressed</i></span><span><b>Calculator</b><small>1,250 × 8.5</small><strong>10,625</strong></span></div></section>
+  <section class="about-beliefs"><h2>What we believe</h2><div><article><span>✓</span><h3>Useful before impressive</h3><p>Every feature should solve a real problem.</p></article><article><span>▣</span><h3>Privacy by design</h3><p>Most file tools work directly on your device.</p></article><article><span>✣</span><h3>One connected workspace</h3><p>Tools become more powerful when they work together.</p></article></div></section>
+  <section class="about-numbers"><h2>Vootkit by the numbers</h2><div><p><b>${floorTo(VK.counts.live, TOOL_ROUND_TO)}+</b><span>tools</span></p><p><b>${VK.CATEGORIES.length}</b><span>categories</span></p><p><b>Local</b><span>most tools process locally</span></p><p><b>Global</b><span>available worldwide</span></p></div></section>
+  <section class="about-founder"><div><h2>Built by John Prosper</h2><p>Vootkit began as a practical toolbox and is growing into a connected platform for everyday digital work.</p><a class="btn" href="blog/">Read the founder story</a></div><img src="public/images/about/john-prosper.webp" alt="John Prosper, founder of Vootkit" width="900" height="1350" loading="lazy"></section>
+  <section class="about-files"><h2>How Vootkit handles files</h2><div><article><b>1</b><span>⌁</span><h3>Choose a tool</h3><p>Pick the tool that matches your task.</p></article><i>→</i><article><b>2</b><span>▣</span><h3>Process in your browser</h3><p>Your files stay on your device. We process locally in your browser.</p></article><i>→</i><article><b>3</b><span>⇩</span><h3>Download your result</h3><p>Get your finished file instantly and keep working.</p></article></div><a href="privacy.html">Learn about privacy →</a></section>
+  <section class="about-next"><div><h2>The next chapter</h2><p>More useful tools. Better workflows.<br>The same commitment to simplicity.</p></div><a class="btn btn-primary" href="blog/">See what's new</a></section>
+</div>` + foot(0);
+}
+write("about.html", aboutPage());
 
 /* Legacy contact markup kept out of the build; contactPage() below is canonical. */
 void infoPage({
