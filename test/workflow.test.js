@@ -142,9 +142,8 @@ console.log(`workflow + settings: ${pass} total assertions passed`);
  * TEMPLATES AND THE PRO GATE.
  *
  * A template that names a retired tool is worse than no template: it fails the
- * moment somebody trusts it. And a gate that fails CLOSED would refuse a
- * paying customer whenever a network call hiccups, which is the one failure
- * mode a paid feature cannot have.
+ * moment somebody trusts it. The Pro gate must fail closed: if Vootkit cannot
+ * prove the active account owns Pro, it must not mount the workflow editor.
  * ------------------------------------------------------------------------- */
 {
   ok(W.TEMPLATES.length >= 4, "there are templates to start from, got " + W.TEMPLATES.length);
@@ -186,13 +185,15 @@ console.log(`workflow + settings: ${pass} total assertions passed`);
     client: async () => ({ from: () => ({ select: () => ({ eq: () => ({ single: async () => ({ data: { plan } }) }) }) }) })
   });
   const run = async () => {
-    ok(await W.isPro({}), "no auth module at all — fails OPEN");
-    ok(await W.isPro({ VKAuth: { enabled: false } }), "auth disabled — fails OPEN");
+    ok(!(await W.isPro({})), "no auth module cannot prove Pro access, so it fails closed");
+    ok(!(await W.isPro({ VKAuth: { enabled: false } })), "disabled auth cannot prove Pro access");
     ok(!(await W.isPro({ VKAuth: mkAuth("free") })), "a free account is gated");
+    ok(!(await W.isPro({ VKAuth: mkAuth(null) })), "a missing profile plan is gated");
+    ok(!(await W.isPro({ VKAuth: mkAuth("CREATOR_PRO") })), "an unknown plan spelling cannot bypass the gate");
     ok(await W.isPro({ VKAuth: mkAuth("creator_pro") }), "creator_pro may run");
     ok(await W.isPro({ VKAuth: mkAuth("creator_teams") }), "creator_teams may run");
-    ok(await W.isPro({ VKAuth: { enabled: true, getUser: async () => { throw new Error("net"); } } }),
-       "a lookup that throws lets the run through — never refuse a payer over a network blip");
+    ok(!(await W.isPro({ VKAuth: { enabled: true, getUser: async () => { throw new Error("net"); } } })),
+       "a failed plan lookup cannot unlock a Pro-only workflow");
     ok(!(await W.isPro({ VKAuth: { enabled: true, getUser: async () => null } })),
        "signed out is gated, since there is no plan to check");
     console.log(`workflow + templates + gate: ${pass} total assertions passed`);
@@ -308,6 +309,15 @@ console.log(`workflow + cancel + retry: ${pass} total assertions passed`);
        "nothing on the page contradicts the no-upload promise");
     ok(/never uploaded|not uploaded|on your device/i.test(noJs),
        "and it states the promise plainly");
+    ok(/Turn several tasks into[\s\S]*one simple flow/.test(html),
+       "the mobile-first workflow home is rendered in HTML");
+    ok(/class="wf-ref-featured"/.test(html) && /class="wf-ref-popular"/.test(html),
+       "the featured and popular workflow sections use the new format");
+    ok(!/class="wf-marketplace"/.test(html) && !/class="wf-template-preview"/.test(html),
+       "the former marketplace and preview formats are no longer rendered");
+    const client = fsW.readFileSync(pathW.join(__dirname, "..", "assets/js/workflow.js"), "utf8");
+    ["Running workflow", "Workflow needs attention", "Workflow complete", "Fix step", "Skip this step", "Save as template"]
+      .forEach((label) => ok(client.includes(label), "workflow lifecycle includes: " + label));
   }
 }
 console.log(`workflow + page SEO: ${pass} total assertions passed`);
