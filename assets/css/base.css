@@ -250,63 +250,42 @@ label { display: block; font-size: var(--t-sm); font-weight: 600; color: var(--i
 .note.err { color: var(--err); }
 
 /* ---------- footer ---------- */
-/* ---------- footer ----------
- * A dark band, fixed in both themes. Not a lighter shade of the page: the
- * footer's job is to end the page, and a hairline rule over the same canvas
- * does not read as an ending, which is why the old one looked like the content
- * simply stopped. It is also the only place on the site that can hold this
- * many links without the page feeling like a directory.
- *
- * The colours are literal rather than tokens on purpose. Every token here
- * flips with the theme, and a footer that is dark in light mode and lighter in
- * dark mode is two designs to maintain and neither is the one that was drawn.
- */
 .ftr {
-  background: #0f1729; color: rgb(255 255 255 / .68);
-  padding-block: var(--s-7) var(--s-5);
+  background: #fff; color: #606678;
+  padding-block: 42px 24px;
   font-size: var(--t-base);
-  /* When a browser is zoomed out or the viewport is unusually tall, body still
-     paints below the document. Keep that area visually attached to the footer
-     instead of exposing the pale page canvas underneath it. */
-  box-shadow: 0 100vh 0 100vh #0f1729;
+  border-top: 1px solid #eceef4;
+  box-shadow: 0 100vh 0 100vh #fff;
 }
-.ftr-top {
-  display: grid; grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
-  gap: var(--s-7); align-items: start;
-}
-.ftr-cols { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-5); }
+.ftr-top { display: block; }
+.ftr-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(24px, 8vw, 120px); max-width: 920px; }
 .ftr h4 {
-  font-family: var(--font-mono); font-size: var(--t-xs); font-weight: 600;
-  letter-spacing: .08em; text-transform: uppercase;
-  color: #fff; margin-bottom: var(--s-3);
+  font-family: var(--font-body); font-size: 13px; font-weight: 750;
+  letter-spacing: 0; text-transform: none;
+  color: #171b2c; margin-bottom: 8px;
 }
-.ftr a { display: block; padding: 6px 0; color: rgb(255 255 255 / .68); }
-.ftr a:hover { color: #fff; }
-.ftr :focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.ftr a { display: block; padding: 5px 0; color: #606678; }
+.ftr a:hover { color: var(--accent); }
+.ftr :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* Brand block — the slot the reference gives to app-store badges. */
-.ftr-brand p { margin: 0 0 var(--s-3); font-size: var(--t-sm); line-height: 1.6; }
+.ftr-brand { display: flex; align-items: center; gap: 14px; }
+.ftr-brand p { margin: 0; font-size: 12px; }
 .ftr-mark {
-  display: inline-flex; align-items: center; gap: var(--s-2);
-  font-family: var(--font-display); font-size: var(--t-lg); font-weight: 700;
-  color: #fff; margin-bottom: var(--s-3);
-}
-.ftr-mark svg { width: 30px; height: 30px; color: #7dabf8; }
-.ftr-trust { display: flex; gap: var(--s-2); align-items: flex-start; margin: 0; }
-.ftr-trust svg {
-  flex: 0 0 auto; width: 17px; height: 17px; margin-top: 2px;
-  fill: none; stroke: #22d3ee; stroke-width: 1.8;
-  stroke-linecap: round; stroke-linejoin: round;
+  display: inline-flex; align-items: center;
+  font-family: var(--font-body); font-size: 20px; font-weight: 850;
+  color: var(--accent); padding: 0;
 }
 
 /* Bottom bar. */
 .ftr-bar {
   display: flex; align-items: center; justify-content: space-between;
   gap: var(--s-4); flex-wrap: wrap;
-  margin-top: var(--s-6); padding-top: var(--s-4);
-  border-top: 1px solid rgb(255 255 255 / .10);
+  margin-top: 28px; padding-top: 18px;
+  border-top: 1px solid #eceef4;
 }
 .ftr-copy { margin: 0; font-size: var(--t-sm); }
+.ftr-lang { color: #606678; font-size: 12px; white-space: nowrap; }
 .ftr-socials { display: flex; gap: var(--s-2); }
 .ftr-soc {
   display: grid; place-items: center; width: 38px; height: 38px; padding: 0;
@@ -320,12 +299,18 @@ label { display: block; font-size: var(--t-sm); font-weight: 600; color: var(--i
 }
 
 @media (max-width: 900px) {
-  .ftr-top { grid-template-columns: 1fr; gap: var(--s-6); }
-  .ftr-brand { order: -1; max-width: 34rem; }   /* who this is, before the index of it */
+  .ftr-cols { gap: var(--s-5); }
 }
 @media (max-width: 560px) {
-  .ftr-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-5) var(--s-4); }
-  .ftr-bar { justify-content: center; text-align: center; }
+  .ftr { padding-block: 32px 20px; }
+  .ftr-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .ftr h4 { font-size: 12px; }
+  .ftr a { font-size: 11px; line-height: 1.35; }
+  .ftr-bar { flex-wrap: nowrap; }
+  .ftr-brand { gap: 9px; min-width: 0; }
+  .ftr-mark { font-size: 18px; }
+  .ftr-brand p { font-size: 9px; line-height: 1.3; }
+  .ftr-lang { font-size: 10px; }
 }
 
 /* ============ Component library (ui.js) ============ */
