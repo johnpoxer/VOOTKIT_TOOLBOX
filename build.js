@@ -776,7 +776,7 @@ function toolIconHtml(t) {
   const m = toolIcon(t);
   const cat = CATBY[t.cat] || {};
   if (!m) return `<span class="ic">${icon(cat.icon)}</span>`;   // audited against below
-  return `<span class="ic ic-tool" style="--ic-h:${m.hue};--ic-bg:${hueFill(m.hue)}">` +
+  return `<span class="ic ic-tool ic-tool-${esc(t.cat)} ic-glyph-${esc(m.g)}" style="--ic-h:${m.hue};--ic-bg:${hueFill(m.hue)}">` +
     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" ` +
     `stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${GLYPH[m.g]}</svg></span>`;
 }
@@ -1385,7 +1385,7 @@ function allToolsPage() {
       tax:278, business:214, seo:24, accessibility:12, privacy:148, text:282,
       design:326, developer:145, everyday:38, data:198, health:350, travel:194,
       audio:286, education:264, ai:228 })[c.slug] || 214;
-    return `<a href="../tools/?cat=${esc(c.slug)}" data-dir-cat="${esc(c.slug)}" data-dir-cats="${esc(c.slug)}"><span style="--cat-icon-bg:${hueFill(hue)};--cat-icon-h:${hue}">${icon(c.icon)}</span><strong>${esc(c.name)}</strong><small>${c.count} tools</small><b>›</b></a>`;
+    return `<a href="../tools/${esc(c.slug)}/" aria-label="Open ${esc(c.name)} tools"><span style="--cat-icon-bg:${hueFill(hue)};--cat-icon-h:${hue}">${icon(c.icon)}</span><strong>${esc(c.name)}</strong><small>${c.count} tools</small><b>›</b></a>`;
   }).join("");
   const planned = allTools.length - liveCount;
 

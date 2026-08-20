@@ -690,7 +690,7 @@ console.log(`seo + newsletter placement: ${pass} total assertions passed`);
     console.log("  (skipped tool-icon checks — run `node build.js` first)");
   } else {
     const hues = (h) => (h.match(/--ic-h:(\d+)/g) || []);
-    const glyphs = (h) => [...h.matchAll(/ic-tool"[^>]*><svg[^>]*>(.*?)<\/svg>/gs)].map((m) => m[1]);
+    const glyphs = (h) => [...h.matchAll(/ic-tool[^\"]*"[^>]*><svg[^>]*>(.*?)<\/svg>/gs)].map((m) => m[1]);
 
     ok(hues(pdf).length >= 30, "every PDF card carries a per-tool icon, got " + hues(pdf).length);
     ok(new Set(hues(pdf)).size === 1 && /--ic-h:4/.test(pdf),
@@ -717,6 +717,15 @@ console.log(`seo + newsletter placement: ${pass} total assertions passed`);
        name sits right beside it and would otherwise be announced twice. */
     ok(/ic-tool[^>]*><svg[^>]*aria-hidden="true"/.test(pdf),
        "tool icons are aria-hidden — the name next to them is the label");
+
+    const directory = read4("tools/index.html");
+    ["pdf", "images", "video", "finance", "developer"].forEach((cat) => {
+      ok(new RegExp('href="\\.\\./tools/' + cat + '/"[^>]*aria-label="Open ').test(directory),
+         "Browse categories opens the real " + cat + " category page");
+    });
+    const browse = (directory.match(/<div class="dir-browse-grid">[\s\S]*?<\/div>/) || [""])[0];
+    ok(!/href="\.\.\/tools\/\?cat=/.test(browse),
+       "Browse categories no longer relies on fragile query-filter links");
   }
 }
 console.log(`seo + tool icons: ${pass} total assertions passed`);

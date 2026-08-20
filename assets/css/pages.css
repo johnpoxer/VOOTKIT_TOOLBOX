@@ -1131,6 +1131,33 @@
   .dir-float { animation: none !important; }
 }
 
+/* Category launchers are real destinations, not decorative filters. Their
+   icon treatment mirrors the layered app marks used by individual tools. */
+.dir-browse-grid > a {
+  position: relative;
+  transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+.dir-browse-grid > a:hover,
+.dir-browse-grid > a:focus-visible {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--cat-icon-bg, #2f72d7) 38%, #dfe3ec);
+  box-shadow: 0 8px 20px rgb(15 23 42 / .08);
+}
+.dir-browse-grid > a:active { transform: translateY(0) scale(.985); }
+.dir-browse-grid > a > span {
+  position: relative; isolation: isolate; overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--cat-icon-bg, #2f72d7) 72%, #fff 28%);
+  background:
+    radial-gradient(circle at 25% 18%, rgb(255 255 255 / .34), transparent 31%),
+    linear-gradient(145deg, color-mix(in srgb, var(--cat-icon-bg, #2f72d7) 76%, #fff 24%), var(--cat-icon-bg, #2f72d7) 60%, color-mix(in srgb, var(--cat-icon-bg, #2f72d7) 84%, #000 16%));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / .32), 0 4px 9px hsl(var(--cat-icon-h, 214) 55% 35% / .26);
+}
+.dir-browse-grid > a > span::after {
+  content: ""; position: absolute; z-index: -1; right: -20%; bottom: -32%;
+  width: 74%; height: 74%; border-radius: 50%; background: rgb(255 255 255 / .14);
+}
+.dir-browse-grid > a > span svg { filter: drop-shadow(0 1px 1px rgb(0 0 0 / .16)); }
+
 /* ---------- universal tool page ---------- */
 .tool-page { max-width: 1240px; }
 .tool-page > .crumb { margin-bottom: var(--s-5); }
