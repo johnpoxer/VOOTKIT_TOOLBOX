@@ -727,6 +727,13 @@ console.log(`seo + newsletter placement: ${pass} total assertions passed`);
     const browse = (directory.match(/<div class="dir-browse-grid">[\s\S]*?<\/div>/) || [""])[0];
     ok(!/href="\.\.\/tools\/\?cat=/.test(browse),
        "Browse categories no longer relies on fragile query-filter links");
+
+    const iconData = require("../data/tool-icons.js").icons;
+    const marks = Object.values(iconData).map((entry) => entry.m);
+    ok(marks.length === VK.TOOLS.length, "every catalog tool has an exclusive logo mark");
+    ok(marks.every(Boolean), "no tool logo mark is empty");
+    ok(new Set(marks).size === marks.length,
+       "no complete tool logo is repeated across the catalog");
   }
 }
 console.log(`seo + tool icons: ${pass} total assertions passed`);

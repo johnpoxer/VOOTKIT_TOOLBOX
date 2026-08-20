@@ -1100,7 +1100,8 @@
       if (!e || !I.glyphs[e.g]) return '<span class="ic"></span>';
       return '<span class="ic ic-tool" style="--ic-h:' + e.h + ';--ic-bg:' + e.bg + '">' +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" ' +
-        'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + I.glyphs[e.g] + '</svg></span>';
+        'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + I.glyphs[e.g] + '</svg>' +
+        '<b class="ic-mark" aria-hidden="true">' + e.m + '</b></span>';
     }
     function summarise(n) {
       var spec = specFor(n.id), o = (spec && spec.options) || [];

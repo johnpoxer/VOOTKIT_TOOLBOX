@@ -722,6 +722,16 @@ function toolIcon(t) {
   return null;
 }
 
+/* A compact, globally unique signature. The action glyph explains what the
+   tool does; this mark makes the complete app icon exclusive to that tool.
+   Including the catalogue position guarantees uniqueness even when names
+   begin with the same word (PDF to JPG / PDF to PNG / PDF to WebP). */
+function toolMark(t) {
+  const position = VK.TOOLS.findIndex((item) => item.id === t.id && item.cat === t.cat);
+  const lead = String(t.id || "tool").replace(/[^a-z0-9]/g, "").charAt(0).toUpperCase() || "V";
+  return lead + Math.max(0, position).toString(36).toUpperCase().padStart(2, "0");
+}
+
 /* ---------- THE TILE IS A SOLID COLOUR, NOT A TINT ----------
  *
  * It used to be hsl(H 72% 96%) — a 96%-lightness wash with the glyph stroked
@@ -772,7 +782,8 @@ function toolIconHtml(t) {
   if (!m) return `<span class="ic">${icon(cat.icon)}</span>`;   // audited against below
   return `<span class="ic ic-tool ic-tool-${esc(t.cat)} ic-glyph-${esc(m.g)}" style="--ic-h:${m.hue};--ic-bg:${hueFill(m.hue)}">` +
     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" ` +
-    `stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${GLYPH[m.g]}</svg></span>`;
+    `stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${GLYPH[m.g]}</svg>` +
+    `<b class="ic-mark" aria-hidden="true">${toolMark(t)}</b></span>`;
 }
 
 /* A silent fallback is how the original problem survived unnoticed, so the
@@ -4510,7 +4521,7 @@ const cssBundle = CSS_PARTS
   VK.TOOLS.forEach((t) => {
     const m = toolIcon(t);
     if (!m) return;                    // iconAudit() has already thrown for live tools
-    map[t.id] = { g: m.g, h: m.hue, bg: hueFill(m.hue) };
+    map[t.id] = { g: m.g, h: m.hue, bg: hueFill(m.hue), m: toolMark(t) };
     used.add(m.g);
   });
   const glyphs = {};
