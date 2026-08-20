@@ -291,13 +291,14 @@ function head(o) {
     || (here.indexOf("/about.html") > -1 ? "about" : "");
   const cur = (name) => active === name ? ' aria-current="page"' : "";
   return `<!doctype html>
-<html lang="${lang}"${o.dir === "rtl" ? ' dir="rtl"' : ""}>
+<html lang="${lang}" data-theme="light"${o.dir === "rtl" ? ' dir="rtl"' : ""}>
 <head>
 <meta charset="utf-8">
 <meta name="google-adsense-account" content="${PUB}">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#fbfcfe" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#fbfcfe">
+<meta name="color-scheme" content="light">
+<script>document.documentElement.setAttribute('data-theme','light');</script>
 <title>${esc(o.title)}</title>
 <meta name="description" content="${esc(o.desc)}">
 <link rel="canonical" href="${o.url}">${hreflangTags(o.alts)}
@@ -339,7 +340,7 @@ ${o.ads ? adLoader() : "<!-- no ads inside an active tool workspace -->"}
     </nav>
     <div class="hdr-act">
       ${langSwitcher(o.alts, lang)}
-      <button class="icon-btn" id="theme" type="button" aria-label="Switch theme">
+      <button class="icon-btn" id="theme" type="button" aria-label="Light mode enabled" hidden>
         <svg viewBox="0 0 24 24"><path d="M21 13.1A8.4 8.4 0 1 1 10.9 3a6.6 6.6 0 0 0 10.1 10.1Z"/></svg>
       </button>
       <button class="icon-btn" type="button" data-open-search aria-label="Search tools">
@@ -467,9 +468,7 @@ function foot(depth, extraScripts, opts) {
 document.getElementById('yr').textContent=new Date().getFullYear();
 (function(){var b=document.getElementById('burger'),n=document.getElementById('nav');
 b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');b.setAttribute('aria-label',o?'Close menu':'Open menu');});
-var t=document.getElementById('theme'),s=null;try{s=localStorage.getItem('vk-theme');}catch(e){}
-if(s)document.documentElement.setAttribute('data-theme',s);
-t.addEventListener('click',function(){var c=document.documentElement.getAttribute('data-theme'),x=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',x);try{localStorage.setItem('vk-theme',x);}catch(e){}});})();
+document.documentElement.setAttribute('data-theme','light');})();
 </script>
 <script src="${up}assets/js/track.js${V}" defer></script>
 <script src="${up}assets/js/consent-ui.js${V}" defer></script>
@@ -2773,13 +2772,14 @@ function authTopAction(kind) {
 function authHead(kind, title, desc, ld) {
   const url = `${SITE}/auth/${kind}/`;
   return `<!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="google-adsense-account" content="${PUB}">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#fbfcfe" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#fbfcfe">
+<meta name="color-scheme" content="light">
+<script>document.documentElement.setAttribute('data-theme','light');</script>
 <title>${esc(title)} - Vootkit</title>
 <meta name="description" content="${esc(desc)}">
 <link rel="canonical" href="${url}">
@@ -2814,7 +2814,7 @@ ${consentHead()}
   <div class="auth-top-in">
     <a class="brand auth-logo" href="../../" aria-label="Vootkit home">${brandLogo()}<span>vootkit</span></a>
     <div class="auth-top-actions">
-      <button class="icon-btn auth-theme" id="theme" type="button" aria-label="Switch theme">
+      <button class="icon-btn auth-theme" id="theme" type="button" aria-label="Light mode enabled" hidden>
         <svg viewBox="0 0 24 24"><path d="M21 13.1A8.4 8.4 0 1 1 10.9 3a6.6 6.6 0 0 0 10.1 10.1Z"/></svg>
       </button>
       <p class="auth-switch">${authTopAction(kind)}</p>
@@ -2826,9 +2826,7 @@ ${consentHead()}
 function authFootLite() {
   return `</main>
 <script>
-(function(){var t=document.getElementById('theme'),s=null;try{s=localStorage.getItem('vk-theme');}catch(e){}
-if(s)document.documentElement.setAttribute('data-theme',s);
-if(t)t.addEventListener('click',function(){var c=document.documentElement.getAttribute('data-theme'),x=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',x);try{localStorage.setItem('vk-theme',x);}catch(e){}});})();
+(function(){document.documentElement.setAttribute('data-theme','light');})();
 </script>
 <script src="../../assets/js/track.js${V}" defer></script>
 <script src="../../assets/js/consent-ui.js${V}" defer></script>
