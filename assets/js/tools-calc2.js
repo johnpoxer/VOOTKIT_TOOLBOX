@@ -406,6 +406,11 @@
           ] }
       ],
       compute: function (v) {
+        if (!(v.value > 0)) return {
+          headline: { label: 'Fuel economy', value: '—', sub: 'Enter a value above zero' },
+          stats: [{ label: 'MPG (US)', value: '—' }, { label: 'MPG (UK)', value: '—' }, { label: 'km/L', value: '—' }, { label: 'L/100km', value: '—' }],
+          note: 'Fuel economy cannot be converted from zero. Enter the vehicle’s measured consumption or mileage.'
+        };
         var l100;
         if (v.from === 'mpgus') l100 = 235.215 / v.value;
         else if (v.from === 'mpguk') l100 = 282.481 / v.value;
@@ -724,6 +729,11 @@
         { k: 'speed', label: 'Average speed', def: 60, min: 1, step: 1 }
       ],
       compute: function (v) {
+        if (!(v.speed > 0)) return {
+          headline: { label: 'Travel time', value: '—', sub: 'Enter an average speed above zero' },
+          stats: [{ label: 'Time', value: '—' }, { label: 'With breaks', value: '—' }, { label: 'Distance', value: (Number(v.distance) || 0) + ' ' + v.unit }],
+          note: 'A travel time needs a speed above zero. Real journeys also vary with traffic, stops and terrain.'
+        };
         var hours = v.distance / v.speed;
         function tripTime(h) {
           var mins = Math.round(Math.max(0, h) * 60);

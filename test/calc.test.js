@@ -105,6 +105,28 @@ edge.forEach(([id, v]) => {
   assert.ok(!/NaN/.test(JSON.stringify(out)), `${id} edge case produces no NaN`); pass++;
 });
 
+/* Category beta pass: exercise every calculator at defaults, declared minima,
+ * declared maxima and an incomplete-form zero state. Mobile users frequently
+ * clear a field before typing the replacement, so zero must never crash or
+ * flash NaN/Infinity while the form is between values. */
+const ALL_CALCS = Object.assign({}, TOOLS, require("../assets/js/tools-calc2.js"), require("../assets/js/tools-video.js"));
+Object.entries(ALL_CALCS).forEach(([id, spec]) => {
+  ["default", "min", "max", "zero"].forEach(kind => {
+    const v = {};
+    spec.fields.forEach(f => {
+      if (f.type === "select") v[f.k] = f.def;
+      else if (kind === "min") v[f.k] = f.min == null ? 0 : f.min;
+      else if (kind === "max") v[f.k] = f.max == null ? Math.max(1, (+f.def || 1) * 10) : f.max;
+      else if (kind === "zero") v[f.k] = 0;
+      else v[f.k] = f.def;
+    });
+    let out;
+    assert.doesNotThrow(() => { out = spec.compute(v, M); }, `${id}/${kind} does not throw`); pass++;
+    assert.ok(out && out.headline, `${id}/${kind} returns a result state`); pass++;
+    assert.ok(!/NaN|undefined|Infinity/.test(JSON.stringify(out)), `${id}/${kind} contains no non-finite output`); pass++;
+  });
+});
+
 /* ---- Wave 1b reference values (independently computed) ---- */
 const T2 = require("../assets/js/tools-money2.js");
 const C2 = require("../assets/js/tools-calc2.js");

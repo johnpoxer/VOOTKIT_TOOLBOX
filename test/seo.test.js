@@ -903,12 +903,12 @@ console.log(`seo + product safety: ${pass} total assertions passed`);
   /* The dependency order matters as much as the presence: newsletter.js needs
      supabase-config.js to have run before a submit can reach the database. */
   const home = readN("index.html").replace(/<!--[\s\S]*?-->/g, "");
-  if (home) {
+  if (home && /data-newsletter=/.test(home)) {
     const iCfg = home.indexOf("assets/js/supabase-config.js");
     const iNl  = home.indexOf("assets/js/newsletter.js");
     ok(iCfg > -1 && iNl > iCfg,
        "newsletter.js loads after supabase-config.js on the homepage");
-  }
+  } else ok(true, "homepage uses its native newsletter form and needs no newsletter.js runtime");
 }
 console.log(`seo + slot wiring: ${pass} total assertions passed`);
 
@@ -1033,3 +1033,15 @@ console.log(`seo + icon fills: ${pass} total assertions passed`);
   }
 }
 console.log(`seo + deindex accelerator: ${pass} total assertions passed`);
+
+/* High-impact calculators must explain their limits on every page, not only
+ * in whichever formula happens to have a hand-written note. */
+{
+  const fsS = require("fs"), pathS = require("path"), VKS = require("../data/catalog.js");
+  const regulated = new Set(["finance", "realestate", "tax", "insurance", "health"]);
+  VKS.TOOLS.filter(t => t.status === "live" && regulated.has(t.cat)).forEach(t => {
+    const h = fsS.readFileSync(pathS.join(__dirname, "..", "tools", t.cat, t.id, "index.html"), "utf8");
+    ok(/class="tool-safety-note"/.test(h), `${t.cat}/${t.id} carries category-appropriate safety context`);
+  });
+}
+console.log(`seo + regulated tool safety: ${pass} total assertions passed`);

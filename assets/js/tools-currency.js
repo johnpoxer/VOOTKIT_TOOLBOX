@@ -12,7 +12,12 @@
   async function getRates(base) {
     var c = cache[base];
     if (c && Date.now() - c.time < 60 * 60 * 1000) return c.rates;   // 1h cache
-    var res = await fetch(API + encodeURIComponent(base));
+    var ctl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    var timer = ctl ? setTimeout(function () { ctl.abort(); }, 12000) : null;
+    var res;
+    try { res = await fetch(API + encodeURIComponent(base), ctl ? { signal: ctl.signal } : undefined); }
+    catch (e) { throw new Error(e && e.name === 'AbortError' ? 'The rate service took too long — please try again.' : 'Could not reach the rate service. Check your connection and try again.'); }
+    finally { if (timer) clearTimeout(timer); }
     if (!res.ok) throw new Error('Rate service is unavailable right now — try again shortly.');
     var data = await res.json();
     if (!data || data.result === 'error' || !data.rates) throw new Error('Could not read exchange rates.');
@@ -32,6 +37,7 @@
       var busy = false;
       async function convert() {
         if (busy) return; busy = true;
+        host.setAttribute('aria-busy', 'true');
         out.innerHTML = '<span class="calc-label">Converting…</span>';
         try {
           var rates = await getRates(from.value);
@@ -40,8 +46,9 @@
           var result = (+amount.value || 0) * rate;
           out.innerHTML = '<span class="calc-label">' + (+amount.value || 0).toLocaleString() + ' ' + from.value + ' =</span><strong class="calc-value">' + result.toLocaleString(undefined, { maximumFractionDigits: 2 }) + ' ' + to.value + '</strong>';
           meta.className = 'note'; meta.textContent = '1 ' + from.value + ' = ' + rate.toFixed(4) + ' ' + to.value + (cache[from.value] && cache[from.value].updated ? ' · rates updated ' + cache[from.value].updated : '');
+          W.noteSuccess();
         } catch (e) { out.innerHTML = ''; meta.className = 'note err'; meta.textContent = e.message; }
-        busy = false;
+        busy = false; host.removeAttribute('aria-busy');
       }
       amount.addEventListener('input', W.debounce(convert, 250));
       from.addEventListener('change', convert); to.addEventListener('change', convert);

@@ -16,7 +16,9 @@ const VK = require("./data/catalog.js");
 const STATS = require("./data/stats.js");
 const TOOLCONTENT = require("./data/tool-content.js");
 const TOOLFACTS = require("./data/tool-facts.js");
-const MONEY = Object.assign({}, require("./assets/js/tools-money.js"), require("./assets/js/tools-money2.js"));
+const MONEY1 = require("./assets/js/tools-money.js");
+const MONEY2 = require("./assets/js/tools-money2.js");
+const MONEY = Object.assign({}, MONEY1, MONEY2);
 const CALC2 = require("./assets/js/tools-calc2.js");
 /* Tools whose process() calls VKPixels. Kept as an explicit list so a page
    cannot silently ship without the worker its tool depends on — the test suite
@@ -56,7 +58,7 @@ const WIDGETS = {
   "assets/js/tools-stream.js": ["giveaway-picker","starting-soon-screen","stream-overlay-creator","stream-alert-creator","stream-schedule-planner","chat-overlay-tool"],
   "assets/js/tools-mathdate.js": ["math-solver","equation-solver","date-calculator","time-calculator"],
   "assets/js/tools-edu.js": ["flashcard-maker","vocabulary-builder","citation-generator","mind-map-generator","diagram-maker","learning-tracker","quiz-maker","study-planner"],
-  "assets/js/tools-pdfedit.js": ["compress-pdf","pdf-redact","compare-pdf"],
+  "assets/js/tools-pdfedit.js": ["pdf-redact","compare-pdf"],
   "assets/js/tools-currency.js": ["currency-converter"]
 };
 function widgetScriptsFor(id) {
@@ -980,7 +982,8 @@ const CATEGORY_DEPTH = {
 /* which script bundle a tool page loads — shared by English + localised pages */
 function toolScripts(t) {
   if (VIDEO[t.id]) return ['assets/js/calc.js', 'assets/js/tools-video.js'];
-  if (MONEY[t.id]) return ['assets/js/calc.js', 'assets/js/tools-money.js', 'assets/js/tools-money2.js'];
+  if (MONEY1[t.id]) return ['assets/js/calc.js', 'assets/js/tools-money.js'];
+  if (MONEY2[t.id]) return ['assets/js/calc.js', 'assets/js/tools-money2.js'];
   if (CALC2[t.id]) return ['assets/js/calc.js', 'assets/js/tools-calc2.js'];
   /* pixelworker.js is only needed by the tools that do per-pixel work; loading
      it everywhere would put a worker payload on pages that never use one. */
@@ -992,7 +995,7 @@ function toolScripts(t) {
     .concat(['assets/js/tools-image2.js']);
   if (PDF[t.id]) return ['assets/js/filetool.js', 'assets/js/tools-pdf.js'];
   if (VIDEOFX[t.id]) return ['assets/js/filetool.js', 'assets/js/videoengine.js', 'assets/js/tools-videofx.js'];
-  if (LINKTOOLS.indexOf(t.id) !== -1) return ['assets/js/tools-linktools.js'];
+  if (LINKTOOLS.indexOf(t.id) !== -1) return ['assets/js/widget.js', 'assets/js/tools-linktools.js'];
   return widgetScriptsFor(t.id) || [];
 }
 
@@ -1764,6 +1767,18 @@ function toolWorkspaceShell(t, c, live, local, facts, archetype, steps) {
   </section>`;
 }
 
+function toolSafetyNote(t) {
+  const notes = {
+    finance: "This result is an educational estimate, not financial advice. Rates, fees, taxes and product terms vary, so compare it with the lender, provider or official documents before making a decision.",
+    realestate: "Property results are planning estimates, not a valuation or lending offer. Verify local taxes, fees, rates and legal requirements with the relevant professionals.",
+    tax: "This is a planning estimate, not tax or payroll advice. Rules, thresholds, deductions and employment terms vary by location and can change; verify the result with the correct authority or accountant.",
+    insurance: "This result is a planning estimate, not an insurance quote or recommendation. Actual cover, exclusions, premiums and claims depend on the policy and insurer.",
+    health: "This result is a general planning estimate, not a diagnosis or medical advice. Speak with a qualified professional before making significant health, diet or training changes."
+  };
+  const copy = notes[t.cat];
+  return copy ? `<aside class="tool-safety-note" aria-label="Important information">${icon("shield")}<p><strong>Important:</strong> ${esc(copy)}</p></aside>` : "";
+}
+
 function toolPage(t) {
   const c = VK.category(t.cat);
   const url = `${SITE}/tools/${t.cat}/${t.id}/`;
@@ -1825,7 +1840,7 @@ function toolPage(t) {
   const relatedShell = toolRelatedStrip(t, c, related);
   const howShell = toolHowToCards(t, steps);
 
-  let pageHead = head({ depth: 3, url, ads: true, ld, cat: t.cat, lang: "en", alts: altsForTool(t),
+  let pageHead = head({ depth: 3, url, ads: true, ld, cat: t.cat, lang: "en", alts: altsForTool(t), bodyClass: "tool-detail-page",
     title: toolTitle(t.name, c.name),
     ogTitle: shellTitle,
     desc: `${t.desc} ${local ? "Runs in your browser" : "No install needed"}, no watermark, 5 free uses a day.` });
@@ -1838,6 +1853,7 @@ function toolPage(t) {
   <div class="tool-shell-layout">
     <main class="tool-main-column">
       <header class="tool-hero tool-head">
+        <a class="tool-back" href="../" aria-label="Back to ${esc(c.name)} tools">${icon("arrow-left")}</a>
         <div class="tool-hero-icon">${toolIconHtml(t)}</div>
         <div class="tool-hero-copy">
           <div class="tool-hero-kicker"><span>${esc(c.name)} tool</span><span>${esc(toolOutputLabel(t, archetype))}</span></div>
@@ -1845,12 +1861,20 @@ function toolPage(t) {
           <p class="page-lede">${esc(t.desc)}</p>
           <div class="trust">${toolHeroBadges(t, local, archetype)}</div>
         </div>
+        <a class="tool-help" href="#tool-faq" aria-label="Help with ${esc(t.name)}">?</a>
       </header>
 
       <!-- 1. workspace -->
       ${workspace}
-      ${relatedShell}
       ${howShell}
+      ${toolSafetyNote(t)}
+      <section class="tool-privacy-card" aria-labelledby="tool-privacy-title">
+        <span class="tool-privacy-icon">${icon("shield")}</span>
+        <div><h2 id="tool-privacy-title">${local ? "Your files stay private" : "Clear about network access"}</h2>
+        <p>${local ? "Your work is processed locally in your browser where possible and is never added to a Vootkit upload library." : "This tool needs an internet connection for its live lookup. Network use is clearly labelled before you begin."}</p>
+        <a href="../../../privacy.html">Learn more about privacy ${icon("arrow-right")}</a></div>
+      </section>
+      ${relatedShell}
 
       <div class="tool-reading-flow">
         ${deep ? `<section class="prose">
@@ -1898,7 +1922,7 @@ function toolPage(t) {
         ${adUnit("inContent")}
 
         <!-- 5. FAQ -->
-        <section class="prose faq">
+        <section class="prose faq" id="tool-faq">
           <h2>Frequently Asked Questions</h2>
           ${faqs.map((f) => `<details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join("\n          ")}
         </section>

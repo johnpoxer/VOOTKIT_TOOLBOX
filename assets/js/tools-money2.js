@@ -677,9 +677,12 @@
         var gross = v.rent * 12;
         var effective = gross * (1 - v.vacancy / 100);
         var net = effective - v.costs;
+        var propertyValue = Math.max(0, Number(v.price) || 0);
+        var netYield = propertyValue > 0 ? net / propertyValue * 100 : 0;
+        var grossYield = propertyValue > 0 ? gross / propertyValue * 100 : 0;
         return {
-          headline: { label: 'Net yield', value: (net / v.price * 100).toFixed(2) + '%',
-            sub: 'Gross yield ' + (gross / v.price * 100).toFixed(2) + '%' },
+          headline: { label: 'Net yield', value: netYield.toFixed(2) + '%',
+            sub: 'Gross yield ' + grossYield.toFixed(2) + '%' },
           stats: [
             { label: 'Gross rent', value: F.money(gross, v.cur) },
             { label: 'After vacancy', value: F.money(effective, v.cur) },

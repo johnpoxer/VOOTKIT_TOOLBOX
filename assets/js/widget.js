@@ -78,7 +78,90 @@
     try {
       var host = document.getElementById('workspace');
       if (host && root.VKConvert) root.VKConvert.onToolSuccess(host, host.getAttribute('data-tool'));
+      if (host && typeof root.CustomEvent === 'function') {
+        host.dispatchEvent(new root.CustomEvent('vk:widget-success', { detail: { message: 'Your result is ready.' } }));
+      }
     } catch (e) { /* conversion must never break a working tool */ }
+  }
+
+  /* Give custom async widgets the same honest process states as file tools.
+     This observes status text the tool already emits, so it never invents a
+     delay or claims that work is happening when it is not. */
+  function enhanceLifecycle(host) {
+    if (!host || host.getAttribute('data-lifecycle')) return;
+    host.setAttribute('data-lifecycle', '1');
+
+    var shell = el('div', { class: 'uw-lifecycle', 'aria-live': 'polite' });
+    var loading = el('section', { class: 'uw-state uw-loading', hidden: '' }, [
+      el('div', { class: 'uw-spinner', role: 'progressbar', 'aria-label': 'Processing' }),
+      el('h2', { text: 'Working on your result' }),
+      el('p', { class: 'uw-message', text: 'Preparing…' }),
+      el('ol', { class: 'uw-steps' }, [
+        el('li', { class: 'is-done', text: 'Input received' }),
+        el('li', { class: 'is-active', text: 'Processing' }),
+        el('li', { text: 'Preparing result' })
+      ])
+    ]);
+    var success = el('section', { class: 'uw-state uw-success', hidden: '' }, [
+      el('div', { class: 'uw-check', 'aria-hidden': 'true', text: '✓' }),
+      el('h2', { text: 'Your result is ready' }),
+      el('p', { text: 'The tool finished successfully.' }),
+      el('button', { class: 'btn ghost', type: 'button', text: 'Start over', onClick: function () { root.location.reload(); } })
+    ]);
+    var failure = el('section', { class: 'uw-state uw-error', hidden: '' }, [
+      el('div', { class: 'uw-error-mark', 'aria-hidden': 'true', text: '!' }),
+      el('h2', { text: 'We couldn\'t finish that' }),
+      el('p', { text: 'Review the message below, then try again.' }),
+      el('button', { class: 'btn ghost', type: 'button', text: 'Try again', onClick: function () { root.location.reload(); } })
+    ]);
+    shell.appendChild(loading); shell.appendChild(success); shell.appendChild(failure);
+    host.insertBefore(shell, host.firstChild);
+
+    var busyWords = /\b(loading|reading|processing|compressing|converting|extracting|scanning|rendering|generating|removing|hashing|analysing|analyzing|checking|building|shortening|uploading|transcribing|recording)\b/i;
+    var doneWords = /\b(done|ready|downloaded|complete|completed|created|converted|compressed|compared|generated|recorded|finished|saved|success)\b/i;
+    var notDone = /\b(choose|select|set|then|first|when|once)\b/i;
+    var scheduled = false;
+
+    function setVisible(node, visible) {
+      if (node.hidden === visible) node.hidden = !visible;
+    }
+    function evaluate() {
+      var nodes = host.querySelectorAll('[role="status"], .note, .cf-status');
+      var active = '', completed = '', errored = '';
+      Array.prototype.forEach.call(nodes, function (node) {
+        if (shell.contains(node) || node.hidden) return;
+        var message = (node.textContent || '').replace(/\s+/g, ' ').trim();
+        if (!message) return;
+        if (/\b(err|error|failed|failure)\b/i.test(node.className || '') || /\b(error|failed|could not|unable to)\b/i.test(message)) errored = message;
+        else if (busyWords.test(message)) active = message;
+        else if (doneWords.test(message) && !notDone.test(message)) completed = message;
+      });
+      if (errored) {
+        failure.querySelector('p').textContent = errored;
+        setVisible(loading, false); setVisible(success, false); setVisible(failure, true);
+        host.classList.remove('widget-is-loading'); host.removeAttribute('aria-busy');
+      } else if (active) {
+        loading.querySelector('.uw-message').textContent = active;
+        setVisible(loading, true); setVisible(success, false); setVisible(failure, false);
+        host.classList.add('widget-is-loading'); host.setAttribute('aria-busy', 'true');
+      } else {
+        setVisible(loading, false); setVisible(failure, false);
+        if (completed) setVisible(success, true);
+        host.classList.remove('widget-is-loading'); host.removeAttribute('aria-busy');
+      }
+    }
+    function schedule() {
+      if (scheduled) return;
+      scheduled = true;
+      Promise.resolve().then(function () { scheduled = false; evaluate(); });
+    }
+    host.addEventListener('vk:widget-success', function (event) {
+      if (event.detail && event.detail.message) success.querySelector('p').textContent = event.detail.message;
+      setVisible(loading, false); setVisible(failure, false); setVisible(success, true);
+      host.classList.remove('widget-is-loading'); host.removeAttribute('aria-busy');
+    });
+    if (root.MutationObserver) new root.MutationObserver(schedule).observe(host, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['class', 'hidden'] });
+    schedule();
   }
 
   /* a labelled "copy this output" button wired to a getter */
@@ -91,7 +174,8 @@
      then call VKW.boot(). A builder is fn(host, VKW). */
   var VKW = {
     el: el, escapeHtml: escapeHtml, debounce: debounce, copy: copy,
-    download: download, copyBtn: copyBtn, flash: flash, noteSuccess: noteSuccess, tools: {},
+    download: download, copyBtn: copyBtn, flash: flash, noteSuccess: noteSuccess,
+    enhanceLifecycle: enhanceLifecycle, tools: {},
     boot: function () {
       var host = document.getElementById('workspace');
       if (!host || host.getAttribute('data-mounted')) return;
@@ -101,6 +185,7 @@
       host.setAttribute('data-mounted', '1');
       host.classList.add('widget');
       build(host, VKW);
+      enhanceLifecycle(host);
     }
   };
 

@@ -28,7 +28,7 @@
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="manifest" href="../site.webmanifest">
-<link rel="stylesheet" href="../assets/css/app.css?v=d8b9acaea8">
+<link rel="stylesheet" href="../assets/css/app.css?v=b2eca37ab1">
 <script>(function (root) {
   'use strict';
   var KEY = 'vk-consent';
@@ -146,7 +146,7 @@ window.VKConsent&&window.VKConsent.setDefaults();</script>
   </div>
 </header>
 <main id="main" tabindex="-1"><script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Vootkit Workflows","applicationCategory":"BusinessApplication","operatingSystem":"Any modern web browser","url":"https://www.vootkit.com/workflows/","description":"Chain Vootkit tools into one browser-based run.","featureList":["Website Image Optimizer","PDF Document Workflow","Invoice PDF Packet","Video Social Workflow","Photo Batch Cleanup","Print Ready Images","Safe PDF Share","PDF Report Builder","Video Thumbnail Workflow","Social Image Pack","Profile Photo Polish","Ecommerce Image Set","Blog Image Ready","Photo Touchup Export","Thumbnail Export Pack","PDF Client Packet","PDF Page Cleanup","PDF Review Extract","PDF Archive Lock","PDF Watermark Delivery","Quick PDF Trim","Video Compress Export","Muted Preview GIF","Vertical Social Cut","Training Clip Package","Audio Extract Pack","Scan Pack Builder","Image Report PDF","Document Watermark Lock","Page Numbered Archive","Signature Ready PDF","Receipt Archive","Proposal Delivery Pack","Contract Send Ready","Billing Image Packet","Web Thumbnail Set","App Icon Export","Docs Asset WebP","Release GIF Preview","SVG Export Pack","Study Handout Pack","Assignment PDF Lock","Presentation Image Optimizer","Lecture Clip GIF","Research Appendix Builder"],"offers":{"@type":"Offer","category":"Subscription"}}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Do my files get uploaded when I run a workflow?","acceptedAnswer":{"@type":"Answer","text":"No. Every workflow-compatible step runs in your browser on your own machine, including the handover between steps."}},{"@type":"Question","name":"How is this different from using the tools one at a time?","acceptedAnswer":{"@type":"Answer","text":"A workflow is one file selection and one run through a reusable chain, instead of opening several pages manually."}},{"@type":"Question","name":"Which tools can be workflow steps?","acceptedAnswer":{"@type":"Answer","text":"57 tools today - the runnable PDF, image, audio and video sets."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Do my files get uploaded when I run a workflow?","acceptedAnswer":{"@type":"Answer","text":"No. Every workflow-compatible step runs in your browser on your own machine, including the handover between steps."}},{"@type":"Question","name":"How is this different from using the tools one at a time?","acceptedAnswer":{"@type":"Answer","text":"A workflow is one file selection and one run through a reusable chain, instead of opening several pages manually."}},{"@type":"Question","name":"Which tools can be workflow steps?","acceptedAnswer":{"@type":"Answer","text":"58 tools today - the runnable PDF, image, audio and video sets."}}]}</script>
   
     <section class="wf-marketplace" id="wf-examples" aria-labelledby="wf-market-title">
       <div class="wf-market-shell">
@@ -1021,7 +1021,7 @@ window.VKConsent&&window.VKConsent.setDefaults();</script>
   <section class="wrap section prose wf-prose" aria-labelledby="wf-questions">
     <h2 id="wf-questions">How Vootkit Workflow Works</h2>
     <p>A workflow is a reusable path through several compatible Vootkit tools. The builder uses the same processing functions as the individual tool pages, so if a tool cannot be called by the workflow engine yet, it is not offered as a step.</p>
-    <p>57 tools can currently be workflow steps. Every chain is checked before it runs, and your files stay in your browser while one step hands its output to the next. That means you can prepare a whole batch without repeatedly downloading a file, opening another page, and choosing the same file again.</p>
+    <p>58 tools can currently be workflow steps. Every chain is checked before it runs, and your files stay in your browser while one step hands its output to the next. That means you can prepare a whole batch without repeatedly downloading a file, opening another page, and choosing the same file again.</p>
     <h2>Workflow-ready tools</h2>
     <p>The current workflow engine focuses on file-processing tools with callable browser engines. These include image tools such as <a href="../tools/images/resize-image/">Image Resizer</a>, <a href="../tools/images/compress-image/">Image Compressor</a>, <a href="../tools/images/convert-image/">Image Converter</a>, <a href="../tools/images/crop-image/">Crop Image</a>, <a href="../tools/images/jpg-to-webp/">JPG to WebP</a> and <a href="../tools/images/png-to-webp/">PNG to WebP</a>. The website image optimizer template uses that exact family of tools so the canvas is not a fake demo: resize, compress and convert all stay editable after the template loads.</p>
     <p>PDF workflows can combine real PDF tools including <a href="../tools/pdf/merge-pdf/">Merge PDFs</a>, <a href="../tools/pdf/compress-pdf/">Compress PDF</a>, <a href="../tools/pdf/split-pdf/">Split PDF</a>, <a href="../tools/pdf/rotate-pdf/">Rotate PDF</a>, <a href="../tools/pdf/pdf-watermark/">PDF Watermark</a>, <a href="../tools/pdf/protect-pdf/">Protect PDF</a>, <a href="../tools/pdf/extract-pdf-pages/">Extract PDF Pages</a>, <a href="../tools/pdf/pdf-page-numbers/">Add Page Numbers</a>, <a href="../tools/pdf/jpg-to-pdf/">Images to PDF</a>, <a href="../tools/pdf/png-to-pdf/">PNG to PDF</a> and <a href="../tools/pdf/webp-to-pdf/">WebP to PDF</a>. If a requested document conversion is not workflow-ready yet, it is kept out of the builder instead of being shown and failing later.</p>
@@ -1031,7 +1031,7 @@ window.VKConsent&&window.VKConsent.setDefaults();</script>
     <p>The preview panel shows what the template is meant to do before you use it: accepted inputs, output format, privacy status and a simple before/after visual. It does not run anything by itself and it does not imply the stock-photo subjects or image sources are Vootkit customers. The photographs are local template artwork, while the workflow itself still depends on the real tool definitions available in the registry.</p>
     <h2>Running safely</h2>
     <p>Before a workflow runs, Vootkit checks the chain from input to output. A PDF step cannot receive an image unless a compatible conversion step appears before it. A video step cannot receive a PDF. If the chain is incompatible, the builder marks the step and, where possible, suggests a real bridge tool. During a run, each node reports its own status. If one step fails, the run stops at that step, keeps the last successful output when possible, and tells you what happened in the tool's own words.</p>
-    <details class="wf-faq"><summary>Do my files get uploaded when I run a workflow?</summary><p>No. Every workflow-compatible step runs in your browser on your own machine, including the handover between steps.</p></details><details class="wf-faq"><summary>How is this different from using the tools one at a time?</summary><p>A workflow is one file selection and one run through a reusable chain, instead of opening several pages manually.</p></details><details class="wf-faq"><summary>Which tools can be workflow steps?</summary><p>57 tools today - the runnable PDF, image, audio and video sets.</p></details>
+    <details class="wf-faq"><summary>Do my files get uploaded when I run a workflow?</summary><p>No. Every workflow-compatible step runs in your browser on your own machine, including the handover between steps.</p></details><details class="wf-faq"><summary>How is this different from using the tools one at a time?</summary><p>A workflow is one file selection and one run through a reusable chain, instead of opening several pages manually.</p></details><details class="wf-faq"><summary>Which tools can be workflow steps?</summary><p>58 tools today - the runnable PDF, image, audio and video sets.</p></details>
   </section>
 
   <script>
@@ -1146,42 +1146,42 @@ window.VKConsent&&window.VKConsent.setDefaults();</script>
     </div>
   </div>
 </footer>
-<script src="../data/site.config.js?v=d8b9acaea8"></script>
-<script src="../data/catalog.js?v=d8b9acaea8"></script>
+<script src="../data/site.config.js?v=b2eca37ab1"></script>
+<script src="../data/catalog.js?v=b2eca37ab1"></script>
 <script>
 document.getElementById('yr').textContent=new Date().getFullYear();
 (function(){var b=document.getElementById('burger'),n=document.getElementById('nav');
 b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');b.setAttribute('aria-label',o?'Close menu':'Open menu');});
 document.documentElement.setAttribute('data-theme','light');})();
 </script>
-<script src="../assets/js/track.js?v=d8b9acaea8" defer></script>
-<script src="../assets/js/consent-ui.js?v=d8b9acaea8" defer></script>
-<script src="../assets/js/ads.js?v=d8b9acaea8" defer></script>
-<script src="../assets/js/ui.js?v=d8b9acaea8" defer></script>
-<script src="../assets/js/recent.js?v=d8b9acaea8" defer></script>
-<script src="../assets/js/supabase-config.js?v=d8b9acaea8" defer></script>
-<script src="../assets/js/errors.js?v=d8b9acaea8" defer></script>
-<script src="../assets/js/convert.js?v=d8b9acaea8" defer></script>
-<script src="../assets/js/newsletter.js?v=d8b9acaea8" defer></script>
-<script src="../assets/js/auth.js?v=d8b9acaea8" defer></script>
+<script src="../assets/js/track.js?v=b2eca37ab1" defer></script>
+<script src="../assets/js/consent-ui.js?v=b2eca37ab1" defer></script>
+<script src="../assets/js/ads.js?v=b2eca37ab1" defer></script>
+<script src="../assets/js/ui.js?v=b2eca37ab1" defer></script>
+<script src="../assets/js/recent.js?v=b2eca37ab1" defer></script>
+<script src="../assets/js/supabase-config.js?v=b2eca37ab1" defer></script>
+<script src="../assets/js/errors.js?v=b2eca37ab1" defer></script>
+<script src="../assets/js/convert.js?v=b2eca37ab1" defer></script>
+<script src="../assets/js/newsletter.js?v=b2eca37ab1" defer></script>
+<script src="../assets/js/auth.js?v=b2eca37ab1" defer></script>
 
-<script src="../assets/js/usage.js?v=d8b9acaea8" defer></script>
-<script src="../assets/js/deliver.js?v=d8b9acaea8" defer></script>
+<script src="../assets/js/usage.js?v=b2eca37ab1" defer></script>
+<script src="../assets/js/deliver.js?v=b2eca37ab1" defer></script>
 <!-- Tool chaining. tool-flow.js says what each tool accepts, tool-icons.js
      gives the next-step buttons the same per-tool icons as everywhere else,
      and handoff.js parks the finished file on the device between the two
      pages. All three are optional: without them a tool simply downloads. -->
-<script src="../data/tool-flow.js?v=d8b9acaea8" defer></script>
-<script src="../data/tool-icons.js?v=d8b9acaea8" defer></script>
-<script src="../assets/js/handoff.js?v=d8b9acaea8" defer></script>
-<script src="../assets/js/gate.js?v=d8b9acaea8" defer></script>
-<script src="../data/tool-flow.js?v=d8b9acaea8" defer></script>
-<script src="../assets/js/tools-pdf.js?v=d8b9acaea8" defer></script>
-<script src="../assets/js/tools-image.js?v=d8b9acaea8" defer></script>
-<script src="../assets/js/tools-image2.js?v=d8b9acaea8" defer></script>
-<script src="../assets/js/tools-videofx.js?v=d8b9acaea8" defer></script>
-<script src="../assets/js/videoengine.js?v=d8b9acaea8" defer></script>
-<script src="../assets/js/workflow.js?v=d8b9acaea8" defer></script>
-<script src="../assets/js/wf-init.js?v=d8b9acaea8" defer></script>
+<script src="../data/tool-flow.js?v=b2eca37ab1" defer></script>
+<script src="../data/tool-icons.js?v=b2eca37ab1" defer></script>
+<script src="../assets/js/handoff.js?v=b2eca37ab1" defer></script>
+<script src="../assets/js/gate.js?v=b2eca37ab1" defer></script>
+<script src="../data/tool-flow.js?v=b2eca37ab1" defer></script>
+<script src="../assets/js/tools-pdf.js?v=b2eca37ab1" defer></script>
+<script src="../assets/js/tools-image.js?v=b2eca37ab1" defer></script>
+<script src="../assets/js/tools-image2.js?v=b2eca37ab1" defer></script>
+<script src="../assets/js/tools-videofx.js?v=b2eca37ab1" defer></script>
+<script src="../assets/js/videoengine.js?v=b2eca37ab1" defer></script>
+<script src="../assets/js/workflow.js?v=b2eca37ab1" defer></script>
+<script src="../assets/js/wf-init.js?v=b2eca37ab1" defer></script>
 </body>
 </html>

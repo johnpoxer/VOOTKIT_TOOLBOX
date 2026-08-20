@@ -217,8 +217,10 @@ ok(/r\.arrayBuffer\(\)/.test(engSrc), "falls back to a plain fetch where streami
 ok(/Downloading the video engine/.test(engSrc), "the download reports progress to the user");
 ok(/_loading\.catch\(function \(\) \{ _loading = null; \}\)/.test(engSrc),
    "a failed load clears the cached promise so retry can work without a reload");
-ok(/function run\(file, inName, outName, built, onProgress, onStatus\)/.test(engSrc),
-   "run() accepts a status channel");
+ok(/function run\(file, inName, outName, built, onProgress, onStatus, isCancelled\)/.test(engSrc),
+   "run() accepts status and cancellation channels");
+ok(/ff\.terminate/.test(engSrc) && /USER_CANCELLED/.test(engSrc),
+   "cancel stops an active encoder and returns a recognisable cancellation state");
 ok(/'Converting…'/.test(engSrc), "the convert phase is announced separately from the download");
 ok(/await ff\.writeFile\(inName, await util\.fetchFile\(file\)\)/.test(engSrc),
    "run() still writes the input file before exec");
@@ -226,8 +228,8 @@ ok(/await ff\.writeFile\(inName, await util\.fetchFile\(file\)\)/.test(engSrc),
 const ftSrc = require("fs").readFileSync(require("path").join(__dirname, "../assets/js/filetool.js"), "utf8");
 ok(/status: function \(msg\)/.test(ftSrc), "filetool exposes a status channel to tools");
 
-const withStatus = (vfxSrc.match(/api\.progress, api\.status\)/g) || []).length;
-ok(runCalls.length === withStatus, `all ${runCalls.length} VKVideo.run call sites pass the status channel (got ${withStatus})`);
+const withStatus = (vfxSrc.match(/api\.progress, api\.status, api\.isCancelled\)/g) || []).length;
+ok(runCalls.length === withStatus, `all ${runCalls.length} VKVideo.run call sites pass status and cancellation channels (got ${withStatus})`);
 
 console.log(`videofx engine-load: ${pass} total assertions passed`);
 

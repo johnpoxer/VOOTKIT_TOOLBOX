@@ -173,6 +173,7 @@
        feedback was "3 files · 1.2 MB" — you could not see which three, in what
        order, or drop one without starting again. */
     var fileList = el('ol', { class: 'ft-files', hidden: 'hidden' });
+    var selectedFile = el('div', { class: 'ft-selected', hidden: 'hidden' });
 
     var err = el('p', { class: 'note err', hidden: 'hidden', role: 'alert' });
     var status = el('p', { class: 'note', role: 'status', 'aria-live': 'polite' });
@@ -188,20 +189,40 @@
       class: 'bar', hidden: 'hidden', role: 'progressbar',
       'aria-valuemin': '0', 'aria-valuemax': '100'
     }, [el('i')]);
+    var processingPct = el('strong', { class: 'ut-processing-pct', text: '0%' });
+    var processingStatus = el('p', { class: 'ut-processing-status', text: 'Preparing your file…' });
+    var processingRing = el('div', { class: 'ut-progress-ring', role: 'progressbar', 'aria-label': 'Processing progress', 'aria-valuemin': '0', 'aria-valuemax': '100', 'aria-valuenow': '0' }, [processingPct]);
+    var processingSteps = el('ol', { class: 'ut-processing-steps', 'aria-label': 'Processing stages' }, [
+      el('li', { class: 'is-current', text: 'Reading file' }), el('li', { text: 'Processing' }), el('li', { text: 'Building result' })
+    ]);
+    var cancelRequested = false;
+    var cancelBtn = el('button', { class: 'btn ut-cancel', type: 'button', text: 'Cancel', onClick: function () {
+      cancelRequested = true; cancelBtn.disabled = true; processingStatus.textContent = 'Cancelling safely…';
+    } });
+    var processing = el('section', { class: 'ut-processing', hidden: 'hidden', role: 'status', 'aria-live': 'polite' }, [
+      el('h2', { text: 'Processing your file' }),
+      processingRing,
+      processingStatus,
+      processingSteps,
+      el('p', { class: 'ut-processing-note', text: 'Keep this page open. Your file stays on your device.' }),
+      cancelBtn
+    ]);
     var controls = el('div', { class: 'ft-controls', hidden: 'hidden' });
     var result = el('div', { class: 'ft-result' });
 
     host.appendChild(input);
     host.appendChild(drop);
+    host.appendChild(selectedFile);
     host.appendChild(fileList);
     host.appendChild(err);
     host.appendChild(controls);
     host.appendChild(bar);
     host.appendChild(barLine);
     host.appendChild(status);
+    host.appendChild(processing);
     host.appendChild(result);
 
-    function fail(msg) { err.textContent = msg; err.hidden = false; status.textContent = ''; }
+    function fail(msg) { err.textContent = msg; err.hidden = false; status.textContent = ''; processing.hidden = true; host.classList.remove('is-processing'); }
     function clearErr() { err.hidden = true; }
     /* ETA is computed from elapsed time against progress made, but only once
        the job is far enough in for the estimate not to be nonsense. Early
@@ -234,6 +255,11 @@
         bar.firstChild.style.width = pct + '%';
         bar.setAttribute('aria-valuenow', String(pct));
         pctText.textContent = pct + '%';
+        processingPct.textContent = pct + '%';
+        processingRing.style.setProperty('--progress', pct + '%');
+        processingRing.setAttribute('aria-valuenow', String(pct));
+        var stepIndex = pct < 25 ? 0 : pct < 88 ? 1 : 2;
+        [].slice.call(processingSteps.children).forEach(function (step, i) { step.className = i < stepIndex ? 'is-done' : i === stepIndex ? 'is-current' : ''; });
       }
       var elapsed = (Date.now() - progStart) / 1000;
       etaText.textContent = (frac > 0.08 && elapsed > 3 && frac < 0.99)
@@ -286,7 +312,19 @@
     var DROP_LABEL = spec.dropLabel || 'Choose a file or drag it here';
 
     function renderFiles() {
-      if (!spec.multiple) return;
+      if (!spec.multiple) {
+        selectedFile.innerHTML = '';
+        selectedFile.hidden = files.length === 0;
+        if (files.length) {
+          var f = files[0];
+          selectedFile.appendChild(el('span', { class: 'ft-selected-icon', text: (f.name.split('.').pop() || 'FILE').slice(0, 4).toUpperCase() }));
+          selectedFile.appendChild(el('span', { class: 'ft-selected-copy' }, [
+            el('strong', { text: f.name }), el('small', { text: bytes(f.size) })
+          ]));
+          selectedFile.appendChild(el('button', { class: 'btn btn-sm', type: 'button', text: 'Replace file', onClick: function () { input.click(); } }));
+        }
+        return;
+      }
       fileList.innerHTML = '';
       fileList.hidden = files.length === 0;
       if (!files.length) return;
@@ -338,6 +376,7 @@
       }
       renderFiles();
       result.innerHTML = '';
+      host.classList.remove('is-complete');
     }
 
     function accept(list) {
@@ -353,8 +392,13 @@
     async function run() {
       if (!files.length) { fail('Choose a file first.'); return; }
       clearErr();
+      cancelRequested = false; cancelBtn.disabled = false;
       runBtn.disabled = true;
       status.textContent = 'Working…';
+      processingStatus.textContent = 'Preparing your file…';
+      processing.hidden = false;
+      host.classList.add('is-processing');
+      host.setAttribute('aria-busy', 'true');
       /* Fired BEFORE the work, deliberately. tool_run only ever fires for jobs
          that finished, so on a two-minute video encode it cannot distinguish
          "nobody used it" from "everybody closed the tab waiting". */
@@ -368,12 +412,14 @@
       try {
         var out = await spec.process(files, readOptions(), {
           urls: urls, loadImage: function (f) { return loadImage(f, urls); },
-          progress: setProgress, bytes: bytes,
+          progress: function (p) { if (cancelRequested) { var ce = new Error('Cancelled'); ce.code = 'USER_CANCELLED'; throw ce; } setProgress(p); }, bytes: bytes,
+          isCancelled: function () { return cancelRequested; },
           /* Lets a long-running tool replace the generic "Working…" with what is
              actually happening. The video tools spend most of their time
              downloading a ~32 MB engine, which otherwise looks like a hang. */
-          status: function (msg) { if (msg) status.textContent = msg; }
+          status: function (msg) { if (cancelRequested) { var ce = new Error('Cancelled'); ce.code = 'USER_CANCELLED'; throw ce; } if (msg) { status.textContent = msg; processingStatus.textContent = msg; } }
         });
+        if (cancelRequested) { var cancelled = new Error('Cancelled'); cancelled.code = 'USER_CANCELLED'; throw cancelled; }
         setProgress(1);
         renderResult(out);
         status.textContent = out.status || 'Done';
@@ -384,10 +430,17 @@
         // Report before showing the user anything: this is the only place a file
         // tool's failure is observable, and until now it was observable only to
         // the person it happened to.
-        if (root.VKErr) root.VKErr.report(host.getAttribute('data-tool'), e);
-        fail(e && e.message ? e.message : 'Something went wrong processing that file.');
+        if (cancelRequested || (e && e.code === 'USER_CANCELLED')) {
+          processing.hidden = true; host.classList.remove('is-processing'); status.textContent = 'Cancelled. Your original file is unchanged.';
+        } else {
+          if (root.VKErr) root.VKErr.report(host.getAttribute('data-tool'), e);
+          fail(e && e.message ? e.message : 'Something went wrong processing that file.');
+        }
       } finally {
         runBtn.disabled = false;
+        host.classList.remove('is-processing');
+        host.removeAttribute('aria-busy');
+        processing.hidden = true;
         setTimeout(function () { setProgress(null); }, 400);
       }
     }
@@ -399,14 +452,20 @@
       if (page) page.classList.remove('tool-has-result');
       if (!out) return;
       result.classList.add('is-complete');
+      host.classList.add('is-complete');
       if (page) page.classList.add('tool-has-result');
       var toolName = host.getAttribute('data-tool-name') || 'Your file';
+      var outputKind = 'result';
+      if (out.downloads && out.downloads[0] && out.downloads[0].name) {
+        var ext = String(out.downloads[0].name).split('.').pop().toUpperCase();
+        if (/^[A-Z0-9]{2,5}$/.test(ext)) outputKind = ext;
+      }
       var panel = el('section', { class: 'ut-result-panel', role: 'status', 'aria-live': 'polite' });
       panel.appendChild(el('div', { class: 'ut-result-head' }, [
         el('span', { class: 'ut-result-check', html: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>' }),
         el('span', { class: 'ut-result-title' }, [
-          el('strong', { text: toolName + ' is complete' }),
-          el('small', { text: 'Download your finished result below.' })
+          el('strong', { text: 'Your ' + outputKind + ' is ready' }),
+          el('small', { text: toolName + ' finished successfully. Download or continue below.' })
         ])
       ]));
       var body = el('div', { class: 'ut-result-body' });
@@ -432,6 +491,7 @@
         body.appendChild(row);
       }
       if (out.note) body.appendChild(el('p', { class: 'note', html: out.note }));
+      body.appendChild(el('button', { class: 'btn ut-another', type: 'button', text: spec.multiple ? 'Start with new files' : 'Process another file', onClick: reset }));
       panel.appendChild(body);
       result.appendChild(panel);
     }
@@ -439,10 +499,12 @@
     function reset() {
       urls.free(); files = []; input.value = '';
       fileList.innerHTML = ''; fileList.hidden = true;
+      selectedFile.innerHTML = ''; selectedFile.hidden = true;
       drop.querySelector('strong').textContent = DROP_LABEL;
       controls.hidden = true; result.innerHTML = ''; result.classList.remove('is-complete');
       var page = host.closest && host.closest('.tool-page');
       if (page) page.classList.remove('tool-has-result');
+      host.classList.remove('is-processing', 'is-complete'); processing.hidden = true;
       status.textContent = ''; clearErr(); setProgress(null);
       drop.focus();
     }

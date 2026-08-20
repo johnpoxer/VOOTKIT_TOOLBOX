@@ -27,6 +27,7 @@
     var status = doc.getElementById('lk-status');
     var btn = doc.getElementById('lk-go');
     var result = doc.getElementById('lk-result');
+    if (root.VKW && root.VKW.enhanceLifecycle) root.VKW.enhanceLifecycle(host);
 
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
@@ -35,11 +36,15 @@
       if (!url) return;
       btn.disabled = true; var orig = btn.textContent; btn.textContent = 'Shortening…';
       status.textContent = ''; status.className = 'cf-status'; result.hidden = true;
+      host.setAttribute('aria-busy', 'true');
       try {
+        var ctl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+        var timer = ctl ? setTimeout(function () { ctl.abort(); }, 15000) : null;
         var res = await fetch('/.netlify/functions/create-link', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url: url, alias: alias })
+          body: JSON.stringify({ url: url, alias: alias }), signal: ctl ? ctl.signal : undefined
         });
+        if (timer) clearTimeout(timer);
         var data = await res.json().catch(function () { return {}; });
         if (res.ok && data.shortUrl) {
           result.hidden = false;
@@ -54,14 +59,16 @@
               .catch(function () {});
           });
           status.textContent = 'Short link ready.'; status.className = 'cf-status is-ok';
+          if (root.VKConvert) root.VKConvert.onToolSuccess(host, 'url-shortener');
+          if (typeof root.CustomEvent === 'function') host.dispatchEvent(new root.CustomEvent('vk:widget-success', { detail: { message: 'Your short link is ready.' } }));
         } else {
           throw new Error(data.error || 'Could not shorten that link.');
         }
       } catch (err) {
-        status.textContent = err.message || 'Something went wrong. Please try again.';
+        status.textContent = err && err.name === 'AbortError' ? 'The request took too long. Check your connection and try again.' : (err.message || 'Something went wrong. Please try again.');
         status.className = 'cf-status is-err';
       } finally {
-        btn.disabled = false; btn.textContent = orig;
+        btn.disabled = false; btn.textContent = orig; host.removeAttribute('aria-busy');
       }
     });
 
