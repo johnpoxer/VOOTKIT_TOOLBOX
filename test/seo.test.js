@@ -776,16 +776,16 @@ console.log(`seo + tool icons: ${pass} total assertions passed`);
     /* Built pages retain the full desktop footer; the approved mobile-first
        homepage intentionally uses its compact counterpart. Both must expose
        the same essential destinations, but their structures need not match. */
-    ["ftr-top", "ftr-cols", "ftr-brand", "ftr-mark", "ftr-trust", "ftr-bar", "ftr-copy"]
+    ["ftr-top", "ftr-cols", "ftr-brand", "ftr-mark", "ftr-lang", "ftr-bar", "ftr-copy"]
       .forEach((c) => {
         ok(foot(built).includes(c), "built footer has ." + c);
       });
     ["compact-footer", "footer-columns", "footer-bar"].forEach((c) =>
       ok(foot(home).includes(c), "homepage compact footer has ." + c));
 
-    /* Four named columns on built pages; three compact groups on home. */
+    /* Three named groups on both footer variants. */
     eq((foot(home).match(/<div><h3>/g) || []).length, 3, "homepage footer has 3 compact groups");
-    eq((foot(built).match(/class="ftr-col"/g) || []).length, 4, "built footer has 4 columns");
+    eq((foot(built).match(/class="ftr-col"/g) || []).length, 3, "built footer has 3 columns");
 
     /* NO DEAD SOCIAL ICONS. site.config.js ships empty URLs until the real
        profiles are pasted in; an icon rendered before then is a link to
