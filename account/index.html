@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="google-adsense-account" content="ca-pub-5906583727409402">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#fbfcfe">
+<meta name="color-scheme" content="light">
+<script>document.documentElement.setAttribute('data-theme','light');</script>
+<title>Account &amp; Settings — Vootkit</title>
+<meta name="description" content="Manage your Vootkit profile, subscription, privacy preferences, active sessions and account settings.">
+<link rel="canonical" href="https://www.vootkit.com/account/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Vootkit">
+<meta property="og:title" content="Account &amp; Settings — Vootkit">
+<meta property="og:description" content="Manage your Vootkit profile, subscription, privacy preferences, active sessions and account settings.">
+<meta property="og:url" content="https://www.vootkit.com/account/">
+<meta property="og:image" content="https://www.vootkit.com/assets/og-default.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Vootkit — free browser tools that never upload your files">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Account &amp; Settings — Vootkit">
+<meta name="twitter:description" content="Manage your Vootkit profile, subscription, privacy preferences, active sessions and account settings.">
+<meta name="twitter:image" content="https://www.vootkit.com/assets/og-default.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Your account","url":"https://www.vootkit.com/account/"}</script>
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="manifest" href="../site.webmanifest">
+<link rel="stylesheet" href="../assets/css/app.css?v=c631699ed5">
+<script>(function (root) {
+  'use strict';
+  var KEY = 'vk-consent';
+  var VERSION = 1;          // bump to re-ask everyone after a material change
+
+  var CONSENT_REQUIRED_REGIONS = [
+    'AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT',
+    'LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE',   // EU
+    'IS','LI','NO',                                                 // EEA
+    'GB','CH'                                                       // UK, CH
+  ];
+  function read() {
+    try {
+      var raw = root.localStorage.getItem(KEY);
+      if (!raw) return null;
+      var v = JSON.parse(raw);
+      if (!v || v.v !== VERSION) return null;
+      return v;
+    } catch (e) { return null; }
+  }
+  function write(granted) {
+    try {
+      root.localStorage.setItem(KEY, JSON.stringify({
+        v: VERSION, granted: !!granted, at: new Date().toISOString().slice(0, 10)
+      }));
+    } catch (e) {}
+  }
+
+  function signals(granted) {
+    var v = granted ? 'granted' : 'denied';
+    return {
+      ad_storage: v,
+      ad_user_data: v,
+      ad_personalization: v,
+      analytics_storage: v,
+      functionality_storage: 'granted',   // theme, recent tools — strictly necessary
+      security_storage: 'granted'
+    };
+  }
+  function gtagSafe() {
+    if (typeof root.gtag === 'function') return root.gtag;
+
+    root.dataLayer = root.dataLayer || [];
+    return function () { root.dataLayer.push(arguments); };
+  }
+
+  function setDefaults() {
+    var g = gtagSafe();
+    var saved = read();
+    if (saved) {
+
+      g('consent', 'default', signals(saved.granted));
+      return;
+    }
+
+    g('consent', 'default', Object.assign(signals(false), {
+      region: CONSENT_REQUIRED_REGIONS,
+      wait_for_update: 500
+    }));
+    g('consent', 'default', signals(true));
+  }
+  function update(granted) {
+    gtagSafe()('consent', 'update', signals(granted));
+    write(granted);
+  }
+  root.VKConsent = {
+    KEY: KEY, VERSION: VERSION,
+    REGIONS: CONSENT_REQUIRED_REGIONS,
+    signals: signals, read: read, write: write,
+    setDefaults: setDefaults, update: update,
+    needsBanner: function () { return read() === null; }
+  };
+  if (typeof module === 'object' && module.exports) module.exports = root.VKConsent;
+})(typeof window !== 'undefined' ? window : globalThis);
+window.VKConsent&&window.VKConsent.setDefaults();</script>
+<!-- no ads inside an active tool workspace -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KLEWTJ8WG2"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-KLEWTJ8WG2');</script>
+<meta name="robots" content="noindex">
+</head>
+<body class="account-ref">
+<a class="skip" href="#main">Skip to content</a>
+<header class="hdr">
+  <div class="wrap hdr-in">
+    <a class="brand" href="../" aria-label="Vootkit home">
+      <svg class="brand-v" viewBox="0 0 44 44" aria-hidden="true">
+        <circle class="brand-ring" cx="22" cy="22" r="17.5"/>
+        <path class="brand-check" d="M12.5 14.5 21.5 30 31.5 13.5"/>
+        <circle class="brand-orb" cx="33.5" cy="10.5" r="2.7"/>
+      </svg>
+      vootkit
+    </a>
+    <nav class="nav" id="nav" aria-label="Main">
+      <a href="../">Home</a>
+      <a href="../tools/">Tools</a>
+      <a href="../workflows/">Workflow</a>
+      <a href="../templates/">Templates</a>
+      <a href="../blog/">Blog</a>
+      <a href="../pricing.html">Pricing</a>
+      <a href="../about.html">About</a>
+    </nav>
+    <div class="hdr-act">
+
+      <button class="icon-btn" id="theme" type="button" aria-label="Light mode enabled" hidden>
+        <svg viewBox="0 0 24 24"><path d="M21 13.1A8.4 8.4 0 1 1 10.9 3a6.6 6.6 0 0 0 10.1 10.1Z"/></svg>
+      </button>
+      <button class="icon-btn" type="button" data-open-search aria-label="Search tools">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+      </button>
+      <span id="vk-auth-slot" class="vk-auth-slot"><a class="btn btn-sm hdr-login" href="../auth/sign-in/">Login</a></span>
+      <a class="hdr-cta" href="../auth/sign-up/"><span class="cta-full">Get Started Free</span><span class="cta-short">Start Free</span></a>
+      <button class="icon-btn" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav">
+        <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+<main id="main" tabindex="-1"><div class="wrap section">
+  <div id="account" class="acct">
+    <div class="vk-skeleton" style="height:80px;max-width:420px"></div>
+  </div>
+</div>
+<nav class="acct-bottom-nav" aria-label="Account navigation">
+  <a href="../"><span aria-hidden="true">⌂</span><small>Home</small></a>
+  <a href="../tools/"><span aria-hidden="true">▦</span><small>Tools</small></a>
+  <a href="../workflows/"><span aria-hidden="true">⌘</span><small>Workflows</small></a>
+  <a class="is-active" href="./" aria-current="page"><span aria-hidden="true">□</span><small>Account</small></a>
+</nav></main>
+<footer class="ftr">
+  <div class="wrap">
+    <div class="ftr-nl" data-newsletter="footer"></div>
+    <div class="ftr-top">
+      <div class="ftr-cols">
+      <div class="ftr-col">
+        <h4>Product</h4>
+        <a href="../tools/">All tools</a><a href="../workflows/">Workflows</a><a href="../pricing.html">Pricing</a><a href="../blog/">What’s new</a>
+      </div>
+      <div class="ftr-col">
+        <h4>Resources</h4>
+        <a href="../blog/">Guides</a><a href="../blog/">Blog</a><a href="../contact.html">Help center</a><a href="../contact.html">Contact us</a>
+      </div>
+      <div class="ftr-col">
+        <h4>Company</h4>
+        <a href="../about.html">About us</a><a href="../privacy.html">Privacy policy</a><a href="../cookies.html">Cookie policy</a><a href="../terms.html">Terms of service</a><a href="../disclaimer.html">Disclaimer</a><a href="../privacy.html#security">Security</a>
+      </div>
+      </div>
+    </div>
+    <div class="ftr-bar">
+
+      <div class="ftr-brand">
+        <a class="ftr-mark" href="../" aria-label="Vootkit home">vootkit</a>
+        <p class="ftr-copy">&copy; <span id="yr"></span> Vootkit. All rights reserved.</p>
+      </div>
+      <span class="ftr-lang" aria-label="Current language: English">English <span aria-hidden="true">⌄</span></span>
+    </div>
+  </div>
+</footer>
+<script src="../data/site.config.js?v=c631699ed5"></script>
+<script src="../data/catalog.js?v=c631699ed5"></script>
+<script>
+document.getElementById('yr').textContent=new Date().getFullYear();
+(function(){var b=document.getElementById('burger'),n=document.getElementById('nav');
+b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');b.setAttribute('aria-label',o?'Close menu':'Open menu');});
+document.documentElement.setAttribute('data-theme','light');})();
+</script>
+<script src="../assets/js/track.js?v=c631699ed5" defer></script>
+<script src="../assets/js/consent-ui.js?v=c631699ed5" defer></script>
+<script src="../assets/js/ads.js?v=c631699ed5" defer></script>
+<script src="../assets/js/ui.js?v=c631699ed5" defer></script>
+<script src="../assets/js/recent.js?v=c631699ed5" defer></script>
+<script src="../assets/js/supabase-config.js?v=c631699ed5" defer></script>
+<script src="../assets/js/errors.js?v=c631699ed5" defer></script>
+<script src="../assets/js/convert.js?v=c631699ed5" defer></script>
+<script src="../assets/js/newsletter.js?v=c631699ed5" defer></script>
+<script src="../assets/js/auth.js?v=c631699ed5" defer></script>
+
+<script src="../assets/js/usage.js?v=c631699ed5" defer></script>
+<script src="../assets/js/deliver.js?v=c631699ed5" defer></script>
+<!-- Tool chaining. tool-flow.js says what each tool accepts, tool-icons.js
+     gives the next-step buttons the same per-tool icons as everywhere else,
+     and handoff.js parks the finished file on the device between the two
+     pages. All three are optional: without them a tool simply downloads. -->
+<script src="../data/tool-flow.js?v=c631699ed5" defer></script>
+<script src="../data/tool-icons.js?v=c631699ed5" defer></script>
+<script src="../assets/js/handoff.js?v=c631699ed5" defer></script>
+<script src="../assets/js/gate.js?v=c631699ed5" defer></script>
+<script src="../assets/js/account.js?v=c631699ed5" defer></script>
+</body>
+</html>
