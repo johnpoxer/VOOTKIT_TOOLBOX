@@ -410,7 +410,7 @@ function footCols(up) {
       </div>
       <div class="ftr-col">
         <h4>Company</h4>
-        <a href="${up}about.html">About us</a><a href="${up}privacy.html">Privacy policy</a><a href="${up}cookies.html">Cookie policy</a><a href="${up}terms.html">Terms of service</a><a href="${up}disclaimer.html">Disclaimer</a><a href="${up}privacy.html#security">Security</a>
+        <a href="${up}about.html">About us</a><a href="${up}privacy.html">Privacy policy</a><a href="${up}cookies.html">Cookie policy</a><a href="${up}terms.html">Terms of service</a><a href="${up}disclaimer.html">Disclaimer</a><a href="${up}security.html">Security</a>
       </div>`;
 }
 
@@ -2037,12 +2037,14 @@ function legalPage(o) {
   const url = SITE + "/" + o.file;
   const ld = { "@context": "https://schema.org", "@type": "WebPage", name: o.title, url, description: o.desc };
   return head({ depth: 0, url, ads: true, ld, title: `${o.title} — Vootkit`, desc: o.desc }) +
-`<div class="wrap section tool-page">
+`<main class="wrap section legal-page">
   <nav class="crumb" aria-label="Breadcrumb"><a href="./">Vootkit</a> <span aria-hidden="true">›</span> <span aria-current="page">${esc(o.title)}</span></nav>
-  <h1 class="page-h1">${esc(o.title)}</h1>
-  <p class="page-lede">Last updated ${o.updated}.</p>
-  <section class="prose">${o.body}</section>
-</div>` + foot(0);
+  <header class="legal-hero"><span class="eyebrow">Trust centre</span><h1 class="page-h1">${esc(o.title)}</h1><p>${esc(o.desc)}</p><small>Effective and last updated ${o.updated}</small></header>
+  <div class="legal-layout">
+    <aside class="legal-nav" aria-label="Legal and trust pages"><strong>Vootkit policies</strong><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="cookies.html">Cookies</a><a href="disclaimer.html">Disclaimer</a><a href="security.html">Security</a><a href="contact.html">Contact</a></aside>
+    <article class="prose legal-copy">${o.body}</article>
+  </div>
+</main>` + foot(0);
 }
 
 /* ---------- info pages (About, Contact, Blog) ---------- */
@@ -2578,6 +2580,50 @@ function blogJsonData(posts) {
     search: [p.title, p.description, p.category, p.type].concat(p.tags).join(" ").toLowerCase()
   }))).replace(/</g, "\\u003c");
 }
+
+function blogReferenceIndex(posts) {
+  const url = SITE + "/blog/";
+  const bySlug = (slug) => posts.find((p) => p.slug === slug);
+  const feature = bySlug("reduce-pdf-file-size") || posts[0];
+  const popular = [bySlug("which-image-format-should-i-use"), bySlug("interest-rate-trap-loan-cost"), bySlug("compress-video-for-discord")].filter(Boolean);
+  const latest = posts.filter((p) => !popular.includes(p) && (!feature || p.slug !== feature.slug)).slice(0, 5);
+  const ld = { "@context": "https://schema.org", "@type": "Blog", name: "Vootkit Guides", url,
+    description: "Practical guides, tutorials and workflows for Vootkit tools.",
+    blogPost: posts.slice(0, 20).map((p) => ({ "@type": "BlogPosting", headline: p.title, url: SITE + "/blog/" + p.slug + "/", datePublished: p.date })) };
+  const chip = (slug, label, mark) => `<a class="br-chip${slug === "all" ? " is-on" : ""}" href="${slug === "all" ? "/blog/" : "/blog/" + slug + "/"}"><span>${mark}</span>${esc(label)}</a>`;
+  const toolHref = (p) => {
+    const id = p && p.relatedTools && p.relatedTools[0], t = id && VK.find(id);
+    return t ? `/tools/${t.cat}/${t.id}/` : "/tools/";
+  };
+  const compact = (p, i) => `<a class="br-pop" href="/blog/${esc(p.slug)}/">
+    ${blogPicture(p, "br-pop-img", "lazy")}
+    <span><small>${esc(p.category)}</small><strong>${esc(p.title)}</strong><em>◷ ${p.minutes} min read</em></span>
+    <b>Open guide&nbsp; ›</b>
+  </a>`;
+  const latestRow = (p, i) => `<article class="br-latest-row" data-blog-card data-title="${esc(p.title)}" data-date="${esc(p.date || "")}" data-filters="${esc(p.filters.join(" "))}" data-search="${esc([p.title,p.description,p.category].concat(p.tags).join(" ").toLowerCase())}" data-index="${i}"><a href="/blog/${esc(p.slug)}/">${toolIconHtml(VK.find((p.relatedTools || [])[0]) || { id: "word-counter", cat: "text", name: p.category })}<span><strong>${esc(p.title)}</strong><small>${p.minutes} min read</small></span><b>›</b></a></article>`;
+  return head({ depth: 1, url, ads: true, ld, bodyClass: "blog-ref", title: "Vootkit Guides - Practical tutorials and workflows", ogTitle: "Vootkit Guides", desc: "Useful Vootkit guides, practical tutorials and workflows for PDF, image, video, business, finance and developer tools." }) +
+`<div class="br-page" data-blog-page data-current-filter="all">
+  <section class="wrap br-hero">
+    <span class="eyebrow">Vootkit Guides</span>
+    <h1>Useful knowledge.<br>Practical results.</h1>
+    <p>Guides, ideas and workflows that help you finish real tasks.</p>
+    <label class="br-search"><span aria-hidden="true">⌕</span><input id="blog-search" type="search" placeholder="Search guides..." data-blog-search aria-label="Search guides"></label>
+    <div class="br-chips">${chip("all","All","✦")}${chip("pdf","PDF","▧")}${chip("images","Images","▣")}${chip("video","Video","▤")}${chip("business","Business","♙")}${chip("finance","Finance","◉")}${chip("developer","Developer","⌘")}</div>
+  </section>
+  <main class="wrap br-main">
+    ${feature ? `<article class="br-feature">
+      ${blogPicture(feature, "br-feature-img", "eager")}
+      <div><span class="br-label">${esc(feature.category)}</span><h2>${esc(feature.title)}</h2><p>${esc(feature.description)}</p><small>◷ ${feature.minutes} min read</small><a class="btn btn-primary" href="/blog/${esc(feature.slug)}/">Read guide</a><a class="br-tool-link" href="${toolHref(feature)}">Open ${esc((VK.find((feature.relatedTools || [])[0]) || {name:"Vootkit tool"}).name)} <b>›</b></a></div>
+    </article>` : ""}
+    <section class="br-section"><header><h2>Popular this week</h2><a href="#latest-guides">See all</a></header><div class="br-pop-list">${popular.map(compact).join("")}</div></section>
+    <section class="br-section" id="latest-guides"><header><h2>Latest guides</h2><a href="/blog/">See all</a></header><div class="br-latest" data-blog-grid>${latest.map(latestRow).join("")}</div><div class="bl-empty" data-blog-empty hidden><h2>No guides found</h2><p>Try another search.</p></div></section>
+    ${adUnit("inContent")}
+    <section class="br-section br-goals"><header><h2>Browse by goal</h2></header><div><a href="/blog/pdf/"><span>↗</span><b>Share smaller files</b></a><a href="/blog/business/"><span>▧</span><b>Prepare business documents</b></a><a href="/blog/images/"><span>▣</span><b>Improve photos</b></a><a href="/blog/finance/"><span>◫</span><b>Understand your finances</b></a></div></section>
+    <section class="br-newsletter"><img src="/assets/blog/nl-band.webp" alt="" width="260" height="180" loading="lazy"><div><h2>One useful workflow every week.</h2><p>Handpicked guides, practical tips and time-saving workflows delivered to your inbox.</p><div data-newsletter="blog_index" data-nl-compact data-nl-placeholder="Email address" data-nl-button="Subscribe"></div></div></section>
+  </main>
+  <script type="application/json" id="blog-data">${blogJsonData(posts)}</script>
+</div>` + foot(1, ["assets/js/blog.js"], { noNewsletter: true });
+}
 function blogPostPage(post, allPosts) {
   const url = `${SITE}/blog/${post.slug}/`;
   const img = post.thumbnail ? (post.thumbnail.startsWith("http") ? post.thumbnail : SITE + post.thumbnail) : "";
@@ -2637,6 +2683,7 @@ function blogIndexPage(posts, opts) {
   const o = opts || {};
   const allPosts = o.allPosts || posts;
   const current = o.category || "all";
+  if (current === "all") return blogReferenceIndex(posts);
   const info = BLOG_CATEGORY_INFO[current] || BLOG_CATEGORY_INFO.all;
   const url = current === "all" ? SITE + "/blog/" : SITE + "/blog/" + current + "/";
   const depth = current === "all" ? 1 : 2;
@@ -3332,7 +3379,7 @@ function templatesPage() {
 </div>` + foot(1);
 }
 
-const LAST_UPDATED = "22 July 2026";
+const LAST_UPDATED = "20 August 2026";
 const TRUST_CONTENT_UPDATED = "2026-08-20";
 
 write("pricing.html", pricingPage());
@@ -3346,42 +3393,54 @@ write("account/index.html", accountPage(false));
 write("account-preview/index.html", accountPage(true));
 write("privacy.html", legalPage({
   file: "privacy.html", title: "Privacy Policy", updated: LAST_UPDATED,
-  desc: "How Vootkit handles your data. Most tools process files entirely in your browser and never upload them.",
+  desc: "How Vootkit handles account, tool, support, analytics and advertising data, including local browser processing.",
   body: `
     <h2>The short version</h2>
-    <p><strong>Most Vootkit tools never send your files anywhere.</strong> They run inside your browser using your own device's processing power. When a tool is local, your file is not uploaded, not stored, and not seen by us — there is nothing for us to keep or delete.</p>
-    <p>Two tools genuinely need the internet and cannot work without it: the <strong>Currency Converter</strong>, which fetches live exchange rates, and the <strong>URL Shortener</strong>, which has to register the short link somewhere. Both say so on their own pages. Every other tool works without sending anything to us.</p>
+    <p><strong>Compatible Vootkit tools process files in your browser.</strong> When a tool is labelled as local or processed on your device, its working file is not uploaded to Vootkit. Tools that need live data, account storage or another online service are identified in their interface and may send the minimum information needed to provide that feature.</p>
+    <p>This policy covers Vootkit's website, accounts, tools, guides and support services. It explains what we collect, why we use it and the choices available to you.</p>
 
     <h2 id="security">Security and local processing</h2>
     <p>Local file tools process compatible files inside your browser tab, which reduces exposure by avoiding a file upload to Vootkit. Keep your browser and device updated, download results only to a device you trust, and use password protection or encryption when a document contains sensitive information.</p>
 
     <h2>What we collect</h2>
     <ul>
-      <li><strong>Files you process with local tools:</strong> nothing. They never leave your device.</li>
-      <li><strong>Data sent by network tools:</strong> only what the tool needs to answer your request (for example, a city name for a weather lookup, or a URL you asked us to fetch). We do not build a profile from it.</li>
-      <li><strong>Preferences:</strong> your theme choice, recently used tools and favourites are stored in your browser's local storage. They stay on your device and are never transmitted to us. Clearing your browser data removes them.</li>
-      <li><strong>Analytics:</strong> we use privacy-respecting aggregate analytics to understand which tools are used, so we know what to build next. This does not identify you personally.</li>
+      <li><strong>Account information:</strong> email address, profile details, authentication records and plan status when you create an account.</li>
+      <li><strong>Local-tool files:</strong> files used in a tool explicitly labelled as local remain in your browser and are not stored by Vootkit.</li>
+      <li><strong>Online-feature inputs:</strong> the query or value needed to answer a live-data request. The relevant tool explains when an external service is involved.</li>
+      <li><strong>Support and newsletter information:</strong> the details you submit, such as your email address and message.</li>
+      <li><strong>Device, usage and consent information:</strong> page views, approximate region, browser/device type, diagnostics and your advertising or analytics choices, subject to consent where required.</li>
+      <li><strong>Local preferences:</strong> recent tools, favourites and interface preferences saved in browser storage on your device.</li>
     </ul>
 
+    <h2>Why we use information</h2>
+    <p>We use information to provide and secure accounts, run requested online features, respond to support, prevent abuse, understand site performance, improve Vootkit, meet legal obligations and—where permitted—measure or personalise advertising. We rely on performance of a contract, legitimate interests, consent or legal obligations as applicable.</p>
+
+    <h2>Service providers and disclosure</h2>
+    <p>We use carefully selected providers for authentication and account infrastructure, analytics, advertising, email or support, and hosting. They may process limited information under their own terms and our instructions. We do not sell your files. We may disclose information where required by law, to protect users and the service, or as part of a business transfer with appropriate safeguards.</p>
+
     <h2>Advertising</h2>
-    <p>Vootkit is free and supported by advertising on category and information pages. <strong>We never place ads inside a working tool.</strong> Third-party vendors, including Google, use cookies to serve ads based on your prior visits to this and other websites. You can opt out of personalised advertising through <a href="https://www.google.com/settings/ads" rel="nofollow noopener">Google Ads Settings</a>, or opt out of third-party vendor cookies at <a href="https://www.aboutads.info/choices/" rel="nofollow noopener">aboutads.info</a>.</p>
+    <p>Vootkit may be supported by advertising on eligible pages. Third-party vendors, including Google, may use cookies or similar technologies to serve and measure ads, subject to your consent where required. Ads are visually separated from tool controls and download actions. You can manage personalised advertising through <a href="https://myadcenter.google.com/" rel="nofollow noopener">Google My Ad Center</a>.</p>
 
     <h2>Cookies</h2>
-    <p>We use cookies for advertising (as above) and basic analytics. We do not use cookies to track you across unrelated sites for our own purposes.</p>
+    <p>We use necessary browser storage and, subject to consent where required, analytics and advertising technologies. See the <a href="cookies.html">Cookie Policy</a> for categories and controls.</p>
+
+    <h2>Retention and security</h2>
+    <p>We retain account, support, subscription and service records only as long as needed for the purposes described here, including security, dispute resolution and legal requirements. Retention varies by record type. We use reasonable technical and organisational safeguards, but no internet service can promise absolute security.</p>
 
     <h2>Children</h2>
     <p>Vootkit is not directed at children under 13 and we do not knowingly collect personal information from them.</p>
 
     <h2>Your rights</h2>
-    <p>Because local tools collect nothing, there is usually no personal data of yours for us to export or erase. For anything we do hold, you can contact us to request access or deletion.</p>
+    <p>Depending on where you live, you may have rights to access, correct, delete, restrict or object to processing, receive a portable copy, withdraw consent and complain to your data-protection authority. Withdrawing consent does not affect earlier lawful processing. Use your account controls or contact us; we may need to verify the request.</p>
+
+    <h2>International processing</h2>
+    <p>Our providers may process information in countries other than yours. Where required, transfers are protected using recognised legal safeguards. Local-tool files are not transferred to Vootkit merely by using the tool.</p>
 
     <h2>Changes</h2>
     <p>If this policy changes materially, we will update the date at the top of this page.</p>
 
     <h2>Contact</h2>
-    <p>Questions about privacy: <a href="mailto:vootkit1@gmail.com">vootkit1@gmail.com</a></p>
-
-    <p class="note" style="margin-top:var(--s-6)">This policy describes our actual technical behaviour in plain language. It is not legal advice, and if you operate in a regulated market you should have your own counsel review it.</p>`
+    <p>Questions or privacy requests: <a href="contact.html">contact Vootkit</a> or email <a href="mailto:vootkit1@gmail.com">vootkit1@gmail.com</a>.</p>`
 }));
 
 write("terms.html", legalPage({
@@ -3389,10 +3448,19 @@ write("terms.html", legalPage({
   desc: "The terms for using Vootkit's free online tools.",
   body: `
     <h2>Using Vootkit</h2>
-    <p>Vootkit provides free browser-based utilities. You may use them for personal and commercial work at no cost. No account is required.</p>
+    <p>These terms govern your access to Vootkit's website, tools, guides, accounts, workflows and paid features. By using the service, you agree to these terms. Some tools work without an account; saved workflows, subscriptions or other features may require one.</p>
+
+    <h2>Accounts and eligibility</h2>
+    <p>You must provide accurate information, protect your sign-in credentials and promptly tell us about suspected unauthorised use. You are responsible for activity through your account. If you are not legally able to agree to these terms, a parent, guardian or authorised organisation must do so for you.</p>
+
+    <h2>Free and paid plans</h2>
+    <p>Plan limits, prices and included features are shown on the pricing or checkout page before purchase. Recurring subscriptions renew until cancelled. Taxes, currency, billing interval, cancellation timing and any refund rights are displayed by the checkout provider and governed by applicable law. We may change future pricing or plan features with reasonable notice; changes do not retroactively alter a completed billing period.</p>
 
     <h2>Your responsibility for content</h2>
     <p>You are responsible for the files and data you process, and for having the right to process them. Do not use Vootkit to infringe copyright, breach another service's terms, or handle material you are not entitled to.</p>
+
+    <h2>Acceptable use</h2>
+    <p>Do not misuse the service, attempt unauthorised access, interfere with security or availability, automate abusive traffic, distribute malware, evade usage limits, or use Vootkit for unlawful, deceptive or harmful activity. We may restrict access needed to protect users, Vootkit or third parties.</p>
 
     <h2>What the tools are and aren't</h2>
     <ul>
@@ -3401,19 +3469,20 @@ write("terms.html", legalPage({
       <li><strong>Keep your originals.</strong> Tools transform files on your device; always keep a copy of anything important before converting or compressing it.</li>
     </ul>
 
-    <h2>Availability</h2>
+    <h2>Intellectual property</h2>
+    <p>You keep ownership of content you lawfully process. Vootkit and its original interface, software, branding and written content remain protected by applicable intellectual-property laws. These terms give you permission to use the service, not ownership of the platform.</p>
+
+    <h2>Availability and termination</h2>
     <p>We aim to keep Vootkit fast and available, but it is provided "as is" without warranty. Browser-based processing depends on your device and browser, and very large files may exceed what a browser can handle — the affected tools say so on their page.</p>
 
     <h2>Limitation of liability</h2>
     <p>To the extent permitted by law, Vootkit is not liable for loss or damage arising from use of the tools, including loss of data. Because most tools run locally and we never receive your files, we cannot recover them for you.</p>
 
     <h2>Changes</h2>
-    <p>We may update these terms; the date at the top reflects the latest version.</p>
+    <p>We may update these terms to reflect product, legal or security changes. Material changes will be identified by a new effective date and, where appropriate, additional notice.</p>
 
     <h2>Contact</h2>
-    <p><a href="mailto:vootkit1@gmail.com">vootkit1@gmail.com</a></p>
-
-    <p class="note" style="margin-top:var(--s-6)">These terms are written in plain language to be genuinely readable. They are not a substitute for legal advice tailored to your business.</p>`
+    <p><a href="contact.html">Contact Vootkit</a> or email <a href="mailto:vootkit1@gmail.com">vootkit1@gmail.com</a>.</p>`
 }));
 
 /* Cookie Policy — required by every ad network's reviewer, and the page the
@@ -3494,6 +3563,29 @@ write("disclaimer.html", legalPage({
     <h2>Liability</h2>
     <p>Vootkit is provided "as is". To the extent permitted by law, we are not liable for loss arising from the use of a result produced by these tools. Your use is subject to our <a href="terms.html">Terms of Use</a>.</p>
   `
+}));
+
+write("security.html", legalPage({
+  file: "security.html", title: "Security", updated: LAST_UPDATED,
+  desc: "How Vootkit designs browser-based processing, accounts and reporting to reduce security risk.",
+  body: `
+    <h2>Security at Vootkit</h2>
+    <p>Vootkit uses layered safeguards and minimises the information it handles. Compatible file tools run in your browser, reducing the need to transfer a working file to Vootkit. A tool's privacy label explains whether processing is local or needs an online service.</p>
+
+    <h2>Account protection</h2>
+    <ul><li>Authentication sessions are handled through our account provider and transmitted over HTTPS.</li><li>Passwords are not displayed or stored in readable form by Vootkit.</li><li>Session and account controls let signed-in users update credentials, end access and request account deletion.</li></ul>
+
+    <h2>Application safeguards</h2>
+    <p>We use security headers, input validation, dependency and automated regression checks, least-privilege access patterns and abuse controls appropriate to the feature. Sensitive account pages do not contain advertising. We review tool flows separately because files, calculators and network-connected tools have different risk profiles.</p>
+
+    <h2>Your part</h2>
+    <p>Use a unique password, keep your browser and operating system updated, confirm downloads before opening them, and avoid processing confidential information on a shared or untrusted device. Keep an original copy before changing an important file.</p>
+
+    <h2>Report a vulnerability</h2>
+    <p>If you believe you found a security issue, use the <a href="contact.html">contact page</a> and choose <strong>Privacy / Security</strong>. Include the affected URL, a clear reproduction and the potential impact. Do not access other users' data, disrupt the service or publicly disclose an unresolved issue. We will acknowledge useful reports and investigate them in good faith.</p>
+
+    <h2>Limits</h2>
+    <p>No online service can guarantee absolute security. This page describes our current approach and may change as the platform grows.</p>`
 }));
 
 function aboutPage() {
@@ -4180,7 +4272,7 @@ console.log(`generated ${pages} pages (${localizedPages} localised)`);
  * so Google can still reach and cluster them through the alternates on every
  * English page. This only changes what we actively ask it to prioritise.
  * Revisit once English pages hold real positions. */
-const enUrls = ["/", "/tools/", "/workflows/", "/templates/", "/pricing.html", "/about.html", "/founder-story.html", "/contact.html", "/privacy.html", "/terms.html", "/cookies.html", "/disclaimer.html"]
+const enUrls = ["/", "/tools/", "/workflows/", "/templates/", "/pricing.html", "/about.html", "/founder-story.html", "/contact.html", "/privacy.html", "/terms.html", "/cookies.html", "/disclaimer.html", "/security.html"]
   .concat(POSTS.length ? ["/blog/"] : [])                       // only list blog when it has posts
   .concat(BLOG_USED_CATEGORIES.map((slug) => `/blog/${slug}/`))
   .concat(POSTS.map((p) => `/blog/${p.slug}/`))
