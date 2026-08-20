@@ -406,7 +406,7 @@ function footCols(up) {
       </div>
       <div class="ftr-col">
         <h4>Resources</h4>
-        <a href="${up}blog/">Guides</a><a href="${up}blog/">Blog</a><a href="${up}contact.html">Help center</a><a href="${up}contact.html">Contact us</a>
+        <a href="${up}blog/">Guides</a><a href="${up}blog/">Blog</a><a href="${up}help/">Help center</a><a href="${up}contact.html">Contact us</a>
       </div>
       <div class="ftr-col">
         <h4>Company</h4>
@@ -858,6 +858,16 @@ function icon(name) {
     plane: '<path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/>',
     mic: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/>',
     book: '<path d="M12 6c-2-1.2-5-1.2-7 0v12c2-1.2 5-1.2 7 0 2-1.2 5-1.2 7 0V6c-2-1.2-5-1.2-7 0z"/><path d="M12 6v12"/>',
+    tool: '<path d="M14 6a4 4 0 0 0-5 5L3 17l4 4 6-6a4 4 0 0 0 5-5l-3 3-4-4z"/>',
+    workflow: '<circle cx="6" cy="6" r="2"/><circle cx="18" cy="12" r="2"/><circle cx="6" cy="18" r="2"/><path d="M8 6h3a3 3 0 0 1 3 3v0a3 3 0 0 0 3 3M8 18h3a3 3 0 0 0 3-3v0a3 3 0 0 1 3-3"/>',
+    card: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/>',
+    headset: '<path d="M4 14v-2a8 8 0 0 1 16 0v2M4 14h4v6H6a2 2 0 0 1-2-2zm16 0h-4v6h2a2 2 0 0 0 2-2z"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    trash: '<path d="M4 7h16M9 7V4h6v3m3 0-1 14H7L6 7m4 4v6m4-6v6"/>',
+    folder: '<path d="M3 6h7l2 2h9v11H3z"/>',
+    cookie: '<path d="M20 13a8 8 0 1 1-9-9 4 4 0 0 0 4 4 4 4 0 0 0 5 5Z"/><circle cx="8" cy="14" r="1"/><circle cx="11" cy="18" r="1"/>',
+    info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/>',
+    alert: '<path d="M12 3 2.5 20h19z"/><path d="M12 9v5M12 17h.01"/>',
     "arrow-right": '<path d="M5 12h14"/><path d="m13 6 6 6-6 6"/>'
   };
   return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (p[name] || p.file) + '</svg>';
@@ -3382,6 +3392,71 @@ function templatesPage() {
 const LAST_UPDATED = "20 August 2026";
 const TRUST_CONTENT_UPDATED = "2026-08-20";
 
+/* ---------- product support surfaces ----------
+ * These pages deliberately use the normal site shell. The mobile references
+ * describe useful product states, not a separate native app, so desktop gets
+ * the same actions with more room while mobile collapses to a compact stack. */
+function productPage(o) {
+  const depth = o.depth || 0, up = "../".repeat(depth) || "./";
+  const url = SITE + "/" + o.slug;
+  let h = head({ depth, url, ads: false, active: o.active || "", bodyClass: "product-surface " + (o.bodyClass || ""),
+    title: `${o.title} — Vootkit`, ogTitle: o.title, desc: o.desc });
+  if (o.noindex) h = h.replace("</head>", '<meta name="robots" content="noindex,follow">\n</head>');
+  return h + `<div class="wrap product-wrap">
+    <nav class="crumb" aria-label="Breadcrumb"><a href="${up}">Vootkit</a><span aria-hidden="true">›</span><span aria-current="page">${esc(o.title)}</span></nav>
+    ${o.body}
+  </div>` + foot(depth, o.scripts || "", { noNewsletter: !!o.noNewsletter, workspaceScripts: false });
+}
+
+function helpCenterPage() {
+  const topic = (ic, title, href) => `<a class="help-topic" href="${href}"><span>${icon(ic)}</span><strong>${title}</strong></a>`;
+  const article = (ic, title, copy, href) => `<a class="help-article" href="${href}"><span>${icon(ic)}</span><span><strong>${title}</strong><small>${copy}</small></span><i aria-hidden="true">›</i></a>`;
+  return productPage({ slug: "help/", depth: 1, title: "Help Center", active: "about",
+    desc: "Find Vootkit help articles, privacy information, workflow guidance and account support.", scripts: ["assets/js/support-pages.js"], body: `
+    <header class="product-hero"><span class="eyebrow">Vootkit support</span><h1>How can we help?</h1><p>Search practical answers, browse a topic, or contact the team.</p>
+      <label class="help-search">${icon("search")}<span class="sr-only">Search help</span><input id="help-search" type="search" placeholder="Search help articles" autocomplete="off"></label></header>
+    <section aria-labelledby="help-topics"><h2 id="help-topics">Popular topics</h2><div class="help-topic-grid">
+      ${topic("zap", "Getting started", "../blog/")}${topic("shield", "Files & privacy", "../privacy.html")}${topic("tool", "Tools", "../tools/")}${topic("workflow", "Workflows", "../workflows/")}${topic("users", "Account & billing", "../account/")}
+    </div></section>
+    <section class="help-featured" aria-labelledby="featured-help"><h2 id="featured-help">Featured answers</h2><div id="help-results">
+      ${article("book", "Getting started with Vootkit", "Set up your account and explore the basics.", "../blog/")}
+      ${article("shield", "Keeping your files safe and private", "Understand local processing and your controls.", "../privacy.html")}
+      ${article("file", "Choosing the right PDF tool", "Find the best tool for your task.", "../tools/pdf/")}
+      ${article("workflow", "Build a multi-step workflow", "Connect compatible tools into one process.", "../workflows/")}
+      ${article("card", "Plans, usage and billing", "Compare Free and Pro or manage your account.", "../pricing.html")}
+    </div><p class="help-empty" id="help-empty" hidden>No matching answer yet. Try fewer words or contact support.</p></section>
+    <div class="status-card"><span class="status-dot">✓</span><span><strong>All systems operational</strong><small>Tools are available normally.</small></span></div>
+    <aside class="help-cta"><span>${icon("headset")}</span><div><strong>Still need help?</strong><p>Send the support team the details and we’ll get back to you.</p></div><a class="btn btn-primary" href="../contact.html">Contact support</a></aside>` });
+}
+
+function filesPage() {
+  return productPage({ slug: "files/", depth: 1, title: "My Files", noindex: true, noNewsletter: true,
+    desc: "Manage files saved from Vootkit tool results on this device.", scripts: ["assets/js/support-pages.js"], body: `
+    <header class="files-head"><div><span class="eyebrow">Your workspace</span><h1>My Files</h1><p>Results you choose to save appear here on this device.</p></div><button class="btn btn-primary" type="button" id="files-import">${icon("plus")} Add files</button><input id="files-picker" type="file" multiple hidden></header>
+    <div class="files-toolbar"><label class="files-search">${icon("search")}<span class="sr-only">Search files</span><input id="files-search" type="search" placeholder="Search files…"></label><select id="files-filter" aria-label="Filter files"><option value="all">All files</option><option value="pdf">PDF</option><option value="image">Images</option><option value="video">Video</option><option value="other">Other</option></select><select id="files-sort" aria-label="Sort files"><option value="recent">Most recent</option><option value="name">Name</option><option value="size">Largest</option></select></div>
+    <section class="storage-card"><div><span>${icon("clock")}</span><strong id="storage-label">0 B saved on this device</strong></div><button type="button" id="files-manage">Manage</button><progress id="storage-progress" max="100" value="0">0%</progress></section>
+    <div class="selection-bar" id="selection-bar" hidden><strong><span id="selected-count">0</span> selected</strong><button type="button" data-file-action="download">${icon("download")} Download</button><button type="button" data-file-action="delete">${icon("trash")} Delete</button></div>
+    <section class="file-list-card" aria-labelledby="saved-files"><h2 id="saved-files">Saved files</h2><div id="file-list"></div><div class="files-empty" id="files-empty"><span>${icon("folder")}</span><h3>Your saved results will appear here</h3><p>Add files to organize them locally, or save a result after using a Vootkit tool.</p><a class="btn" href="../tools/">Explore tools</a></div></section>
+    <div class="file-folders"><a href="../workflows/"><span>${icon("workflow")}</span><strong>Workflow results</strong><i>›</i></a><button type="button" id="files-trash"><span>${icon("trash")}</span><strong>Trash</strong><i>›</i></button></div>
+    <p class="local-note">${icon("lock")} File names and file data remain in this browser. Clearing site data can remove locally saved items, so keep an original copy.</p>` });
+}
+
+function legalHubPage() {
+  const link = (ic, title, copy, href) => `<a class="legal-hub-link" href="${href}"><span>${icon(ic)}</span><span><strong>${title}</strong><small>${copy}</small></span><i>›</i></a>`;
+  return productPage({ slug: "legal/", depth: 1, title: "Legal & Privacy Hub", active: "about",
+    desc: "Manage cookie choices and review Vootkit privacy, terms, accessibility and security information.", body: `
+    <header class="legal-hub-hero"><span>${icon("shield")}</span><div><span class="eyebrow">Trust center</span><h1>Your privacy matters</h1><p>Most compatible tools process files on your device. Our policies explain what Vootkit collects, what stays local, and the choices you control.</p></div></header>
+    <section class="legal-choice" aria-labelledby="cookie-choices"><div><h2 id="cookie-choices">Your cookie choices</h2><p>Necessary storage keeps the site secure and remembers your preferences. Analytics and advertising are optional where consent is required.</p></div><div><button class="btn btn-primary" type="button" data-consent-choice="accept">Accept all</button><button class="btn" type="button" data-consent-choice="reject">Reject optional</button><a class="btn" href="../cookies.html">Customize choices</a></div><p id="legal-choice-status" role="status"></p></section>
+    <section class="legal-hub-list" aria-labelledby="policies"><h2 id="policies">Legal, policies & trust</h2>
+      ${link("shield", "Privacy policy", "How we protect and use data", "../privacy.html")}${link("file", "Terms of service", "Rules for using Vootkit", "../terms.html")}${link("cookie", "Cookie policy", "Storage, advertising and choices", "../cookies.html")}${link("eye", "Accessibility tools", "Tools that support inclusive digital work", "../tools/accessibility/")}${link("lock", "Security", "Local processing and safeguards", "../security.html")}${link("info", "Disclaimer", "Important limitations", "../disclaimer.html")}
+    </section>` , scripts: ["assets/js/support-pages.js"] });
+}
+
+function statePage(o) {
+  return productPage({ slug: o.slug, depth: 1, title: o.title, noindex: true, noNewsletter: true, desc: o.desc,
+    bodyClass: "state-page", body: `<section class="state-card"><div class="state-art state-${o.tone}">${icon(o.icon)}</div><span class="eyebrow">${o.kicker}</span><h1>${o.heading}</h1><p>${o.copy}</p>${o.extra || ""}<div class="state-actions">${o.actions}</div></section>` });
+}
+
 write("pricing.html", pricingPage());
 write("templates/index.html", templatesPage());
 write("auth/sign-in/index.html", pageSignIn());
@@ -3391,6 +3466,11 @@ write("auth/update-password/index.html", pageUpdatePassword());
 write("auth/callback/index.html", pageCallback());
 write("account/index.html", accountPage(false));
 write("account-preview/index.html", accountPage(true));
+write("files/index.html", filesPage());
+write("help/index.html", helpCenterPage());
+write("legal/index.html", legalHubPage());
+write("offline/index.html", statePage({ slug: "offline/", title: "You’re offline", kicker: "Connection status", heading: "You’re offline", icon: "globe", tone: "offline", desc: "Vootkit offline status page.", copy: "It looks like you’re not connected to the internet. Tools already loaded in this browser may still work.", actions: '<button class="btn btn-primary" type="button" onclick="location.reload()">Try again</button><a class="btn" href="../tools/">Open tools</a>' }));
+write("tool-error/index.html", statePage({ slug: "tool-error/", title: "Tool interrupted", kicker: "Tool error", heading: "Something interrupted the process", icon: "alert", tone: "error", desc: "A safe Vootkit tool error page.", copy: "Don’t worry—your original file is safe. Adjust the settings or restart the process.", extra: '<div class="diagnostic"><strong>Diagnostic code</strong><code>E-7A3B-92C1</code></div>', actions: '<button class="btn btn-primary" type="button" onclick="history.back()">Try again</button><a class="btn" href="../contact.html?subject=Tool%20Problem">Contact support</a>' }));
 write("privacy.html", legalPage({
   file: "privacy.html", title: "Privacy Policy", updated: LAST_UPDATED,
   desc: "How Vootkit handles account, tool, support, analytics and advertising data, including local browser processing.",
@@ -4272,7 +4352,7 @@ console.log(`generated ${pages} pages (${localizedPages} localised)`);
  * so Google can still reach and cluster them through the alternates on every
  * English page. This only changes what we actively ask it to prioritise.
  * Revisit once English pages hold real positions. */
-const enUrls = ["/", "/tools/", "/workflows/", "/templates/", "/pricing.html", "/about.html", "/founder-story.html", "/contact.html", "/privacy.html", "/terms.html", "/cookies.html", "/disclaimer.html", "/security.html"]
+const enUrls = ["/", "/tools/", "/workflows/", "/templates/", "/pricing.html", "/about.html", "/founder-story.html", "/contact.html", "/help/", "/legal/", "/privacy.html", "/terms.html", "/cookies.html", "/disclaimer.html", "/security.html"]
   .concat(POSTS.length ? ["/blog/"] : [])                       // only list blog when it has posts
   .concat(BLOG_USED_CATEGORIES.map((slug) => `/blog/${slug}/`))
   .concat(POSTS.map((p) => `/blog/${p.slug}/`))
