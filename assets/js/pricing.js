@@ -12,12 +12,9 @@
 
   function paintPrices() {
     var pro = bill === 'year' ? plans.creator_pro_annual : plans.creator_pro_monthly;
-    var teams = bill === 'year' ? plans.creator_teams_annual : plans.creator_teams_monthly;
     var per = bill === 'year' ? '/year' : '/month';
     setText('[data-price="pro"]', pro ? money(pro.amount) : '');
-    setText('[data-price="teams"]', teams ? money(teams.amount) : '');
     document.querySelectorAll('[data-per="pro"]').forEach(function (n) { n.textContent = per; });
-    document.querySelectorAll('[data-per="teams"]').forEach(function (n) { n.textContent = per; });
   }
   function setText(sel, v) { var n = document.querySelector(sel); if (n && v) n.textContent = v; }
 

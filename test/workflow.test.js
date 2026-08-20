@@ -191,7 +191,6 @@ console.log(`workflow + settings: ${pass} total assertions passed`);
     ok(!(await W.isPro({ VKAuth: mkAuth(null) })), "a missing profile plan is gated");
     ok(!(await W.isPro({ VKAuth: mkAuth("CREATOR_PRO") })), "an unknown plan spelling cannot bypass the gate");
     ok(await W.isPro({ VKAuth: mkAuth("creator_pro") }), "creator_pro may run");
-    ok(await W.isPro({ VKAuth: mkAuth("creator_teams") }), "creator_teams may run");
     ok(!(await W.isPro({ VKAuth: { enabled: true, getUser: async () => { throw new Error("net"); } } })),
        "a failed plan lookup cannot unlock a Pro-only workflow");
     ok(!(await W.isPro({ VKAuth: { enabled: true, getUser: async () => null } })),

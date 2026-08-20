@@ -12,6 +12,9 @@ const fs = require("fs");
 const path = require("path");
 const { marked } = require("marked");
 const ROOT = __dirname;
+/* Retired unfinished surface. Builds may run in a persistent checkout, so
+ * remove the old generated directory before emitting the current catalogue. */
+fs.rmSync(path.join(ROOT, "tools", "ai"), { recursive: true, force: true });
 const VK = require("./data/catalog.js");
 const STATS = require("./data/stats.js");
 const TOOLCONTENT = require("./data/tool-content.js");
@@ -647,7 +650,7 @@ const ICON_RULES = [
   [/compress|shrink|optimi/,             'compress', 152],
   [/upscale|enlarge/,                    'expand',   152],
   [/rotate|flip/,                        'rotate',   200],
-  [/delete|remove-pages|remove-bg|remove-background/, 'trash', 4],
+  [/delete|remove-pages/, 'trash', 4],
   [/reorder|organise|organize|sort/,     'reorder',  268],
   [/extract|page-numbers/,               'extract',  32],
   [/unlock|remove-password|decrypt/,     'unlock',   142],
@@ -1486,10 +1489,8 @@ function categoryDepthSection(c, list) {
     <h3>${esc(t.name)}</h3>
     <p>${esc(t.desc)}</p>
   </article>`).join("");
-  const question = c.slug === "ai" ? `Are ${esc(c.name)} tools available now?` : `Are ${esc(c.name)} tools private?`;
-  const answer = c.slug === "ai"
-    ? "Some AI tools are planned while the browser models are tested for quality and performance. Planned tools are marked clearly, and live tools open normally."
-    : "Most Vootkit tools run in your browser, and each individual page says when a tool needs a network request. Files handled locally never leave your device.";
+  const question = `Are ${esc(c.name)} tools private?`;
+  const answer = "Most Vootkit tools run in your browser, and each individual page says when a tool needs a network request. Files handled locally never leave your device.";
 
   return `<section class="cat-depth section" aria-labelledby="cat-depth-title">
     <div class="cat-depth-head">
@@ -3240,7 +3241,7 @@ function pricingPage() {
   const annualSaving = Math.round((1 - P.creator_pro_annual.amount / (P.creator_pro_monthly.amount * 12)) * 100);
   const feat = (on, txt) => `<li class="${on ? "yes" : "no"}"><svg viewBox="0 0 24 24" aria-hidden="true">${on ? '<path d="M20 6 9 17l-5-5"/>' : '<path d="M6 6l12 12M18 6 6 18"/>'}</svg>${txt}</li>`;
   const yn = (v) => v === true ? '<span class="cmp-yes" aria-label="Included">✓</span>' : v === false ? '<span class="cmp-no" aria-label="Not included">—</span>' : v;
-  return head({ depth: 0, url, ads: true, ld, bodyClass: "pricing-ref", title: "Vootkit Pricing: Free, Creator Pro & Teams", ogTitle: "Vootkit Pricing — Free, Pro and Teams", desc: "Start free, upgrade to Creator Pro for unlimited usage, or preview the upcoming Vootkit Teams plan." }) +
+  return head({ depth: 0, url, ads: true, ld, bodyClass: "pricing-ref", title: "Vootkit Pricing: Free & Creator Pro Plans", ogTitle: "Vootkit Pricing — Free and Creator Pro", desc: "Start free with 5 tool runs a day. Upgrade to Creator Pro for unlimited usage, an ad-free workspace and saved workflows." }) +
 `<div class="wrap section" id="plans">
   <header class="sec-head" style="margin-top:var(--s-4)">
     <span class="pricing-kicker">Simple, transparent pricing</span>
@@ -3296,36 +3297,19 @@ function pricingPage() {
       </ul>
     </div>
 
-    <div class="plan plan--teams plan--soon">
-      <span class="plan-flag plan-flag--soon">Coming soon</span>
-      <span class="plan-kicker">For shared work</span>
-      <h2>Creator Teams</h2>
-      <p class="plan-price"><span class="plan-amt" data-price="teams">$${P.creator_teams_monthly.amount}</span><span class="plan-per" data-per="teams">/month</span></p>
-      <p class="plan-tag">A planned workspace for small teams that need shared access and centralized billing.</p>
-      <p class="plan-detail">Teams is shown for pricing transparency, but checkout remains disabled until member invitations, roles and shared workflow controls are ready.</p>
-      <button class="btn btn-block" type="button" disabled aria-disabled="true">Coming soon</button>
-      <p class="plan-includes">Planned Teams capabilities:</p>
-      <ul class="plan-feats">
-        ${feat(true, "Everything included in Creator Pro")}
-        ${feat(true, "One subscription for a small team")}
-        ${feat(true, "Member invitations and access controls")}
-        ${feat(true, "Shared reusable workflows")}
-        ${feat(true, "Centralized billing management")}
-      </ul>
-    </div>
   </div>
 
   <section class="pricing-compare">
     <div class="sec-head"><h2>Compare the essentials</h2></div>
     <div class="cmp-wrap">
       <table class="cmp-table">
-        <thead><tr><th scope="col" style="text-align:left">Feature</th><th scope="col">Free</th><th scope="col" class="cmp-hi">Creator Pro</th><th scope="col">Teams</th></tr></thead>
+        <thead><tr><th scope="col" style="text-align:left">Feature</th><th scope="col">Free</th><th scope="col" class="cmp-hi">Creator Pro</th></tr></thead>
         <tbody>
-          <tr><th scope="row">Daily tool runs</th><td>5 / day</td><td class="cmp-hi">Unlimited</td><td>Unlimited</td></tr>
-          <tr><th scope="row">Saved workflows</th><td>${yn(false)}</td><td class="cmp-hi">${yn(true)}</td><td>Shared · planned</td></tr>
-          <tr><th scope="row">Workspace ads</th><td>Included</td><td class="cmp-hi">None</td><td>None</td></tr>
-          <tr><th scope="row">Browser processing</th><td>${yn(true)}</td><td class="cmp-hi">${yn(true)}</td><td>${yn(true)}</td></tr>
-          <tr><th scope="row">Billing management</th><td>${yn(false)}</td><td class="cmp-hi">Stripe portal</td><td>Centralized · planned</td></tr>
+          <tr><th scope="row">Daily tool runs</th><td>5 / day</td><td class="cmp-hi">Unlimited</td></tr>
+          <tr><th scope="row">Saved workflows</th><td>${yn(false)}</td><td class="cmp-hi">${yn(true)}</td></tr>
+          <tr><th scope="row">Workspace ads</th><td>Included</td><td class="cmp-hi">None</td></tr>
+          <tr><th scope="row">Browser processing</th><td>${yn(true)}</td><td class="cmp-hi">${yn(true)}</td></tr>
+          <tr><th scope="row">Billing management</th><td>${yn(false)}</td><td class="cmp-hi">Stripe portal</td></tr>
         </tbody>
       </table>
     </div>
@@ -4529,6 +4513,9 @@ const CATEGORY_MOVES = [
 ];
 
 const lines = ["# 301s from the previous URL scheme — keep indexed pages alive", "",
+  "# Removed unfinished AI pages now lead to the working tool directory.",
+  "/tools/ai/*   /tools/   301!", "/tools/ai/   /tools/   301!",
+  "/:lang/tools/ai/*   /:lang/tools/   301!", "/:lang/tools/ai/   /:lang/tools/   301!", "",
   "# Directory URLs are canonical: /x/index.html duplicates /x/ on every page.",
   "/*/index.html   /:splat/   301!", ""];
 RENAMED.forEach(([cat, oldId, newId]) => {

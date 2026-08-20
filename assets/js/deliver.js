@@ -156,7 +156,7 @@
             var cl = await A.client();
             var r = await cl.from('profiles').select('plan').eq('id', user.id).single();
             var plan = r && r.data && r.data.plan;
-            state.pro = plan === 'creator_pro' || plan === 'creator_teams';
+            state.pro = plan === 'creator_pro';
           } catch (e) {}
         }
       }

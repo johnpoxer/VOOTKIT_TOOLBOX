@@ -683,7 +683,7 @@
       var c = await A.client();
       var r = await c.from('profiles').select('plan').eq('id', user.id).single();
       var plan = r && r.data && r.data.plan;
-      return plan === 'creator_pro' || plan === 'creator_teams';
+      return plan === 'creator_pro';
     } catch (e) { return false; }
   }
 

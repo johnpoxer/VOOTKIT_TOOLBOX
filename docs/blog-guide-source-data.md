@@ -500,20 +500,6 @@ Guide/blog ideas:
 - How to choose the right Education & Study tool for a real task
 - Common Education & Study mistakes and how Vootkit helps avoid them
 
-### AI (on-device) (3)
-
-Category URL: /tools/ai/
-Category blurb: Background removal, OCR and transcription. The model downloads once, then runs on your machine.
-
-- **Background Remover** (remove-background) - Cut out a background - private, in-browser AI. URL: /tools/ai/remove-background/ [planned, local, tier:traffic]
-- **Image to Text (OCR)** (image-to-text) - Extract text from photos, screenshots and scans. URL: /tools/ai/image-to-text/ [planned, local, tier:traffic]
-- **Audio to Text** (transcribe-audio) - Transcribe speech with on-device Whisper. URL: /tools/ai/transcribe-audio/ [planned, local, tier:traffic]
-
-Guide/blog ideas:
-- Best AI (on-device) tools for beginners
-- How to choose the right AI (on-device) tool for a real task
-- Common AI (on-device) mistakes and how Vootkit helps avoid them
-
 ## Workflow-Capable Tools
 
 These tools can be used as steps inside Vootkit Workflow. Use them when writing workflow-builder guides.

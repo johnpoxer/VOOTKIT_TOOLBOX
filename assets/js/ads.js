@@ -65,7 +65,7 @@
     for (var j = 0; j < units.length; j++) io.observe(units[j]);
   }
 
-  function isPaidPlan(plan) { return plan === 'creator_pro' || plan === 'creator_teams'; }
+  function isPaidPlan(plan) { return plan === 'creator_pro'; }
   function removeUnits() {
     if (!doc) return;
     doc.querySelectorAll('.ad-slot').forEach(function (node) { node.remove(); });

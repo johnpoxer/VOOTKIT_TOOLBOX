@@ -55,12 +55,11 @@ body.pricing-ref .bt-opt.is-on{box-shadow:0 3px 12px rgb(31 25 74/.09)}
 body.pricing-ref .pricing-highlights{max-width:760px;margin:0 auto 34px;gap:0;border:1px solid #e7e5ed;border-radius:14px;background:#fff;overflow:hidden}
 body.pricing-ref .pricing-highlights span{min-height:52px;border:0;border-right:1px solid #eceaf1;border-radius:0;background:transparent;font-size:12px}
 body.pricing-ref .pricing-highlights span:last-child{border-right:0}
-body.pricing-ref .plans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;align-items:stretch;max-width:1240px;margin-inline:auto}
+body.pricing-ref .plans{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;align-items:stretch;max-width:1080px;margin-inline:auto}
 body.pricing-ref .plan,body.pricing-ref .plan--featured{display:flex;flex-direction:column;min-height:720px;padding:46px 42px 38px;border:1px solid #dedfe7;border-radius:28px;background:#fff;box-shadow:0 8px 30px rgb(25 25 55/.055);overflow:visible}
 body.pricing-ref .plan:hover{transform:translateY(-4px);border-color:#c9c3eb;box-shadow:0 22px 55px rgb(45 32 105/.11)}
 body.pricing-ref .plan--featured{border:2px solid #5839e8;background:linear-gradient(180deg,#f8f6ff 0,#fff 34%);box-shadow:0 18px 55px rgb(79 52 190/.16)}
 body.pricing-ref .plan--soon{background:linear-gradient(180deg,#fbfbfd,#fff)}
-body.pricing-ref .plan--teams{border-style:dashed}.pricing-ref .plan-flag--soon{background:#5f6979;box-shadow:none}.pricing-ref .plan--teams>.btn:disabled{border-color:#cfd4df;background:#eef1f6;color:#687386;cursor:not-allowed}.pricing-ref .plan--teams>.btn:disabled:hover{transform:none}
 body.pricing-ref .plan-flag{top:-14px;left:24px;transform:none;padding:7px 13px;border-radius:999px;box-shadow:0 7px 18px rgb(79 52 190/.24);font-size:11px;letter-spacing:.035em;text-transform:uppercase}
 body.pricing-ref .plan-kicker{display:block;margin:0 0 12px;color:#777f92;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
 body.pricing-ref .plan h2{margin:0;font-family:var(--font-body);font-size:34px;line-height:1.12;letter-spacing:-.03em}
@@ -85,7 +84,7 @@ body.pricing-ref .pricing-faq details:first-of-type{border-radius:14px 14px 0 0}
 body.pricing-ref .pricing-faq details:last-child{border-radius:0 0 14px 14px}
 body.pricing-ref .pricing-faq summary{padding:19px 20px;font-size:14px}
 body.pricing-ref .pricing-cta{margin-top:36px;padding:42px;border-radius:20px}
-@media(max-width:1050px){body.pricing-ref .plans{grid-template-columns:repeat(2,minmax(0,1fr))}body.pricing-ref .plan--teams{grid-column:1/-1;max-width:610px;width:100%;justify-self:center}body.pricing-ref .plan,body.pricing-ref .plan--featured{padding:38px 30px;min-height:700px}}
+@media(max-width:900px){body.pricing-ref .plan,body.pricing-ref .plan--featured{padding:38px 30px;min-height:700px}}
 @media(max-width:700px){
   body.pricing-ref #plans{width:min(100% - 28px,1240px);padding:38px 0 74px}
   body.pricing-ref #plans>.sec-head .page-h1{font-size:clamp(42px,12vw,58px)}
@@ -95,7 +94,6 @@ body.pricing-ref .pricing-cta{margin-top:36px;padding:42px;border-radius:20px}
   body.pricing-ref .pricing-highlights span{justify-content:flex-start;min-height:44px;border-right:0;border-bottom:1px solid #eceaf1}
   body.pricing-ref .pricing-highlights span:last-child{border-bottom:0}
   body.pricing-ref .plans{grid-template-columns:1fr;gap:20px}
-  body.pricing-ref .plan--teams{grid-column:auto;max-width:none}
   body.pricing-ref .plan,body.pricing-ref .plan--featured{grid-column:auto;display:flex;min-height:0;padding:34px 26px 30px;border-radius:22px}
   body.pricing-ref .plan--featured{padding-top:38px}
   body.pricing-ref .plan h2{font-size:27px}
