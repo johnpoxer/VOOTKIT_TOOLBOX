@@ -111,7 +111,8 @@
     }
     return '<span class="ic ic-tool" style="--ic-h:' + e.h + ';--ic-bg:' + e.bg + '">' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" ' +
-      'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + D.glyphs[e.g] + '</svg></span>';
+      'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + D.glyphs[e.g] + '</svg>' +
+      '<b class="ic-mark" aria-hidden="true">' + e.m + '</b></span>';
   }
 
   var INTENTS = [

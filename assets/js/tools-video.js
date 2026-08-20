@@ -49,6 +49,10 @@
       ],
       compute: function (v) {
         var sec = v.mins * 60;
+        if (!(sec > 0) || !(v.size > 0)) return {
+          headline: { label: 'Target video bitrate', value: '—', sub: 'Enter a duration and file size above zero.' },
+          note: 'A bitrate needs both a real running time and a target file size.'
+        };
         var totalBits = v.size * 1048576 * 8;          // MB (MiB) → bits
         var totalKbps = totalBits / sec / 1000;        // → kbps (decimal)
         var videoKbps = totalKbps - v.audio;

@@ -181,6 +181,7 @@
       }
 
       out.innerHTML =
+        '<span class="calc-result-kicker">Your result</span>' +
         '<div class="calc-headline"><span class="calc-label">' + r.headline.label + '</span>' +
         '<strong class="calc-value">' + r.headline.value + '</strong>' +
         (r.headline.sub ? '<span class="calc-sub">' + r.headline.sub + '</span>' : '') + '</div>' +

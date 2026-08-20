@@ -1,165 +1,30 @@
-/* account.js — the signed-in dashboard. Reads the user's profile, favorites and
- * history from Supabase (RLS-protected). Runs only on /account/.
- * Requires auth.js + a configured anon key. Degrades to a notice otherwise. */
-(function (root) {
-  'use strict';
-  var doc = document, A = root.VKAuth, VK = root.VK;
-  var host = doc.getElementById('account');
-  if (!host) return;
-
-  function el(t, a, k) { var n = doc.createElement(t); if (a) Object.keys(a).forEach(function (x) { if (x === 'class') n.className = a[x]; else if (x === 'html') n.innerHTML = a[x]; else if (x === 'text') n.textContent = a[x]; else if (x.slice(0, 2) === 'on' && typeof a[x] === 'function') n.addEventListener(x.slice(2).toLowerCase(), a[x]); else if (a[x] != null) n.setAttribute(x, a[x]); }); (k || []).forEach(function (c) { if (c != null) n.appendChild(typeof c === 'string' ? doc.createTextNode(c) : c); }); return n; }
-  function up() { return A ? A.upPrefix(location.pathname) : ''; }
-  function toolHref(id, cat) { return up() + 'tools/' + cat + '/' + id + '/'; }
-  function notice(msg) { host.innerHTML = ''; host.appendChild(el('div', { class: 'vk-empty' }, [el('h3', { text: 'Accounts are launching soon' }), el('p', { class: 'note', text: msg })])); }
-
-  if (!A || !A.enabled) { notice('Sign-in isn’t switched on yet. The tools all work without an account in the meantime.'); return; }
-
-  var user, client;
-  var LIMIT = (root.VK_CONFIG && root.VK_CONFIG.freeLimit && root.VK_CONFIG.freeLimit.count) || 5;
-  var stat = {};       // references to overview stat value nodes
-
-  async function init() {
-    user = await A.requireAuth(); if (!user) return; // redirected
-    client = await A.client();
-    render();
-  }
-
-  function tabButton(id, label) { return el('button', { class: 'btn', role: 'tab', id: 'at-' + id, 'aria-controls': 'ap-' + id, text: label }); }
-
-  /* ---- overview: at-a-glance stats + usage meter ---- */
-  function statCard(key, label, value) {
-    var v = el('b', { class: 'acct-stat-v', text: value });
-    stat[key] = v;
-    return el('div', { class: 'acct-stat' }, [el('span', { class: 'acct-stat-l', text: label }), v]);
-  }
-  function usageCard() {
-    var used = root.VKUsage ? root.VKUsage.readCount() : 0;
-    var pct = LIMIT ? Math.min(100, Math.round((used / LIMIT) * 100)) : 0;
-    var v = el('b', { class: 'acct-stat-v', text: used + ' / ' + LIMIT });
-    stat.use = v;
-    var fill = el('i', { style: 'width:' + pct + '%' }); stat.useBar = fill;
-    return el('div', { class: 'acct-stat acct-stat--wide' }, [
-      el('span', { class: 'acct-stat-l', text: 'Free runs today' }), v,
-      el('div', { class: 'acct-bar' }, [fill]),
-      el('span', { class: 'acct-stat-s', text: 'Resets at midnight. Core tools & downloaders are always unlimited.' })
-    ]);
-  }
-  function overview() {
-    return el('div', { class: 'acct-overview' }, [
-      statCard('plan', 'Plan', 'Free'),
-      usageCard(),
-      statCard('fav', 'Saved tools', '—'),
-      statCard('hist', 'Tools used', '—')
-    ]);
-  }
-  function upgradeCard() {
-    return el('div', { class: 'acct-upgrade', id: 'acct-upgrade' }, [
-      el('div', { class: 'acct-upgrade-tx' }, [
-        el('h3', { text: 'Unlock Vootkit Pro' }),
-        el('p', { text: 'Unlimited daily runs, faster processing, premium tools and cloud history that syncs across your devices.' })
-      ]),
-      el('a', { class: 'acct-upgrade-cta', href: up() + 'pricing.html', text: 'Upgrade' })
-    ]);
-  }
-
-  async function render() {
-    var name = (user.user_metadata && user.user_metadata.display_name) || user.email;
-    host.innerHTML = '';
-    host.appendChild(el('header', { class: 'acct-head' }, [
-      el('div', { class: 'acct-avatar', text: (name[0] || 'A').toUpperCase() }),
-      el('div', {}, [el('h1', { class: 'page-h1', text: name }), el('p', { class: 'note', text: user.email })]),
-      el('button', { class: 'btn', type: 'button', text: 'Sign out', onClick: function () { A.signOut(); } })
-    ]));
-
-    host.appendChild(overview());
-    host.appendChild(upgradeCard());
-
-    var tabs = el('div', { 'data-tabs': '' }, [
-      el('div', { role: 'tablist', class: 'wbtns', 'aria-label': 'Account sections' }, [
-        tabButton('fav', 'Favorites'), tabButton('hist', 'History'), tabButton('plan', 'Subscription'), tabButton('set', 'Settings')
-      ]),
-      el('div', { role: 'tabpanel', id: 'ap-fav', 'aria-labelledby': 'at-fav' }, [favPanel()]),
-      el('div', { role: 'tabpanel', id: 'ap-hist', 'aria-labelledby': 'at-hist' }, [histPanel()]),
-      el('div', { role: 'tabpanel', id: 'ap-plan', 'aria-labelledby': 'at-plan' }, [planPanel()]),
-      el('div', { role: 'tabpanel', id: 'ap-set', 'aria-labelledby': 'at-set' }, [settingsPanel()])
-    ]);
-    host.appendChild(tabs);
-    if (root.VKUI && root.VKUI.initTabs) root.VKUI.initTabs(host);
-    loadFavorites(); loadHistory(); loadPlan();
-  }
-
-  /* ---- Favorites ---- */
-  function favPanel() { var w = el('div', { id: 'fav-wrap' }, [el('div', { class: 'vk-skeleton', style: 'height:60px' })]); return w; }
-  async function loadFavorites() {
-    var wrap = doc.getElementById('fav-wrap'); if (!wrap) return;
-    try {
-      var r = await client.from('favorites').select('tool_id, created_at').order('created_at', { ascending: false });
-      var rows = (r.data || []);
-      if (stat.fav) stat.fav.textContent = String(rows.length);
-      wrap.innerHTML = '';
-      if (!rows.length) { wrap.appendChild(emptyState('No favorites yet', 'Open any tool and tap the ☆ to pin it here.')); return; }
-      var grid = el('div', { class: 'popular-grid' });
-      rows.forEach(function (row) { var t = VK && VK.find(row.tool_id); if (!t) return; var cat = VK.category(t.cat) || { name: '' }; grid.appendChild(el('a', { class: 'poptool', href: toolHref(t.id, t.cat) }, [el('span', { class: 'poptool-tx' }, [el('strong', { text: t.name }), el('span', { text: cat.name })])])); });
-      wrap.appendChild(grid);
-    } catch (e) { wrap.innerHTML = ''; wrap.appendChild(emptyState('Couldn’t load favorites', 'The favorites table may not be set up yet (see supabase/schema.sql).')); }
-  }
-
-  /* ---- History (cloud, a Pro convenience) ---- */
-  function histPanel() { return el('div', { id: 'hist-wrap' }, [el('div', { class: 'vk-skeleton', style: 'height:60px' })]); }
-  async function loadHistory() {
-    var wrap = doc.getElementById('hist-wrap'); if (!wrap) return;
-    try {
-      var r = await client.from('history').select('tool_id, used_at').order('used_at', { ascending: false }).limit(40);
-      var rows = (r.data || []);
-      if (stat.hist) stat.hist.textContent = String(rows.length);
-      wrap.innerHTML = '';
-      if (!rows.length) { wrap.appendChild(emptyState('No history yet', 'Tools you use while signed in show up here, synced across your devices.')); return; }
-      var list = el('div', { class: 'popular-grid' });
-      rows.forEach(function (row) { var t = VK && VK.find(row.tool_id); if (!t) return; list.appendChild(el('a', { class: 'poptool', href: toolHref(t.id, t.cat) }, [el('span', { class: 'poptool-tx' }, [el('strong', { text: t.name }), el('span', { text: new Date(row.used_at).toLocaleDateString() })])])); });
-      wrap.appendChild(list);
-    } catch (e) { wrap.innerHTML = ''; wrap.appendChild(emptyState('Couldn’t load history', 'The history table may not be set up yet (see supabase/schema.sql).')); }
-  }
-
-  /* ---- Subscription ---- */
-  function planPanel() { return el('div', { id: 'plan-wrap' }, [el('div', { class: 'vk-skeleton', style: 'height:60px' })]); }
-  async function loadPlan() {
-    var wrap = doc.getElementById('plan-wrap'); if (!wrap) return;
-    var plan = 'free';
-    try { var r = await client.from('profiles').select('plan').eq('id', user.id).single(); if (r.data && r.data.plan) plan = r.data.plan; } catch (e) {}
-    var isPro = plan !== 'free';
-    var label = plan === 'creator_pro' ? 'Creator Pro' : plan === 'creator_teams' ? 'Creator Teams' : 'Free';
-    // reflect plan into the overview + toggle the upgrade card / usage meter
-    if (stat.plan) stat.plan.textContent = label;
-    if (isPro) {
-      if (stat.use) stat.use.textContent = 'Unlimited';
-      if (stat.useBar) stat.useBar.style.width = '100%';
-      var up1 = doc.getElementById('acct-upgrade'); if (up1) up1.remove();
-    }
-    wrap.innerHTML = '';
-    wrap.appendChild(el('div', { class: 'calc-stats' }, [el('div', { class: 'calc-stat' }, [el('span', { text: 'Current plan' }), el('b', { text: label })])]));
-    if (!isPro) wrap.appendChild(el('p', { class: 'note', html: 'You’re on the free plan — 5 tool runs a day, with core tools and downloaders always unlimited. <a href="' + up() + 'pricing.html" style="color:var(--accent);font-weight:600">See Pro</a> for unlimited usage, faster processing and cloud history.' }));
-    else wrap.appendChild(el('p', { class: 'note', text: 'Thanks for supporting Vootkit. Manage billing from the receipt email’s Stripe portal link.' }));
-  }
-
-  /* ---- Settings ---- */
-  function settingsPanel() {
-    var name = el('input', { class: 'field', type: 'text', value: (user.user_metadata && user.user_metadata.display_name) || '', 'aria-label': 'Display name' });
-    var pw = el('input', { class: 'field', type: 'password', placeholder: 'New password', 'aria-label': 'New password', autocomplete: 'new-password' });
-    var msg = el('p', { class: 'note', role: 'status' });
-    var saveName = el('button', { class: 'btn btn-primary', type: 'button', text: 'Save name', onClick: async function () { try { await client.auth.updateUser({ data: { display_name: name.value } }); toast('Name updated'); } catch (e) { toast('Could not save', 'warn'); } } });
-    var savePw = el('button', { class: 'btn', type: 'button', text: 'Change password', onClick: async function () { var p = A.passwordProblem(pw.value); if (p) { toast(p, 'warn'); return; } try { await A.updatePassword(pw.value); pw.value = ''; toast('Password changed'); } catch (e) { toast('Could not change password', 'warn'); } } });
-    return el('div', { class: 'wfield' }, [
-      el('label', { class: 'wfield' }, [el('span', { class: 'wlab', text: 'Display name' }), name]),
-      el('div', { class: 'wbtns' }, [saveName]),
-      el('label', { class: 'wfield', style: 'margin-top:var(--s-4)' }, [el('span', { class: 'wlab', text: 'New password' }), pw]),
-      el('div', { class: 'wbtns' }, [savePw]),
-      msg,
-      el('p', { class: 'note', style: 'margin-top:var(--s-5)', html: '<a href="#" style="color:var(--err);font-weight:600" onclick="return false">Delete account</a> — contact support to remove your account and data.' })
-    ]);
-  }
-
-  function emptyState(title, body) { return el('div', { class: 'vk-empty' }, [el('svg', { viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', 'stroke-width': '1.6', html: '<path d="M12 3l1.8 4.7L18.5 9l-4.7 1.8L12 15l-1.8-4.2L5.5 9l4.7-1.3z"/>' }), el('h3', { text: title }), el('p', { class: 'note', text: body })]); }
-  function toast(m, type) { if (root.VKUI && root.VKUI.toast) root.VKUI.toast(m, { type: type || 'ok' }); }
-
-  init();
-})(typeof window !== 'undefined' ? window : globalThis);
+/* account.js — mobile-first account dashboard and settings. */
+(function(root){'use strict';
+var d=document,A=root.VKAuth,VK=root.VK,host=d.getElementById('account');if(!host)return;var DEMO=host.hasAttribute('data-account-preview');
+var user,client,profile={plan:'free',subscription_status:'inactive'},favorites=[],recent=[];
+var LIMIT=(root.VK_CONFIG&&root.VK_CONFIG.freeLimit&&root.VK_CONFIG.freeLimit.count)||5,PREF='vk-account-preferences',prefs=readPrefs();
+var GLYPH={
+user:'<circle cx="12" cy="8" r="3"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/>',shield:'<path d="M12 3 4.5 6v5.5c0 4.5 3 8.2 7.5 9.5 4.5-1.3 7.5-5 7.5-9.5V6z"/><path d="m9 12 2 2 4-4"/>',google:'<path d="M20 12h-8v4h4a5 5 0 1 1-1-7l3-3A9 9 0 1 0 21 12z"/>',globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>',card:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/>',chart:'<path d="M5 20V10M12 20V4M19 20v-7"/>',crown:'<path d="m4 7 4 5 4-7 4 7 4-5-2 11H6z"/>',mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/>',bell:'<path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7M10 20h4"/>',bulb:'<path d="M9 18h6M10 22h4M8 14a6 6 0 1 1 8 0c-1 .8-1 2-1 2H9s0-1.2-1-2Z"/>',moon:'<path d="M20 15.5A8 8 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"/>',download:'<path d="M12 3v12m-4-4 4 4 4-4M5 20h14"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',trash:'<path d="M4 7h16M9 7V4h6v3m3 0-1 14H7L6 7m4 4v6m4-6v6"/>',cookie:'<path d="M20 13a8 8 0 1 1-9-9 4 4 0 0 0 4 4 4 4 0 0 0 5 5Z"/><circle cx="8" cy="14" r="1"/>',file:'<path d="M6 3h8l4 4v14H6zM14 3v5h5"/>',lock:'<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',devices:'<rect x="3" y="4" width="14" height="11" rx="2"/><path d="M8 20h4m-2-5v5M18 9h3v10h-6v-3"/>',help:'<circle cx="12" cy="12" r="9"/><path d="M10 9a2 2 0 1 1 2 3v2M12 18h.01"/>',headset:'<path d="M4 14v-2a8 8 0 0 1 16 0v2M4 14h4v6H6a2 2 0 0 1-2-2zm16 0h-4v6h2a2 2 0 0 0 2-2z"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/>',exit:'<path d="M10 4H5v16h5M14 8l4 4-4 4m4-4H9"/>',spark:'<path d="m12 3 2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/>'};
+var TONES=['blue','violet','green','amber','rose'];
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]})}
+function ico(n,t){return'<span class="acct-ico '+(t||'blue')+'"><svg viewBox="0 0 24 24" aria-hidden="true">'+(GLYPH[n]||GLYPH.spark)+'</svg></span>'}
+function readPrefs(){try{return JSON.parse(localStorage.getItem(PREF)||'{}')}catch(e){return{}}}function savePrefs(){try{localStorage.setItem(PREF,JSON.stringify(prefs))}catch(e){}}
+function toast(m,t){if(root.VKUI&&root.VKUI.toast)root.VKUI.toast(m,{type:t||'ok'})}
+function name(){return(user.user_metadata&&(user.user_metadata.display_name||user.user_metadata.full_name||user.user_metadata.name))||(user.email||'Vootkit user').split('@')[0]}
+function pro(){return profile.plan&&profile.plan!=='free'}function plan(){return pro()?'Creator Pro':'Free plan'}
+function row(ic,title,detail,action,value,tone){var link=action&&/^(\.\.\/|https?:|mailto:)/.test(action),tag=link?'a':'button',attr=link?' href="'+esc(action)+'"':' type="button"'+(action?' data-action="'+esc(action)+'"':' disabled');return'<'+tag+' class="acct-row"'+attr+'>'+ico(ic,tone)+'<span class="acct-row-copy"><b>'+esc(title)+'</b><small>'+esc(detail||'')+'</small></span>'+(value?'<span class="acct-row-value">'+esc(value)+'</span>':'')+'<span class="acct-chevron" aria-hidden="true">›</span></'+tag+'>'}
+function toggle(ic,title,key,tone){var on=prefs[key]!==false;return'<button class="acct-row" type="button" role="switch" aria-checked="'+on+'" data-toggle="'+key+'">'+ico(ic,tone)+'<span class="acct-row-copy"><b>'+esc(title)+'</b></span><span class="acct-switch '+(on?'is-on':'')+'"><i></i></span></button>'}
+function section(title,rows){return'<section class="acct-section"><h2>'+esc(title)+'</h2><div class="acct-list">'+rows.join('')+'</div></section>'}
+function usage(used,pct){return'<section class="acct-plan-card"><div class="acct-plan-ring">✓</div><div class="acct-plan-copy"><h2>'+esc(plan())+'</h2><p>'+(pro()?'Unlimited tool runs':used+' of '+LIMIT+' tasks used today')+'</p><div class="acct-progress"><i style="width:'+pct+'%"></i></div><small>'+(pro()?'Your Pro access is active':'Daily allowance resets automatically')+'</small></div>'+(pro()?'<button type="button" data-action="billing">Manage plan</button>':'<a href="../pricing.html">Upgrade to Pro</a>')+'</section>'}
+function recentHTML(){if(!recent.length)return'<div class="acct-empty"><b>No recent tools yet</b><p>Your signed-in activity will appear here.</p><a href="../tools/">Explore tools</a></div>';return recent.slice(0,5).map(function(x,i){var t=VK&&VK.find(x.tool_id);return t?row('clock',t.name,new Date(x.used_at).toLocaleDateString(),'../tools/'+t.cat+'/'+t.id+'/','',TONES[i%TONES.length]):''}).join('')}
+function dashboard(used,pct){return usage(used,pct)+'<section class="acct-stats"><article><span>Saved tools</span><b>'+favorites.length+'</b></article><article><span>Recent activity</span><b>'+recent.length+'</b></article><article><span>Workflows</span><b>'+(pro()?'Pro':'Locked')+'</b></article></section>'+section('Quick actions',[row('spark','Browse all tools','Find the right tool for your next task','../tools/','', 'violet'),row('clock','Continue where you stopped','Open your recent tool history','show-history','', 'blue'),row('crown','Saved workflows',pro()?'Build and reuse multi-step workflows':'Available with Creator Pro','../workflows/','', 'green')])+'<section class="acct-section"><h2>Recent tools</h2><div class="acct-list" id="acct-recent">'+recentHTML()+'</div></section>'}
+function settings(used,pct){var provider=(user.app_metadata&&user.app_metadata.provider)||'email';return section('Account',[row('user','Personal information','Name, email and profile photo','edit-profile','', 'violet'),row('shield','Password & security','Password and account protection','password','', 'blue'),row('google','Connected accounts',provider==='google'?'Google connected':'Signed in with '+provider,'connected',provider==='google'?'Connected':'','green'),row('globe','Language & region','English · Auto-detected region','language','','green')])+section('Plan & usage',[usage(used,pct),row('card','Billing & payments',pro()?'Payment method, invoices and cancellation':'No payment method','billing','','amber'),row('chart','Usage history','View tasks and recent activity','show-history','','blue'),row('crown','Manage subscription',pro()?'Manage Creator Pro':'Compare Free and Creator Pro',pro()?'billing':'../pricing.html','','green')])+section('Preferences',[toggle('mail','Email notifications','email','violet'),toggle('bell','Product updates','updates','blue'),toggle('bell','Workflow completion alerts','workflow','green'),toggle('bulb','Weekly tips','tips','amber'),row('moon','Theme','Consistent high-readability interface','theme','Light','violet'),row('download','Default download location','Controlled by your browser','downloads','Ask every time','blue')])+section('Privacy & files',['<div class="acct-privacy-note">'+ico('lock','blue')+'<div><b>Most files stay on your device</b><p>Compatible tools process files locally without uploading them to Vootkit.</p></div></div>',row('clock','Recent files','Manage dashboard history','show-history','','violet'),row('trash','Clear local data','Preferences and recent activity','clear-local','','rose'),row('cookie','Cookie preferences','Manage analytics and advertising choices','cookies','','green'),row('file','Privacy policy','Read how Vootkit handles data','../privacy.html','','blue')])+section('Security & sessions',[row('lock','Two-step verification','Additional account protection','two-factor','Not enabled','violet'),row('devices','Active sessions','This browser and other devices','sessions','Current device','blue'),row('download','Download my data','Export visible account data as JSON','export','','green')])+section('Support',[row('help','Help center','Guides and common questions','../contact.html','','blue'),row('headset','Contact support','Get help with your account','../contact.html','','violet'),row('mail','Send feedback','Tell us what to improve','mailto:vootkit1@gmail.com?subject=Vootkit%20feedback','','amber'),row('info','About Vootkit','Product and founder story','../about.html','Version 1.0','green')])+'<div class="acct-danger"><button type="button" data-action="signout">'+ico('exit','rose')+'<span>Sign out</span><b>›</b></button><button type="button" data-action="delete">'+ico('trash','rose')+'<span>Delete account</span><b>›</b></button></div>'}
+function render(){var nm=name(),used=root.VKUsage?root.VKUsage.readCount():0,pct=pro()?100:Math.min(100,Math.round(used/LIMIT*100)),avatar=user.user_metadata&&(user.user_metadata.avatar_url||user.user_metadata.picture);host.innerHTML='<header class="acct-page-head"><a href="../" aria-label="Back to Vootkit">‹</a><h1>Account &amp; settings</h1><a href="../contact.html" aria-label="Help">?</a></header><div class="acct-profile">'+(avatar?'<img src="'+esc(avatar)+'" alt="">':'<span class="acct-profile-fallback">'+esc(nm.charAt(0).toUpperCase())+'</span>')+'<div><h2>'+esc(nm)+'</h2><p>'+esc(user.email||'')+'</p><span>'+esc(plan())+'</span></div><button type="button" data-action="edit-profile">Edit profile</button></div><div class="acct-view-tabs" role="tablist"><button class="is-active" type="button" data-view="dashboard" role="tab" aria-selected="true">Dashboard</button><button type="button" data-view="settings" role="tab" aria-selected="false">Settings</button></div><div id="acct-dashboard" class="acct-view">'+dashboard(used,pct)+'</div><div id="acct-settings" class="acct-view" hidden>'+settings(used,pct)+'</div><div class="acct-inline-panel" id="acct-inline" hidden></div>';bind()}
+function bind(){host.onclick=function(e){var v=e.target.closest('[data-view]');if(v)return switchView(v.dataset.view);var t=e.target.closest('[data-toggle]');if(t){var k=t.dataset.toggle;prefs[k]=t.getAttribute('aria-checked')!=='true';savePrefs();t.setAttribute('aria-checked',String(prefs[k]));t.querySelector('.acct-switch').classList.toggle('is-on',prefs[k]);return toast('Preference saved')}var a=e.target.closest('[data-action]');if(a)handle(a.dataset.action)}}
+function switchView(n){host.querySelectorAll('[data-view]').forEach(function(b){var on=b.dataset.view===n;b.classList.toggle('is-active',on);b.setAttribute('aria-selected',String(on))});d.getElementById('acct-dashboard').hidden=n!=='dashboard';d.getElementById('acct-settings').hidden=n!=='settings';scrollTo({top:0,behavior:'smooth'})}
+function panel(title,body){var x=d.getElementById('acct-inline');x.innerHTML='<div class="acct-panel-head"><h2>'+esc(title)+'</h2><button type="button" data-action="close-panel" aria-label="Close">×</button></div>'+body;x.hidden=false;x.scrollIntoView({behavior:'smooth',block:'center'})}
+async function handle(a){if(DEMO&&['save-name','save-password','billing','clear-local','signout-all','export','signout','delete'].indexOf(a)>-1)return toast('This is a safe design preview. Account changes are disabled.');if(a==='close-panel')return d.getElementById('acct-inline').hidden=true;if(a==='edit-profile'){panel('Personal information','<label class="acct-field"><span>Display name</span><input id="acct-name" value="'+esc(name())+'"></label><label class="acct-field"><span>Email address</span><input value="'+esc(user.email||'')+'" disabled></label><button class="btn btn-primary" type="button" data-action="save-name">Save changes</button>');return}if(a==='save-name'){var nm=d.getElementById('acct-name').value.trim();if(!nm)return toast('Enter your name','warn');try{await client.auth.updateUser({data:{display_name:nm}});user.user_metadata.display_name=nm;toast('Profile updated');render()}catch(e){toast('Could not update profile','warn')}return}if(a==='password'){panel('Password & security','<label class="acct-field"><span>New password</span><input id="acct-password" type="password" autocomplete="new-password" placeholder="At least 8 characters"></label><button class="btn btn-primary" type="button" data-action="save-password">Update password</button>');return}if(a==='save-password'){var pw=d.getElementById('acct-password').value,p=A.passwordProblem(pw);if(p)return toast(p,'warn');try{await A.updatePassword(pw);toast('Password updated');d.getElementById('acct-inline').hidden=true}catch(e){toast('Could not update password','warn')}return}if(a==='billing')return billing();if(a==='show-history'){switchView('dashboard');return setTimeout(function(){d.getElementById('acct-recent').scrollIntoView({behavior:'smooth'})},100)}if(a==='clear-local'){if(confirm('Clear Vootkit preferences and recent local activity on this device?')){['vk-recent','vk-favorites',PREF].forEach(function(k){localStorage.removeItem(k)});prefs={};toast('Local data cleared');render()}return}if(a==='cookies'){location.href='../cookies.html';return}if(a==='sessions'){panel('Active sessions','<div class="acct-session"><span class="acct-live"></span><div><b>Current browser</b><p>'+esc(navigator.platform||'This device')+' · Active now</p></div></div><p class="note">You can securely end every session connected to your account.</p><button class="btn" type="button" data-action="signout-all">Sign out all devices</button>');return}if(a==='signout-all'){if(confirm('Sign out Vootkit on every device?'))try{await client.auth.signOut({scope:'global'});location.href='../auth/sign-in/'}catch(e){toast('Could not end sessions','warn')}return}if(a==='export'){var out={exported_at:new Date().toISOString(),account:{id:user.id,email:user.email,created_at:user.created_at,metadata:user.user_metadata},plan:profile,preferences:prefs,favorites:favorites,recent_activity:recent},blob=new Blob([JSON.stringify(out,null,2)],{type:'application/json'}),link=d.createElement('a');link.href=URL.createObjectURL(blob);link.download='vootkit-account-data.json';link.click();setTimeout(function(){URL.revokeObjectURL(link.href)},1000);return toast('Account data downloaded')}if(a==='connected')return toast('Connected account management is coming soon.');if(a==='language')return toast('Vootkit is currently set to English.');if(a==='theme')return toast('Light mode is used for consistent readability.');if(a==='downloads')return toast('Your browser securely controls download locations.');if(a==='two-factor')return toast('Two-step verification setup is coming soon.');if(a==='signout')return A.signOut();if(a==='delete'&&confirm('Account deletion is permanent. Continue to support to verify your request?'))location.href='../contact.html'}
+async function billing(){if(!pro())return location.href='../pricing.html';try{var s=await A.getSession();if(!s||!s.access_token)throw Error('Sign in again to manage billing.');var r=await fetch('/.netlify/functions/create-portal',{method:'POST',headers:{Authorization:'Bearer '+s.access_token}}),j=await r.json().catch(function(){return{}});if(!r.ok||!j.url)throw Error(j.error||'Could not open billing.');location.href=j.url}catch(e){toast(e.message||'Could not open billing.','warn')}}
+async function load(){try{var p=await client.from('profiles').select('plan,subscription_status').eq('id',user.id).single();if(p.data)profile=p.data}catch(e){}try{var f=await client.from('favorites').select('tool_id,created_at').order('created_at',{ascending:false});favorites=f.data||[]}catch(e){}try{var h=await client.from('history').select('tool_id,used_at').order('used_at',{ascending:false}).limit(40);recent=h.data||[]}catch(e){}}
+async function init(){if(DEMO){user={id:'preview-user',email:'john@example.com',created_at:new Date().toISOString(),user_metadata:{display_name:'John Prosper'},app_metadata:{provider:'google'}};profile={plan:'free',subscription_status:'inactive'};favorites=[{tool_id:'compress-pdf'},{tool_id:'resize-image'}];recent=[{tool_id:'compress-pdf',used_at:new Date().toISOString()},{tool_id:'resize-image',used_at:new Date(Date.now()-86400000).toISOString()}];render();return}if(!A||!A.enabled){host.innerHTML='<div class="acct-unavailable"><h1>Account setup is unavailable</h1><p>Vootkit tools still work without an account.</p><a class="btn btn-primary" href="../tools/">Open tools</a></div>';return}user=await A.requireAuth();if(!user)return;client=await A.client();await load();render()}init();
+})(typeof window!=='undefined'?window:globalThis);

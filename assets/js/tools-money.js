@@ -261,7 +261,7 @@
         var a = M.amortise(P, r, n);
         var months = v.years * 12;
         var interestPaid = a.rows.slice(0, months).reduce(function (s, x) { return s + x.interest; }, 0);
-        var balance = months < a.rows.length ? a.rows[months - 1].balance : 0;
+        var balance = months > 0 && months < a.rows.length ? a.rows[months - 1].balance : 0;
         var owningCosts = v.price * (v.costs / 100) * v.years;
         var futureValue = v.price * Math.pow(1 + v.grow / 100, v.years);
         var sellCosts = futureValue * 0.03;
@@ -302,7 +302,8 @@
         var gross = v.rent * 12;
         var effective = gross * (1 - v.vacancy / 100);
         var noi = effective - v.expenses;
-        var cap = noi / v.value;
+        var propertyValue = Math.max(0, Number(v.value) || 0);
+        var cap = propertyValue > 0 ? noi / propertyValue : 0;
         return {
           headline: { label: 'Cap rate', value: (cap * 100).toFixed(2) + '%',
             sub: 'Net operating income ' + F.money(noi, v.cur) + ' a year' },
@@ -310,7 +311,7 @@
             { label: 'Gross rent', value: F.money(gross, v.cur) },
             { label: 'After vacancy', value: F.money(effective, v.cur) },
             { label: 'Operating expenses', value: F.money(v.expenses, v.cur) },
-            { label: 'Gross yield', value: (gross / v.value * 100).toFixed(2) + '%' }
+            { label: 'Gross yield', value: (propertyValue > 0 ? gross / propertyValue * 100 : 0).toFixed(2) + '%' }
           ],
           note: 'Cap rate deliberately ignores financing so you can compare properties like for like. It is not a return on your cash — use cash-on-cash for that.'
         };

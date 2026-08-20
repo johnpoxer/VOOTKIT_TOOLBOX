@@ -65,7 +65,41 @@
     for (var j = 0; j < units.length; j++) io.observe(units[j]);
   }
 
-  root.VKAds = { fill: fill, init: init, MARGIN: MARGIN, SELECTOR: SEL };
+  function isPaidPlan(plan) { return plan === 'creator_pro' || plan === 'creator_teams'; }
+  function removeUnits() {
+    if (!doc) return;
+    doc.querySelectorAll('.ad-slot').forEach(function (node) { node.remove(); });
+  }
+
+  function loadNetwork() {
+    if (!doc || doc.querySelector('script[data-vk-ad-loaded]')) return;
+    var placeholder = doc.querySelector('script[data-vk-ad-src]');
+    if (!placeholder) return;
+    var script = doc.createElement('script');
+    script.async = true;
+    script.src = placeholder.getAttribute('data-vk-ad-src');
+    script.crossOrigin = 'anonymous';
+    script.setAttribute('data-vk-ad-loaded', '1');
+    doc.head.appendChild(script);
+  }
+
+  async function boot() {
+    var A = root.VKAuth;
+    if (A && A.enabled) {
+      try {
+        var user = await A.getUser();
+        if (user) {
+          var client = await A.client();
+          var result = await client.from('profiles').select('plan').eq('id', user.id).single();
+          if (isPaidPlan(result && result.data && result.data.plan)) { removeUnits(); return; }
+        }
+      } catch (e) { /* Ads remain available if plan lookup is unavailable. */ }
+    }
+    loadNetwork();
+    init();
+  }
+
+  root.VKAds = { fill: fill, init: init, boot: boot, loadNetwork: loadNetwork, isPaidPlan: isPaidPlan, MARGIN: MARGIN, SELECTOR: SEL };
   if (typeof module === 'object' && module.exports) module.exports = root.VKAds;
-  if (doc) { if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', init); else init(); }
+  if (doc) { if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', boot); else boot(); }
 })(typeof window !== 'undefined' ? window : globalThis);

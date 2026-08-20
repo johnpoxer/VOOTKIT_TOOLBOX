@@ -55,7 +55,7 @@
     n.className = 'usage-nudge';
     n.innerHTML =
       '<p><strong>That was your ' + CFG.count + 'th free run today.</strong> ' +
-      'Everything still works — Creator Pro is $' + amount + ' a month for unlimited runs, no ads and faster processing.</p>' +
+      'Everything still works — Creator Pro is $' + amount + ' a month for unlimited runs, no ads and saved workflows.</p>' +
       '<a class="btn btn-primary btn-sm" href="' + up() + 'pricing.html">See Pro</a>';
     ws.appendChild(n);
 
@@ -78,7 +78,7 @@
       '<div class="usage-gate">' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>' +
       '<h2>You’ve used your ' + CFG.count + ' free tools today</h2>' +
-      '<p class="note">Upgrade to Creator Pro for unlimited use, no ads, faster processing and cloud history — or come back tomorrow.</p>' +
+      '<p class="note">Upgrade to Creator Pro for unlimited use, no ads and saved workflows — or come back tomorrow.</p>' +
       '<div class="usage-gate-actions">' +
       '<a class="btn btn-primary" href="' + u + 'pricing.html">See Pro plans</a>' +
       (root.VKAuth && root.VKAuth.enabled ? '<a class="btn" href="' + u + 'auth/sign-in/">Sign in</a>' : '') +

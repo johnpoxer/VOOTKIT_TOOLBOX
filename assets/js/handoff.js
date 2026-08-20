@@ -179,9 +179,11 @@
     var I = root.VK_ICONS;
     var e = I && I.icons && I.icons[id];
     if (!e || !I.glyphs[e.g]) return null;
-    return el('span', { class: 'ic ic-tool', style: '--ic-h:' + e.h + ';--ic-bg:' + e.bg },
-      [el('span', { html: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" ' +
-        'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + I.glyphs[e.g] + '</svg>' }).firstChild]);
+    return el('span', { class: 'ic ic-tool', style: '--ic-h:' + e.h + ';--ic-bg:' + e.bg }, [
+      el('span', { html: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" ' +
+        'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + I.glyphs[e.g] + '</svg>' }).firstChild,
+      el('b', { class: 'ic-mark', text: e.m, 'aria-hidden': 'true' })
+    ]);
   }
 
   function toolHref(id) {

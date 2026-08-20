@@ -106,7 +106,7 @@ a.card:hover, button.card:hover { transform: translateY(-3px); border-color: var
 
 /* tool card — built for variable content length */
 .tool-card { display: flex; flex-direction: column; gap: var(--s-2); min-height: 148px; }
-.tool-card .ic { display: grid; place-items: center; width: 40px; height: 40px; border-radius: var(--r-md); background: var(--accent-weak); color: var(--accent); flex: none; }
+.tool-card .ic:not(.ic-tool) { display: grid; place-items: center; width: 40px; height: 40px; border-radius: var(--r-md); background: var(--accent-weak); color: var(--accent); flex: none; }
 .tool-card .ic svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .tool-card h3 { font-size: var(--t-md); font-weight: 700; }
 .tool-card p { font-size: var(--t-sm); color: var(--ink-soft); line-height: 1.5; flex: 1; }
@@ -135,15 +135,38 @@ a.card:hover, button.card:hover { transform: translateY(-3px); border-color: var
  * safe to derive — the hover shade and the soft glow beneath.
  */
 .ic-tool {
+  position: relative; isolation: isolate; overflow: hidden;
   display: inline-flex; align-items: center; justify-content: center;
   width: 2.5rem; height: 2.5rem; flex: 0 0 auto;
+  border: 1px solid color-mix(in srgb, var(--ic-bg) 72%, #fff 28%);
   border-radius: 12px;
   color: #fff;
-  background: var(--ic-bg, hsl(var(--ic-h) 68% 45%));
-  box-shadow: 0 2px 6px hsl(var(--ic-h) 55% 45% / .28);
+  background:
+    radial-gradient(circle at 24% 18%, rgb(255 255 255 / .32), transparent 31%),
+    linear-gradient(145deg, color-mix(in srgb, var(--ic-bg) 76%, #fff 24%), var(--ic-bg) 58%, color-mix(in srgb, var(--ic-bg) 84%, #000 16%));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / .3), 0 3px 8px hsl(var(--ic-h) 55% 35% / .3);
   transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
 }
-.ic-tool svg { width: 1.35rem; height: 1.35rem; }
+.ic-tool::after {
+  content: ""; position: absolute; z-index: -1; right: -18%; bottom: -30%;
+  width: 72%; height: 72%; border-radius: 50%;
+  background: rgb(255 255 255 / .13); transform: rotate(-18deg);
+}
+.ic-tool svg {
+  position: relative; z-index: 1; width: 1.22rem; height: 1.22rem;
+  transform: translate(-2px, -2px);
+  filter: drop-shadow(0 1px 1px rgb(0 0 0 / .16));
+}
+.ic-tool .ic-mark {
+  position: absolute; z-index: 2; right: 3px; bottom: 3px;
+  min-width: 13px; height: 9px; padding: 0 2px;
+  display: grid; place-items: center;
+  border: 1px solid rgb(255 255 255 / .46); border-radius: 4px;
+  background: rgb(7 15 35 / .3); color: #fff;
+  font: 700 5.5px/1 ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: -.15px;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / .18);
+}
 
 /* A little life on hover — the card is a link, and the icon is the part the
    eye is already on. Darkened with a filter rather than a second colour, so
@@ -227,63 +250,42 @@ label { display: block; font-size: var(--t-sm); font-weight: 600; color: var(--i
 .note.err { color: var(--err); }
 
 /* ---------- footer ---------- */
-/* ---------- footer ----------
- * A dark band, fixed in both themes. Not a lighter shade of the page: the
- * footer's job is to end the page, and a hairline rule over the same canvas
- * does not read as an ending, which is why the old one looked like the content
- * simply stopped. It is also the only place on the site that can hold this
- * many links without the page feeling like a directory.
- *
- * The colours are literal rather than tokens on purpose. Every token here
- * flips with the theme, and a footer that is dark in light mode and lighter in
- * dark mode is two designs to maintain and neither is the one that was drawn.
- */
 .ftr {
-  background: #0f1729; color: rgb(255 255 255 / .68);
-  padding-block: var(--s-7) var(--s-5);
+  background: #fff; color: #606678;
+  padding-block: 42px 24px;
   font-size: var(--t-base);
-  /* When a browser is zoomed out or the viewport is unusually tall, body still
-     paints below the document. Keep that area visually attached to the footer
-     instead of exposing the pale page canvas underneath it. */
-  box-shadow: 0 100vh 0 100vh #0f1729;
+  border-top: 1px solid #eceef4;
+  box-shadow: 0 100vh 0 100vh #fff;
 }
-.ftr-top {
-  display: grid; grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
-  gap: var(--s-7); align-items: start;
-}
-.ftr-cols { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-5); }
+.ftr-top { display: block; }
+.ftr-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(24px, 8vw, 120px); max-width: 920px; }
 .ftr h4 {
-  font-family: var(--font-mono); font-size: var(--t-xs); font-weight: 600;
-  letter-spacing: .08em; text-transform: uppercase;
-  color: #fff; margin-bottom: var(--s-3);
+  font-family: var(--font-body); font-size: 13px; font-weight: 750;
+  letter-spacing: 0; text-transform: none;
+  color: #171b2c; margin-bottom: 8px;
 }
-.ftr a { display: block; padding: 6px 0; color: rgb(255 255 255 / .68); }
-.ftr a:hover { color: #fff; }
-.ftr :focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.ftr a { display: block; padding: 5px 0; color: #606678; }
+.ftr a:hover { color: var(--accent); }
+.ftr :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* Brand block — the slot the reference gives to app-store badges. */
-.ftr-brand p { margin: 0 0 var(--s-3); font-size: var(--t-sm); line-height: 1.6; }
+.ftr-brand { display: flex; align-items: center; gap: 14px; }
+.ftr-brand p { margin: 0; font-size: 12px; }
 .ftr-mark {
-  display: inline-flex; align-items: center; gap: var(--s-2);
-  font-family: var(--font-display); font-size: var(--t-lg); font-weight: 700;
-  color: #fff; margin-bottom: var(--s-3);
-}
-.ftr-mark svg { width: 30px; height: 30px; color: #7dabf8; }
-.ftr-trust { display: flex; gap: var(--s-2); align-items: flex-start; margin: 0; }
-.ftr-trust svg {
-  flex: 0 0 auto; width: 17px; height: 17px; margin-top: 2px;
-  fill: none; stroke: #22d3ee; stroke-width: 1.8;
-  stroke-linecap: round; stroke-linejoin: round;
+  display: inline-flex; align-items: center;
+  font-family: var(--font-body); font-size: 20px; font-weight: 850;
+  color: var(--accent); padding: 0;
 }
 
 /* Bottom bar. */
 .ftr-bar {
   display: flex; align-items: center; justify-content: space-between;
   gap: var(--s-4); flex-wrap: wrap;
-  margin-top: var(--s-6); padding-top: var(--s-4);
-  border-top: 1px solid rgb(255 255 255 / .10);
+  margin-top: 28px; padding-top: 18px;
+  border-top: 1px solid #eceef4;
 }
 .ftr-copy { margin: 0; font-size: var(--t-sm); }
+.ftr-lang { color: #606678; font-size: 12px; white-space: nowrap; }
 .ftr-socials { display: flex; gap: var(--s-2); }
 .ftr-soc {
   display: grid; place-items: center; width: 38px; height: 38px; padding: 0;
@@ -297,12 +299,18 @@ label { display: block; font-size: var(--t-sm); font-weight: 600; color: var(--i
 }
 
 @media (max-width: 900px) {
-  .ftr-top { grid-template-columns: 1fr; gap: var(--s-6); }
-  .ftr-brand { order: -1; max-width: 34rem; }   /* who this is, before the index of it */
+  .ftr-cols { gap: var(--s-5); }
 }
 @media (max-width: 560px) {
-  .ftr-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-5) var(--s-4); }
-  .ftr-bar { justify-content: center; text-align: center; }
+  .ftr { padding-block: 32px 20px; }
+  .ftr-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .ftr h4 { font-size: 12px; }
+  .ftr a { font-size: 11px; line-height: 1.35; }
+  .ftr-bar { flex-wrap: nowrap; }
+  .ftr-brand { gap: 9px; min-width: 0; }
+  .ftr-mark { font-size: 18px; }
+  .ftr-brand p { font-size: 9px; line-height: 1.3; }
+  .ftr-lang { font-size: 10px; }
 }
 
 /* ============ Component library (ui.js) ============ */
@@ -1317,6 +1325,23 @@ label { display: block; font-size: var(--t-sm); font-weight: 600; color: var(--i
 }
 
 .acct { max-width: 780px; margin-inline: auto; }
+
+/* 2026 authentication refresh — mobile reference implementation. */
+.auth-page{--auth-purple:#5430e8;--auth-ink:#121733;background:#fff;color-scheme:light}
+.auth-top{position:relative;border:0;background:#fff;backdrop-filter:none}
+.auth-top-in{width:min(100% - 40px,440px);min-height:84px}
+.auth-logo{gap:8px;color:#151a36;font-size:21px}.auth-logo .brand-v{width:29px;height:29px}.auth-top-actions{display:none}
+.auth-shell{width:min(100% - 40px,440px);display:block;padding:0 0 36px}.auth-story,.auth-bottom-trust{display:none}.auth-panel{position:relative;display:block;padding:0}
+.auth-card{width:100%;padding:26px 0 0;border:0;border-radius:0;background:#fff;box-shadow:none}
+.auth-card-head{max-width:75%;margin:0 0 54px;text-align:left}.auth-card-head h1{font-family:Georgia,"Times New Roman",serif;font-size:32px;line-height:1.03;letter-spacing:-.035em}.auth-card-head p{margin-top:8px;color:#59627a;font-size:13px}
+.auth-sign-in .auth-panel:before,.auth-sign-up .auth-panel:before{content:"";position:absolute;z-index:2;right:0;top:4px;width:38%;height:142px;border-radius:52% 0 0 55%;background-color:#eee9ff;background-position:center;background-size:cover;box-shadow:inset 22px 0 42px #e6deff66;pointer-events:none}
+.auth-sign-in .auth-panel:before{background-image:linear-gradient(120deg,#eee8ff44,#fff0),url('../images/home/home-community-person.webp')}.auth-sign-up .auth-panel:before{background-image:linear-gradient(120deg,#eee8ff44,#fff0),url('../images/home/home-workflow-workspace.jpg')}
+.auth-sign-in .auth-card-head{margin-bottom:94px}
+.auth-card>*{position:relative;z-index:1}.auth-google,.auth-submit{min-height:48px;border-radius:7px;font-size:13px}.auth-google{border-color:#e0e1e8;box-shadow:0 5px 16px #24213d0b}.auth-oauth{margin-bottom:14px}.auth-or{margin:13px 0 18px;font-size:11px}.auth-form{gap:14px}.auth-field{gap:6px}.auth-field>span:first-child{font-size:11px;font-weight:600}.auth-input{grid-template-columns:1fr;min-height:47px;padding:0 13px;border-color:#dfe1e8;border-radius:6px;background:#fff}.auth-input>.auth-ic{display:none}.auth-input input{font-size:13px}.auth-password{grid-template-columns:1fr 34px}.auth-row{align-items:center;justify-content:space-between;margin-top:0;font-size:11px}.auth-remember,.auth-agree{display:flex;align-items:center;gap:6px;color:#525b72;font-size:11px}.auth-remember input,.auth-agree input{accent-color:#5636e8}.auth-submit{margin-top:5px;background:linear-gradient(100deg,#4d2de5,#5b32ec);box-shadow:none;font-weight:650}.auth-alt{margin-top:28px;font-size:11px}.auth-agree{align-items:flex-start;line-height:1.45}.auth-agree a{color:#4f27e8}.auth-password-rules{display:grid;gap:4px;margin:-3px 0 3px;font-size:10px}.auth-password-rules .auth-ic{width:14px;height:14px}.auth-password-rules .auth-ic svg{width:9px;height:9px}.auth-free-badge{width:max-content;margin:18px auto 0;padding:7px 16px;border-radius:6px;background:#f7f3ff;color:#4e35cb;font-size:11px}
+.auth-reset .auth-card-head,.auth-update-password .auth-card-head{max-width:100%;margin-bottom:66px}.auth-reset .auth-form{gap:26px}.auth-reset .auth-submit{margin-top:0}.auth-reset .auth-alt{margin-top:26px}
+.auth-card.is-success{padding-top:26px}.auth-card.is-success>:not(.auth-success):not(.auth-msg){display:none}.auth-card.is-success .auth-msg{display:none}.auth-success{min-height:520px;margin:0;padding:24px 0;border:0;background:#fff;align-content:start;gap:16px}.auth-success>.auth-ic{width:120px;height:120px;margin-top:62px;border-radius:34px;background:linear-gradient(145deg,#f1ecff,#7047ee);box-shadow:none}.auth-success>.auth-ic svg{width:62px;height:62px}.auth-success h2{order:-1;justify-self:start;font-family:Georgia,"Times New Roman",serif;font-size:31px}.auth-success>p{justify-self:start;margin:0;color:#59627a;text-align:left}.auth-success .auth-privacy-note{width:100%;margin-top:20px;padding:20px;border:1px solid #e2e2e9;border-radius:8px;color:#313a55;text-align:left}.auth-success .btn{width:100%;margin-top:12px}.auth-reset .auth-success{min-height:300px;padding:20px;border:1px solid #bfe5d4;border-radius:8px;background:#f4fbf7;justify-items:start}.auth-reset .auth-success>.auth-ic{width:42px;height:42px;margin:0;border-radius:50%;background:#e4f7ee;color:#16855b}.auth-reset .auth-success>.auth-ic svg{width:24px;height:24px}.auth-reset .auth-success h2{order:0;font-family:var(--sans);font-size:15px}.auth-reset .auth-success p{text-align:left}.auth-reset .auth-success .btn{display:none}
+@media(min-width:760px){.auth-top-in,.auth-shell{width:min(100% - 48px,480px)}.auth-card{padding-top:34px}}
+.auth-page .auth-card>*{z-index:3}
 .acct-head { display: flex; align-items: center; gap: var(--s-4); margin-bottom: var(--s-6); flex-wrap: wrap; }
 .acct-head .page-h1 { margin: 0; }
 .acct-avatar { width: 56px; height: 56px; border-radius: 50%; background: var(--accent); color: var(--accent-on); display: grid; place-items: center; font-size: var(--t-xl); font-weight: 800; flex: none; }

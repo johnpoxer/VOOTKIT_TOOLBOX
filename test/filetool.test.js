@@ -126,4 +126,15 @@ ok(/doesn’t look like a PDF/.test(VKFile.validate([f("x.png", 1000, "image/png
 ok(VKFile.validate([f("photo.png", 1000, "image/png")], { accept: "application/pdf,.pdf,image/*" }) === null,
    "a tool that accepts PDFs AND images does not reject the images");
 
+/* The shared lifecycle is part of every file tool's product contract. These
+ * source checks catch accidental removal even in this dependency-light test
+ * environment, where a full browser DOM is intentionally unavailable. */
+const lifecycleSource = require("fs").readFileSync(require("path").join(__dirname, "../assets/js/filetool.js"), "utf8");
+ok(/ut-progress-ring[\s\S]*role:\s*'progressbar'/.test(lifecycleSource), "processing ring exposes progressbar semantics");
+ok(/aria-valuenow/.test(lifecycleSource), "processing progress publishes its numeric value");
+ok(/ut-processing-steps/.test(lifecycleSource), "processing view includes named stages");
+ok(/USER_CANCELLED/.test(lifecycleSource), "long-running work has a safe cancellation path");
+ok(/aria-busy/.test(lifecycleSource), "workspace exposes its busy state");
+ok(/Process another file|Start with new files/.test(lifecycleSource), "completed state offers a clear restart action");
+
 console.log(`filetool + multi-select: ${pass} total assertions passed`);

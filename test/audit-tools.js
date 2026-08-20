@@ -62,7 +62,7 @@ for (const f of pages) {
 /* Only tools-*.js modules mount workspaces. home.js also lists tool ids — it
    builds the homepage grid and search index — so including it reported nine
    tools as doubly-registered when nothing is actually registered twice. */
-const jsFiles = fs.readdirSync(JSDIR).filter(f => /^tools-.*\.js$/.test(f));
+const jsFiles = fs.readdirSync(JSDIR).filter(f => /^tools-.*\.js$/.test(f) && f !== "tools-directory.js");
 const idToModule = new Map();
 for (const f of jsFiles) {
   const src = fs.readFileSync(path.join(JSDIR, f), "utf8");

@@ -7,15 +7,22 @@
 create table if not exists public.profiles (
   id           uuid primary key references auth.users(id) on delete cascade,
   display_name text,
-  plan         text not null default 'free',   -- 'free' | 'creator_pro' | 'creator_teams'
+  plan         text not null default 'free' check (plan in ('free', 'creator_pro', 'creator_teams')),
+  stripe_customer_id text unique,
+  stripe_subscription_id text unique,
+  subscription_status text not null default 'inactive',
+  subscription_updated_at timestamptz,
   created_at   timestamptz not null default now()
 );
 
 alter table public.profiles enable row level security;
 
 create policy "own profile read"   on public.profiles for select using (auth.uid() = id);
-create policy "own profile insert" on public.profiles for insert with check (auth.uid() = id);
-create policy "own profile update" on public.profiles for update using (auth.uid() = id);
+create policy "own profile insert" on public.profiles for insert with check (
+  auth.uid() = id and plan = 'free' and stripe_customer_id is null and stripe_subscription_id is null
+);
+-- Billing fields are server-controlled. Profile updates happen through Auth
+-- metadata so browser clients cannot grant themselves a paid plan.
 
 -- auto-create a profile row when a user signs up
 create or replace function public.handle_new_user()

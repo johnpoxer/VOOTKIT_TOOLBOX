@@ -5,7 +5,10 @@
   'use strict';
 
   var PDFLIB_URL = 'https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
+  var PDFJS_URL = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';
+  var PDFJS_WORKER_URL = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
   var _pdflib = null;
+  var _pdfjs = null;
   function loadPdfLib() {
     if (_pdflib) return Promise.resolve(_pdflib);
     if (root.PDFLib) { _pdflib = root.PDFLib; return Promise.resolve(_pdflib); }
@@ -14,6 +17,16 @@
       s.src = PDFLIB_URL; s.async = true;
       s.onload = function () { _pdflib = root.PDFLib; _pdflib ? res(_pdflib) : rej(new Error('PDF engine failed to load.')); };
       s.onerror = function () { rej(new Error('Could not load the PDF engine — check your connection and try again.')); };
+      document.head.appendChild(s);
+    });
+  }
+  function loadPdfJs() {
+    if (_pdfjs) return Promise.resolve(_pdfjs);
+    if (root.pdfjsLib) { _pdfjs = root.pdfjsLib; _pdfjs.GlobalWorkerOptions.workerSrc = PDFJS_WORKER_URL; return Promise.resolve(_pdfjs); }
+    return new Promise(function (res, rej) {
+      var s = document.createElement('script'); s.src = PDFJS_URL; s.async = true;
+      s.onload = function () { _pdfjs = root.pdfjsLib; if (!_pdfjs) return rej(new Error('PDF renderer failed to load.')); _pdfjs.GlobalWorkerOptions.workerSrc = PDFJS_WORKER_URL; res(_pdfjs); };
+      s.onerror = function () { rej(new Error('Could not load the PDF renderer — check your connection and try again.')); };
       document.head.appendChild(s);
     });
   }
@@ -82,6 +95,51 @@
   ];
 
   var T = {
+
+    'compress-pdf': {
+      accept: 'application/pdf,.pdf', action: 'Compress PDF', dropLabel: 'Choose a PDF to compress', maxBytes: 100 * 1024 * 1024,
+      options: [
+        { k: 'quality', label: 'Compression level', type: 'select', def: '0.7', options: [
+          { v: '0.85', label: 'Maximum quality' }, { v: '0.7', label: 'Balanced — recommended' }, { v: '0.5', label: 'Smallest size' }
+        ] },
+        { k: 'scale', label: 'Page resolution', type: 'select', def: '1', options: [
+          { v: '1', label: 'Full size' }, { v: '0.75', label: 'Medium' }, { v: '0.5', label: 'Compact' }
+        ] }
+      ],
+      process: async function (files, o, api) {
+        var file = files[0];
+        api.status('Loading the PDF engine…');
+        var libs = await Promise.all([loadPdfJs(), loadPdfLib()]);
+        var pdfjs = libs[0], PDFLib = libs[1];
+        var doc;
+        try { doc = await pdfjs.getDocument({ data: await file.arrayBuffer() }).promise; }
+        catch (e) { throw new Error(/password/i.test(e && e.message) ? 'This PDF is password-protected. Remove its password first.' : 'That PDF could not be opened. It may be damaged or incomplete.'); }
+        var out = await PDFLib.PDFDocument.create(), pageCount = doc.numPages;
+        for (var i = 1; i <= pageCount; i++) {
+          api.status('Compressing page ' + i + ' of ' + pageCount + '…');
+          var pg = await doc.getPage(i), vp = pg.getViewport({ scale: (+o.scale || 1) * 1.5 });
+          var canvas = document.createElement('canvas'); canvas.width = Math.max(1, Math.round(vp.width)); canvas.height = Math.max(1, Math.round(vp.height));
+          await pg.render({ canvasContext: canvas.getContext('2d', { alpha: false }), viewport: vp }).promise;
+          var jpg = await new Promise(function (resolve, reject) { canvas.toBlob(function (blob) { blob ? resolve(blob) : reject(new Error('A PDF page could not be compressed.')); }, 'image/jpeg', +o.quality || 0.7); });
+          var img = await out.embedJpg(await jpg.arrayBuffer());
+          var page = out.addPage([img.width, img.height]); page.drawImage(img, { x: 0, y: 0, width: img.width, height: img.height });
+          canvas.width = canvas.height = 1;
+          api.progress(i / pageCount * 0.94);
+        }
+        if (doc.destroy) await doc.destroy();
+        api.status('Rebuilding your PDF…');
+        var saved = await out.save(), blob = pdfBlob(saved), reduction = Math.round((1 - blob.size / file.size) * 100);
+        return {
+          stats: [
+            { label: 'Original', value: api.bytes(file.size) }, { label: 'Compressed', value: api.bytes(blob.size) },
+            { label: 'Pages', value: pageCount }, { label: 'Reduction', value: reduction > 0 ? reduction + '% smaller' : 'Already optimised' }
+          ],
+          downloads: [{ label: 'Download compressed PDF', blob: blob, name: baseName(file.name) + '-compressed.pdf' }],
+          status: 'Your compressed PDF is ready',
+          note: reduction > 0 ? 'The new file is ' + reduction + '% smaller. Keep the original if you may need selectable text or maximum print quality.' : 'This PDF was already compact. Try the Smallest size setting if reducing size matters more than quality.'
+        };
+      }
+    },
 
     'merge-pdf': {
       accept: 'application/pdf,.pdf', multiple: true, maxFiles: 20, action: 'Merge PDFs',

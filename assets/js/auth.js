@@ -115,6 +115,7 @@
   async function updatePassword(newPassword) { var c = await client(); return c.auth.updateUser({ password: newPassword }); }
   async function signOut() { var c = await client(); await c.auth.signOut(); loc().href = up() || './'; }
   async function getUser() { if (!ENABLED) return null; var c = await client(); var r = await c.auth.getUser(); return r && r.data ? r.data.user : null; }
+  async function getSession() { if (!ENABLED) return null; var c = await client(); var r = await c.auth.getSession(); return r && r.data ? r.data.session : null; }
   async function onChange(cb) { var c = await client(); return c.auth.onAuthStateChange(function (e, session) { cb(e, session && session.user); }); }
 
   /* ---- header state (runs on every page) ---- */
@@ -189,7 +190,7 @@
     safeReturnUrl: safeReturnUrl, authMessage: authMessage,
     favInit: favInit,
     client: client, signUp: signUp, signIn: signIn, signInOAuth: signInOAuth, sendReset: sendReset,
-    updatePassword: updatePassword, signOut: signOut, getUser: getUser, onChange: onChange,
+    updatePassword: updatePassword, signOut: signOut, getUser: getUser, getSession: getSession, onChange: onChange,
     renderHeader: renderHeader, requireAuth: requireAuth, config: CFG
   };
   root.VKAuth = VKAuth;

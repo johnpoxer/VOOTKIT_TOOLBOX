@@ -47,6 +47,7 @@
     var success = page.querySelector('[data-success="' + name + '"]');
     if (form) form.hidden = true;
     if (success) success.hidden = false;
+    page.classList.add('is-success');
   }
   function updateRules(pw) {
     var value = String(pw || '');
@@ -124,10 +125,12 @@
       var name = $('#name').value.trim();
       var email = $('#email').value.trim();
       var pw = $('#password').value;
+      var agreed = page.querySelector('.auth-agree input');
       var btn = $('button[type=submit]');
       if (!A.validateEmail(email)) return msg('Enter a valid email address.', true);
       var pp = A.passwordProblem(pw);
       if (pp) return msg(pp, true);
+      if (agreed && !agreed.checked) return msg('Please agree to the Terms of Service and Privacy Policy.', true);
       busy(btn, true, 'Creating account...');
       try {
         var r = await A.signUp(email, pw, name, nextUrl());

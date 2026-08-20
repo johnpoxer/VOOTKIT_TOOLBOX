@@ -652,11 +652,12 @@
    * here rather than in the tool means the file is written to the VFS exactly
    * once, and the numbers come from the same demuxer that will do the work.
    * The builder may throw; that surfaces to the user as a normal tool error. */
-  async function run(file, inName, outName, built, onProgress, onStatus) {
+  async function run(file, inName, outName, built, onProgress, onStatus, isCancelled) {
     var isLate = typeof built === 'function';
     if (!isLate && built.error) throw new Error(built.error);
     var say = onStatus || function () {};
     var tick = onProgress || function () {};
+    var cancelled = isCancelled || function () { return false; };
 
     var env = await load({ onStatus: say, onProgress: tick });
     var ff = env.ff, util = env.util;
@@ -674,6 +675,11 @@
      * across a filter graph, and a bar that jumps back reads as a fault. */
     var durSec = 0, seen = 0;
     function prog(e) {
+      if (cancelled()) {
+        try { if (ff && ff.terminate) ff.terminate(); } catch (stopErr) {}
+        _ff = null; _util = null; _loading = null;
+        return;
+      }
       if (!e) return;
       var f = null;
       if (durSec > 0 && typeof e.time === 'number' && e.time > 0) f = (e.time / 1e6) / durSec;
@@ -689,6 +695,7 @@
     var mountDir = '', declaredIn = inName;
     try {
       say('Reading your video…');
+      if (cancelled()) { var early = new Error('Cancelled'); early.code = 'USER_CANCELLED'; throw early; }
       tick(P_DOWNLOAD_END);
 
       /* MOUNT THE FILE INSTEAD OF COPYING IT INTO THE WASM HEAP.
@@ -751,11 +758,13 @@
         built.args = remapInput(built.args, declaredIn, mountedPath);
       }
       tick(P_PROBE_END);
+      if (cancelled()) { var beforeEncode = new Error('Cancelled'); beforeEncode.code = 'USER_CANCELLED'; throw beforeEncode; }
       /* Say up front roughly how long this will take. "Slow" is mostly a
          problem of not knowing — a two-minute wait you were told about is a
          very different experience from a two-minute wait you weren't. */
       say(built.estimateSec > 8 ? 'Converting… this usually takes about ' + roughTime(built.estimateSec) : 'Converting…');
       await ff.exec(built.args);
+      if (cancelled()) { var afterEncode = new Error('Cancelled'); afterEncode.code = 'USER_CANCELLED'; throw afterEncode; }
       var data = await ff.readFile(outName);
       return data; // Uint8Array
     } finally {

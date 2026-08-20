@@ -150,8 +150,13 @@
       var card = W.el('div', { class: 'wog' });
       function upd() {
         var domain = (url.value.replace(/^https?:\/\//, '').split('/')[0] || '').toUpperCase();
-        card.innerHTML = '<div class="wog-img"' + (img.value ? ' style="background-image:url(' + W.escapeHtml(img.value) + ')"' : '') + '>' + (img.value ? '' : '1200 × 630') + '</div>' +
-          '<div class="wog-body"><div class="wog-dom">' + W.escapeHtml(domain) + '</div><div class="wog-title">' + W.escapeHtml(title.value) + '</div><div class="wog-desc">' + W.escapeHtml(desc.value) + '</div></div>';
+        card.innerHTML = '';
+        var visual = W.el('div', { class: 'wog-img', text: img.value ? '' : '1200 × 630' });
+        if (/^https?:\/\//i.test(img.value.trim())) visual.style.backgroundImage = 'url("' + img.value.trim().replace(/["\\\n\r]/g, '') + '")';
+        var body = W.el('div', { class: 'wog-body' }, [
+          W.el('div', { class: 'wog-dom', text: domain }), W.el('div', { class: 'wog-title', text: title.value }), W.el('div', { class: 'wog-desc', text: desc.value })
+        ]);
+        card.appendChild(visual); card.appendChild(body);
       }
       [title, desc, url, img].forEach(function (x) { x.addEventListener('input', upd); });
       host.appendChild(W.el('div', { class: 'wgrid2' }, [fld(W, 'Title', title), fld(W, 'Description', desc), fld(W, 'URL', url), fld(W, 'Image URL', img)]));

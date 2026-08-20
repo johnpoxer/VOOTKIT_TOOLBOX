@@ -12,41 +12,46 @@ _The real production wiring. Single source of truth: `data/site.config.js`._
 | GA4 | `G-KLEWTJ8WG2` — wired site-wide in `build.js` head() + `index.html` |
 
 ## Core product rules (reflected in copy + pricing)
-- Downloaders / tools are **free forever**.
-- **No login required** to use anything.
-- **No download limits.**
-Paid plans only add: no ads, faster/higher-res processing, premium tools, cloud
-history, priority support (Teams adds shared workspace, higher limits, API).
+- Visitors can run five tools per day without paying.
+- **No login is required** until someone upgrades.
+- Creator Pro adds unlimited runs, no workspace ads and saved workflows.
+- Creator Teams is a waitlist only until shared workspaces are implemented.
 
 ## Stripe
 Products (from you) → **Checkout needs a recurring _price_ per product**:
 
 | Plan | Product ID | Price env var (set in Netlify) | Amount |
 |---|---|---|---|
-| Creator Pro Monthly | `prod_UhxCv4HRKfegkM` | `VK_PRICE_CREATOR_PRO_MONTHLY` | $12/mo |
-| Creator Pro Annual | `prod_UhxF5IXhe6653t` | `VK_PRICE_CREATOR_PRO_ANNUAL` | $120/yr |
-| Creator Teams Monthly | `prod_UhxuUASj85k4eY` | `VK_PRICE_CREATOR_TEAMS_MONTHLY` | $25/mo |
-| Creator Teams Annual | `prod_UhxnBrCi8RUYEa` | `VK_PRICE_CREATOR_TEAMS_ANNUAL` | $250/yr |
+| Creator Pro Monthly | `prod_UhxCv4HRKfegkM` | `VK_PRICE_CREATOR_PRO_MONTHLY` | $8/mo |
+| Creator Pro Annual | `prod_UhxF5IXhe6653t` | `VK_PRICE_CREATOR_PRO_ANNUAL` | $80/yr |
 
 **To make checkout live:**
-1. In Stripe, add one recurring **Price** to each product above; copy each `price_…` id.
+1. In Stripe, add one recurring **Price** to each Creator Pro product; copy each `price_…` id.
 2. In Netlify → Site settings → Environment variables, set:
-   `STRIPE_SECRET_KEY`, the four `VK_PRICE_*` vars, and `VK_ORIGIN=https://www.vootkit.com`.
+   `STRIPE_SECRET_KEY`, the two Creator Pro `VK_PRICE_*` vars, `STRIPE_WEBHOOK_SECRET`,
+   `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, and
+   `VK_ORIGIN=https://www.vootkit.com`.
 3. Add `stripe` to the function's deps (Netlify installs from `netlify/functions/package.json` or root). The function is `netlify/functions/create-checkout.js`.
-Until then the pricing page works and the Upgrade button shows a friendly "not
-configured yet" toast — the free tools are unaffected.
+3. Run `supabase/billing-migration.sql` in Supabase.
+4. In Stripe Workbench, add the endpoint
+   `https://www.vootkit.com/.netlify/functions/stripe-webhook` for
+   `checkout.session.completed`, `customer.subscription.updated`, and
+   `customer.subscription.deleted`; copy its signing secret to
+   `STRIPE_WEBHOOK_SECRET`.
 
-## Supabase (auth — Phase 6/8, not yet built)
+Checkout requires a signed-in Vootkit account. Stripe events—not the browser—
+activate or remove Creator Pro. The account page opens Stripe's billing portal.
+
+## Supabase authentication and accounts
 | | |
 |---|---|
 | Project ref | `qfqdmzwmjxdiqzeybaoo` |
 | URL | https://qfqdmzwmjxdiqzeybaoo.supabase.co |
 | Region | West EU (Ireland) `eu-west-1` |
 
-Scaffolded in `assets/js/supabase-config.js`. **Still needed to build auth:** the
-project **anon (publishable) key** — set it as `VK_SUPABASE_ANON` and inject into
-`window.VK_SUPABASE.anonKey` at deploy. Then: sign up / in / reset / verify,
-RLS-protected `profiles` + `favorites` + `history` tables, and the dashboard.
+The browser uses the public anon key in `assets/js/supabase-config.js`. Profiles,
+favorites and history are protected by RLS. Paid-plan fields cannot be updated
+by browser clients; only the Stripe webhook's service-role request changes them.
 
 ## Growth / content (strategy — captured, not yet built)
 - Primary growth: **SEO**.

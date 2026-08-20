@@ -1,12 +1,12 @@
-/* tools-pdfedit.js — compress-pdf, pdf-redact, compare-pdf.
- * Uses pdf.js (render/extract, Apache-2.0) + pdf-lib (rebuild, MIT), both
+/* tools-pdfedit.js — pdf-redact and compare-pdf.
+ * Uses pdf.js (render/extract, Apache-2.0),
  * lazy-loaded from CDN only on run. Everything in-browser; no upload.
  * diffLines is exported + unit-tested. */
 (function (root) {
   'use strict';
 
-  var PDFJS = '3.11.174', PDFLIB = '1.17.1';
-  var _pjs = null, _plib = null;
+  var PDFJS = '3.11.174';
+  var _pjs = null;
   function loadScript(src) { return new Promise(function (res, rej) { var s = document.createElement('script'); s.src = src; s.async = true; s.onload = res; s.onerror = function () { rej(new Error('Could not load a PDF library from the CDN.')); }; document.head.appendChild(s); }); }
   async function pdfjs() {
     if (_pjs) return _pjs;
@@ -14,7 +14,6 @@
     _pjs = root.pdfjsLib; _pjs.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@' + PDFJS + '/build/pdf.worker.min.js';
     return _pjs;
   }
-  async function pdflib() { if (_plib) return _plib; if (!root.PDFLib) await loadScript('https://cdn.jsdelivr.net/npm/pdf-lib@' + PDFLIB + '/dist/pdf-lib.min.js'); _plib = root.PDFLib; return _plib; }
 
   /* line diff (LCS) — shared with text-diff, reimplemented here to stay standalone */
   function diffLines(a, b) {
@@ -39,43 +38,6 @@
   function fileInput(W, cb, accept) { var i = W.el('input', { type: 'file', class: 'field', accept: accept || 'application/pdf,.pdf', 'aria-label': 'Choose a PDF' }); i.addEventListener('change', function () { if (i.files[0]) cb(i.files[0]); }); return i; }
 
   var T = {
-
-    'compress-pdf': function (host, W) {
-      var quality = W.el('select', { class: 'field' }); [['0.5', 'Strong (smallest)'], ['0.7', 'Balanced'], ['0.85', 'Light (best quality)']].forEach(function (o) { quality.appendChild(W.el('option', { value: o[0], text: o[1] })); }); quality.value = '0.7';
-      var scale = W.el('select', { class: 'field' }); [['1', '100% size'], ['0.75', '75% size'], ['0.5', '50% size']].forEach(function (o) { scale.appendChild(W.el('option', { value: o[0], text: o[1] })); }); scale.value = '1';
-      var status = W.el('p', { class: 'note', role: 'status', 'aria-live': 'polite' });
-      var dl = W.el('div', { class: 'wbtns' });
-      var file = null;
-      var input = fileInput(W, function (f) { file = f; status.className = 'note'; status.textContent = f.name + ' ready — choose settings and Compress.'; });
-      async function run() {
-        if (!file) { status.className = 'note err'; status.textContent = 'Choose a PDF first.'; return; }
-        dl.innerHTML = ''; status.className = 'note'; status.textContent = 'Loading engines…';
-        try {
-          var lib = await pdfjs(), PDFLib = await pdflib();
-          var doc = await lib.getDocument({ data: await file.arrayBuffer() }).promise;
-          var out = await PDFLib.PDFDocument.create();
-          var n = doc.numPages;
-          for (var i = 1; i <= n; i++) {
-            status.textContent = 'Compressing page ' + i + ' / ' + n + '…';
-            var pg = await doc.getPage(i); var vp = pg.getViewport({ scale: +scale.value * 1.5 });
-            var c = document.createElement('canvas'); c.width = vp.width; c.height = vp.height;
-            await pg.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise;
-            var jpg = await new Promise(function (r) { c.toBlob(function (b) { r(b); }, 'image/jpeg', +quality.value); });
-            var img = await out.embedJpg(await jpg.arrayBuffer());
-            var page = out.addPage([img.width, img.height]); page.drawImage(img, { x: 0, y: 0, width: img.width, height: img.height });
-          }
-          var bytes = await out.save();
-          var blob = new Blob([bytes], { type: 'application/pdf' });
-          var pct = Math.round((1 - blob.size / file.size) * 100);
-          status.textContent = 'Done — ' + Math.round(file.size / 1024) + ' KB → ' + Math.round(blob.size / 1024) + ' KB' + (pct > 0 ? ' (' + pct + '% smaller)' : ' (already small)') + '.';
-          dl.appendChild(W.el('button', { class: 'btn btn-primary', type: 'button', text: 'Download compressed PDF', onClick: function () { W.download(blob, baseName(file.name) + '-compressed.pdf'); } }));
-        } catch (e) { status.className = 'note err'; status.textContent = /encrypt|password/i.test(e.message) ? 'This PDF is password-protected — remove the password first.' : 'Could not process that PDF.'; }
-      }
-      host.appendChild(W.el('div', { class: 'wgrid2' }, [fld(W, 'PDF file', input), fld(W, 'Quality', quality), fld(W, 'Page scale', scale)]));
-      host.appendChild(W.el('div', { class: 'wbtns' }, [W.el('button', { class: 'btn btn-primary', type: 'button', text: 'Compress', onClick: run })]));
-      host.appendChild(status); host.appendChild(dl);
-      host.appendChild(W.el('p', { class: 'note', text: 'Compresses by re-rendering each page as a JPEG image — great for scan-heavy or image-heavy PDFs. Note: this flattens the PDF, so selectable text becomes an image. All on your device.' }));
-    },
 
     'pdf-redact': function (host, W) {
       var canvas = W.el('canvas', { class: 'wredact' });

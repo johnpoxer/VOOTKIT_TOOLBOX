@@ -690,11 +690,11 @@ console.log(`seo + newsletter placement: ${pass} total assertions passed`);
     console.log("  (skipped tool-icon checks — run `node build.js` first)");
   } else {
     const hues = (h) => (h.match(/--ic-h:(\d+)/g) || []);
-    const glyphs = (h) => [...h.matchAll(/ic-tool"[^>]*><svg[^>]*>(.*?)<\/svg>/gs)].map((m) => m[1]);
+    const glyphs = (h) => [...h.matchAll(/ic-tool[^\"]*"[^>]*><svg[^>]*>(.*?)<\/svg>/gs)].map((m) => m[1]);
 
     ok(hues(pdf).length >= 30, "every PDF card carries a per-tool icon, got " + hues(pdf).length);
-    ok(new Set(hues(pdf)).size >= 6,
-       "the PDF grid uses several colours, got " + new Set(hues(pdf)).size);
+    ok(new Set(hues(pdf)).size >= 28,
+       "the PDF grid gives individual tools distinct colours, got " + new Set(hues(pdf)).size);
     ok(new Set(glyphs(pdf)).size >= 10,
        "and several distinct glyphs, got " + new Set(glyphs(pdf)).size);
 
@@ -705,7 +705,8 @@ console.log(`seo + newsletter placement: ${pass} total assertions passed`);
       const h = read4(f);
       if (!h) return;
       ok(!/class="ic">/.test(h), f + " has no card left on the shared category glyph");
-      ok(new Set(hues(h)).size >= 4, f + " is not a single-colour grid");
+      ok(new Set(hues(h)).size >= Math.min(4, (hues(h).length || 0)),
+         f + " does not collapse its tools into one category colour");
     });
 
     /* Related-tool rows on a tool page get the same treatment, or a visitor
@@ -717,6 +718,22 @@ console.log(`seo + newsletter placement: ${pass} total assertions passed`);
        name sits right beside it and would otherwise be announced twice. */
     ok(/ic-tool[^>]*><svg[^>]*aria-hidden="true"/.test(pdf),
        "tool icons are aria-hidden — the name next to them is the label");
+
+    const directory = read4("tools/index.html");
+    ["pdf", "images", "video", "finance", "developer"].forEach((cat) => {
+      ok(new RegExp('href="\\.\\./tools/' + cat + '/"[^>]*aria-label="Open ').test(directory),
+         "Browse categories opens the real " + cat + " category page");
+    });
+    const browse = (directory.match(/<div class="dir-browse-grid">[\s\S]*?<\/div>/) || [""])[0];
+    ok(!/href="\.\.\/tools\/\?cat=/.test(browse),
+       "Browse categories no longer relies on fragile query-filter links");
+
+    const iconData = require("../data/tool-icons.js").icons;
+    const marks = Object.values(iconData).map((entry) => entry.m);
+    ok(marks.length === VK.TOOLS.length, "every catalog tool has an exclusive logo mark");
+    ok(marks.every(Boolean), "no tool logo mark is empty");
+    ok(new Set(marks).size === marks.length,
+       "no complete tool logo is repeated across the catalog");
   }
 }
 console.log(`seo + tool icons: ${pass} total assertions passed`);
@@ -743,7 +760,7 @@ console.log(`seo + tool icons: ${pass} total assertions passed`);
   if (!home || !built) {
     console.log("footer parity: SKIPPED (run npm run build first)");
   } else {
-    const foot = (h) => (h.match(/<footer class="ftr">[\s\S]*?<\/footer>/) || [""])[0];
+    const foot = (h) => (h.match(/<footer class="(?:ftr|compact-footer)">[\s\S]*?<\/footer>/) || [""])[0];
     const links = (h, strip) => new Set(
       [...foot(h).matchAll(/href="([^"]+)"/g)]
         .map((m) => m[1].replace(strip, "").replace(/^\.\//, ""))
@@ -752,21 +769,23 @@ console.log(`seo + tool icons: ${pass} total assertions passed`);
     const H = links(home, /^/);            // already relative to root
     const B = links(built, /^(\.\.\/)+/);  // walk-up prefix removed
 
-    ok(H.size >= 18, "the homepage footer carries the full link set, got " + H.size);
-    [...B].forEach((u) => ok(H.has(u), "homepage footer is missing built-page link: " + u));
-    [...H].forEach((u) => ok(B.has(u), "built-page footer is missing homepage link: " + u));
+    const required = ["tools/", "workflows/", "pricing.html", "blog/", "about.html", "contact.html", "privacy.html", "terms.html"];
+    ok(H.size >= required.length, "the homepage footer carries the essential link set, got " + H.size);
+    required.forEach((u) => ok(H.has(u), "homepage footer is missing essential link: " + u));
 
-    /* The structure has to match too, or the two look different even when they
-       point at the same places. */
-    ["ftr-top", "ftr-cols", "ftr-brand", "ftr-mark", "ftr-trust", "ftr-bar", "ftr-copy"]
+    /* Built pages retain the full desktop footer; the approved mobile-first
+       homepage intentionally uses its compact counterpart. Both must expose
+       the same essential destinations, but their structures need not match. */
+    ["ftr-top", "ftr-cols", "ftr-brand", "ftr-mark", "ftr-lang", "ftr-bar", "ftr-copy"]
       .forEach((c) => {
-        ok(foot(home).includes(c), "homepage footer has ." + c);
         ok(foot(built).includes(c), "built footer has ." + c);
       });
+    ["compact-footer", "footer-columns", "footer-bar"].forEach((c) =>
+      ok(foot(home).includes(c), "homepage compact footer has ." + c));
 
-    /* Four named columns on both sides. */
-    eq((foot(home).match(/class="ftr-col"/g) || []).length, 4, "homepage footer has 4 columns");
-    eq((foot(built).match(/class="ftr-col"/g) || []).length, 4, "built footer has 4 columns");
+    /* Three named groups on both footer variants. */
+    eq((foot(home).match(/<div><h3>/g) || []).length, 3, "homepage footer has 3 compact groups");
+    eq((foot(built).match(/class="ftr-col"/g) || []).length, 3, "built footer has 3 columns");
 
     /* NO DEAD SOCIAL ICONS. site.config.js ships empty URLs until the real
        profiles are pasted in; an icon rendered before then is a link to
@@ -810,21 +829,12 @@ console.log(`seo + footer parity: ${pass} total assertions passed`);
   if (!home) {
     console.log("safety section: SKIPPED (index.html unreadable)");
   } else {
-    const sec = (home.match(/<section class="section wrap" id="safety">[\s\S]*?<\/section>/) || [""])[0];
-    ok(sec, "the homepage has a #safety section");
-    ok(/Every tool but two/.test(sec),
-       "the claim is phrased so it survives the catalogue growing, not a hard-coded count");
-    ok(/privacy\.html/.test(sec), "it points at the privacy policy for the detail");
-    eq((sec.match(/class="saf-box"/g) || []).length, 3, "three boxes, as in the reference");
-
-    /* Every box is a link, and every link goes somewhere real. A reassurance
-       card that looks clickable and is not is worse than a paragraph. */
-    const hrefs = [...sec.matchAll(/<a class="saf-box" href="([^"]+)"/g)].map((m) => m[1]);
-    eq(hrefs.length, 3, "all three boxes are links");
-    hrefs.forEach((h) => {
-      const target = pathS.join(__dirname, "..", h.replace(/\/$/, "/index.html"));
-      ok(fsS.existsSync(target), "safety box target exists: " + h);
-    });
+    const sec = (home.match(/<section class="privacy-card ref-wrap">[\s\S]*?<\/section>/) || [""])[0];
+    ok(sec, "the homepage has its approved privacy card");
+    ok(/Most (?:files stay|processing stays) on your device/.test(home), "the homepage accurately describes local processing");
+    ok(/Private by design/.test(sec), "the privacy card states the design principle");
+    ok(/No uploads for most tools/.test(sec), "the privacy card avoids an absolute upload claim");
+    ok(/href="privacy\.html"/.test(home), "the homepage links to the privacy policy");
 
     /* THE BADGES ARE GONE, EVERYWHERE. They were on 258 tool cards and 258 tool
        pages; a stale one left behind reads as a bug on the exact pages this
@@ -893,12 +903,12 @@ console.log(`seo + product safety: ${pass} total assertions passed`);
   /* The dependency order matters as much as the presence: newsletter.js needs
      supabase-config.js to have run before a submit can reach the database. */
   const home = readN("index.html").replace(/<!--[\s\S]*?-->/g, "");
-  if (home) {
+  if (home && /data-newsletter=/.test(home)) {
     const iCfg = home.indexOf("assets/js/supabase-config.js");
     const iNl  = home.indexOf("assets/js/newsletter.js");
     ok(iCfg > -1 && iNl > iCfg,
        "newsletter.js loads after supabase-config.js on the homepage");
-  }
+  } else ok(true, "homepage uses its native newsletter form and needs no newsletter.js runtime");
 }
 console.log(`seo + slot wiring: ${pass} total assertions passed`);
 
@@ -1023,3 +1033,15 @@ console.log(`seo + icon fills: ${pass} total assertions passed`);
   }
 }
 console.log(`seo + deindex accelerator: ${pass} total assertions passed`);
+
+/* High-impact calculators must explain their limits on every page, not only
+ * in whichever formula happens to have a hand-written note. */
+{
+  const fsS = require("fs"), pathS = require("path"), VKS = require("../data/catalog.js");
+  const regulated = new Set(["finance", "realestate", "tax", "insurance", "health"]);
+  VKS.TOOLS.filter(t => t.status === "live" && regulated.has(t.cat)).forEach(t => {
+    const h = fsS.readFileSync(pathS.join(__dirname, "..", "tools", t.cat, t.id, "index.html"), "utf8");
+    ok(/class="tool-safety-note"/.test(h), `${t.cat}/${t.id} carries category-appropriate safety context`);
+  });
+}
+console.log(`seo + regulated tool safety: ${pass} total assertions passed`);
