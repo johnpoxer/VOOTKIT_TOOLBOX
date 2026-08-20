@@ -669,27 +669,22 @@
     });
   }
 
-  /* ---------- who may run one ----------
-   *
-   * Workflows are a Pro feature. Building one is free and always will be —
-   * you cannot judge whether a thing is worth paying for from a description of
-   * it, and a canvas you may not touch converts nobody. The gate is on RUN,
-   * which is the moment the value is obvious and the cost is real.
-   *
-   * Fails OPEN. If the plan lookup errors, Supabase is down, or auth has not
-   * loaded, the run proceeds. Refusing a paying customer because a network
-   * call failed is worse than an occasional free run. */
+  /* ---------- who may use one ----------
+   * Workflow building, saving, testing and running are Pro features. Access
+   * fails closed: a missing or failed plan lookup must never silently turn a
+   * paid product into a free one. The public landing page still explains and
+   * previews the feature without mounting its interactive editor. */
   async function isPro(root2) {
     try {
       var A = (root2 || root).VKAuth;
-      if (!A || !A.enabled || !A.getUser) return true;
+      if (!A || !A.enabled || !A.getUser) return false;
       var user = await A.getUser();
       if (!user) return false;
       var c = await A.client();
       var r = await c.from('profiles').select('plan').eq('id', user.id).single();
       var plan = r && r.data && r.data.plan;
       return plan === 'creator_pro' || plan === 'creator_teams';
-    } catch (e) { return true; }
+    } catch (e) { return false; }
   }
 
   /* ---------- what kind of failure was that ----------
@@ -729,7 +724,7 @@
       text: stepName + ': ' + (msg || 'that step failed.') + ' Retrying will not help — change the setting or the file.' };
   }
 
-  /* ---------- saved workflows (this device, no account needed) ---------- */
+  /* ---------- saved workflows (Pro access; stored privately on this device) ---------- */
 
   function load() {
     try { return JSON.parse(root.localStorage.getItem(STORE_KEY) || '[]') || []; }
@@ -876,7 +871,7 @@
     if (temps.length) {
       wrap.appendChild(h('h3', { text: 'Workflows people run' }));
       var ul = h('ul', { class: 'wf-lock-list' });
-      temps.forEach(function (t) {
+      temps.slice(0, 4).forEach(function (t) {
         ul.appendChild(h('li', {}, [
           h('strong', { text: t.name }),
           h('span', { text: t.steps.map(function (id) { return (D.names && D.names[id]) || id; }).join('  →  ') })
@@ -885,9 +880,11 @@
       wrap.appendChild(ul);
     }
 
-    wrap.appendChild(h('a', { class: 'btn btn-primary', href: '../pricing.html', text: 'See Vootkit Pro' }));
-    wrap.appendChild(h('p', { class: 'note',
-      text: 'Already Pro? Sign in and this page becomes the editor.' }));
+    wrap.appendChild(h('div', { class: 'wf-lock-actions' }, [
+      h('a', { class: 'btn btn-primary', href: '../pricing.html', text: 'Upgrade to Creator Pro' }),
+      h('a', { class: 'btn', href: '../auth/sign-in/?returnTo=%2Fworkflows%2F', text: 'Sign in' })
+    ]));
+    wrap.appendChild(h('p', { class: 'note', text: 'Already Pro? Sign in, then return here to open the builder.' }));
     host.appendChild(wrap);
     try { if (root.VKTrack && root.VKTrack.event) root.VKTrack.event('workflow_locked', {}); } catch (e) {}
   }
@@ -897,9 +894,16 @@
     var D = root.VK_FLOW;
     if (!D) { host.textContent = 'Workflows are unavailable right now.'; return; }
 
-    /* The builder stays visible so visitors can understand and draft a real
-       workflow. Running is where the Pro check happens. */
-    editor(host, D);
+    host.setAttribute('aria-busy', 'true');
+    host.innerHTML = '<div class="wf-access-check" role="status">Checking workflow access…</div>';
+    isPro(root).then(function (allowed) {
+      host.removeAttribute('aria-busy');
+      if (allowed) editor(host, D);
+      else lockedView(host, D);
+    }, function () {
+      host.removeAttribute('aria-busy');
+      lockedView(host, D);
+    });
   }
 
   function editor(host, D) {
@@ -984,6 +988,7 @@
     var fileNote = h('span', { class: 'wfc-files', id: 'wf-file-note', text: 'No files yet' });
     var runBtn = h('button', { class: 'btn btn-primary wfc-run-main', type: 'button', text: 'Run Workflow', disabled: 'disabled' });
     var saveBtn = h('button', { class: 'btn', type: 'button', text: 'Save', disabled: 'disabled' });
+    var saveBottom = h('button', { class: 'btn btn-primary wfc-save-bottom', type: 'button', text: 'Save workflow', disabled: 'disabled', onclick: function () { saveBtn.click(); } });
     var shareBtn = h('button', { class: 'btn', type: 'button', text: 'Share', onclick: function () { notify('Workflow share link copied'); } });
     var undoBtn = h('button', { class: 'icon-btn wfc-undo', type: 'button', text: '↶', 'aria-label': 'Undo', onclick: undo });
     var redoBtn = h('button', { class: 'icon-btn wfc-redo', type: 'button', text: '↷', 'aria-label': 'Redo', onclick: redo });
@@ -1015,11 +1020,61 @@
       ]),
       h('div', { class: 'wfc-top-actions' }, [undoBtn, redoBtn, saveBtn, shareBtn, runBtn, moreBtn])
     ]);
-    var bar = h('div', { class: 'wfc-bar' }, [runSummary, h('span', { class: 'wfc-privacy', text: 'Add steps to see where they run' }), h('span', { class: 'wfc-spacer' }), fileBtn, input, fileNote, cancelBtn, h('button', { class: 'btn btn-primary wfc-run-bottom', type: 'button', text: 'Run Workflow', onclick: function () { runBtn.click(); } })]);
+    var bar = h('div', { class: 'wfc-bar' }, [h('strong', { class: 'wfc-test-title', text: 'Test workflow' }), runSummary, h('span', { class: 'wfc-privacy', text: 'Add steps to see where they run' }), h('span', { class: 'wfc-spacer' }), fileBtn, input, fileNote, cancelBtn, h('button', { class: 'btn wfc-run-bottom', type: 'button', text: 'Test workflow', onclick: function () { runBtn.click(); } }), saveBottom]);
     var log = h('div', { class: 'wfc-log', 'aria-live': 'polite' });
     var toast = h('div', { class: 'wfc-toast', hidden: 'hidden', 'aria-live': 'polite' });
     var center = h('section', { class: 'wfc-center', 'aria-label': 'Workflow canvas workspace' }, [top, canvas, bar, log, toast]);
     var stage = h('div', { class: 'wfc' }, [palette, center, panel]);
+    var runView = h('section', { class: 'wf-run-view', hidden: 'hidden', 'aria-live': 'polite' });
+    var runStates = {};
+    var lastFailedUid = '';
+
+    function showBuilder() { runView.hidden = true; stage.hidden = false; }
+    function showRunView(mode, message) {
+      stage.hidden = true; runView.hidden = false;
+      runView.className = 'wf-run-view is-' + mode;
+      var title = mode === 'complete' ? 'Workflow complete' : (mode === 'attention' ? 'Workflow needs attention' : 'Running workflow');
+      var banner = mode === 'complete'
+        ? h('div', { class: 'wf-run-banner is-ok' }, [h('b', { text: '✓' }), h('span', {}, [h('strong', { text: files.length + ' file' + (files.length === 1 ? '' : 's') + ' processed' }), h('small', { text: message || 'All steps completed successfully' })])])
+        : (mode === 'attention' ? h('div', { class: 'wf-run-banner is-err' }, [h('b', { text: '!' }), h('span', {}, [h('strong', { text: 'This workflow needs your attention' }), h('small', { text: message || 'A step could not be completed' })])]) : null);
+      var list = h('ol', { class: 'wf-run-steps' });
+      var steps = [{ uid: 'in', name: 'Upload files', desc: files.length ? files.length + ' selected' : 'From device', icon: '<span class="wf-run-basic">↑</span>' }]
+        .concat(nodes.map(function (n) { return { uid: n.uid, name: toolInfo(n.id).name, desc: summarise(n), icon: toolIcon(n.id) }; }))
+        .concat([{ uid: 'out', name: 'Download package', desc: 'Finished files', icon: '<span class="wf-run-basic is-download">↓</span>' }]);
+      steps.forEach(function (s, i) {
+        var rowState = mode === 'complete' ? 'done' : (runStates[s.uid] || (i === 0 ? 'done' : 'waiting'));
+        list.appendChild(h('li', { class: 'is-' + rowState, 'data-run-uid': s.uid }, [
+          h('i', { class: 'wf-run-dot', text: rowState === 'done' ? '✓' : (rowState === 'fail' ? '!' : String(i + 1)) }),
+          h('span', { class: 'wf-run-icon', html: s.icon }),
+          h('span', { class: 'wf-run-copy' }, [h('strong', { text: s.name }), h('small', { text: s.desc })]),
+          h('em', { text: rowState === 'done' ? 'Complete' : (rowState === 'fail' ? 'Failed' : (rowState === 'run' ? 'Processing' : 'Waiting')) })
+        ]));
+      });
+      var actions = h('div', { class: 'wf-run-actions' });
+      if (mode === 'running') actions.appendChild(h('button', { class: 'btn', type: 'button', text: 'Cancel', onclick: function () { cancelBtn.click(); } }));
+      else if (mode === 'complete') {
+        actions.appendChild(h('button', { class: 'btn btn-primary', type: 'button', text: 'Download package', onclick: function () { lastResults.forEach(function (r) { downloadResult(r, log); }); } }));
+        actions.appendChild(h('button', { class: 'btn', type: 'button', text: 'View files', onclick: showBuilder }));
+        actions.appendChild(h('button', { class: 'btn', type: 'button', text: 'Run again', onclick: function () { showBuilder(); runBtn.click(); } }));
+        actions.appendChild(h('button', { class: 'btn wf-run-save-template', type: 'button', text: 'Save as template', onclick: function () { saveBtn.click(); } }));
+      } else {
+        actions.appendChild(h('button', { class: 'btn btn-primary', type: 'button', text: 'Fix step', onclick: function () { sel = lastFailedUid || sel; showBuilder(); draw(); } }));
+        actions.appendChild(h('button', { class: 'btn', type: 'button', text: 'Skip this step', onclick: function () { if (lastFailedUid) removeNode(lastFailedUid); showBuilder(); } }));
+      }
+      runView.innerHTML = '';
+      runView.appendChild(h('header', { class: 'wf-run-head' }, [h('button', { type: 'button', text: '←', 'aria-label': 'Back to workflow', onclick: showBuilder }), h('div', {}, [h('h2', { text: title }), h('p', { text: workflowName.value })])]));
+      if (banner) runView.appendChild(banner);
+      runView.appendChild(list); runView.appendChild(actions);
+    }
+    function setRunStep(uid, state, detail) {
+      runStates[uid] = state;
+      var row = runView.querySelector('[data-run-uid="' + uid + '"]');
+      if (!row) return;
+      row.className = 'is-' + state;
+      row.querySelector('.wf-run-dot').textContent = state === 'done' ? '✓' : (state === 'fail' ? '!' : row.querySelector('.wf-run-dot').textContent);
+      row.querySelector('em').textContent = state === 'run' ? (detail || 'Processing') : (state === 'done' ? 'Complete' : (state === 'fail' ? 'Failed' : 'Waiting'));
+      if (detail && state === 'run') row.querySelector('.wf-run-copy small').textContent = detail;
+    }
 
     /* --- helpers ---------------------------------------------------------- */
     function startKind() { return files.length ? kindOfFile(files[0].name, files[0].type) : draftKind; }
@@ -1510,7 +1565,7 @@
     }
 
     function makeDraggable(el2, n) {
-      var sx, sy, ox, oy, moving = false;
+      var sx, sy, ox, oy, lastDy = 0, moving = false;
       el2.addEventListener('pointerdown', function (e) {
         if (e.button || e.target.classList.contains('wfc-port')) return;
         moving = true; sx = e.clientX; sy = e.clientY; ox = n.x; oy = n.y;
@@ -1519,6 +1574,7 @@
       el2.addEventListener('pointermove', function (e) {
         if (!moving) return;
         var dx = (e.clientX - sx) / view.k, dy = (e.clientY - sy) / view.k;
+        lastDy = dy;
         if (Math.abs(dx) + Math.abs(dy) > 3) el2.dataset.dragged = '1';
         n.x = clampNodeX(ox + dx); n.y = Math.max(24, oy + dy);
         el2.style.left = n.x + 'px'; el2.style.top = n.y + 'px';
@@ -1527,6 +1583,16 @@
       var stop = function () {
         if (!moving) return;
         moving = false; el2.classList.remove('is-drag');
+        if (el2.dataset.dragged && isNarrow() && Math.abs(lastDy) > 48) {
+          var from = nodes.indexOf(n);
+          var to = Math.max(0, Math.min(nodes.length - 1, from + (lastDy > 0 ? 1 : -1)));
+          if (from !== to) {
+            pushHistory();
+            nodes.splice(from, 1); nodes.splice(to, 0, n);
+            relinkSequential();
+          }
+          delete el2.dataset.dragged; draw(); return;
+        }
         if (el2.dataset.dragged && reorderByCanvasX(n.uid)) draw();
       };
       el2.addEventListener('pointerup', stop);
@@ -1683,9 +1749,18 @@
 
       drawEdges();
       drawPanel();
+      if (isNarrow() && sel && sel !== 'in') {
+        var selectedNode = pan.querySelector('.wfc-node[data-uid="' + sel + '"]');
+        if (selectedNode && panel.childNodes.length) {
+          var inlineSettings = h('div', { class: 'wfc-inline-settings' });
+          while (panel.firstChild) inlineSettings.appendChild(panel.firstChild);
+          selectedNode.appendChild(inlineSettings);
+        }
+      }
       var paths = pathsFrom(nodes, links, 'in');
       runBtn.disabled = !(files.length && paths.length);
       saveBtn.disabled = !nodes.length;
+      saveBottom.disabled = !nodes.length;
       summarySteps.textContent = String(nodes.length + 2);
       summaryFiles.textContent = files.length ? (files.length === 1 ? '1 file' : files.length + ' files') : 'None yet';
       summaryTime.textContent = lastRunMs ? (lastRunMs < 1000 ? '<1s' : Math.round(lastRunMs / 1000) + 's') : 'Not run yet';
@@ -1983,14 +2058,17 @@
     /* Pulled out of the click handler so a retry can call it again with a
        checkpoint instead of duplicating the whole run loop. */
     async function execute(paths, resume) {
-      runBtn.disabled = true; saveBtn.disabled = true;
+      runBtn.disabled = true; saveBtn.disabled = true; saveBottom.disabled = true;
       cancelBtn.hidden = false; cancelBtn.disabled = false; cancelBtn.textContent = 'Cancel';
       lastResults = [];
       var runStarted = Date.now();
       log.innerHTML = '';
       [].forEach.call(pan.querySelectorAll('.wfc-node.is-step'), function (n) { n.classList.remove('is-run', 'is-done', 'is-fail'); });
       var results = [];
+      var runFailed = '';
       var ctl = { cancelled: false };
+      runStates = { in: 'done' }; lastFailedUid = '';
+      showRunView('running');
       cancelBtn.onclick = function () {
         ctl.cancelled = true;
         cancelBtn.disabled = true;
@@ -2017,11 +2095,11 @@
               var el3 = pan.querySelector('.wfc-node[data-uid="' + pth[i].uid + '"]');
               var nm = (D.names && D.names[pth[i].id]) || pth[i].id;
               var head = ln.textContent.split(' — ')[0];
-              if (state === 'run') { if (el3) { el3.classList.remove('is-done', 'is-fail'); el3.classList.add('is-run'); } ln.textContent = head + ' — ' + nm; }
+              if (state === 'run') { if (el3) { el3.classList.remove('is-done', 'is-fail'); el3.classList.add('is-run'); } setRunStep(pth[i].uid, 'run'); ln.textContent = head + ' — ' + nm; }
               else if (state === 'progress' && typeof detail === 'number' && el3) el3.style.setProperty('--wfp', Math.round(detail * 100) + '%');
-              else if (state === 'status' && detail) ln.textContent = head + ' — ' + nm + ': ' + detail;
-              else if (state === 'done' && el3) { el3.classList.remove('is-run'); el3.classList.add('is-done'); }
-              else if (state === 'fail') { if (el3) { el3.classList.remove('is-run'); el3.classList.add('is-fail'); } ln.className = 'wfc-line is-err'; ln.textContent = head + ' — ' + nm + ': ' + detail; }
+              else if (state === 'status' && detail) { setRunStep(pth[i].uid, 'run', detail); ln.textContent = head + ' — ' + nm + ': ' + detail; }
+              else if (state === 'done') { setRunStep(pth[i].uid, 'done'); if (el3) { el3.classList.remove('is-run'); el3.classList.add('is-done'); } }
+              else if (state === 'fail') { lastFailedUid = pth[i].uid; setRunStep(pth[i].uid, 'fail'); if (el3) { el3.classList.remove('is-run'); el3.classList.add('is-fail'); } ln.className = 'wfc-line is-err'; ln.textContent = head + ' — ' + nm + ': ' + detail; }
             };
           })(line, path));
           /* eslint-enable no-loop-func */
@@ -2036,6 +2114,7 @@
           if (!res.ok && !res.cancelled) {
             var stepName = (D.names && D.names[path[res.at].id]) || path[res.at].id;
             var adv = failureAdvice(stepName, res.error);
+            runFailed = adv.text;
             var msg = h('p', { class: 'wfc-line is-err', text: adv.text });
             log.appendChild(msg);
             if (adv.retry && res.file) {
@@ -2051,12 +2130,13 @@
         }
       }
 
-      runBtn.disabled = false; saveBtn.disabled = false;
+      runBtn.disabled = false; saveBtn.disabled = false; saveBottom.disabled = false;
       cancelBtn.hidden = true;
       if (ctl.cancelled) {
         log.appendChild(h('p', { class: 'note', text: 'Cancelled. Anything already finished is below; your originals are untouched.' }));
+        showBuilder();
       }
-      if (!results.length) { log.appendChild(h('p', { class: 'note err', text: 'Nothing came out. Your originals are untouched and nothing was uploaded.' })); return; }
+      if (!results.length) { log.appendChild(h('p', { class: 'note err', text: 'Nothing came out. Your originals are untouched and nothing was uploaded.' })); if (!ctl.cancelled) showRunView('attention', runFailed); return; }
       lastResults = results.slice();
       lastRunMs = Date.now() - runStarted;
       drawPanel();
@@ -2066,8 +2146,11 @@
         b.addEventListener('click', function () { downloadResult(r, log); });
         log.appendChild(b);
       });
+      setRunStep('out', 'done');
+      showRunView(runFailed ? 'attention' : 'complete', runFailed || (results.length + ' result' + (results.length === 1 ? '' : 's') + ' ready to download'));
     }
 
+    host.appendChild(runView);
     host.appendChild(stage);
     drawPalette();
     refreshSaved();
