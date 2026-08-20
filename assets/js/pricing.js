@@ -31,7 +31,11 @@
       var key = btn.getAttribute(bill === 'year' ? 'data-plan-year' : 'data-plan-month');
       var toast = window.VKUI && window.VKUI.toast;
       var session = null;
-      try { session = window.VKAuth && await window.VKAuth.getSession(); } catch (e) {}
+      try {
+        session = window.VKAuth && window.VKAuth.waitForSession
+          ? await window.VKAuth.waitForSession(6)
+          : window.VKAuth && await window.VKAuth.getSession();
+      } catch (e) {}
       if (!session || !session.access_token) {
         window.location.href = 'auth/sign-in/?next=' + encodeURIComponent('/pricing.html');
         return;

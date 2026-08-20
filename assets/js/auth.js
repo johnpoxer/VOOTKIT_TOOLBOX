@@ -74,6 +74,7 @@
 
   function loc() { return root.location || { pathname: '/', href: '', origin: '' }; }
   function up() { return doc ? upPrefix(loc().pathname) : ''; }
+  function pause(ms) { return new Promise(function (resolve) { setTimeout(resolve, ms); }); }
 
   /* ---- SDK + client (lazy) ---- */
   var _client = null, _loading = null;
@@ -116,6 +117,19 @@
   async function signOut() { var c = await client(); await c.auth.signOut(); loc().href = up() || './'; }
   async function getUser() { if (!ENABLED) return null; var c = await client(); var r = await c.auth.getUser(); return r && r.data ? r.data.user : null; }
   async function getSession() { if (!ENABLED) return null; var c = await client(); var r = await c.auth.getSession(); return r && r.data ? r.data.session : null; }
+  /* PKCE restoration happens asynchronously when the callback page creates
+     the client. A direct getSession() in that window can legitimately return
+     null for a moment, which previously sent a newly signed-in buyer straight
+     back to Login. Keep this bounded: 1.8 seconds maximum, no infinite loop. */
+  async function waitForSession(attempts) {
+    attempts = Math.max(1, Math.min(Number(attempts) || 7, 12));
+    for (var i = 0; i < attempts; i++) {
+      var session = await getSession();
+      if (session && session.access_token) return session;
+      if (i < attempts - 1) await pause(150 + i * 50);
+    }
+    return null;
+  }
   async function onChange(cb) { var c = await client(); return c.auth.onAuthStateChange(function (e, session) { cb(e, session && session.user); }); }
 
   /* ---- header state (runs on every page) ---- */
@@ -190,7 +204,7 @@
     safeReturnUrl: safeReturnUrl, authMessage: authMessage,
     favInit: favInit,
     client: client, signUp: signUp, signIn: signIn, signInOAuth: signInOAuth, sendReset: sendReset,
-    updatePassword: updatePassword, signOut: signOut, getUser: getUser, getSession: getSession, onChange: onChange,
+    updatePassword: updatePassword, signOut: signOut, getUser: getUser, getSession: getSession, waitForSession: waitForSession, onChange: onChange,
     renderHeader: renderHeader, requireAuth: requireAuth, config: CFG
   };
   root.VKAuth = VKAuth;

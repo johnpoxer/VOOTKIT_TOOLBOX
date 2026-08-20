@@ -8,6 +8,7 @@
   var page = doc.querySelector('[data-auth]');
   if (!page) return;
   var kind = page.getAttribute('data-auth');
+  var NEXT_KEY = 'vk-auth-return';
 
   function $(s) { return page.querySelector(s); }
   function msg(text, isErr) {
@@ -36,8 +37,16 @@
   function nextUrl() {
     try {
       var raw = new URLSearchParams(location.search).get('next');
-      return A && A.safeReturnUrl ? A.safeReturnUrl(raw) : raw;
+      var safe = A && A.safeReturnUrl ? A.safeReturnUrl(raw) : raw;
+      if (safe) { try { sessionStorage.setItem(NEXT_KEY, safe); } catch (e) {} return safe; }
+      var saved = sessionStorage.getItem(NEXT_KEY);
+      return A && A.safeReturnUrl ? A.safeReturnUrl(saved) : saved;
     } catch (e) { return null; }
+  }
+  function finishUrl(fallback) {
+    var target = nextUrl() || fallback;
+    try { sessionStorage.removeItem(NEXT_KEY); } catch (e) {}
+    return target;
   }
   function go(path) {
     location.href = (A ? A.upPrefix(location.pathname) : '../../') + path;
@@ -111,7 +120,8 @@
       try {
         var r = await A.signIn(email, pw);
         if (r.error) throw r.error;
-        location.href = nextUrl() || (A.upPrefix(location.pathname) + 'account/');
+        if (A.waitForSession && !(await A.waitForSession(8))) throw new Error('Your session could not be restored. Please try again.');
+        location.href = finishUrl(A.upPrefix(location.pathname) + 'account/');
       } catch (err) {
         busy(btn, false);
         msg(friendly(err), true);
@@ -187,10 +197,11 @@
     (async function () {
       try {
         await A.client();
-        var user = await A.getUser();
+        var session = A.waitForSession ? await A.waitForSession(10) : await A.getSession();
+        var user = session && session.user;
         var next = nextUrl();
         if (user && next) {
-          location.href = next;
+          location.href = finishUrl(next);
           return;
         }
         go(user ? 'account/' : 'auth/sign-in/');

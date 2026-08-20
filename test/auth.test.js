@@ -21,6 +21,7 @@ eq(A.safeReturnUrl("//evil.test/phish"), null, "protocol-relative return URL blo
 eq(A.safeReturnUrl("/auth/callback/"), null, "callback return URL blocked");
 eq(A.authMessage({ message: "Invalid login credentials" }).text, "Email or password is incorrect.", "raw signin error translated");
 eq(A.authMessage({ message: "User already registered" }).signin, true, "existing account error suggests sign-in");
+ok(typeof A.waitForSession === "function", "bounded session restoration helper is exposed");
 
 /* DOM: header state via a mock supabase client (no network) */
 async function domTests() {
