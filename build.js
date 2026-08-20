@@ -2037,14 +2037,14 @@ function legalPage(o) {
   const url = SITE + "/" + o.file;
   const ld = { "@context": "https://schema.org", "@type": "WebPage", name: o.title, url, description: o.desc };
   return head({ depth: 0, url, ads: true, ld, title: `${o.title} — Vootkit`, desc: o.desc }) +
-`<main class="wrap section legal-page">
+`<div class="wrap section legal-page">
   <nav class="crumb" aria-label="Breadcrumb"><a href="./">Vootkit</a> <span aria-hidden="true">›</span> <span aria-current="page">${esc(o.title)}</span></nav>
   <header class="legal-hero"><span class="eyebrow">Trust centre</span><h1 class="page-h1">${esc(o.title)}</h1><p>${esc(o.desc)}</p><small>Effective and last updated ${o.updated}</small></header>
   <div class="legal-layout">
     <aside class="legal-nav" aria-label="Legal and trust pages"><strong>Vootkit policies</strong><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="cookies.html">Cookies</a><a href="disclaimer.html">Disclaimer</a><a href="security.html">Security</a><a href="contact.html">Contact</a></aside>
     <article class="prose legal-copy">${o.body}</article>
   </div>
-</main>` + foot(0);
+</div>` + foot(0);
 }
 
 /* ---------- info pages (About, Contact, Blog) ---------- */
