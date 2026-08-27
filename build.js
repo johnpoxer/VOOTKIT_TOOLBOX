@@ -353,6 +353,7 @@ ${o.ads ? adLoader() : "<!-- no ads inside an active tool workspace -->"}
       <a href="${up}blog/"${cur("blog")}>Blog</a>
       <a href="${up}pricing.html"${cur("pricing")}>Pricing</a>
       <a href="${up}about.html"${cur("about")}>About</a>
+      <a href="${up}auth/sign-in/" data-auth-link>Log in</a>
     </nav>
     <div class="hdr-act">
       ${langSwitcher(o.alts, lang)}
