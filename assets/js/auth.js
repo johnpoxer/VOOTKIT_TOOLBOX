@@ -76,6 +76,35 @@
   function up() { return doc ? upPrefix(loc().pathname) : ''; }
   function pause(ms) { return new Promise(function (resolve) { setTimeout(resolve, ms); }); }
 
+  /* Keep one auth record available to every full-page navigation. Supabase's
+     default browser store is localStorage only. Some iOS/WebView privacy modes
+     allow the write on the login document but do not return it reliably to the
+     next document. sessionStorage *does* survive navigation in the same tab,
+     so mirror the exact same Supabase value into both stores and recover from
+     either one. No Vootkit code reads or alters the token payload. */
+  var AUTH_STORAGE_KEY = 'sb-' + (CFG.ref || String(CFG.url || '').replace(/^.*\/\//, '').split('.')[0]) + '-auth-token';
+  function webStorage() {
+    if (!doc) return null;
+    function read(store, key) { try { return store && store.getItem(key); } catch (e) { return null; } }
+    function write(store, key, value) { try { if (store) store.setItem(key, value); } catch (e) {} }
+    function drop(store, key) { try { if (store) store.removeItem(key); } catch (e) {} }
+    return {
+      getItem: function (key) {
+        var value = read(root.localStorage, key) || read(root.sessionStorage, key);
+        if (value) { write(root.localStorage, key, value); write(root.sessionStorage, key, value); }
+        return value;
+      },
+      setItem: function (key, value) {
+        write(root.localStorage, key, value);
+        write(root.sessionStorage, key, value);
+      },
+      removeItem: function (key) {
+        drop(root.localStorage, key);
+        drop(root.sessionStorage, key);
+      }
+    };
+  }
+
   /* ---- SDK + client (lazy) ---- */
   var _client = null, _loading = null;
   function loadSdk() {
@@ -92,9 +121,15 @@
     if (_client) return Promise.resolve(_client);
     if (_loading) return _loading;
     _loading = loadSdk().then(function (sb) {
-      _client = sb.createClient(CFG.url, CFG.anonKey, {
-        auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'pkce' }
-      });
+      var authOptions = {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        flowType: 'pkce',
+        storageKey: AUTH_STORAGE_KEY
+      };
+      var storage = webStorage(); if (storage) authOptions.storage = storage;
+      _client = sb.createClient(CFG.url, CFG.anonKey, { auth: authOptions });
       return _client;
     });
     return _loading;
