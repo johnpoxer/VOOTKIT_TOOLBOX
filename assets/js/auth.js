@@ -159,7 +159,25 @@
   async function signInOAuth(provider, returnTo) { var c = await client(); return c.auth.signInWithOAuth({ provider: provider, options: { redirectTo: authRedirect('/auth/callback/', returnTo) } }); }
   async function sendReset(email, returnTo) { var c = await client(); return c.auth.resetPasswordForEmail(email, { redirectTo: authRedirect('/auth/update-password/', returnTo) }); }
   async function updatePassword(newPassword) { var c = await client(); return c.auth.updateUser({ password: newPassword }); }
-  async function signOut() { var c = await client(); await c.auth.signOut(); loc().href = up() || './'; }
+  function clearLocalAuth() {
+    var storage = webStorage();
+    if (storage) {
+      storage.removeItem(AUTH_STORAGE_KEY);
+      storage.removeItem(AUTH_STORAGE_KEY + '-code-verifier');
+    }
+    if (doc && doc.documentElement) doc.documentElement.classList.remove('vk-signed-in');
+  }
+  async function signOut(scope) {
+    var c = null;
+    try { c = await client(); } catch (e) {}
+    /* Device logout must not depend on a successful network request. */
+    clearLocalAuth();
+    try {
+      if (c && c.auth.stopAutoRefresh) c.auth.stopAutoRefresh();
+      if (c) await c.auth.signOut({ scope: scope === 'global' ? 'global' : 'local' });
+    } catch (e) { clearLocalAuth(); }
+    loc().href = up() || './';
+  }
   async function getUser() { if (!ENABLED) return null; var c = await client(); var r = await c.auth.getUser(); return r && r.data ? r.data.user : null; }
   async function getSession() { if (!ENABLED) return null; var c = await client(); var r = await c.auth.getSession(); return r && r.data ? r.data.session : null; }
   /* PKCE restoration happens asynchronously when the callback page creates
@@ -208,8 +226,9 @@
       slot.innerHTML = '<a class="btn btn-sm" href="' + u + 'auth/sign-in/">Sign in</a>';
     }
     if (doc) doc.querySelectorAll('[data-auth-link]').forEach(function (link) {
-      link.href = user ? u + 'account/' : u + 'auth/sign-in/';
-      link.textContent = user ? 'My account' : 'Sign in';
+      link.href = user ? '#sign-out' : u + 'auth/sign-in/';
+      link.textContent = user ? 'Sign out' : 'Log in';
+      link.onclick = user ? function (e) { e.preventDefault(); signOut(); } : null;
     });
   }
   var _subscribed = false;
@@ -273,7 +292,7 @@
     safeReturnUrl: safeReturnUrl, authMessage: authMessage,
     favInit: favInit,
     client: client, signUp: signUp, signIn: signIn, signInOAuth: signInOAuth, sendReset: sendReset,
-    updatePassword: updatePassword, signOut: signOut, getUser: getUser, getSession: getSession, waitForSession: waitForSession, restoreUser: restoreUser, onChange: onChange,
+    updatePassword: updatePassword, signOut: signOut, clearLocalAuth: clearLocalAuth, getUser: getUser, getSession: getSession, waitForSession: waitForSession, restoreUser: restoreUser, onChange: onChange,
     storageKey: AUTH_STORAGE_KEY, storage: webStorage,
     renderHeader: renderHeader, requireAuth: requireAuth, config: CFG
   };
