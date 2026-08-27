@@ -130,6 +130,24 @@
     }
     return null;
   }
+  /* A new document must restore the persisted session before deciding that the
+     visitor is signed out. getUser() performs a network validation and can
+     briefly return no user (or throw) while an existing token is being
+     refreshed. Treating that transient state as a logout made navigation to
+     any other Vootkit page replace the avatar with "Sign in", and made the
+     account guard bounce a valid user back to the login page. The locally
+     restored session is the source of truth for page boot; Supabase/RLS still
+     validates the token for every protected database request. */
+  async function restoreUser(attempts) {
+    var session = await waitForSession(attempts || 8);
+    if (!session || !session.user) return null;
+    try {
+      var user = await getUser();
+      return user || session.user;
+    } catch (e) {
+      return session.user;
+    }
+  }
   async function onChange(cb) { var c = await client(); return c.auth.onAuthStateChange(function (e, session) { cb(e, session && session.user); }); }
 
   /* ---- header state (runs on every page) ---- */
@@ -150,7 +168,7 @@
     // reuse the slot if it already exists — never remove/recreate (that caused flicker)
     var slot = doc.getElementById('vk-auth-slot');
     if (!slot) { slot = doc.createElement('span'); slot.id = 'vk-auth-slot'; slot.className = 'vk-auth-slot'; act.insertBefore(slot, act.firstChild); }
-    var user = null; try { user = await getUser(); } catch (e) {}
+    var user = null; try { user = await restoreUser(8); } catch (e) {}
     paintSlot(slot, user);
     // subscribe to auth changes EXACTLY ONCE; the handler only repaints (no re-render, no re-subscribe)
     if (!_subscribed) {
@@ -162,7 +180,7 @@
   /* ---- guard: redirect to sign-in if not authed (for /account/) ---- */
   async function requireAuth() {
     if (!ENABLED) return null;
-    var user = await getUser();
+    var user = await restoreUser(10);
     if (!user) { loc().href = up() + 'auth/sign-in/?next=' + encodeURIComponent(loc().pathname); return null; }
     return user;
   }
@@ -172,7 +190,7 @@
     if (!ENABLED || !doc) return;
     var ws = doc.getElementById('workspace'); if (!ws) return;
     var toolId = ws.getAttribute('data-tool'); if (!toolId) return;
-    var user; try { user = await getUser(); } catch (e) { return; }
+    var user; try { user = await restoreUser(8); } catch (e) { return; }
     if (!user) return;
     var c = await client();
     // log usage (upsert keeps one row per tool, freshest first)
@@ -204,7 +222,7 @@
     safeReturnUrl: safeReturnUrl, authMessage: authMessage,
     favInit: favInit,
     client: client, signUp: signUp, signIn: signIn, signInOAuth: signInOAuth, sendReset: sendReset,
-    updatePassword: updatePassword, signOut: signOut, getUser: getUser, getSession: getSession, waitForSession: waitForSession, onChange: onChange,
+    updatePassword: updatePassword, signOut: signOut, getUser: getUser, getSession: getSession, waitForSession: waitForSession, restoreUser: restoreUser, onChange: onChange,
     renderHeader: renderHeader, requireAuth: requireAuth, config: CFG
   };
   root.VKAuth = VKAuth;
