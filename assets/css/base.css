@@ -372,6 +372,7 @@ label { display: block; font-size: var(--t-sm); font-weight: 600; color: var(--i
    rule hid the whole auth slot below 560px, including the avatar, while the
    "Get Started Free" CTA stayed visible — every page looked logged out. */
 .vk-signed-in .hdr-cta { display: none; }
+.vk-signed-in .vk-auth-slot[aria-busy="true"] { visibility: hidden; }
 @media (max-width: 560px) {
   .vk-auth-slot { display: none; }
   .vk-signed-in .vk-auth-slot { display: inline-flex; }
