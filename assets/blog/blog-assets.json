@@ -13,6 +13,86 @@
       "sourcePlatform": "Pexels",
       "sourceLicenseNote": "Pexels free-to-use stock photo; downloaded locally, cropped to a 16:9 blog cover and optimized as JPEG, WebP and AVIF.",
       "alt": "Printed documents beside a laptop, representing files prepared for upload or sharing."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "merge-pdf-files-safely",
+      "localFiles": ["/assets/blog/merge-pdf-files-safely.jpg", "/assets/blog/merge-pdf-files-safely.webp"],
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Separate document pages flowing into one organized PDF file."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "split-pdf-pages",
+      "localFiles": ["/assets/blog/split-pdf-pages.jpg", "/assets/blog/split-pdf-pages.webp"],
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "A PDF document being separated into selected page groups."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "convert-jpg-images-to-pdf",
+      "localFiles": ["/assets/blog/convert-jpg-images-to-pdf.jpg", "/assets/blog/convert-jpg-images-to-pdf.webp"],
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Photo thumbnails arranged into a clean multipage PDF document."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "password-protect-pdf",
+      "localFiles": ["/assets/blog/password-protect-pdf.jpg", "/assets/blog/password-protect-pdf.webp"],
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "A PDF document secured by a strong padlock."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "remove-photo-metadata",
+      "localFiles": ["/assets/blog/remove-photo-metadata.jpg", "/assets/blog/remove-photo-metadata.webp"],
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "A photo being cleaned of location and camera metadata."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "resize-images-without-blur",
+      "localFiles": ["/assets/blog/resize-images-without-blur.jpg", "/assets/blog/resize-images-without-blur.webp"],
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "A sharp image being resized between two precise dimensions."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "trim-video-in-browser",
+      "localFiles": ["/assets/blog/trim-video-in-browser.jpg", "/assets/blog/trim-video-in-browser.webp"],
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "A video timeline with a selected segment ready to trim."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "convert-video-to-gif",
+      "localFiles": ["/assets/blog/convert-video-to-gif.jpg", "/assets/blog/convert-video-to-gif.webp"],
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Video frames looping into an animated image."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "create-professional-invoice",
+      "localFiles": ["/assets/blog/create-professional-invoice.jpg", "/assets/blog/create-professional-invoice.webp"],
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "A polished business invoice beside a calculator and payment card."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "format-json-privately",
+      "localFiles": ["/assets/blog/format-json-privately.jpg", "/assets/blog/format-json-privately.webp"],
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Structured JSON data being formatted into a clean readable hierarchy."
     }
   ]
 }
