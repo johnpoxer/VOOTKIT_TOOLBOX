@@ -368,7 +368,14 @@ label { display: block; font-size: var(--t-sm); font-weight: 600; color: var(--i
 .vk-fav { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink-soft); border-radius: var(--r-pill); padding: 6px 14px; font: inherit; font-size: var(--t-sm); font-weight: 600; cursor: pointer; min-height: 36px; }
 .vk-fav:hover { border-color: var(--accent-border); color: var(--accent); }
 .vk-fav.is-on { background: var(--accent-weak); border-color: var(--accent-border); color: var(--accent); }
-@media (max-width: 560px) { .vk-auth-slot { display: none; } }
+/* A signed-in user must never lose the account control on mobile. The old
+   rule hid the whole auth slot below 560px, including the avatar, while the
+   "Get Started Free" CTA stayed visible — every page looked logged out. */
+.vk-signed-in .hdr-cta { display: none; }
+@media (max-width: 560px) {
+  .vk-auth-slot { display: none; }
+  .vk-signed-in .vk-auth-slot { display: inline-flex; }
+}
 
 .auth-wrap { max-width: 440px; margin: clamp(var(--s-6), 6vw, var(--s-9)) auto; padding-inline: var(--gutter); }
 .auth-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--shadow-md); padding: var(--s-6); }
