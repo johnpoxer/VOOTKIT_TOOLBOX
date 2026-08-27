@@ -84,13 +84,23 @@
      either one. No Vootkit code reads or alters the token payload. */
   var AUTH_STORAGE_KEY = 'sb-' + (CFG.ref || String(CFG.url || '').replace(/^.*\/\//, '').split('.')[0]) + '-auth-token';
   function webStorage() {
-    if (!doc) return null;
+    if (!root || (!root.localStorage && !root.sessionStorage)) return null;
     function read(store, key) { try { return store && store.getItem(key); } catch (e) { return null; } }
     function write(store, key, value) { try { if (store) store.setItem(key, value); } catch (e) {} }
     function drop(store, key) { try { if (store) store.removeItem(key); } catch (e) {} }
     return {
       getItem: function (key) {
-        var value = read(root.localStorage, key) || read(root.sessionStorage, key);
+        var local = read(root.localStorage, key), tab = read(root.sessionStorage, key);
+        /* A partial/old token write must not mask a healthy tab copy. PKCE
+           verifier values are plain strings, so validate JSON only for the
+           main session key. */
+        function usable(value) {
+          if (!value) return false;
+          if (key !== AUTH_STORAGE_KEY) return true;
+          try { var parsed = JSON.parse(value); return !!(parsed && parsed.access_token && parsed.user); }
+          catch (e) { return false; }
+        }
+        var value = usable(local) ? local : (usable(tab) ? tab : null);
         if (value) { write(root.localStorage, key, value); write(root.sessionStorage, key, value); }
         return value;
       },
@@ -176,18 +186,20 @@
   async function restoreUser(attempts) {
     var session = await waitForSession(attempts || 8);
     if (!session || !session.user) return null;
-    try {
-      var user = await getUser();
-      return user || session.user;
-    } catch (e) {
-      return session.user;
-    }
+    /* The session was already restored and contains the signed-in user.
+       Do not block every page header on a second network request: on a slow
+       connection getUser() could leave "Login" painted for many seconds and
+       make a healthy session look lost. RLS validates the JWT on protected
+       requests; this is only the navigation/account UI state. */
+    return session.user;
   }
   async function onChange(cb) { var c = await client(); return c.auth.onAuthStateChange(function (e, session) { cb(e, session && session.user); }); }
 
   /* ---- header state (runs on every page) ---- */
   function paintSlot(slot, user) {
     var u = up();
+    if (doc && doc.documentElement) doc.documentElement.classList.toggle('vk-signed-in', !!user);
+    slot.removeAttribute('aria-busy');
     if (user) {
       var name = (user.user_metadata && user.user_metadata.display_name) || user.email || 'Account';
       var initial = (name[0] || 'A').toUpperCase();
@@ -195,11 +207,15 @@
     } else {
       slot.innerHTML = '<a class="btn btn-sm" href="' + u + 'auth/sign-in/">Sign in</a>';
     }
+    if (doc) doc.querySelectorAll('[data-auth-link]').forEach(function (link) {
+      link.href = user ? u + 'account/' : u + 'auth/sign-in/';
+      link.textContent = user ? 'My account' : 'Sign in';
+    });
   }
   var _subscribed = false;
   async function renderHeader() {
     if (!ENABLED || !doc) return;
-    var act = doc.querySelector('.hdr-act'); if (!act) return;
+    var act = doc.querySelector('.hdr-act') || doc.querySelector('.header-actions'); if (!act) return;
     // reuse the slot if it already exists — never remove/recreate (that caused flicker)
     var slot = doc.getElementById('vk-auth-slot');
     if (!slot) { slot = doc.createElement('span'); slot.id = 'vk-auth-slot'; slot.className = 'vk-auth-slot'; act.insertBefore(slot, act.firstChild); }
@@ -258,6 +274,7 @@
     favInit: favInit,
     client: client, signUp: signUp, signIn: signIn, signInOAuth: signInOAuth, sendReset: sendReset,
     updatePassword: updatePassword, signOut: signOut, getUser: getUser, getSession: getSession, waitForSession: waitForSession, restoreUser: restoreUser, onChange: onChange,
+    storageKey: AUTH_STORAGE_KEY, storage: webStorage,
     renderHeader: renderHeader, requireAuth: requireAuth, config: CFG
   };
   root.VKAuth = VKAuth;
