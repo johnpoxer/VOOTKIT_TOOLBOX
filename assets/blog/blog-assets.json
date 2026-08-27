@@ -93,6 +93,78 @@
       "sourcePlatform": "OpenAI ImageGen",
       "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
       "alt": "Structured JSON data being formatted into a clean readable hierarchy."
+    },
+    {
+      "section": "blog-article-cover", "articleSlug": "loan-calculator-guide",
+      "localFiles": ["/assets/blog/loan-calculator-guide.jpg", "/assets/blog/loan-calculator-guide.webp"],
+      "sourcePlatform": "OpenAI ImageGen", "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Loan agreement, calculator, payment calendar and declining loan balance chart."
+    },
+    {
+      "section": "blog-article-cover", "articleSlug": "auto-loan-calculator-guide",
+      "localFiles": ["/assets/blog/auto-loan-calculator-guide.jpg", "/assets/blog/auto-loan-calculator-guide.webp"],
+      "sourcePlatform": "OpenAI ImageGen", "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Modern car beside an auto finance agreement, calculator and payment calendar."
+    },
+    {
+      "section": "blog-article-cover", "articleSlug": "credit-card-payoff-guide",
+      "localFiles": ["/assets/blog/credit-card-payoff-guide.jpg", "/assets/blog/credit-card-payoff-guide.webp"],
+      "sourcePlatform": "OpenAI ImageGen", "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Credit card balance declining along a payoff path with calculator and calendar."
+    },
+    {
+      "section": "blog-article-cover", "articleSlug": "compound-interest-guide",
+      "localFiles": ["/assets/blog/compound-interest-guide.jpg", "/assets/blog/compound-interest-guide.webp"],
+      "sourcePlatform": "OpenAI ImageGen", "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Coins growing in measured stages beside a calculator and savings calendar."
+    },
+    {
+      "section": "blog-article-cover", "articleSlug": "savings-goal-planner-guide",
+      "localFiles": ["/assets/blog/savings-goal-planner-guide.jpg", "/assets/blog/savings-goal-planner-guide.webp"],
+      "sourcePlatform": "OpenAI ImageGen", "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Savings goal jar filling with coins along a milestone path and calendar."
+    },
+    {
+      "section": "blog-article-cover", "articleSlug": "retirement-calculator-guide",
+      "localFiles": ["/assets/blog/retirement-calculator-guide.jpg", "/assets/blog/retirement-calculator-guide.webp"],
+      "sourcePlatform": "OpenAI ImageGen", "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Long-term retirement nest egg, contribution calendar and projected growth horizon."
+    },
+    {
+      "section": "blog-article-cover", "articleSlug": "crypto-profit-dca-guide",
+      "localFiles": ["/assets/blog/crypto-profit-dca-guide.jpg", "/assets/blog/crypto-profit-dca-guide.webp"],
+      "sourcePlatform": "OpenAI ImageGen", "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Abstract digital tokens, multiple purchase points, calculator and profit-loss chart."
+    },
+    {
+      "section": "blog-article-cover", "articleSlug": "currency-converter-guide",
+      "localFiles": ["/assets/blog/currency-converter-guide.jpg", "/assets/blog/currency-converter-guide.webp"],
+      "sourcePlatform": "OpenAI ImageGen", "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Abstract banknotes and coins moving through two-way currency conversion arrows."
+    },
+    {
+      "section": "blog-article-cover", "articleSlug": "debt-to-income-calculator-guide",
+      "localFiles": ["/assets/blog/debt-to-income-calculator-guide.jpg", "/assets/blog/debt-to-income-calculator-guide.webp"],
+      "sourcePlatform": "OpenAI ImageGen", "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Income and recurring debt payments balanced on a ratio scale with calculator."
+    },
+    {
+      "section": "blog-article-cover", "articleSlug": "simple-interest-calculator-guide",
+      "localFiles": ["/assets/blog/simple-interest-calculator-guide.jpg", "/assets/blog/simple-interest-calculator-guide.webp"],
+      "sourcePlatform": "OpenAI ImageGen", "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Principal amount following a straight interest path across a timeline to a final total."
+    },
+    {
+      "section": "blog-article-cover", "articleSlug": "investment-growth-calculator-guide",
+      "localFiles": ["/assets/blog/investment-growth-calculator-guide.jpg", "/assets/blog/investment-growth-calculator-guide.webp"],
+      "sourcePlatform": "OpenAI ImageGen", "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Diversified asset blocks, contribution calendar and cautious projected investment curve."
+    },
+    {
+      "section": "blog-article-cover", "articleSlug": "50-30-20-budget-calculator-guide",
+      "localFiles": ["/assets/blog/50-30-20-budget-calculator-guide.jpg", "/assets/blog/50-30-20-budget-calculator-guide.webp"],
+      "sourcePlatform": "OpenAI ImageGen", "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Monthly income divided into organized needs, wants and savings containers."
     }
   ]
 }
