@@ -22,6 +22,7 @@ eq(A.safeReturnUrl("/auth/callback/"), null, "callback return URL blocked");
 eq(A.authMessage({ message: "Invalid login credentials" }).text, "Email or password is incorrect.", "raw signin error translated");
 eq(A.authMessage({ message: "User already registered" }).signin, true, "existing account error suggests sign-in");
 ok(typeof A.waitForSession === "function", "bounded session restoration helper is exposed");
+ok(typeof A.restoreUser === "function", "cross-page user restoration helper is exposed");
 
 /* DOM: header state via a mock supabase client (no network) */
 async function domTests() {
@@ -30,6 +31,7 @@ async function domTests() {
     const w = dom.window;
     w.VK_SUPABASE = { url: "https://x.supabase.co", anonKey: "anon_test_key" };
     w.supabase = { createClient: function () { return { auth: {
+      getSession: async function () { return { data: { session: userObj ? { access_token: "token", user: userObj } : null } }; },
       getUser: async function () { return { data: { user: userObj } }; },
       onAuthStateChange: function () { return { data: { subscription: {} } }; }
     } }; } };
