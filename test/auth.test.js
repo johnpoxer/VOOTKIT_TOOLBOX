@@ -30,20 +30,23 @@ async function domTests() {
     const dom = new JSDOM('<!doctype html><header class="hdr"><div class="hdr-act"></div></header>', { url: "https://www.vootkit.com/tools/pdf/merge-pdf/" });
     const w = dom.window;
     w.VK_SUPABASE = { url: "https://x.supabase.co", anonKey: "anon_test_key" };
-    w.supabase = { createClient: function () { return { auth: {
+    var clientOptions = null;
+    w.supabase = { createClient: function (url, key, options) { clientOptions = options; return { auth: {
       getSession: async function () { return { data: { session: userObj ? { access_token: "token", user: userObj } : null } }; },
       getUser: async function () { return { data: { user: userObj } }; },
       onAuthStateChange: function () { return { data: { subscription: {} } }; }
     } }; } };
     global.document = w.document; global.window = w;
     delete require.cache[require.resolve("../assets/js/auth.js")];
-    return { w, Auth: require("../assets/js/auth.js") };
+    return { w, Auth: require("../assets/js/auth.js"), options: function () { return clientOptions; } };
   }
 
   // signed out -> "Sign in" link to the auth page
   let s = setup(null);
   eq(s.Auth.enabled, true, "enabled when url+anonKey present");
   await s.Auth.renderHeader();
+  ok(s.options().auth.persistSession, "session persistence stays enabled");
+  ok(s.options().auth.storage && /sb-x-auth-token/.test(s.options().auth.storageKey), "auth uses mirrored navigation storage");
   let slot = s.w.document.getElementById("vk-auth-slot");
   ok(slot && /Sign in/.test(slot.textContent), "signed-out header shows Sign in");
   ok(/auth\/sign-in\//.test(slot.querySelector("a").getAttribute("href")), "links to sign-in at correct depth");
