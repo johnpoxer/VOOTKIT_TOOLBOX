@@ -1,6 +1,7 @@
 /* auth.test.js — auth helpers + header state + form wiring (mock Supabase). */
 "use strict";
 const assert = require("assert");
+const fs = require("fs");
 let JSDOM, hasDom = false;
 try { JSDOM = require("jsdom").JSDOM; hasDom = true; } catch (e) {}
 global.window = global;
@@ -23,6 +24,30 @@ eq(A.authMessage({ message: "Invalid login credentials" }).text, "Email or passw
 eq(A.authMessage({ message: "User already registered" }).signin, true, "existing account error suggests sign-in");
 ok(typeof A.waitForSession === "function", "bounded session restoration helper is exposed");
 ok(typeof A.restoreUser === "function", "cross-page user restoration helper is exposed");
+
+/* Storage regression: a broken local token must recover from the healthy
+   same-tab copy, then repair localStorage for the following navigation. */
+function memoryStore(seed) {
+  const values = Object.assign({}, seed || {});
+  return { getItem: k => Object.prototype.hasOwnProperty.call(values, k) ? values[k] : null,
+    setItem: (k, v) => { values[k] = String(v); }, removeItem: k => { delete values[k]; } };
+}
+const goodSession = JSON.stringify({ access_token: "token", user: { id: "u1" } });
+global.localStorage = memoryStore({ [A.storageKey]: "{broken" });
+global.sessionStorage = memoryStore({ [A.storageKey]: goodSession });
+const mirrored = A.storage();
+eq(mirrored.getItem(A.storageKey), goodSession, "healthy tab session wins over corrupt local token");
+eq(global.localStorage.getItem(A.storageKey), goodSession, "recovered session repairs persistent storage");
+mirrored.removeItem(A.storageKey);
+eq(global.localStorage.getItem(A.storageKey), null, "sign-out clears persistent auth storage");
+eq(global.sessionStorage.getItem(A.storageKey), null, "sign-out clears tab auth storage");
+
+const baseCss = fs.readFileSync(require("path").join(__dirname, "../assets/css/base.css"), "utf8");
+ok(/\.vk-signed-in \.vk-auth-slot\s*\{\s*display:\s*inline-flex/.test(baseCss), "signed-in avatar remains visible on mobile");
+ok(/\.vk-signed-in \.hdr-cta\s*\{\s*display:\s*none/.test(baseCss), "signup CTA is hidden after login");
+const homeHtml = fs.readFileSync(require("path").join(__dirname, "../index.html"), "utf8");
+ok(/class="header-actions"[^>]*>[\s\S]*?id="vk-auth-slot"/.test(homeHtml), "homepage exposes the shared auth slot");
+ok(/data-auth-link/.test(homeHtml), "homepage drawer has an auth-aware account link");
 
 /* DOM: header state via a mock supabase client (no network) */
 async function domTests() {
