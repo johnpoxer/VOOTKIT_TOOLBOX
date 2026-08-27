@@ -41,6 +41,11 @@ eq(global.localStorage.getItem(A.storageKey), goodSession, "recovered session re
 mirrored.removeItem(A.storageKey);
 eq(global.localStorage.getItem(A.storageKey), null, "sign-out clears persistent auth storage");
 eq(global.sessionStorage.getItem(A.storageKey), null, "sign-out clears tab auth storage");
+global.localStorage.setItem(A.storageKey, goodSession);
+global.sessionStorage.setItem(A.storageKey, goodSession);
+A.clearLocalAuth();
+eq(global.localStorage.getItem(A.storageKey), null, "forced logout clears persistent backup immediately");
+eq(global.sessionStorage.getItem(A.storageKey), null, "forced logout clears tab backup immediately");
 
 const baseCss = fs.readFileSync(require("path").join(__dirname, "../assets/css/base.css"), "utf8");
 ok(/\.vk-signed-in \.vk-auth-slot\s*\{\s*display:\s*inline-flex/.test(baseCss), "signed-in avatar remains visible on mobile");
@@ -48,6 +53,7 @@ ok(/\.vk-signed-in \.hdr-cta\s*\{\s*display:\s*none/.test(baseCss), "signup CTA 
 const homeHtml = fs.readFileSync(require("path").join(__dirname, "../index.html"), "utf8");
 ok(/class="header-actions"[^>]*>[\s\S]*?id="vk-auth-slot"/.test(homeHtml), "homepage exposes the shared auth slot");
 ok(/data-auth-link/.test(homeHtml), "homepage drawer has an auth-aware account link");
+ok(/data-auth-link>Log in</.test(homeHtml), "signed-out homepage menu says Log in");
 ok(/documentElement\.classList\.add\('vk-signed-in'\)/.test(homeHtml), "homepage paints auth hint before CSS");
 const buildSource = fs.readFileSync(require("path").join(__dirname, "../build.js"), "utf8");
 ok(/function authHintHead\(\)/.test(buildSource) && /\$\{authHintHead\(\)\}/.test(buildSource), "generated pages paint auth hint before CSS");
