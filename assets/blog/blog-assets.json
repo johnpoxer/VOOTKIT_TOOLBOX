@@ -95,76 +95,268 @@
       "alt": "Structured JSON data being formatted into a clean readable hierarchy."
     },
     {
-      "section": "blog-article-cover", "articleSlug": "loan-calculator-guide",
+      "section": "blog-article-cover",
+      "articleSlug": "bitrate-calculator-guide",
+      "localFiles": ["/assets/blog/bitrate-calculator-guide.jpg", "/assets/blog/bitrate-calculator-guide.webp"],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the bitrate calculator workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "vertical-reframe-guide",
+      "localFiles": ["/assets/blog/vertical-reframe-guide.jpg", "/assets/blog/vertical-reframe-guide.webp"],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the vertical reframe workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "frame-grabber-guide",
+      "localFiles": ["/assets/blog/frame-grabber-guide.jpg", "/assets/blog/frame-grabber-guide.webp"],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the frame grabber workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "mute-video-guide",
+      "localFiles": ["/assets/blog/mute-video-guide.jpg", "/assets/blog/mute-video-guide.webp"],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the mute video workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "extract-audio-guide",
+      "localFiles": ["/assets/blog/extract-audio-guide.jpg", "/assets/blog/extract-audio-guide.webp"],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the extract audio workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "convert-video-guide",
+      "localFiles": ["/assets/blog/convert-video-guide.jpg", "/assets/blog/convert-video-guide.webp"],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the convert video workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "resize-video-guide",
+      "localFiles": ["/assets/blog/resize-video-guide.jpg", "/assets/blog/resize-video-guide.webp"],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the resize video workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "loop-video-guide",
+      "localFiles": ["/assets/blog/loop-video-guide.jpg", "/assets/blog/loop-video-guide.webp"],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the loop video workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "adjust-volume-guide",
+      "localFiles": ["/assets/blog/adjust-volume-guide.jpg", "/assets/blog/adjust-volume-guide.webp"],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the adjust volume workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "stream-asset-sizer-guide",
+      "localFiles": ["/assets/blog/stream-asset-sizer-guide.jpg", "/assets/blog/stream-asset-sizer-guide.webp"],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the stream asset sizer workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "emote-resizer-guide",
+      "localFiles": ["/assets/blog/emote-resizer-guide.jpg", "/assets/blog/emote-resizer-guide.webp"],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the emote resizer workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "brb-overlay-guide",
+      "localFiles": ["/assets/blog/brb-overlay-guide.jpg", "/assets/blog/brb-overlay-guide.webp"],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the brb overlay workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "upload-time-guide",
+      "localFiles": ["/assets/blog/upload-time-guide.jpg", "/assets/blog/upload-time-guide.webp"],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the upload time workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "stream-overlay-creator-guide",
+      "localFiles": ["/assets/blog/stream-overlay-creator-guide.jpg", "/assets/blog/stream-overlay-creator-guide.webp"],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the stream overlay creator workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "starting-soon-screen-guide",
+      "localFiles": ["/assets/blog/starting-soon-screen-guide.jpg", "/assets/blog/starting-soon-screen-guide.webp"],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the starting soon screen workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "stream-alert-creator-guide",
+      "localFiles": ["/assets/blog/stream-alert-creator-guide.jpg", "/assets/blog/stream-alert-creator-guide.webp"],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the stream alert creator workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "chat-overlay-tool-guide",
+      "localFiles": ["/assets/blog/chat-overlay-tool-guide.jpg", "/assets/blog/chat-overlay-tool-guide.webp"],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the chat overlay tool workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "stream-revenue-calculator-guide",
+      "localFiles": ["/assets/blog/stream-revenue-calculator-guide.jpg", "/assets/blog/stream-revenue-calculator-guide.webp"],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the stream revenue calculator workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "obs-settings-assistant-guide",
+      "localFiles": ["/assets/blog/obs-settings-assistant-guide.jpg", "/assets/blog/obs-settings-assistant-guide.webp"],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the obs settings assistant workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "stream-schedule-planner-guide",
+      "localFiles": ["/assets/blog/stream-schedule-planner-guide.jpg", "/assets/blog/stream-schedule-planner-guide.webp"],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the stream schedule planner workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "giveaway-picker-guide",
+      "localFiles": ["/assets/blog/giveaway-picker-guide.jpg", "/assets/blog/giveaway-picker-guide.webp"],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the giveaway picker workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "loan-calculator-guide",
       "localFiles": ["/assets/blog/loan-calculator-guide.jpg", "/assets/blog/loan-calculator-guide.webp"],
-      "sourcePlatform": "OpenAI ImageGen", "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
-      "alt": "Loan agreement, calculator, payment calendar and declining loan balance chart."
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original finance guide editorial cover for loan calculator guide."
     },
     {
-      "section": "blog-article-cover", "articleSlug": "auto-loan-calculator-guide",
+      "section": "blog-article-cover",
+      "articleSlug": "auto-loan-calculator-guide",
       "localFiles": ["/assets/blog/auto-loan-calculator-guide.jpg", "/assets/blog/auto-loan-calculator-guide.webp"],
-      "sourcePlatform": "OpenAI ImageGen", "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
-      "alt": "Modern car beside an auto finance agreement, calculator and payment calendar."
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original finance guide editorial cover for auto loan calculator guide."
     },
     {
-      "section": "blog-article-cover", "articleSlug": "credit-card-payoff-guide",
+      "section": "blog-article-cover",
+      "articleSlug": "credit-card-payoff-guide",
       "localFiles": ["/assets/blog/credit-card-payoff-guide.jpg", "/assets/blog/credit-card-payoff-guide.webp"],
-      "sourcePlatform": "OpenAI ImageGen", "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
-      "alt": "Credit card balance declining along a payoff path with calculator and calendar."
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original finance guide editorial cover for credit card payoff guide."
     },
     {
-      "section": "blog-article-cover", "articleSlug": "compound-interest-guide",
+      "section": "blog-article-cover",
+      "articleSlug": "compound-interest-guide",
       "localFiles": ["/assets/blog/compound-interest-guide.jpg", "/assets/blog/compound-interest-guide.webp"],
-      "sourcePlatform": "OpenAI ImageGen", "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
-      "alt": "Coins growing in measured stages beside a calculator and savings calendar."
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original finance guide editorial cover for compound interest guide."
     },
     {
-      "section": "blog-article-cover", "articleSlug": "savings-goal-planner-guide",
+      "section": "blog-article-cover",
+      "articleSlug": "savings-goal-planner-guide",
       "localFiles": ["/assets/blog/savings-goal-planner-guide.jpg", "/assets/blog/savings-goal-planner-guide.webp"],
-      "sourcePlatform": "OpenAI ImageGen", "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
-      "alt": "Savings goal jar filling with coins along a milestone path and calendar."
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original finance guide editorial cover for savings goal planner guide."
     },
     {
-      "section": "blog-article-cover", "articleSlug": "retirement-calculator-guide",
+      "section": "blog-article-cover",
+      "articleSlug": "retirement-calculator-guide",
       "localFiles": ["/assets/blog/retirement-calculator-guide.jpg", "/assets/blog/retirement-calculator-guide.webp"],
-      "sourcePlatform": "OpenAI ImageGen", "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
-      "alt": "Long-term retirement nest egg, contribution calendar and projected growth horizon."
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original finance guide editorial cover for retirement calculator guide."
     },
     {
-      "section": "blog-article-cover", "articleSlug": "crypto-profit-dca-guide",
+      "section": "blog-article-cover",
+      "articleSlug": "crypto-profit-dca-guide",
       "localFiles": ["/assets/blog/crypto-profit-dca-guide.jpg", "/assets/blog/crypto-profit-dca-guide.webp"],
-      "sourcePlatform": "OpenAI ImageGen", "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
-      "alt": "Abstract digital tokens, multiple purchase points, calculator and profit-loss chart."
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original finance guide editorial cover for crypto profit dca guide."
     },
     {
-      "section": "blog-article-cover", "articleSlug": "currency-converter-guide",
+      "section": "blog-article-cover",
+      "articleSlug": "currency-converter-guide",
       "localFiles": ["/assets/blog/currency-converter-guide.jpg", "/assets/blog/currency-converter-guide.webp"],
-      "sourcePlatform": "OpenAI ImageGen", "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
-      "alt": "Abstract banknotes and coins moving through two-way currency conversion arrows."
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original finance guide editorial cover for currency converter guide."
     },
     {
-      "section": "blog-article-cover", "articleSlug": "debt-to-income-calculator-guide",
+      "section": "blog-article-cover",
+      "articleSlug": "debt-to-income-calculator-guide",
       "localFiles": ["/assets/blog/debt-to-income-calculator-guide.jpg", "/assets/blog/debt-to-income-calculator-guide.webp"],
-      "sourcePlatform": "OpenAI ImageGen", "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
-      "alt": "Income and recurring debt payments balanced on a ratio scale with calculator."
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original finance guide editorial cover for debt to income calculator guide."
     },
     {
-      "section": "blog-article-cover", "articleSlug": "simple-interest-calculator-guide",
+      "section": "blog-article-cover",
+      "articleSlug": "simple-interest-calculator-guide",
       "localFiles": ["/assets/blog/simple-interest-calculator-guide.jpg", "/assets/blog/simple-interest-calculator-guide.webp"],
-      "sourcePlatform": "OpenAI ImageGen", "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
-      "alt": "Principal amount following a straight interest path across a timeline to a final total."
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original finance guide editorial cover for simple interest calculator guide."
     },
     {
-      "section": "blog-article-cover", "articleSlug": "investment-growth-calculator-guide",
+      "section": "blog-article-cover",
+      "articleSlug": "investment-growth-calculator-guide",
       "localFiles": ["/assets/blog/investment-growth-calculator-guide.jpg", "/assets/blog/investment-growth-calculator-guide.webp"],
-      "sourcePlatform": "OpenAI ImageGen", "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
-      "alt": "Diversified asset blocks, contribution calendar and cautious projected investment curve."
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original finance guide editorial cover for investment growth calculator guide."
     },
     {
-      "section": "blog-article-cover", "articleSlug": "50-30-20-budget-calculator-guide",
+      "section": "blog-article-cover",
+      "articleSlug": "50-30-20-budget-calculator-guide",
       "localFiles": ["/assets/blog/50-30-20-budget-calculator-guide.jpg", "/assets/blog/50-30-20-budget-calculator-guide.webp"],
-      "sourcePlatform": "OpenAI ImageGen", "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
-      "alt": "Monthly income divided into organized needs, wants and savings containers."
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original finance guide editorial cover for 50 30 20 budget calculator guide."
     }
   ]
 }
