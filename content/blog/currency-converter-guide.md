@@ -65,4 +65,13 @@ Tax authorities may prescribe a transaction-date rate, official annual average o
 
 It can. Each conversion may introduce another spread or fee, even when the reference arithmetic appears reversible.
 
+## Useful next tools
+
+- [Salary Converter](/tools/tax/salary-converter/) — Hourly, weekly, monthly and annual, both ways.
+- [Loan Calculator](/tools/finance/loan-calculator/) — Payment, interest and payoff for any personal or business loan.
+- [50/30/20 Budget Calculator](/tools/finance/budget-calculator/) — Split take-home pay into needs, wants and savings.
+- [Compound Interest](/tools/finance/compound-interest/) — Grow savings with regular contributions over time.
+- [Savings Goal Planner](/tools/finance/savings-goal/) — How much to set aside each month to hit a target.
+
 The converter is an informational estimate. Confirm the final rate and all fees with the financial provider before transferring or spending money.
+

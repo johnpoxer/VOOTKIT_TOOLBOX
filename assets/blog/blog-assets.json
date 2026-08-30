@@ -126,138 +126,6 @@
     },
     {
       "section": "blog-article-cover",
-      "articleSlug": "loan-calculator-guide",
-      "localFiles": [
-        "/assets/blog/loan-calculator-guide.jpg",
-        "/assets/blog/loan-calculator-guide.webp"
-      ],
-      "sourcePlatform": "OpenAI ImageGen",
-      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
-      "alt": "Loan agreement, calculator, payment calendar and declining loan balance chart."
-    },
-    {
-      "section": "blog-article-cover",
-      "articleSlug": "auto-loan-calculator-guide",
-      "localFiles": [
-        "/assets/blog/auto-loan-calculator-guide.jpg",
-        "/assets/blog/auto-loan-calculator-guide.webp"
-      ],
-      "sourcePlatform": "OpenAI ImageGen",
-      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
-      "alt": "Modern car beside an auto finance agreement, calculator and payment calendar."
-    },
-    {
-      "section": "blog-article-cover",
-      "articleSlug": "credit-card-payoff-guide",
-      "localFiles": [
-        "/assets/blog/credit-card-payoff-guide.jpg",
-        "/assets/blog/credit-card-payoff-guide.webp"
-      ],
-      "sourcePlatform": "OpenAI ImageGen",
-      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
-      "alt": "Credit card balance declining along a payoff path with calculator and calendar."
-    },
-    {
-      "section": "blog-article-cover",
-      "articleSlug": "compound-interest-guide",
-      "localFiles": [
-        "/assets/blog/compound-interest-guide.jpg",
-        "/assets/blog/compound-interest-guide.webp"
-      ],
-      "sourcePlatform": "OpenAI ImageGen",
-      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
-      "alt": "Coins growing in measured stages beside a calculator and savings calendar."
-    },
-    {
-      "section": "blog-article-cover",
-      "articleSlug": "savings-goal-planner-guide",
-      "localFiles": [
-        "/assets/blog/savings-goal-planner-guide.jpg",
-        "/assets/blog/savings-goal-planner-guide.webp"
-      ],
-      "sourcePlatform": "OpenAI ImageGen",
-      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
-      "alt": "Savings goal jar filling with coins along a milestone path and calendar."
-    },
-    {
-      "section": "blog-article-cover",
-      "articleSlug": "retirement-calculator-guide",
-      "localFiles": [
-        "/assets/blog/retirement-calculator-guide.jpg",
-        "/assets/blog/retirement-calculator-guide.webp"
-      ],
-      "sourcePlatform": "OpenAI ImageGen",
-      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
-      "alt": "Long-term retirement nest egg, contribution calendar and projected growth horizon."
-    },
-    {
-      "section": "blog-article-cover",
-      "articleSlug": "crypto-profit-dca-guide",
-      "localFiles": [
-        "/assets/blog/crypto-profit-dca-guide.jpg",
-        "/assets/blog/crypto-profit-dca-guide.webp"
-      ],
-      "sourcePlatform": "OpenAI ImageGen",
-      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
-      "alt": "Abstract digital tokens, multiple purchase points, calculator and profit-loss chart."
-    },
-    {
-      "section": "blog-article-cover",
-      "articleSlug": "currency-converter-guide",
-      "localFiles": [
-        "/assets/blog/currency-converter-guide.jpg",
-        "/assets/blog/currency-converter-guide.webp"
-      ],
-      "sourcePlatform": "OpenAI ImageGen",
-      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
-      "alt": "Abstract banknotes and coins moving through two-way currency conversion arrows."
-    },
-    {
-      "section": "blog-article-cover",
-      "articleSlug": "debt-to-income-calculator-guide",
-      "localFiles": [
-        "/assets/blog/debt-to-income-calculator-guide.jpg",
-        "/assets/blog/debt-to-income-calculator-guide.webp"
-      ],
-      "sourcePlatform": "OpenAI ImageGen",
-      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
-      "alt": "Income and recurring debt payments balanced on a ratio scale with calculator."
-    },
-    {
-      "section": "blog-article-cover",
-      "articleSlug": "simple-interest-calculator-guide",
-      "localFiles": [
-        "/assets/blog/simple-interest-calculator-guide.jpg",
-        "/assets/blog/simple-interest-calculator-guide.webp"
-      ],
-      "sourcePlatform": "OpenAI ImageGen",
-      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
-      "alt": "Principal amount following a straight interest path across a timeline to a final total."
-    },
-    {
-      "section": "blog-article-cover",
-      "articleSlug": "investment-growth-calculator-guide",
-      "localFiles": [
-        "/assets/blog/investment-growth-calculator-guide.jpg",
-        "/assets/blog/investment-growth-calculator-guide.webp"
-      ],
-      "sourcePlatform": "OpenAI ImageGen",
-      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
-      "alt": "Diversified asset blocks, contribution calendar and cautious projected investment curve."
-    },
-    {
-      "section": "blog-article-cover",
-      "articleSlug": "50-30-20-budget-calculator-guide",
-      "localFiles": [
-        "/assets/blog/50-30-20-budget-calculator-guide.jpg",
-        "/assets/blog/50-30-20-budget-calculator-guide.webp"
-      ],
-      "sourcePlatform": "OpenAI ImageGen",
-      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
-      "alt": "Monthly income divided into organized needs, wants and savings containers."
-    },
-    {
-      "section": "blog-article-cover",
       "articleSlug": "bitrate-calculator-guide",
       "localFiles": [
         "/assets/blog/bitrate-calculator-guide.jpg",
@@ -486,6 +354,754 @@
       "sourcePlatform": "Vootkit original vector artwork",
       "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
       "alt": "Editorial illustration representing the giveaway picker workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "loan-calculator-guide",
+      "localFiles": [
+        "/assets/blog/loan-calculator-guide.jpg",
+        "/assets/blog/loan-calculator-guide.webp"
+      ],
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original finance guide editorial cover for loan calculator guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "auto-loan-calculator-guide",
+      "localFiles": [
+        "/assets/blog/auto-loan-calculator-guide.jpg",
+        "/assets/blog/auto-loan-calculator-guide.webp"
+      ],
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original finance guide editorial cover for auto loan calculator guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "credit-card-payoff-guide",
+      "localFiles": [
+        "/assets/blog/credit-card-payoff-guide.jpg",
+        "/assets/blog/credit-card-payoff-guide.webp"
+      ],
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original finance guide editorial cover for credit card payoff guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "compound-interest-guide",
+      "localFiles": [
+        "/assets/blog/compound-interest-guide.jpg",
+        "/assets/blog/compound-interest-guide.webp"
+      ],
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original finance guide editorial cover for compound interest guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "savings-goal-planner-guide",
+      "localFiles": [
+        "/assets/blog/savings-goal-planner-guide.jpg",
+        "/assets/blog/savings-goal-planner-guide.webp"
+      ],
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original finance guide editorial cover for savings goal planner guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "retirement-calculator-guide",
+      "localFiles": [
+        "/assets/blog/retirement-calculator-guide.jpg",
+        "/assets/blog/retirement-calculator-guide.webp"
+      ],
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original finance guide editorial cover for retirement calculator guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "crypto-profit-dca-guide",
+      "localFiles": [
+        "/assets/blog/crypto-profit-dca-guide.jpg",
+        "/assets/blog/crypto-profit-dca-guide.webp"
+      ],
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original finance guide editorial cover for crypto profit dca guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "currency-converter-guide",
+      "localFiles": [
+        "/assets/blog/currency-converter-guide.jpg",
+        "/assets/blog/currency-converter-guide.webp"
+      ],
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original finance guide editorial cover for currency converter guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "debt-to-income-calculator-guide",
+      "localFiles": [
+        "/assets/blog/debt-to-income-calculator-guide.jpg",
+        "/assets/blog/debt-to-income-calculator-guide.webp"
+      ],
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original finance guide editorial cover for debt to income calculator guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "simple-interest-calculator-guide",
+      "localFiles": [
+        "/assets/blog/simple-interest-calculator-guide.jpg",
+        "/assets/blog/simple-interest-calculator-guide.webp"
+      ],
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original finance guide editorial cover for simple interest calculator guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "investment-growth-calculator-guide",
+      "localFiles": [
+        "/assets/blog/investment-growth-calculator-guide.jpg",
+        "/assets/blog/investment-growth-calculator-guide.webp"
+      ],
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original finance guide editorial cover for investment growth calculator guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "50-30-20-budget-calculator-guide",
+      "localFiles": [
+        "/assets/blog/50-30-20-budget-calculator-guide.jpg",
+        "/assets/blog/50-30-20-budget-calculator-guide.webp"
+      ],
+      "sourcePlatform": "OpenAI ImageGen",
+      "sourceLicenseNote": "Original AI-generated editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original finance guide editorial cover for 50 30 20 budget calculator guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "percentage-calculator-guide",
+      "localFiles": [
+        "/assets/blog/percentage-calculator-guide.jpg",
+        "/assets/blog/percentage-calculator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Percentage Calculator workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "tip-split-guide",
+      "localFiles": [
+        "/assets/blog/tip-split-guide.jpg",
+        "/assets/blog/tip-split-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Tip & Bill Split workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "discount-calculator-guide",
+      "localFiles": [
+        "/assets/blog/discount-calculator-guide.jpg",
+        "/assets/blog/discount-calculator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Discount Calculator workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "life-insurance-needs-guide",
+      "localFiles": [
+        "/assets/blog/life-insurance-needs-guide.jpg",
+        "/assets/blog/life-insurance-needs-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Life Cover Estimator workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "auto-insurance-estimator-guide",
+      "localFiles": [
+        "/assets/blog/auto-insurance-estimator-guide.jpg",
+        "/assets/blog/auto-insurance-estimator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Auto Cover Estimator workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "income-protection-guide",
+      "localFiles": [
+        "/assets/blog/income-protection-guide.jpg",
+        "/assets/blog/income-protection-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Income Protection Estimator workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "unit-converter-guide",
+      "localFiles": [
+        "/assets/blog/unit-converter-guide.jpg",
+        "/assets/blog/unit-converter-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Unit Converter workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "length-converter-guide",
+      "localFiles": [
+        "/assets/blog/length-converter-guide.jpg",
+        "/assets/blog/length-converter-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Length Converter workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "weight-converter-guide",
+      "localFiles": [
+        "/assets/blog/weight-converter-guide.jpg",
+        "/assets/blog/weight-converter-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Weight Converter workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "temperature-converter-guide",
+      "localFiles": [
+        "/assets/blog/temperature-converter-guide.jpg",
+        "/assets/blog/temperature-converter-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Temperature Converter workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "speed-converter-guide",
+      "localFiles": [
+        "/assets/blog/speed-converter-guide.jpg",
+        "/assets/blog/speed-converter-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Speed Converter workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "area-converter-guide",
+      "localFiles": [
+        "/assets/blog/area-converter-guide.jpg",
+        "/assets/blog/area-converter-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Area Converter workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "volume-converter-guide",
+      "localFiles": [
+        "/assets/blog/volume-converter-guide.jpg",
+        "/assets/blog/volume-converter-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Volume Converter workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "data-converter-guide",
+      "localFiles": [
+        "/assets/blog/data-converter-guide.jpg",
+        "/assets/blog/data-converter-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Data Size Converter workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "electricity-cost-guide",
+      "localFiles": [
+        "/assets/blog/electricity-cost-guide.jpg",
+        "/assets/blog/electricity-cost-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Electricity Cost Calculator workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "date-calculator-guide",
+      "localFiles": [
+        "/assets/blog/date-calculator-guide.jpg",
+        "/assets/blog/date-calculator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Date Calculator workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "time-calculator-guide",
+      "localFiles": [
+        "/assets/blog/time-calculator-guide.jpg",
+        "/assets/blog/time-calculator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Time Calculator workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "math-solver-guide",
+      "localFiles": [
+        "/assets/blog/math-solver-guide.jpg",
+        "/assets/blog/math-solver-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Math Solver workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "equation-solver-guide",
+      "localFiles": [
+        "/assets/blog/equation-solver-guide.jpg",
+        "/assets/blog/equation-solver-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Equation Solver workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "age-calculator-guide",
+      "localFiles": [
+        "/assets/blog/age-calculator-guide.jpg",
+        "/assets/blog/age-calculator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Age & Date Difference workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "fraction-calculator-guide",
+      "localFiles": [
+        "/assets/blog/fraction-calculator-guide.jpg",
+        "/assets/blog/fraction-calculator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Fraction Calculator workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "fuel-cost-calculator-guide",
+      "localFiles": [
+        "/assets/blog/fuel-cost-calculator-guide.jpg",
+        "/assets/blog/fuel-cost-calculator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Fuel Cost Calculator workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "fuel-economy-converter-guide",
+      "localFiles": [
+        "/assets/blog/fuel-economy-converter-guide.jpg",
+        "/assets/blog/fuel-economy-converter-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Fuel Economy Converter workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "trip-cost-splitter-guide",
+      "localFiles": [
+        "/assets/blog/trip-cost-splitter-guide.jpg",
+        "/assets/blog/trip-cost-splitter-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Trip Cost Splitter workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "tip-by-country-guide",
+      "localFiles": [
+        "/assets/blog/tip-by-country-guide.jpg",
+        "/assets/blog/tip-by-country-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Tipping Calculator by Country workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "mileage-reimbursement-guide",
+      "localFiles": [
+        "/assets/blog/mileage-reimbursement-guide.jpg",
+        "/assets/blog/mileage-reimbursement-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Mileage Reimbursement workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "distance-calculator-guide",
+      "localFiles": [
+        "/assets/blog/distance-calculator-guide.jpg",
+        "/assets/blog/distance-calculator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Travel Time Calculator workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "packing-list-guide",
+      "localFiles": [
+        "/assets/blog/packing-list-guide.jpg",
+        "/assets/blog/packing-list-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Packing List Generator workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "countdown-guide",
+      "localFiles": [
+        "/assets/blog/countdown-guide.jpg",
+        "/assets/blog/countdown-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Event Countdown workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "pomodoro-guide",
+      "localFiles": [
+        "/assets/blog/pomodoro-guide.jpg",
+        "/assets/blog/pomodoro-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Pomodoro & Countdown workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "stopwatch-guide",
+      "localFiles": [
+        "/assets/blog/stopwatch-guide.jpg",
+        "/assets/blog/stopwatch-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Stopwatch workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "timezone-converter-guide",
+      "localFiles": [
+        "/assets/blog/timezone-converter-guide.jpg",
+        "/assets/blog/timezone-converter-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Time Zone Converter workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "qr-generator-guide",
+      "localFiles": [
+        "/assets/blog/qr-generator-guide.jpg",
+        "/assets/blog/qr-generator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the QR Code Generator workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "qr-scanner-guide",
+      "localFiles": [
+        "/assets/blog/qr-scanner-guide.jpg",
+        "/assets/blog/qr-scanner-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the QR Code Scanner workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "barcode-generator-guide",
+      "localFiles": [
+        "/assets/blog/barcode-generator-guide.jpg",
+        "/assets/blog/barcode-generator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Barcode Generator workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "random-picker-guide",
+      "localFiles": [
+        "/assets/blog/random-picker-guide.jpg",
+        "/assets/blog/random-picker-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Random Picker workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "random-number-generator-guide",
+      "localFiles": [
+        "/assets/blog/random-number-generator-guide.jpg",
+        "/assets/blog/random-number-generator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Random Number Generator workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "typing-test-guide",
+      "localFiles": [
+        "/assets/blog/typing-test-guide.jpg",
+        "/assets/blog/typing-test-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Typing Speed Test workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "mortgage-calculator-guide",
+      "localFiles": [
+        "/assets/blog/mortgage-calculator-guide.jpg",
+        "/assets/blog/mortgage-calculator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Mortgage Calculator workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "refinance-calculator-guide",
+      "localFiles": [
+        "/assets/blog/refinance-calculator-guide.jpg",
+        "/assets/blog/refinance-calculator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Refinance Break-Even workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "rent-vs-buy-guide",
+      "localFiles": [
+        "/assets/blog/rent-vs-buy-guide.jpg",
+        "/assets/blog/rent-vs-buy-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Rent vs Buy workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "cap-rate-guide",
+      "localFiles": [
+        "/assets/blog/cap-rate-guide.jpg",
+        "/assets/blog/cap-rate-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Cap Rate Calculator workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "cash-on-cash-guide",
+      "localFiles": [
+        "/assets/blog/cash-on-cash-guide.jpg",
+        "/assets/blog/cash-on-cash-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Cash-on-Cash Return workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "closing-costs-guide",
+      "localFiles": [
+        "/assets/blog/closing-costs-guide.jpg",
+        "/assets/blog/closing-costs-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Closing Costs Estimator workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "home-affordability-guide",
+      "localFiles": [
+        "/assets/blog/home-affordability-guide.jpg",
+        "/assets/blog/home-affordability-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Home Affordability workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "rental-yield-guide",
+      "localFiles": [
+        "/assets/blog/rental-yield-guide.jpg",
+        "/assets/blog/rental-yield-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Rental Yield workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "mortgage-payoff-guide",
+      "localFiles": [
+        "/assets/blog/mortgage-payoff-guide.jpg",
+        "/assets/blog/mortgage-payoff-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Mortgage Payoff workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "paycheck-calculator-guide",
+      "localFiles": [
+        "/assets/blog/paycheck-calculator-guide.jpg",
+        "/assets/blog/paycheck-calculator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Take-Home Pay workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "income-tax-estimator-guide",
+      "localFiles": [
+        "/assets/blog/income-tax-estimator-guide.jpg",
+        "/assets/blog/income-tax-estimator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Income Tax Estimator workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "self-employment-tax-guide",
+      "localFiles": [
+        "/assets/blog/self-employment-tax-guide.jpg",
+        "/assets/blog/self-employment-tax-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Self-Employment Tax workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "overtime-calculator-guide",
+      "localFiles": [
+        "/assets/blog/overtime-calculator-guide.jpg",
+        "/assets/blog/overtime-calculator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Overtime Pay workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "pto-accrual-guide",
+      "localFiles": [
+        "/assets/blog/pto-accrual-guide.jpg",
+        "/assets/blog/pto-accrual-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the PTO Accrual workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "employee-cost-guide",
+      "localFiles": [
+        "/assets/blog/employee-cost-guide.jpg",
+        "/assets/blog/employee-cost-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the True Employee Cost workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "salary-converter-guide",
+      "localFiles": [
+        "/assets/blog/salary-converter-guide.jpg",
+        "/assets/blog/salary-converter-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Salary Converter workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "payroll-calculator-guide",
+      "localFiles": [
+        "/assets/blog/payroll-calculator-guide.jpg",
+        "/assets/blog/payroll-calculator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Payroll Calculator workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "hourly-wage-guide",
+      "localFiles": [
+        "/assets/blog/hourly-wage-guide.jpg",
+        "/assets/blog/hourly-wage-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original vector artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Editorial illustration representing the Hourly Wage Calculator workflow."
     }
   ]
 }

@@ -1,7 +1,7 @@
 ---
 title: "Debt-to-Income Ratio: The Number Your Lender Works Out Before They Look at Anything Else"
 date: "2026-08-05"
-description: "There are two DTI ratios, not one, and you can pass the famous one while failing the other. How lenders actually calculate it, the thresholds that matter, and why paying off your biggest debt is often the wrong move."
+description: "Understand front-end and back-end debt-to-income ratios, lender thresholds, and which debt payment can most effectively improve affordability."
 thumbnail: "/assets/blog/debt-to-income-ratio.jpg"
 author: "Mr John Prosper"
 ---

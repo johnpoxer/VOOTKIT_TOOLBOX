@@ -1,7 +1,7 @@
 ---
 title: "How to Style a Stream Chat Overlay With CSS"
 date: "2026-08-28"
-description: "Practical guidance for using Vootkit's Chat Overlay CSS, understanding its settings, avoiding common mistakes and producing a result suited to your platform."
+description: "Creates a styled chat overlay to add as a browser source in OBS, so messages appear on the stream itself."
 thumbnail: "/assets/blog/chat-overlay-tool-guide.jpg"
 coverAlt: "Editorial illustration representing the Chat Overlay CSS workflow."
 author: "The Vootkit team"
@@ -18,7 +18,7 @@ Creates a styled chat overlay to add as a browser source in OBS, so messages app
 
 It changes what a VOD is worth. Without it, a recording of a stream is one side of a conversation; with it, the jokes land.
 
-The [Chat Overlay CSS](/tools/video/chat-overlay-tool/) runs as a focused Vootkit workspace. Start with a source you are allowed to use, keep an untouched original, and check the exported result on the platform where it will be published. A successful export can still be unsuitable when a platform imposes its own duration, size, codec or layout rules.
+Open the [Chat Overlay CSS](/tools/video/chat-overlay-tool/) and follow the settings and checks below.
 
 ## Setup and considerations
 
@@ -42,16 +42,6 @@ The [Chat Overlay CSS](/tools/video/chat-overlay-tool/) runs as a focused Vootki
 
 Whatever appears in the overlay is baked into the VOD permanently. A message your moderators delete two seconds later is still in the recording, and you cannot edit it out without re-encoding the whole thing. If your chat is fast or your moderation is thin, showing fewer lines is safer than showing more.
 
-Do not judge only from the download completing. Inspect the beginning, middle and end; check sound where relevant; confirm that text and faces are not cropped; and make sure the filename and format are clear before deleting the original.
-
-## Common mistakes to avoid
-
-- Using a low-quality source and expecting conversion to recreate missing detail.
-- Selecting settings for one platform without checking the destination's current requirements.
-- Reprocessing the same compressed file repeatedly, which can compound quality loss.
-- Publishing without checking the final duration, dimensions, sound and file size.
-- Assuming an estimate or preview is identical to the destination platform's final processing.
-
 ## Common questions
 
 ### Why is my chat overlay hard to read?
@@ -72,10 +62,9 @@ It costs more than a static image, since it is effectively a small web page rend
 
 ## Useful next tools
 
-- [Stream Overlay Creator](/tools/video/stream-overlay-creator/)
-- [Stream Alert Creator](/tools/video/stream-alert-creator/)
-- [Brb Overlay](/tools/video/brb-overlay/)
-- [Obs Settings Assistant](/tools/video/obs-settings-assistant/)
+- [Stream Overlay Creator](/tools/video/stream-overlay-creator/) — Design a transparent webcam overlay for OBS.
+- [Stream Alert Creator](/tools/video/stream-alert-creator/) — Design follower, sub and donation alert graphics.
+- [Brb Overlay](/tools/video/brb-overlay/) — A styled page to drop into OBS as a browser source.
+- [Obs Settings Assistant](/tools/video/obs-settings-assistant/) — Recommended bitrate and encoder settings for your setup.
 
 Vootkit provides a browser tool and educational guidance, not a guarantee that every browser, device or third-party platform will accept every file. Platform specifications can change, so verify important publishing requirements with the destination service.
-

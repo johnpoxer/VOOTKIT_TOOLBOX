@@ -58,4 +58,13 @@ Required minimums are obligations. Extra principal payments can be treated as pa
 
 Build the core budget around a conservative baseline, reserve part of stronger months and update the plan as income becomes clearer.
 
+## Useful next tools
+
+- [Take-Home Pay](/tools/tax/paycheck-calculator/) — Estimate net pay from gross salary.
+- [Savings Goal Planner](/tools/finance/savings-goal/) — How much to set aside each month to hit a target.
+- [Credit Card Payoff](/tools/finance/credit-card-payoff/) — How long to clear a balance, and what extra payments save.
+- [Compound Interest](/tools/finance/compound-interest/) — Grow savings with regular contributions over time.
+- [Salary Converter](/tools/tax/salary-converter/) — Hourly, weekly, monthly and annual, both ways.
+
 The framework is educational, not personal financial advice. Prioritise essential living costs and contractual obligations, and seek qualified help when debt or arrears are unmanageable.
+

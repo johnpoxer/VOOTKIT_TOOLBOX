@@ -54,4 +54,13 @@ The mathematics can use compounding, but investments have uncertain returns whil
 
 No. It compares numerical scenarios and does not evaluate securities, risk tolerance, liquidity, taxes or suitability.
 
+## Useful next tools
+
+- [Compound Interest](/tools/finance/compound-interest/) — Grow savings with regular contributions over time.
+- [Retirement Projection](/tools/finance/retirement-calculator/) — Project a pension or 401k pot at your chosen retirement age.
+- [Savings Goal Planner](/tools/finance/savings-goal/) — How much to set aside each month to hit a target.
+- [50/30/20 Budget Calculator](/tools/finance/budget-calculator/) — Split take-home pay into needs, wants and savings.
+- [Take-Home Pay](/tools/tax/paycheck-calculator/) — Estimate net pay from gross salary.
+
 Investments can fall in value and past performance does not guarantee future results. This guide is educational, not investment advice.
+

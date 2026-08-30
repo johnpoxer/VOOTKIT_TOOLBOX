@@ -1,7 +1,7 @@
 ---
 title: "How to Make a Starting Soon Screen for Your Stream"
 date: "2026-08-28"
-description: "Practical guidance for using Vootkit's Starting Soon Screen, understanding its settings, avoiding common mistakes and producing a result suited to your platform."
+description: "Generates a full-screen holding card with your text, sized for a stream canvas, ready to add as a browser or image source in OBS."
 thumbnail: "/assets/blog/starting-soon-screen-guide.jpg"
 coverAlt: "Editorial illustration representing the Starting Soon Screen workflow."
 author: "The Vootkit team"
@@ -18,7 +18,7 @@ Generates a full-screen holding card with your text, sized for a stream canvas, 
 
 It is a static screen by design, so it costs no CPU while it is up — which matters, because the moments before going live are when you are still loading everything else.
 
-The [Starting Soon Screen](/tools/video/starting-soon-screen/) runs as a focused Vootkit workspace. Start with a source you are allowed to use, keep an untouched original, and check the exported result on the platform where it will be published. A successful export can still be unsuitable when a platform imposes its own duration, size, codec or layout rules.
+Open the [Starting Soon Screen](/tools/video/starting-soon-screen/) and follow the settings and checks below.
 
 ## Use and setup
 
@@ -42,16 +42,6 @@ The [Starting Soon Screen](/tools/video/starting-soon-screen/) runs as a focused
 
 Play music over it. A silent starting screen is indistinguishable from a broken stream, and viewers who cannot tell the difference leave rather than wait. Audible music is the clearest possible signal that everything is working and something is about to happen.
 
-Do not judge only from the download completing. Inspect the beginning, middle and end; check sound where relevant; confirm that text and faces are not cropped; and make sure the filename and format are clear before deleting the original.
-
-## Common mistakes to avoid
-
-- Using a low-quality source and expecting conversion to recreate missing detail.
-- Selecting settings for one platform without checking the destination's current requirements.
-- Reprocessing the same compressed file repeatedly, which can compound quality loss.
-- Publishing without checking the final duration, dimensions, sound and file size.
-- Assuming an estimate or preview is identical to the destination platform's final processing.
-
 ## Common questions
 
 ### How long should I leave it up?
@@ -72,10 +62,9 @@ What the stream is, not just that it is starting. Someone arriving from a browse
 
 ## Useful next tools
 
-- [Brb Overlay](/tools/video/brb-overlay/)
-- [Stream Overlay Creator](/tools/video/stream-overlay-creator/)
-- [Stream Alert Creator](/tools/video/stream-alert-creator/)
-- [Stream Asset Sizer](/tools/video/stream-asset-sizer/)
+- [Brb Overlay](/tools/video/brb-overlay/) — A styled page to drop into OBS as a browser source.
+- [Stream Overlay Creator](/tools/video/stream-overlay-creator/) — Design a transparent webcam overlay for OBS.
+- [Stream Alert Creator](/tools/video/stream-alert-creator/) — Design follower, sub and donation alert graphics.
+- [Stream Asset Sizer](/tools/video/stream-asset-sizer/) — Correct sizes for Twitch and YouTube banners, avatars and panels.
 
 Vootkit provides a browser tool and educational guidance, not a guarantee that every browser, device or third-party platform will accept every file. Platform specifications can change, so verify important publishing requirements with the destination service.
-

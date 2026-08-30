@@ -1,7 +1,7 @@
 ---
 title: "How to Create a Seamless Looping Video"
 date: "2026-08-28"
-description: "Practical guidance for using Vootkit's Loop Video, understanding its settings, avoiding common mistakes and producing a result suited to your platform."
+description: "Repeats the clip end to end for the number of plays you choose, using -streamloop with -c copy. The video is never decoded, so a three-times loop of a…"
 thumbnail: "/assets/blog/loop-video-guide.jpg"
 coverAlt: "Editorial illustration representing the Loop Video workflow."
 author: "The Vootkit team"
@@ -18,7 +18,7 @@ Repeats the clip end to end for the number of plays you choose, using <code>-str
 
 Output length and size scale linearly and predictably: three plays is three times the duration and very close to three times the bytes.
 
-The [Loop Video](/tools/video/loop-video/) runs as a focused Vootkit workspace. Start with a source you are allowed to use, keep an untouched original, and check the exported result on the platform where it will be published. A successful export can still be unsuitable when a platform imposes its own duration, size, codec or layout rules.
+Open the [Loop Video](/tools/video/loop-video/) and follow the settings and checks below.
 
 ## Limits and behaviour
 
@@ -42,16 +42,6 @@ The [Loop Video](/tools/video/loop-video/) runs as a focused Vootkit workspace. 
 
 Loops read as seamless only when the last frame flows into the first. Trim the clip so it starts and ends at the same point in the motion before looping — a quarter of a second of dead air at the end becomes a visible stutter every time round.
 
-Do not judge only from the download completing. Inspect the beginning, middle and end; check sound where relevant; confirm that text and faces are not cropped; and make sure the filename and format are clear before deleting the original.
-
-## Common mistakes to avoid
-
-- Using a low-quality source and expecting conversion to recreate missing detail.
-- Selecting settings for one platform without checking the destination's current requirements.
-- Reprocessing the same compressed file repeatedly, which can compound quality loss.
-- Publishing without checking the final duration, dimensions, sound and file size.
-- Assuming an estimate or preview is identical to the destination platform's final processing.
-
 ## Common questions
 
 ### Does looping degrade the quality each time?
@@ -72,10 +62,9 @@ Yes — the whole stream repeats, video and audio together, and they stay in syn
 
 ## Useful next tools
 
-- [Trim Video](/tools/video/trim-video/)
-- [Video To Gif](/tools/video/video-to-gif/)
-- [Compress Video](/tools/video/compress-video/)
-- [Mute Video](/tools/video/mute-video/)
+- [Trim Video](/tools/video/trim-video/) — Cut the segment you want and save it.
+- [Video To Gif](/tools/video/video-to-gif/) — Turn a short clip into a shareable GIF.
+- [Compress Video](/tools/video/compress-video/) — Shrink any video in your browser — pick a quality level or a size to fit.
+- [Mute Video](/tools/video/mute-video/) — Remove the audio track to avoid copyright strikes.
 
 Vootkit provides a browser tool and educational guidance, not a guarantee that every browser, device or third-party platform will accept every file. Platform specifications can change, so verify important publishing requirements with the destination service.
-

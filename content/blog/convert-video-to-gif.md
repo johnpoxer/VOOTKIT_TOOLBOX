@@ -93,6 +93,12 @@ GIF supports simple on-or-off transparency, not the smooth partial transparency 
 
 Use four seconds or less, 480 px and 12 FPS. Judge the preview and file size, then reduce one variable at a time.
 
+## Useful next tools
+
+- [Video Trimmer](/tools/video/trim-video/) — Cut the exact segment before conversion so unnecessary frames never enter the GIF.
+- [Video Compressor](/tools/video/compress-video/) — Create a smaller MP4 when GIF is not the right format for the destination.
+- [Frame Grabber](/tools/video/frame-grabber/) — Pull a clear still image from the clip for a thumbnail or lightweight preview.
+
 ## The practical rule
 
 If the animation is still too large after shortening and narrowing it, the format is the problem—not your settings. Use a compact MP4 and a poster image instead of forcing a long video into GIF.

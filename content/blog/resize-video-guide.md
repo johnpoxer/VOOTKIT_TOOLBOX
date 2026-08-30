@@ -1,7 +1,7 @@
 ---
 title: "How to Resize a Video for Social Media and the Web"
 date: "2026-08-28"
-description: "Practical guidance for using Vootkit's Video Resizer, understanding its settings, avoiding common mistakes and producing a result suited to your platform."
+description: "Scales the video to a target height and works the width out from the source aspect ratio, so nothing is stretched or cropped. Scaling uses lanczos, which…"
 thumbnail: "/assets/blog/resize-video-guide.jpg"
 coverAlt: "Editorial illustration representing the Video Resizer workflow."
 author: "The Vootkit team"
@@ -18,7 +18,7 @@ Scales the video to a target height and works the width out from the source aspe
 
 The width is always forced even, because H.264 requires it. A 1440×1080 source scaled to 720p becomes 960×720, not 959×720.
 
-The [Video Resizer](/tools/video/resize-video/) runs as a focused Vootkit workspace. Start with a source you are allowed to use, keep an untouched original, and check the exported result on the platform where it will be published. A successful export can still be unsuitable when a platform imposes its own duration, size, codec or layout rules.
+Open the [Video Resizer](/tools/video/resize-video/) and follow the settings and checks below.
 
 ## Resolutions and method
 
@@ -43,16 +43,6 @@ The [Video Resizer](/tools/video/resize-video/) runs as a focused Vootkit worksp
 
 Resize before compressing, not after. File size scales with pixel count, so halving the height quarters the pixels — a 1080p to 540p change removes about 75% of the data before the encoder makes a single quality decision. Then compress the smaller file if it still needs to be smaller.
 
-Do not judge only from the download completing. Inspect the beginning, middle and end; check sound where relevant; confirm that text and faces are not cropped; and make sure the filename and format are clear before deleting the original.
-
-## Common mistakes to avoid
-
-- Using a low-quality source and expecting conversion to recreate missing detail.
-- Selecting settings for one platform without checking the destination's current requirements.
-- Reprocessing the same compressed file repeatedly, which can compound quality loss.
-- Publishing without checking the final duration, dimensions, sound and file size.
-- Assuming an estimate or preview is identical to the destination platform's final processing.
-
 ## Common questions
 
 ### Should I resize or compress?
@@ -73,10 +63,9 @@ Because downscaling is where sharpness is won or lost. Lanczos preserves edge de
 
 ## Useful next tools
 
-- [Compress Video](/tools/video/compress-video/)
-- [Vertical Reframe](/tools/video/vertical-reframe/)
-- [Convert Video](/tools/video/convert-video/)
-- [Trim Video](/tools/video/trim-video/)
+- [Compress Video](/tools/video/compress-video/) — Shrink any video in your browser — pick a quality level or a size to fit.
+- [Vertical Reframe](/tools/video/vertical-reframe/) — Reframe a clip for Shorts, TikTok and Reels.
+- [Convert Video](/tools/video/convert-video/) — Convert MOV, MKV, AVI, WebM and more to universal MP4.
+- [Trim Video](/tools/video/trim-video/) — Cut the segment you want and save it.
 
 Vootkit provides a browser tool and educational guidance, not a guarantee that every browser, device or third-party platform will accept every file. Platform specifications can change, so verify important publishing requirements with the destination service.
-

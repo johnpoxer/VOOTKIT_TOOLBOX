@@ -64,4 +64,13 @@ You can model them, but they are not guaranteed. Use cautious assumptions, espec
 
 It depends on rates, emergency needs, penalties and personal circumstances. At minimum, keep essential payments current and avoid leaving yourself without a basic reserve.
 
+## Useful next tools
+
+- [Compound Interest](/tools/finance/compound-interest/) — Grow savings with regular contributions over time.
+- [50/30/20 Budget Calculator](/tools/finance/budget-calculator/) — Split take-home pay into needs, wants and savings.
+- [Investment Growth Calculator](/tools/finance/investment-calculator/) — Project an investment with monthly contributions and returns.
+- [Credit Card Payoff](/tools/finance/credit-card-payoff/) — How long to clear a balance, and what extra payments save.
+- [Retirement Projection](/tools/finance/retirement-calculator/) — Project a pension or 401k pot at your chosen retirement age.
+
 This calculator provides an estimate, not savings or investment advice. Account rules, taxes, inflation and returns can change the outcome.
+

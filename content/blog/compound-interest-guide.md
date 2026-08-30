@@ -62,4 +62,13 @@ APY already reflects compounding over a year. Avoid treating APY as a nominal ra
 
 Earlier deposits participate in more periods of potential growth, so time can have a compounding effect even when contributions remain unchanged.
 
+## Useful next tools
+
+- [Investment Growth Calculator](/tools/finance/investment-calculator/) — Project an investment with monthly contributions and returns.
+- [Savings Goal Planner](/tools/finance/savings-goal/) — How much to set aside each month to hit a target.
+- [Retirement Projection](/tools/finance/retirement-calculator/) — Project a pension or 401k pot at your chosen retirement age.
+- [50/30/20 Budget Calculator](/tools/finance/budget-calculator/) — Split take-home pay into needs, wants and savings.
+- [Simple Interest Calculator](/tools/finance/simple-interest/) — Interest and total value from principal, rate and time.
+
 All projections are educational estimates. They do not account for every fee, tax, market movement or product rule and are not investment advice.
+

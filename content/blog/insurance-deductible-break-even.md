@@ -1,7 +1,7 @@
 ---
 title: "Should You Raise Your Deductible? Do the Arithmetic First"
 date: "2026-07-31"
-description: "A higher deductible lowers your premium — but only pays off if you go long enough without claiming. Here's the break-even calculation, and the trap that catches people who get it right on paper."
+description: "Calculate when a higher insurance deductible pays for itself, then check whether the larger out-of-pocket risk is affordable in practice."
 thumbnail: "/assets/blog/insurance-deductible.jpg"
 author: "Mr John Prosper"
 ---

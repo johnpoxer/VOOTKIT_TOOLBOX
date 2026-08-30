@@ -656,6 +656,16 @@ console.log(`seo + ezoic verification: ${pass} total assertions passed`);
     if (!html) return;
     eq(slots(html), "blog",
        "blog post '" + d + "' has ONE slot and it is the in-body one, not the footer");
+    ok(/data-blog-article/.test(html), "blog post '" + d + "' uses the guide reader shell");
+    ok(/class="bl-toc-mobile"/.test(html), "blog post '" + d + "' has a collapsible mobile contents list");
+    ok(/class="bl-guide-rail"/.test(html), "blog post '" + d + "' has the desktop guide action rail");
+    ok(/class="[^"]*bl-open-tool/.test(html), "blog post '" + d + "' links to its primary tool above the fold");
+    ok(/assets\/js\/blog\.js/.test(html), "blog post '" + d + "' loads guide interactions");
+  });
+
+  ["everyday", "insurance", "tax", "real-estate"].forEach((category) => {
+    const html = read("blog/" + category + "/index.html");
+    ok(/class="wrap bl-cat-hero"/.test(html), "the " + category + " guide archive is generated");
   });
 
   /* The unsubscribe page must not ask for the address it is removing. */

@@ -64,4 +64,13 @@ No. Compare the transfer fee, promotional period, post-promotion APR and the pay
 
 The balance may grow. Contact the issuer or an appropriate nonprofit debt adviser early rather than relying only on a calculator.
 
+## Useful next tools
+
+- [Loan Calculator](/tools/finance/loan-calculator/) — Payment, interest and payoff for any personal or business loan.
+- [50/30/20 Budget Calculator](/tools/finance/budget-calculator/) — Split take-home pay into needs, wants and savings.
+- [Savings Goal Planner](/tools/finance/savings-goal/) — How much to set aside each month to hit a target.
+- [Compound Interest](/tools/finance/compound-interest/) — Grow savings with regular contributions over time.
+- [Refinance Break-Even](/tools/realestate/refinance-calculator/) — See how many months until refinancing pays for itself.
+
 This is an educational estimate, not debt or credit advice. If payments are unaffordable, seek qualified help in your country.
+

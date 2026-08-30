@@ -2257,6 +2257,10 @@ const BLOG_CATEGORY_INFO = {
   productivity: { label: "Productivity", title: "Productivity guides", intro: "Smarter ways to finish file, content and document work faster." },
   business: { label: "Business", title: "Business guides", intro: "Guides for freelancers, small teams and people managing work files." },
   finance: { label: "Finance", title: "Finance guides", intro: "Plain-English finance explainers with calculators and examples." },
+  everyday: { label: "Everyday", title: "Everyday tool guides", intro: "Clear guidance for calculations, conversions, timers, codes and practical daily tasks." },
+  insurance: { label: "Insurance", title: "Insurance guides", intro: "Educational insurance estimates, trade-offs and questions to check before comparing policies." },
+  tax: { label: "Tax & Pay", title: "Tax and pay guides", intro: "Practical salary, payroll and tax estimates with assumptions and limitations explained." },
+  "real-estate": { label: "Real Estate", title: "Real estate guides", intro: "Mortgage, affordability and property-return guides built around realistic costs and scenarios." },
   education: { label: "Education", title: "Education guides", intro: "Study, document and learning workflows for students and teachers." },
   travel: { label: "Travel", title: "Travel guides", intro: "Planning, file and trip tools for travel workflows." },
   developer: { label: "Developer", title: "Developer guides", intro: "Browser utilities, web formats and technical workflows." },
@@ -2266,7 +2270,7 @@ const BLOG_CATEGORY_INFO = {
   video: { label: "Video", title: "Video guides", intro: "Compress, trim and prepare clips for upload, chat and social platforms." },
   updates: { label: "Updates", title: "Vootkit updates", intro: "Product notes and new ways to use the Vootkit toolkit." }
 };
-const BLOG_CATEGORY_ORDER = ["all", "tutorial", "guide", "news", "tools", "productivity", "finance", "pdf", "images", "video", "security", "business", "developer", "updates", "education", "travel"];
+const BLOG_CATEGORY_ORDER = ["all", "tutorial", "guide", "news", "tools", "productivity", "finance", "tax", "real-estate", "insurance", "everyday", "pdf", "images", "video", "security", "business", "developer", "updates", "education", "travel"];
 
 function blogCategoryDepth(current, posts, allPosts) {
   if (current === "all") return "";
@@ -2460,7 +2464,18 @@ function loadPosts() {
     const { data, body } = parseFrontmatter(fs.readFileSync(path.join(dir, f), "utf8"));
     const slug = (data.slug || f.replace(/\.md$/, "")).toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "");
     const inferred = inferBlogMeta(slug, data.title || slug);
-    const extra = Object.assign({}, inferred, BLOG_META[slug] || {});
+    const curated = BLOG_META[slug] || {};
+    const extra = Object.assign({}, inferred, curated);
+    /* A guide already states which tools it uses in its own links. Prefer
+       those real relationships over the broad keyword fallback, which could
+       otherwise recommend generic PDF/Image tools on a tax or travel guide. */
+    const linkedTools = Array.from(body.matchAll(/\]\(\/tools\/[^/]+\/([^/)]+)\/\)/g)).map((m) => m[1]);
+    const declaredTools = splitList(data.relatedTools);
+    const relatedTools = Array.from(new Set(declaredTools
+      .concat(curated.relatedTools || [])
+      .concat(linkedTools)
+      .concat(inferred.relatedTools || [])))
+      .filter((id) => VK.find(id)).slice(0, 6);
     const plain = plainTextFromMarkdown(body);
     const enhanced = enhanceArticleHtml(marked.parse(body));
     const type = data.type || extra.type || "Guide";
@@ -2477,8 +2492,8 @@ function loadPosts() {
       featured: String(data.featured) === "true" || !!extra.featured,
       featureRank: Number(data.featureRank || extra.featureRank || 99),
       coverAlt: data.coverAlt || extra.coverAlt || data.title || slug,
-      relatedTools: (extra.relatedTools || []).filter((id) => VK.find(id)),
-      relatedWorkflow: extra.relatedWorkflow || "",
+      relatedTools,
+      relatedWorkflow: data.relatedWorkflow || extra.relatedWorkflow || "",
       words, minutes: Math.max(1, Math.round(words / 220)),
       bodyText: plain, draft: String(data.draft) === "true",
       html: enhanced.html, toc: enhanced.toc
@@ -2585,12 +2600,51 @@ function workflowCard(post, depth) {
     <a class="btn btn-primary" href="${up}workflows/#wf-market" data-track="article_workflow_click">Explore workflows</a>
   </aside>`;
 }
-function articleToc(post) {
+function articleToc(post, mobile) {
   if (!post.toc || post.toc.length < 3) return "";
-  return `<aside class="bl-toc" aria-label="Table of contents">
-    <strong>On this page</strong>
-    ${post.toc.slice(0, 10).map((h) => `<a class="lv${h.level}" href="#${esc(h.id)}">${esc(h.text)}</a>`).join("")}
+  const links = post.toc.slice(0, 10).map((h) => `<a class="lv${h.level}" href="#${esc(h.id)}" data-toc-link>${esc(h.text)}</a>`).join("");
+  if (mobile) return `<details class="bl-toc-mobile"><summary><span>On this page</span><b>${Math.min(post.toc.length, 10)} sections</b></summary><nav aria-label="Table of contents">${links}</nav></details>`;
+  return `<aside class="bl-toc" aria-label="Table of contents"><strong>On this page</strong>${links}</aside>`;
+}
+function articlePrimaryTool(post) {
+  const id = post.relatedTools && post.relatedTools[0];
+  return id ? VK.find(id) : null;
+}
+function articleHeadActions(post, depth) {
+  const t = articlePrimaryTool(post);
+  const up = "../".repeat(depth) || "./";
+  return `<div class="bl-head-actions">
+    ${t ? `<a class="btn btn-primary bl-open-tool" href="${up}tools/${esc(t.cat)}/${esc(t.id)}/" data-track="article_primary_tool">Open ${esc(t.name)} <span aria-hidden="true">-&gt;</span></a>` : `<a class="btn btn-primary" href="${up}tools/">Browse tools <span aria-hidden="true">-&gt;</span></a>`}
+    <button class="btn bl-copy-link" type="button" data-copy-link><span data-copy-label>Copy link</span></button>
+  </div>`;
+}
+function articleGuideRail(post, depth) {
+  const t = articlePrimaryTool(post);
+  if (!t) return "";
+  const up = "../".repeat(depth) || "./";
+  const processing = t.processing === "local"
+    ? "Runs on your device for speed and privacy."
+    : "Connects only when the tool needs current online data.";
+  return `<aside class="bl-guide-rail" aria-label="Guide actions">
+    <section class="bl-rail-tool">
+      <span class="eyebrow">Use this guide</span>
+      <div class="bl-rail-tool-name">${toolIconHtml(t)}<h2>${esc(t.name)}</h2></div>
+      <p>${esc(t.desc)}</p>
+      <a class="btn btn-primary" href="${up}tools/${esc(t.cat)}/${esc(t.id)}/" data-track="article_rail_tool">Open free tool <span aria-hidden="true">-&gt;</span></a>
+      <small>${esc(processing)}</small>
+    </section>
+    <section class="bl-rail-facts">
+      <span><b>${post.minutes} min</b><small>Reading time</small></span>
+      <span><b>${esc(post.category)}</b><small>Guide category</small></span>
+    </section>
+    <section class="bl-rail-share"><strong>Share this guide</strong><div><a href="https://twitter.com/intent/tweet?url=${encodeURIComponent(SITE + "/blog/" + post.slug + "/")}&text=${encodeURIComponent(post.title)}" rel="noopener" target="_blank">X</a><a href="https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(SITE + "/blog/" + post.slug + "/")}&title=${encodeURIComponent(post.title)}" rel="noopener" target="_blank">LinkedIn</a><button type="button" data-copy-link><span data-copy-label>Copy</span></button></div></section>
   </aside>`;
+}
+function articleAuthorPanel(author) {
+  return `<section class="bl-author-panel" aria-labelledby="article-author-title">
+    ${blogAuthorMark(author)}
+    <div><span class="eyebrow">About the author</span><h2 id="article-author-title">${esc(author.name)}</h2><p>${esc(author.bio)}</p></div>
+  </section>`;
 }
 function blogJsonData(posts) {
   return JSON.stringify(posts.map((p) => ({
@@ -2661,41 +2715,35 @@ function blogPostPage(post, allPosts) {
       mainEntityOfPage: url, url }
   ];
   return head({ depth: 2, url, ads: true, ld, title: `${post.title} - Vootkit Blog`, ogTitle: post.title, desc: post.description, image: img || undefined }) +
-`<div class="wrap section bl-article-page">
+`<div class="bl-read-progress" aria-hidden="true"><span data-read-progress></span></div>
+<div class="wrap section bl-article-page" data-blog-article>
   <nav class="crumb" aria-label="Breadcrumb"><a href="../../">Home</a> <span aria-hidden="true">/</span> <a href="../">Blog</a> <span aria-hidden="true">/</span> <a href="../${esc(post.categorySlug)}/">${esc(post.category)}</a> <span aria-hidden="true">/</span> <span aria-current="page">${esc(post.title)}</span></nav>
+  <header class="bl-article-head">
+    <div class="bl-article-kickers"><span class="bl-badge">${esc(post.type)}</span><a href="../${esc(post.categorySlug)}/">${esc(post.category)}</a></div>
+    <h1>${esc(post.title)}</h1>
+    <p>${esc(post.description)}</p>
+    <div class="bl-article-meta">${blogMetaLine(post)}</div>
+    ${articleHeadActions(post, 2)}
+  </header>
+  ${blogPicture(post, "bl-article-hero", "eager")}
+  ${articleToc(post, true)}
   <div class="bl-article-layout">
-    ${articleToc(post)}
+    ${articleToc(post, false)}
     <article class="bl-article">
-      <header class="bl-article-head">
-        <span class="bl-badge">${esc(post.type)}</span>
-        <h1>${esc(post.title)}</h1>
-        <p>${esc(post.description)}</p>
-        <div class="bl-article-meta">${blogMetaLine(post)}</div>
-      </header>
-      ${blogPicture(post, "bl-article-hero", "eager")}
       <div class="prose blog-body">${post.html}</div>
       ${articleTools(post, 2)}
       ${workflowCard(post, 2)}
       ${adUnit("footer")}
+      ${articleAuthorPanel(author)}
       ${related.length ? `<section class="bl-related" aria-labelledby="related-title"><h2 id="related-title">Keep reading</h2><div class="bl-related-grid">${related.map((p, i) => blogArticleCard(p, i)).join("")}</div></section>` : ""}
       <section class="bl-article-newsletter">
         <div><span class="eyebrow">Stay updated</span><h2>Work smarter with Vootkit</h2><p>Get practical guides, new tools and useful workflows in your inbox.</p></div>
         <div data-newsletter="blog" data-nl-compact data-nl-placeholder="Enter your email" data-nl-button="Subscribe"></div>
       </section>
     </article>
-    <aside class="bl-author-card">
-      ${blogAuthorMark(author)}
-      <h2>${esc(author.name)}</h2>
-      <p>${esc(author.bio)}</p>
-      <div class="bl-share">
-        <strong>Share</strong>
-        <a href="https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(post.title)}" rel="noopener" target="_blank">X</a>
-        <a href="https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(url)}&title=${encodeURIComponent(post.title)}" rel="noopener" target="_blank">LinkedIn</a>
-        <a href="mailto:?subject=${encodeURIComponent(post.title)}&body=${encodeURIComponent(url)}">Email</a>
-      </div>
-    </aside>
+    ${articleGuideRail(post, 2)}
   </div>
-</div>` + foot(2, null, { noNewsletter: true });
+</div>` + foot(2, ["assets/js/blog.js"], { noNewsletter: true });
 }
 function blogIndexPage(posts, opts) {
   const o = opts || {};

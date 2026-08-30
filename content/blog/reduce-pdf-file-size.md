@@ -1,7 +1,7 @@
 ---
 title: "How to Reduce PDF File Size Without Ruining It"
 date: "2026-08-05"
-description: "Why a text PDF barely shrinks and a scan collapses to a tenth, what every compressor actually does to your pages, and the one trade-off nobody mentions until your text stops being selectable."
+description: "Learn why scanned PDFs shrink more than text PDFs, what compression changes, and how to reduce file size without making text unreadable."
 thumbnail: "/assets/blog/reduce-pdf-file-size.jpg"
 author: "The Vootkit team"
 ---

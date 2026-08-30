@@ -1,7 +1,7 @@
 ---
 title: "How to Create Stream Alerts That Stay Readable"
 date: "2026-08-28"
-description: "Practical guidance for using Vootkit's Stream Alert Creator, understanding its settings, avoiding common mistakes and producing a result suited to your platform."
+description: "Creates alert graphics for follows, subscriptions, donations and raids, ready to add to your alert system as an image."
 thumbnail: "/assets/blog/stream-alert-creator-guide.jpg"
 coverAlt: "Editorial illustration representing the Stream Alert Creator workflow."
 author: "The Vootkit team"
@@ -18,7 +18,7 @@ Creates alert graphics for follows, subscriptions, donations and raids, ready to
 
 The design constraint is that an alert interrupts. It has to be noticed and then get out of the way, which is a much shorter window than most people design for.
 
-The [Stream Alert Creator](/tools/video/stream-alert-creator/) runs as a focused Vootkit workspace. Start with a source you are allowed to use, keep an untouched original, and check the exported result on the platform where it will be published. A successful export can still be unsuitable when a platform imposes its own duration, size, codec or layout rules.
+Open the [Stream Alert Creator](/tools/video/stream-alert-creator/) and follow the settings and checks below.
 
 ## Design guidance
 
@@ -42,16 +42,6 @@ The [Stream Alert Creator](/tools/video/stream-alert-creator/) runs as a focused
 
 Three to five seconds, and quieter than feels right. An alert that lingers stops the stream dead every time it fires, and on a good night that is constant. The sound especially: what feels punchy in a quiet room at design time is startling over gameplay audio at viewer volume.
 
-Do not judge only from the download completing. Inspect the beginning, middle and end; check sound where relevant; confirm that text and faces are not cropped; and make sure the filename and format are clear before deleting the original.
-
-## Common mistakes to avoid
-
-- Using a low-quality source and expecting conversion to recreate missing detail.
-- Selecting settings for one platform without checking the destination's current requirements.
-- Reprocessing the same compressed file repeatedly, which can compound quality loss.
-- Publishing without checking the final duration, dimensions, sound and file size.
-- Assuming an estimate or preview is identical to the destination platform's final processing.
-
 ## Common questions
 
 ### How long should an alert stay up?
@@ -72,10 +62,9 @@ Because you set the level in a quiet room with no game audio. Test them over act
 
 ## Useful next tools
 
-- [Stream Overlay Creator](/tools/video/stream-overlay-creator/)
-- [Emote Resizer](/tools/video/emote-resizer/)
-- [Brb Overlay](/tools/video/brb-overlay/)
-- [Starting Soon Screen](/tools/video/starting-soon-screen/)
+- [Stream Overlay Creator](/tools/video/stream-overlay-creator/) — Design a transparent webcam overlay for OBS.
+- [Emote Resizer](/tools/video/emote-resizer/) — Resize to Discord and Twitch emote limits.
+- [Brb Overlay](/tools/video/brb-overlay/) — A styled page to drop into OBS as a browser source.
+- [Starting Soon Screen](/tools/video/starting-soon-screen/) — Make a starting-soon screen with countdown for OBS.
 
 Vootkit provides a browser tool and educational guidance, not a guarantee that every browser, device or third-party platform will accept every file. Platform specifications can change, so verify important publishing requirements with the destination service.
-

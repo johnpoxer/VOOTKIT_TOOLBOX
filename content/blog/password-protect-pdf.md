@@ -41,7 +41,7 @@ If a recipient should never see a field, remove it with a proper redaction proce
 
 Use a long, unique password that is not based on the recipient's name, birthday, invoice number or another fact found in the document. Length matters more than decorative substitutions such as changing `a` to `@`.
 
-[Password Generator](/tools/security/password-generator/) can create a random value. A multi-word passphrase may be easier to communicate accurately. Do not reuse a password that protects your email, banking or Vootkit account.
+[Password Generator](/tools/privacy/password-generator/) can create a random value. A multi-word passphrase may be easier to communicate accurately. Do not reuse a password that protects your email, banking or Vootkit account.
 
 Record the password in an appropriate password manager if you may need the document later. Vootkit cannot retrieve it.
 
@@ -69,7 +69,7 @@ Do not put the password in the filename, email subject or a note inside the same
 
 Similar filenames create mistakes. Use a clear final name such as `August-statement-protected.pdf`, then attach that exact copy. Remove unprotected working copies from shared download folders when they are no longer needed.
 
-For a high-assurance transfer, [File Checksum](/tools/security/file-checksum/) can produce a SHA-256 digest. The recipient can compare the digest to confirm that their download matches your final file. A checksum verifies bytes; it does not prove that the file is safe or that the sender is genuine.
+For a high-assurance transfer, [File Checksum](/tools/privacy/file-checksum/) can produce a SHA-256 digest. The recipient can compare the digest to confirm that their download matches your final file. A checksum verifies bytes; it does not prove that the file is safe or that the sender is genuine.
 
 ## Common questions
 

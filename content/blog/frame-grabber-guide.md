@@ -1,7 +1,7 @@
 ---
 title: "How to Extract a High-Quality Still Frame From a Video"
 date: "2026-08-28"
-description: "Practical guidance for using Vootkit's Frame Grabber, understanding its settings, avoiding common mistakes and producing a result suited to your platform."
+description: "Seeks to the second you specify, draws that frame to a canvas and saves it as a PNG. This is the only video tool here that does not use ffmpeg — it uses…"
 thumbnail: "/assets/blog/frame-grabber-guide.jpg"
 coverAlt: "Editorial illustration representing the Frame Grabber workflow."
 author: "The Vootkit team"
@@ -18,7 +18,7 @@ Seeks to the second you specify, draws that frame to a canvas and saves it as a 
 
 PNG rather than JPEG on purpose: the frame is going to be a thumbnail, and a thumbnail is usually edited afterwards. Starting from a lossless still means text and edges stay sharp through whatever you do next.
 
-The [Frame Grabber](/tools/video/frame-grabber/) runs as a focused Vootkit workspace. Start with a source you are allowed to use, keep an untouched original, and check the exported result on the platform where it will be published. A successful export can still be unsuitable when a platform imposes its own duration, size, codec or layout rules.
+Open the [Frame Grabber](/tools/video/frame-grabber/) and follow the settings and checks below.
 
 ## What it produces
 
@@ -43,16 +43,6 @@ The [Frame Grabber](/tools/video/frame-grabber/) runs as a focused Vootkit works
 
 Motion blur is what usually ruins a grabbed thumbnail. Try a few tenths either side of your first guess — during fast movement, 0.2 s can be the difference between a sharp face and a smear. The preview shows you the result before you commit.
 
-Do not judge only from the download completing. Inspect the beginning, middle and end; check sound where relevant; confirm that text and faces are not cropped; and make sure the filename and format are clear before deleting the original.
-
-## Common mistakes to avoid
-
-- Using a low-quality source and expecting conversion to recreate missing detail.
-- Selecting settings for one platform without checking the destination's current requirements.
-- Reprocessing the same compressed file repeatedly, which can compound quality loss.
-- Publishing without checking the final duration, dimensions, sound and file size.
-- Assuming an estimate or preview is identical to the destination platform's final processing.
-
 ## Common questions
 
 ### Why does my video not load here when the other tools accept it?
@@ -73,9 +63,9 @@ It decodes one frame. The others decode, process and re-encode every frame in th
 
 ## Useful next tools
 
-- [Thumbnail Maker](/tools/images/thumbnail-maker/)
-- [Video To Gif](/tools/video/video-to-gif/)
-- [Trim Video](/tools/video/trim-video/)
-- [Compress Image](/tools/images/compress-image/)
+- [Thumbnail Maker](/tools/images/thumbnail-maker/) — Resize and crop to YouTube, blog and square thumbnail sizes.
+- [Video To Gif](/tools/video/video-to-gif/) — Turn a short clip into a shareable GIF.
+- [Trim Video](/tools/video/trim-video/) — Cut the segment you want and save it.
+- [Compress Image](/tools/images/compress-image/) — Shrink JPG, PNG or WebP with a quality slider.
 
 Vootkit provides a browser tool and educational guidance, not a guarantee that every browser, device or third-party platform will accept every file. Platform specifications can change, so verify important publishing requirements with the destination service.

@@ -1,7 +1,7 @@
 ---
 title: "How to Prepare Correctly Sized Assets for Twitch and Streaming"
 date: "2026-08-28"
-description: "Practical guidance for using Vootkit's Stream Asset Sizer, understanding its settings, avoiding common mistakes and producing a result suited to your platform."
+description: "Resizes an image to the exact dimensions a specific platform slot requires — YouTube thumbnails, channel banners and avatars, Twitch banners, avatars…"
 thumbnail: "/assets/blog/stream-asset-sizer-guide.jpg"
 coverAlt: "Editorial illustration representing the Stream Asset Sizer workflow."
 author: "The Vootkit team"
@@ -18,7 +18,7 @@ Resizes an image to the exact dimensions a specific platform slot requires — Y
 
 Pick the destination rather than typing numbers, so there is nothing to look up and nothing to mistype.
 
-The [Stream Asset Sizer](/tools/video/stream-asset-sizer/) runs as a focused Vootkit workspace. Start with a source you are allowed to use, keep an untouched original, and check the exported result on the platform where it will be published. A successful export can still be unsuitable when a platform imposes its own duration, size, codec or layout rules.
+Open the [Stream Asset Sizer](/tools/video/stream-asset-sizer/) and follow the settings and checks below.
 
 ## Supported slots
 
@@ -42,16 +42,6 @@ The [Stream Asset Sizer](/tools/video/stream-asset-sizer/) runs as a focused Voo
 
 Channel banners are the one to be careful with. The full image only ever appears on a desktop TV layout; phones crop hard to the centre, and that is where most people will see it. Keep your name and anything essential in the middle third, and treat the outer edges as decoration that may never be seen.
 
-Do not judge only from the download completing. Inspect the beginning, middle and end; check sound where relevant; confirm that text and faces are not cropped; and make sure the filename and format are clear before deleting the original.
-
-## Common mistakes to avoid
-
-- Using a low-quality source and expecting conversion to recreate missing detail.
-- Selecting settings for one platform without checking the destination's current requirements.
-- Reprocessing the same compressed file repeatedly, which can compound quality loss.
-- Publishing without checking the final duration, dimensions, sound and file size.
-- Assuming an estimate or preview is identical to the destination platform's final processing.
-
 ## Common questions
 
 ### Why does my banner look cropped on mobile?
@@ -72,9 +62,9 @@ They match the platforms’ published specifications, but platforms do change th
 
 ## Useful next tools
 
-- [Emote Resizer](/tools/video/emote-resizer/)
-- [Thumbnail Maker](/tools/images/thumbnail-maker/)
-- [Social Media Image](/tools/images/social-media-image/)
-- [Resize Image](/tools/images/resize-image/)
+- [Emote Resizer](/tools/video/emote-resizer/) — Resize to Discord and Twitch emote limits.
+- [Thumbnail Maker](/tools/images/thumbnail-maker/) — Resize and crop to YouTube, blog and square thumbnail sizes.
+- [Social Media Image](/tools/images/social-media-image/) — Crop images to Instagram, Facebook, X and LinkedIn sizes.
+- [Resize Image](/tools/images/resize-image/) — Resize to exact pixels or a percentage.
 
 Vootkit provides a browser tool and educational guidance, not a guarantee that every browser, device or third-party platform will accept every file. Platform specifications can change, so verify important publishing requirements with the destination service.

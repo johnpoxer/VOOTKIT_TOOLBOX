@@ -58,4 +58,13 @@ Fees, different date conventions, payment timing or an amortisation method may e
 
 Not automatically. The principal, rate, term, fees and payment structure must all be compared.
 
+## Useful next tools
+
+- [Compound Interest](/tools/finance/compound-interest/) — Grow savings with regular contributions over time.
+- [Loan Calculator](/tools/finance/loan-calculator/) — Payment, interest and payoff for any personal or business loan.
+- [Savings Goal Planner](/tools/finance/savings-goal/) — How much to set aside each month to hit a target.
+- [Percentage Calculator](/tools/everyday/percentage-calculator/) — Percent of, is-what-percent, and percentage change.
+- [Mortgage Calculator](/tools/realestate/mortgage-calculator/) — Monthly payment, total interest and full amortisation schedule.
+
 The result is an educational estimate. The financial contract determines actual interest, dates, charges and repayment obligations.
+

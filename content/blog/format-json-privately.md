@@ -8,7 +8,7 @@ type: "Guide"
 category: "Developer"
 tags: [Tools, Security, Productivity]
 coverAlt: "Disordered structured data becoming clean indented JSON beside a privacy shield in a browser developer workspace."
-relatedTools: [json-formatter, json-to-csv, json-path-tester, text-diff]
+relatedTools: [json-formatter, json-csv, csv-viewer, text-diff]
 relatedWorkflow: "json-cleanup"
 ---
 
@@ -89,7 +89,7 @@ This object is valid JSON:
 
 It may still be invalid for an API expecting `email` to be a string and `items` to be an array. Validation by `JSON.parse` confirms grammar, not business rules.
 
-Use the API documentation, a JSON Schema validator or tests in the consuming application. [JSON Path Tester](/tools/developer/json-path-tester/) can help inspect nested values, while [JSON to CSV](/tools/developer/json-to-csv/) is useful only when the structure is tabular enough to flatten sensibly.
+Use the API documentation, a JSON Schema validator or tests in the consuming application. [JSON ↔ CSV](/tools/data/json-csv/) is useful when the structure is tabular enough to flatten sensibly, and [CSV Viewer & Sorter](/tools/data/csv-viewer/) can then check the resulting rows and columns.
 
 ## Compare a working and broken payload
 

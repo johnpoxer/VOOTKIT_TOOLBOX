@@ -70,4 +70,13 @@ No. Those are ownership expenses and should be budgeted separately.
 
 The quote may include taxes, fees, optional products, a different payment date or a different interest convention. Ask for an itemised finance disclosure and enter the exact figures.
 
+## Useful next tools
+
+- [Loan Calculator](/tools/finance/loan-calculator/) — Payment, interest and payoff for any personal or business loan.
+- [Auto Cover Estimator](/tools/insurance/auto-insurance-estimator/) — Work out sensible liability and deductible levels.
+- [50/30/20 Budget Calculator](/tools/finance/budget-calculator/) — Split take-home pay into needs, wants and savings.
+- [Credit Card Payoff](/tools/finance/credit-card-payoff/) — How long to clear a balance, and what extra payments save.
+- [Refinance Break-Even](/tools/realestate/refinance-calculator/) — See how many months until refinancing pays for itself.
+
 This guide provides estimates and general education, not lending or purchasing advice. The signed agreement controls the actual payment schedule.
+

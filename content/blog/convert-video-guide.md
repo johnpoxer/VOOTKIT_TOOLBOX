@@ -1,7 +1,7 @@
 ---
 title: "How to Convert Video Formats Without Guessing the Settings"
 date: "2026-08-28"
-description: "Practical guidance for using Vootkit's Video Converter, understanding its settings, avoiding common mistakes and producing a result suited to your platform."
+description: "Converts almost any video container to MP4 with H.264 video and AAC audio, at a frame rate you choose."
 thumbnail: "/assets/blog/convert-video-guide.jpg"
 coverAlt: "Editorial illustration representing the Video Converter workflow."
 author: "The Vootkit team"
@@ -18,7 +18,7 @@ Converts almost any video container to MP4 with H.264 video and AAC audio, at a 
 
 The output is constant frame rate, which matters more than it sounds. Screen recordings and phone captures are often variable frame rate, and that is the single most common reason audio drifts out of sync after importing into an editor.
 
-The [Video Converter](/tools/video/convert-video/) runs as a focused Vootkit workspace. Start with a source you are allowed to use, keep an untouched original, and check the exported result on the platform where it will be published. A successful export can still be unsuitable when a platform imposes its own duration, size, codec or layout rules.
+Open the [Video Converter](/tools/video/convert-video/) and follow the settings and checks below.
 
 ## Input, output and settings
 
@@ -42,16 +42,6 @@ The [Video Converter](/tools/video/convert-video/) runs as a focused Vootkit wor
 
 If footage has ever drifted out of sync in an editor, variable frame rate was almost certainly the cause. Screen recorders and phones produce it routinely, editors assume constant, and the gap accumulates over minutes. Converting first fixes it before it becomes a problem you have to diagnose.
 
-Do not judge only from the download completing. Inspect the beginning, middle and end; check sound where relevant; confirm that text and faces are not cropped; and make sure the filename and format are clear before deleting the original.
-
-## Common mistakes to avoid
-
-- Using a low-quality source and expecting conversion to recreate missing detail.
-- Selecting settings for one platform without checking the destination's current requirements.
-- Reprocessing the same compressed file repeatedly, which can compound quality loss.
-- Publishing without checking the final duration, dimensions, sound and file size.
-- Assuming an estimate or preview is identical to the destination platform's final processing.
-
 ## Common questions
 
 ### Why convert to MP4 specifically?
@@ -72,10 +62,9 @@ Trim it first — that is lossless and usually what you wanted anyway. The limit
 
 ## Useful next tools
 
-- [Compress Video](/tools/video/compress-video/)
-- [Trim Video](/tools/video/trim-video/)
-- [Resize Video](/tools/video/resize-video/)
-- [Video To Gif](/tools/video/video-to-gif/)
+- [Compress Video](/tools/video/compress-video/) — Shrink any video in your browser — pick a quality level or a size to fit.
+- [Trim Video](/tools/video/trim-video/) — Cut the segment you want and save it.
+- [Resize Video](/tools/video/resize-video/) — Resize a video to 1080p, 720p, 480p or 360p, keeping aspect.
+- [Video To Gif](/tools/video/video-to-gif/) — Turn a short clip into a shareable GIF.
 
 Vootkit provides a browser tool and educational guidance, not a guarantee that every browser, device or third-party platform will accept every file. Platform specifications can change, so verify important publishing requirements with the destination service.
-

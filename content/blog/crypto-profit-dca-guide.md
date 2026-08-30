@@ -42,7 +42,7 @@ The market price can change between calculation and sale, and the executable pri
 
 Regular purchases can reduce the importance of choosing one entry date, but they do not guarantee profit or protect against a prolonged decline, asset failure, custody loss or platform insolvency. Never interpret a lower average entry as proof that further buying is sensible.
 
-Use the [Percentage Calculator](/tools/general/percentage-calculator/) to compare returns consistently and the [Currency Converter](/tools/finance/currency-converter/) when statements use different reporting currencies. Historical conversion rates may be required for tax records; today's rate is not a substitute.
+Use the [Percentage Calculator](/tools/everyday/percentage-calculator/) to compare returns consistently and the [Currency Converter](/tools/finance/currency-converter/) when statements use different reporting currencies. Historical conversion rates may be required for tax records; today's rate is not a substitute.
 
 ## Questions people ask
 
@@ -61,5 +61,13 @@ Not exactly when sale fees, spread and taxes apply. The executable break-even pr
 ### Can I use this for tax reporting?
 
 Use it as an organisational estimate only. Tax rules and permitted cost-basis methods vary; rely on complete records and qualified local guidance.
+
+## Useful next tools
+
+- [Percentage Calculator](/tools/everyday/percentage-calculator/) — Percent of, is-what-percent, and percentage change.
+- [Currency Converter](/tools/finance/currency-converter/) — Live exchange rates from European Central Bank data.
+- [Compound Interest](/tools/finance/compound-interest/) — Grow savings with regular contributions over time.
+- [Simple Interest Calculator](/tools/finance/simple-interest/) — Interest and total value from principal, rate and time.
+- [Profit Margin](/tools/business/profit-margin/) — Margin, markup and selling price from cost.
 
 Cryptocurrency is volatile and can result in total loss. This guide is educational and does not recommend buying, selling or holding any asset.

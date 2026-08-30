@@ -68,4 +68,13 @@ Review an official benefit estimate separately. Eligibility and future rules var
 
 At least annually and after major changes to income, contributions, retirement age, fees or investment strategy.
 
+## Useful next tools
+
+- [Compound Interest](/tools/finance/compound-interest/) — Grow savings with regular contributions over time.
+- [Savings Goal Planner](/tools/finance/savings-goal/) — How much to set aside each month to hit a target.
+- [Simple Interest Calculator](/tools/finance/simple-interest/) — Interest and total value from principal, rate and time.
+- [Salary Converter](/tools/tax/salary-converter/) — Hourly, weekly, monthly and annual, both ways.
+- [50/30/20 Budget Calculator](/tools/finance/budget-calculator/) — Split take-home pay into needs, wants and savings.
+
 This projection is educational and is not pension, tax or investment advice. Consider a qualified adviser for decisions that materially affect retirement security.
+

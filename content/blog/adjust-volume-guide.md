@@ -1,7 +1,7 @@
 ---
 title: "How to Increase or Reduce Video Volume Safely"
 date: "2026-08-28"
-description: "Practical guidance for using Vootkit's Video Volume Booster, understanding its settings, avoiding common mistakes and producing a result suited to your platform."
+description: "Multiplies the audio by the percentage you choose and copies the video through untouched (-c:v copy). Only the sound is re-encoded, so the picture is…"
 thumbnail: "/assets/blog/adjust-volume-guide.jpg"
 coverAlt: "Editorial illustration representing the Video Volume Booster workflow."
 author: "The Vootkit team"
@@ -18,7 +18,7 @@ Multiplies the audio by the percentage you choose and copies the video through u
 
 Boosting cannot add information that was never recorded. It raises the whole signal, so the hiss and room noise come up with the voice.
 
-The [Video Volume Booster](/tools/video/adjust-volume/) runs as a focused Vootkit workspace. Start with a source you are allowed to use, keep an untouched original, and check the exported result on the platform where it will be published. A successful export can still be unsuitable when a platform imposes its own duration, size, codec or layout rules.
+Open the [Video Volume Booster](/tools/video/adjust-volume/) and follow the settings and checks below.
 
 ## Levels and behaviour
 
@@ -43,16 +43,6 @@ The [Video Volume Booster](/tools/video/adjust-volume/) runs as a focused Vootki
 
 Judge a boost on the loudest part of the clip, never the quietest. Anything that exceeds the maximum level is clipped flat and turns to distortion, and clipping cannot be undone afterwards. If the quiet parts still need lifting at 200%, the recording needs compression in an audio editor rather than a bigger multiplier.
 
-Do not judge only from the download completing. Inspect the beginning, middle and end; check sound where relevant; confirm that text and faces are not cropped; and make sure the filename and format are clear before deleting the original.
-
-## Common mistakes to avoid
-
-- Using a low-quality source and expecting conversion to recreate missing detail.
-- Selecting settings for one platform without checking the destination's current requirements.
-- Reprocessing the same compressed file repeatedly, which can compound quality loss.
-- Publishing without checking the final duration, dimensions, sound and file size.
-- Assuming an estimate or preview is identical to the destination platform's final processing.
-
 ## Common questions
 
 ### Why does 300% sound distorted?
@@ -73,10 +63,9 @@ Almost never audibly. Reducing scales the signal down and re-encodes the result;
 
 ## Useful next tools
 
-- [Mute Video](/tools/video/mute-video/)
-- [Extract Audio](/tools/video/extract-audio/)
-- [Compress Video](/tools/video/compress-video/)
-- [Trim Video](/tools/video/trim-video/)
+- [Mute Video](/tools/video/mute-video/) — Remove the audio track to avoid copyright strikes.
+- [Extract Audio](/tools/video/extract-audio/) — Save the audio from a video as MP3 or WAV.
+- [Compress Video](/tools/video/compress-video/) — Shrink any video in your browser — pick a quality level or a size to fit.
+- [Trim Video](/tools/video/trim-video/) — Cut the segment you want and save it.
 
 Vootkit provides a browser tool and educational guidance, not a guarantee that every browser, device or third-party platform will accept every file. Platform specifications can change, so verify important publishing requirements with the destination service.
-

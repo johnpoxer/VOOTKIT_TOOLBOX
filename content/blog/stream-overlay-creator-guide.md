@@ -1,7 +1,7 @@
 ---
 title: "How to Create a Clean Stream Overlay for OBS"
 date: "2026-08-28"
-description: "Practical guidance for using Vootkit's Stream Overlay Creator, understanding its settings, avoiding common mistakes and producing a result suited to your platform."
+description: "Builds a stream overlay you can add as an OBS source — the frame around your content, including webcam borders and information panels."
 thumbnail: "/assets/blog/stream-overlay-creator-guide.jpg"
 coverAlt: "Editorial illustration representing the Stream Overlay Creator workflow."
 author: "The Vootkit team"
@@ -18,7 +18,7 @@ Builds a stream overlay you can add as an OBS source — the frame around your c
 
 Deliberately static rather than animated: an animated overlay re-encodes every frame it touches, which costs CPU your encoder needs.
 
-The [Stream Overlay Creator](/tools/video/stream-overlay-creator/) runs as a focused Vootkit workspace. Start with a source you are allowed to use, keep an untouched original, and check the exported result on the platform where it will be published. A successful export can still be unsuitable when a platform imposes its own duration, size, codec or layout rules.
+Open the [Stream Overlay Creator](/tools/video/stream-overlay-creator/) and follow the settings and checks below.
 
 ## Design and setup
 
@@ -42,16 +42,6 @@ The [Stream Overlay Creator](/tools/video/stream-overlay-creator/) runs as a foc
 
 Leave the bottom third emptier than feels right. Platforms overlay their own controls, captions and chat prompts there, and on mobile the player UI covers more of it again. An overlay that looks balanced in OBS can have its lower elements completely hidden for a large share of your audience.
 
-Do not judge only from the download completing. Inspect the beginning, middle and end; check sound where relevant; confirm that text and faces are not cropped; and make sure the filename and format are clear before deleting the original.
-
-## Common mistakes to avoid
-
-- Using a low-quality source and expecting conversion to recreate missing detail.
-- Selecting settings for one platform without checking the destination's current requirements.
-- Reprocessing the same compressed file repeatedly, which can compound quality loss.
-- Publishing without checking the final duration, dimensions, sound and file size.
-- Assuming an estimate or preview is identical to the destination platform's final processing.
-
 ## Common questions
 
 ### Will an overlay slow my stream?
@@ -72,10 +62,9 @@ Yes — consistent colour between overlay, banner and emotes is what makes a cha
 
 ## Useful next tools
 
-- [Stream Alert Creator](/tools/video/stream-alert-creator/)
-- [Brb Overlay](/tools/video/brb-overlay/)
-- [Starting Soon Screen](/tools/video/starting-soon-screen/)
-- [Stream Asset Sizer](/tools/video/stream-asset-sizer/)
+- [Stream Alert Creator](/tools/video/stream-alert-creator/) — Design follower, sub and donation alert graphics.
+- [Brb Overlay](/tools/video/brb-overlay/) — A styled page to drop into OBS as a browser source.
+- [Starting Soon Screen](/tools/video/starting-soon-screen/) — Make a starting-soon screen with countdown for OBS.
+- [Stream Asset Sizer](/tools/video/stream-asset-sizer/) — Correct sizes for Twitch and YouTube banners, avatars and panels.
 
 Vootkit provides a browser tool and educational guidance, not a guarantee that every browser, device or third-party platform will accept every file. Platform specifications can change, so verify important publishing requirements with the destination service.
-

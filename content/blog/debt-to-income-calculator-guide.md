@@ -58,4 +58,13 @@ DTI itself is not normally a credit-score component, but debts and payment histo
 
 No. Income verification, credit, collateral, deposit, reserves and lender policy also matter.
 
+## Useful next tools
+
+- [Loan Calculator](/tools/finance/loan-calculator/) — Payment, interest and payoff for any personal or business loan.
+- [Mortgage Calculator](/tools/realestate/mortgage-calculator/) — Monthly payment, total interest and full amortisation schedule.
+- [50/30/20 Budget Calculator](/tools/finance/budget-calculator/) — Split take-home pay into needs, wants and savings.
+- [Credit Card Payoff](/tools/finance/credit-card-payoff/) — How long to clear a balance, and what extra payments save.
+- [Percentage Calculator](/tools/everyday/percentage-calculator/) — Percent of, is-what-percent, and percentage change.
+
 This is an educational estimate, not lending advice. Use the applicant criteria supplied by the relevant lender for an official assessment.
+

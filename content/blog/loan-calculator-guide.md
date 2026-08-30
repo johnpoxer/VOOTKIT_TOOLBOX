@@ -1,5 +1,5 @@
 ---
-title: "How to Calculate Loan Payments, Total Interest and the True Cost of Borrowing"
+title: "How to Calculate Loan Payments, Interest and Borrowing Cost"
 date: "2026-08-27"
 description: "Learn how loan payments are calculated, compare terms and interest rates, and understand total borrowing cost before accepting a personal or business loan."
 thumbnail: "/assets/blog/loan-calculator-guide.jpg"
@@ -67,5 +67,13 @@ No. It is an educational estimate. Approval, rate, fees and repayment rules come
 ### What should I verify before signing?
 
 Confirm the principal, APR, payment amount, number of payments, all compulsory fees, late-payment terms and early-repayment conditions in the lender's disclosure.
+
+## Useful next tools
+
+- [Auto Loan Calculator](/tools/finance/auto-loan-calculator/) — Car payment, total cost and interest by term and rate.
+- [Mortgage Calculator](/tools/realestate/mortgage-calculator/) — Monthly payment, total interest and full amortisation schedule.
+- [Refinance Break-Even](/tools/realestate/refinance-calculator/) — See how many months until refinancing pays for itself.
+- [Credit Card Payoff](/tools/finance/credit-card-payoff/) — How long to clear a balance, and what extra payments save.
+- [50/30/20 Budget Calculator](/tools/finance/budget-calculator/) — Split take-home pay into needs, wants and savings.
 
 Financial calculations are estimates, not financial advice. Use the official loan agreement for a binding repayment schedule.

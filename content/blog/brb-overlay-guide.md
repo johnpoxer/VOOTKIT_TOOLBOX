@@ -1,7 +1,7 @@
 ---
 title: "How to Create a BRB Screen and Countdown Overlay"
 date: "2026-08-28"
-description: "Practical guidance for using Vootkit's BRB & Countdown Overlay, understanding its settings, avoiding common mistakes and producing a result suited to your platform."
+description: "Creates a \"be right back\" card to switch to during a break — sized for a stream canvas and ready as an OBS source."
 thumbnail: "/assets/blog/brb-overlay-guide.jpg"
 coverAlt: "Editorial illustration representing the BRB & Countdown Overlay workflow."
 author: "The Vootkit team"
@@ -18,7 +18,7 @@ Creates a "be right back" card to switch to during a break — sized for a strea
 
 Keeping the stream running matters more than the design: the platform keeps you in the live directory, chat keeps talking, and returning viewers find you where they left you.
 
-The [BRB & Countdown Overlay](/tools/video/brb-overlay/) runs as a focused Vootkit workspace. Start with a source you are allowed to use, keep an untouched original, and check the exported result on the platform where it will be published. A successful export can still be unsuitable when a platform imposes its own duration, size, codec or layout rules.
+Open the [BRB & Countdown Overlay](/tools/video/brb-overlay/) and follow the settings and checks below.
 
 ## Use and setup
 
@@ -42,16 +42,6 @@ The [BRB & Countdown Overlay](/tools/video/brb-overlay/) runs as a focused Vootk
 
 Mute the mic first, every time. The scene changes instantly and the microphone does not — the gap between switching and remembering is exactly long enough to broadcast something you did not intend to. Make muting the first half of the hotkey, not an afterthought.
 
-Do not judge only from the download completing. Inspect the beginning, middle and end; check sound where relevant; confirm that text and faces are not cropped; and make sure the filename and format are clear before deleting the original.
-
-## Common mistakes to avoid
-
-- Using a low-quality source and expecting conversion to recreate missing detail.
-- Selecting settings for one platform without checking the destination's current requirements.
-- Reprocessing the same compressed file repeatedly, which can compound quality loss.
-- Publishing without checking the final duration, dimensions, sound and file size.
-- Assuming an estimate or preview is identical to the destination platform's final processing.
-
 ## Common questions
 
 ### Why not just end the stream?
@@ -72,10 +62,9 @@ Only if you leave it live. Switching scenes does not mute anything, and this is 
 
 ## Useful next tools
 
-- [Starting Soon Screen](/tools/video/starting-soon-screen/)
-- [Stream Overlay Creator](/tools/video/stream-overlay-creator/)
-- [Stream Alert Creator](/tools/video/stream-alert-creator/)
-- [Mute Video](/tools/video/mute-video/)
+- [Starting Soon Screen](/tools/video/starting-soon-screen/) — Make a starting-soon screen with countdown for OBS.
+- [Stream Overlay Creator](/tools/video/stream-overlay-creator/) — Design a transparent webcam overlay for OBS.
+- [Stream Alert Creator](/tools/video/stream-alert-creator/) — Design follower, sub and donation alert graphics.
+- [Mute Video](/tools/video/mute-video/) — Remove the audio track to avoid copyright strikes.
 
 Vootkit provides a browser tool and educational guidance, not a guarantee that every browser, device or third-party platform will accept every file. Platform specifications can change, so verify important publishing requirements with the destination service.
-

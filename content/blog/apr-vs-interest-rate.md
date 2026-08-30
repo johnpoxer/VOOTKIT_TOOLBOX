@@ -1,7 +1,7 @@
 ---
 title: "APR vs Interest Rate: What Each One Actually Tells You"
 date: "2026-08-05"
-description: "APR folds fees into a single comparable number — but it assumes you keep the loan for the full term, and almost nobody does. Where APR helps, where it misleads, and the break-even month that decides it."
+description: "Learn how APR combines interest and fees, when it gives a fair loan comparison, and why the break-even month can matter more than the headline rate."
 thumbnail: "/assets/blog/apr-vs-interest-rate.jpg"
 author: "Mr John Prosper"
 ---

@@ -1,7 +1,7 @@
 ---
 title: "The Interest Rate Trap: Why 3.3% Costs €1,845 on One Loan and €152,086 on Another"
 date: "2026-07-31"
-description: "The same rate difference produces wildly different totals depending on size and term. Here's the arithmetic, worked through on a car loan, a personal loan and a mortgage."
+description: "See how the same interest-rate difference changes total cost across a car loan, personal loan and mortgage of different sizes and terms."
 thumbnail: "/assets/blog/interest-rate-trap.jpg"
 author: "Mr John Prosper"
 ---
