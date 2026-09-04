@@ -72,14 +72,13 @@
   }
 
   function loadNetwork() {
-    if (!doc || doc.querySelector('script[data-vk-ad-loaded]')) return;
+    if (!doc || doc.querySelector('script[src*="pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"]')) return;
     var placeholder = doc.querySelector('script[data-vk-ad-src]');
     if (!placeholder) return;
     var script = doc.createElement('script');
     script.async = true;
     script.src = placeholder.getAttribute('data-vk-ad-src');
     script.crossOrigin = 'anonymous';
-    script.setAttribute('data-vk-ad-loaded', '1');
     doc.head.appendChild(script);
   }
 
