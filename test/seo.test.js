@@ -678,6 +678,32 @@ console.log(`seo + ezoic verification: ${pass} total assertions passed`);
 }
 console.log(`seo + newsletter placement: ${pass} total assertions passed`);
 
+/* The guide homepage is an editorial archive, not a five-row tool menu. */
+{
+  const fsB = require("fs"), pathB = require("path");
+  const rootB = pathB.join(__dirname, "..");
+  const index = fsB.readFileSync(pathB.join(rootB, "blog", "index.html"), "utf8");
+  const archive = (index.match(/<section class="br-section br-archive"[\s\S]*?<section class="br-section br-topics">/) || [""])[0];
+  const sourceGuides = fsB.readdirSync(pathB.join(rootB, "content", "blog"))
+    .filter((name) => name.endsWith(".md") && name !== "README.md").length;
+  const archiveCards = (archive.match(/br-archive-story/g) || []).length;
+  const categoryCounts = [...index.matchAll(/data-blog-filter="([^"]+)"[^>]*>[\s\S]*?<b>(\d+)<\/b>/g)]
+    .filter((match) => match[1] !== "all")
+    .map((match) => ({ slug: match[1], count: Number(match[2]) }));
+  ok(/id="all-guides"/.test(index), "guide homepage exposes a stable all-guides destination");
+  ok(/href="#all-guides"[^>]*>See all guides/.test(index), "See all guides links to the archive instead of reloading the page top");
+  ok(!/href="\/blog\/"[^>]*>See all/.test(index), "guide homepage has no self-reloading See all link");
+  eq(archiveCards, sourceGuides, "the editorial archive renders every published guide");
+  eq((archive.match(/class="br-story-img"/g) || []).length, archiveCards, "every archive card uses its guide cover instead of a generic tool badge");
+  ok(/data-blog-grid data-page-size="12"/.test(archive), "the archive starts with a mobile-friendly page of guides");
+  ok(/data-blog-more/.test(archive), "the archive provides an accessible load-more control");
+  categoryCounts.forEach(({ slug, count }) => {
+    const actual = (archive.match(new RegExp(`data-category="${slug}"`, "g")) || []).length;
+    eq(actual, count, `${slug} category count matches the guides its filter returns`);
+  });
+}
+console.log(`seo + editorial guide archive: ${pass} total assertions passed`);
+
 /* ---------------------------------------------------------------------------
  * EVERY TOOL HAS ITS OWN ICON
  *

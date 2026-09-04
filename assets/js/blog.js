@@ -88,6 +88,9 @@
   var sort = page.querySelector('[data-blog-sort]');
   var count = page.querySelector('[data-blog-count]');
   var empty = page.querySelector('[data-blog-empty]');
+  var more = page.querySelector('[data-blog-more]');
+  var pageSize = grid ? parseInt(grid.getAttribute('data-page-size') || '0', 10) : 0;
+  var visibleLimit = pageSize || cards.length;
   var currentFilter = page.getAttribute('data-current-filter') || 'all';
   var initialFilter = currentFilter;
 
@@ -98,9 +101,9 @@
 
   function matches(card) {
     var q = search ? String(search.value || '').trim().toLowerCase() : '';
-    var filters = String(card.getAttribute('data-filters') || '').split(/\s+/);
+    var category = String(card.getAttribute('data-category') || '');
     var text = String(card.getAttribute('data-search') || '').toLowerCase();
-    if (currentFilter !== 'all' && filters.indexOf(currentFilter) === -1) return false;
+    if (currentFilter !== 'all' && category !== currentFilter) return false;
     if (q && text.indexOf(q) === -1) return false;
     return true;
   }
@@ -111,32 +114,45 @@
       return sort && sort.value === 'oldest' ? cardDate(a) - cardDate(b) : cardDate(b) - cardDate(a);
     });
     ordered.forEach(function (card) { grid.appendChild(card); });
-    var shown = 0;
-    cards.forEach(function (card) {
+    var matched = 0;
+    ordered.forEach(function (card) {
       var ok = matches(card);
-      card.hidden = !ok;
-      if (ok) shown++;
+      if (ok) matched++;
+      card.hidden = !ok || matched > visibleLimit;
     });
-    if (count) count.textContent = shown + (shown === 1 ? ' article' : ' articles');
-    if (empty) empty.hidden = shown !== 0;
+    if (count) count.textContent = matched + (matched === 1 ? ' guide' : ' guides');
+    if (empty) empty.hidden = matched !== 0;
+    if (more) {
+      more.hidden = matched <= visibleLimit;
+      more.textContent = matched > visibleLimit ? 'Load more guides (' + (matched - visibleLimit) + ' remaining)' : 'All guides loaded';
+    }
   }
 
-  if (search) search.addEventListener('input', render);
-  if (sort) sort.addEventListener('change', render);
+  if (search) search.addEventListener('input', function () { visibleLimit = pageSize || cards.length; render(); });
+  if (sort) sort.addEventListener('change', function () { visibleLimit = pageSize || cards.length; render(); });
+  if (more) more.addEventListener('click', function () {
+    visibleLimit += pageSize || cards.length;
+    render();
+  });
 
   Array.prototype.slice.call(page.querySelectorAll('[data-blog-filter]')).forEach(function (chip) {
     chip.addEventListener('click', function (ev) {
       if (initialFilter !== 'all') return;
       ev.preventDefault();
       currentFilter = chip.getAttribute('data-blog-filter') || 'all';
+      visibleLimit = pageSize || cards.length;
       Array.prototype.slice.call(page.querySelectorAll('[data-blog-filter]')).forEach(function (x) {
-        x.classList.toggle('is-active', x === chip);
+        x.classList.toggle('is-on', x === chip);
+        if (x === chip) x.setAttribute('aria-current', 'true');
+        else x.removeAttribute('aria-current');
       });
       render();
       try {
         history.replaceState(null, '', currentFilter === 'all' ? '/blog/' : '/blog/#' + currentFilter);
         if (window.VKTrack) window.VKTrack.send('blog_filter', { category: currentFilter });
       } catch (e) {}
+      var archive = document.getElementById('all-guides');
+      if (archive && archive.scrollIntoView) archive.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   });
 
@@ -146,7 +162,9 @@
     if (target) {
       currentFilter = h;
       Array.prototype.slice.call(page.querySelectorAll('[data-blog-filter]')).forEach(function (x) {
-        x.classList.toggle('is-active', x === target);
+        x.classList.toggle('is-on', x === target);
+        if (x === target) x.setAttribute('aria-current', 'true');
+        else x.removeAttribute('aria-current');
       });
     }
   }

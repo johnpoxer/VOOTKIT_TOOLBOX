@@ -2657,40 +2657,53 @@ function blogReferenceIndex(posts) {
   const url = SITE + "/blog/";
   const bySlug = (slug) => posts.find((p) => p.slug === slug);
   const feature = bySlug("reduce-pdf-file-size") || posts[0];
-  const popular = [bySlug("which-image-format-should-i-use"), bySlug("interest-rate-trap-loan-cost"), bySlug("compress-video-for-discord")].filter(Boolean);
-  const latest = posts.filter((p) => !popular.includes(p) && (!feature || p.slug !== feature.slug)).slice(0, 5);
+  const editors = [bySlug("which-image-format-should-i-use"), bySlug("interest-rate-trap-loan-cost"), bySlug("compress-video-for-discord")].filter(Boolean);
+  const archive = posts.slice().sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
   const ld = { "@context": "https://schema.org", "@type": "Blog", name: "Vootkit Guides", url,
     description: "Practical guides, tutorials and workflows for Vootkit tools.",
     blogPost: posts.slice(0, 20).map((p) => ({ "@type": "BlogPosting", headline: p.title, url: SITE + "/blog/" + p.slug + "/", datePublished: p.date })) };
-  const chip = (slug, label, mark) => `<a class="br-chip${slug === "all" ? " is-on" : ""}" href="${slug === "all" ? "/blog/" : "/blog/" + slug + "/"}"><span>${mark}</span>${esc(label)}</a>`;
+  const categoryCounts = new Map();
+  posts.forEach((p) => categoryCounts.set(p.categorySlug, (categoryCounts.get(p.categorySlug) || 0) + 1));
+  const navCategories = BLOG_CATEGORY_ORDER.filter((slug) => categoryCounts.has(slug));
+  const chip = (slug) => {
+    const info = BLOG_CATEGORY_INFO[slug] || { label: slug };
+    return `<a class="br-chip${slug === "all" ? " is-on" : ""}" href="${slug === "all" ? "/blog/" : "/blog/" + slug + "/"}" data-blog-filter="${esc(slug)}"${slug === "all" ? ' aria-current="true"' : ""}><span>${esc(info.label)}</span>${slug === "all" ? `<b>${posts.length}</b>` : `<b>${categoryCounts.get(slug) || 0}</b>`}</a>`;
+  };
   const toolHref = (p) => {
     const id = p && p.relatedTools && p.relatedTools[0], t = id && VK.find(id);
     return t ? `/tools/${t.cat}/${t.id}/` : "/tools/";
   };
-  const compact = (p, i) => `<a class="br-pop" href="/blog/${esc(p.slug)}/">
-    ${blogPicture(p, "br-pop-img", "lazy")}
-    <span><small>${esc(p.category)}</small><strong>${esc(p.title)}</strong><em>◷ ${p.minutes} min read</em></span>
-    <b>Open guide&nbsp; ›</b>
-  </a>`;
-  const latestRow = (p, i) => `<article class="br-latest-row" data-blog-card data-title="${esc(p.title)}" data-date="${esc(p.date || "")}" data-filters="${esc(p.filters.join(" "))}" data-search="${esc([p.title,p.description,p.category].concat(p.tags).join(" ").toLowerCase())}" data-index="${i}"><a href="/blog/${esc(p.slug)}/">${toolIconHtml(VK.find((p.relatedTools || [])[0]) || { id: "word-counter", cat: "text", name: p.category })}<span><strong>${esc(p.title)}</strong><small>${p.minutes} min read</small></span><b>›</b></a></article>`;
+  const story = (p, i, cls) => `<article class="br-story ${cls || ""}" data-blog-card data-title="${esc(p.title)}" data-date="${esc(p.date || "")}" data-category="${esc(p.categorySlug)}" data-filters="${esc(p.filters.join(" "))}" data-search="${esc([p.title,p.description,p.category].concat(p.tags).join(" ").toLowerCase())}" data-index="${i}">
+    <a class="br-story-media" href="/blog/${esc(p.slug)}/">${blogPicture(p, "br-story-img", i < 4 ? "eager" : "lazy")}</a>
+    <div class="br-story-copy"><a class="br-story-category" href="/blog/${esc(p.categorySlug)}/">${esc(p.category)}</a><h3><a href="/blog/${esc(p.slug)}/">${esc(p.title)}</a></h3><p>${esc(p.description)}</p><div class="br-story-meta">${p.date ? `<time datetime="${esc(p.date)}">${esc(fmtDate(p.date))}</time><span>·</span>` : ""}<span>${p.minutes} min read</span></div></div>
+  </article>`;
+  const topicLinks = navCategories.slice(0, 8).map((slug) => {
+    const info = BLOG_CATEGORY_INFO[slug] || { label: slug, intro: "Practical Vootkit guides." };
+    return `<a class="br-topic" href="/blog/${esc(slug)}/"><span>${esc(info.label)}</span><b>${categoryCounts.get(slug)} guides</b><small>${esc(info.intro)}</small><i aria-hidden="true">→</i></a>`;
+  }).join("");
   return head({ depth: 1, url, ads: true, ld, bodyClass: "blog-ref", title: "Vootkit Guides - Practical tutorials and workflows", ogTitle: "Vootkit Guides", desc: "Useful Vootkit guides, practical tutorials and workflows for PDF, image, video, business, finance and developer tools." }) +
 `<div class="br-page" data-blog-page data-current-filter="all">
-  <section class="wrap br-hero">
-    <span class="eyebrow">Vootkit Guides</span>
-    <h1>Useful knowledge.<br>Practical results.</h1>
-    <p>Guides, ideas and workflows that help you finish real tasks.</p>
-    <label class="br-search"><span aria-hidden="true">⌕</span><input id="blog-search" type="search" placeholder="Search guides..." data-blog-search aria-label="Search guides"></label>
-    <div class="br-chips">${chip("all","All","✦")}${chip("pdf","PDF","▧")}${chip("images","Images","▣")}${chip("video","Video","▤")}${chip("business","Business","♙")}${chip("finance","Finance","◉")}${chip("developer","Developer","⌘")}</div>
-  </section>
+  <header class="br-masthead wrap">
+    <p>Tools explained clearly</p>
+    <h1>Vootkit Guides</h1>
+    <p>Practical answers, careful calculations and step-by-step help for the work you need to finish.</p>
+  </header>
+  <nav class="br-section-nav" aria-label="Guide categories"><div class="wrap br-chips">${chip("all")}${navCategories.map(chip).join("")}</div></nav>
   <main class="wrap br-main">
     ${feature ? `<article class="br-feature">
       ${blogPicture(feature, "br-feature-img", "eager")}
-      <div><span class="br-label">${esc(feature.category)}</span><h2>${esc(feature.title)}</h2><p>${esc(feature.description)}</p><small>◷ ${feature.minutes} min read</small><a class="btn btn-primary" href="/blog/${esc(feature.slug)}/">Read guide</a><a class="br-tool-link" href="${toolHref(feature)}">Open ${esc((VK.find((feature.relatedTools || [])[0]) || {name:"Vootkit tool"}).name)} <b>›</b></a></div>
+      <div><span class="br-kicker">Featured guide</span><a class="br-label" href="/blog/${esc(feature.categorySlug)}/">${esc(feature.category)}</a><h2><a href="/blog/${esc(feature.slug)}/">${esc(feature.title)}</a></h2><p>${esc(feature.description)}</p><div class="br-feature-meta"><span>${feature.minutes} min read</span>${feature.date ? `<span>·</span><time datetime="${esc(feature.date)}">${esc(fmtDate(feature.date))}</time>` : ""}</div><div class="br-feature-actions"><a class="btn btn-primary" href="/blog/${esc(feature.slug)}/">Read the guide</a><a class="br-tool-link" href="${toolHref(feature)}">Use ${esc((VK.find((feature.relatedTools || [])[0]) || {name:"Vootkit tool"}).name)} <b>→</b></a></div></div>
     </article>` : ""}
-    <section class="br-section"><header><h2>Popular this week</h2><a href="#latest-guides">See all</a></header><div class="br-pop-list">${popular.map(compact).join("")}</div></section>
-    <section class="br-section" id="latest-guides"><header><h2>Latest guides</h2><a href="/blog/">See all</a></header><div class="br-latest" data-blog-grid>${latest.map(latestRow).join("")}</div><div class="bl-empty" data-blog-empty hidden><h2>No guides found</h2><p>Try another search.</p></div></section>
+    <section class="br-section br-editors"><header><div><span class="br-overline">Selected by Vootkit</span><h2>Editor’s picks</h2></div><a href="#all-guides">See all guides <span aria-hidden="true">↓</span></a></header><div class="br-editor-grid">${editors.map((p, i) => story(p, i, "br-editor-story")).join("")}</div></section>
     ${adUnit("inContent")}
-    <section class="br-section br-goals"><header><h2>Browse by goal</h2></header><div><a href="/blog/pdf/"><span>↗</span><b>Share smaller files</b></a><a href="/blog/business/"><span>▧</span><b>Prepare business documents</b></a><a href="/blog/images/"><span>▣</span><b>Improve photos</b></a><a href="/blog/finance/"><span>◫</span><b>Understand your finances</b></a></div></section>
+    <section class="br-section br-archive" id="all-guides" tabindex="-1">
+      <header><div><span class="br-overline">The complete library</span><h2>All guides</h2><p><span data-blog-count>${archive.length} guides</span> written to help you get a dependable result.</p></div></header>
+      <div class="br-archive-tools"><label class="br-search"><span aria-hidden="true">⌕</span><input id="blog-search" type="search" placeholder="Search every guide" data-blog-search aria-label="Search every guide"></label><label class="br-sort-label"><span>Sort</span><select data-blog-sort aria-label="Sort guides"><option value="latest">Newest first</option><option value="oldest">Oldest first</option></select></label></div>
+      <div class="br-archive-grid" data-blog-grid data-page-size="12">${archive.map((p, i) => story(p, i, "br-archive-story")).join("")}</div>
+      <div class="bl-empty" data-blog-empty hidden><h2>No guides found</h2><p>Try a different search or category.</p></div>
+      <div class="br-load-wrap"><button class="btn br-load-more" type="button" data-blog-more>Load more guides</button></div>
+    </section>
+    <section class="br-section br-topics"><header><div><span class="br-overline">Explore the library</span><h2>Browse by topic</h2></div></header><div class="br-topic-grid">${topicLinks}</div></section>
     <section class="br-newsletter"><img src="/assets/blog/nl-band.webp" alt="" width="260" height="180" loading="lazy"><div><h2>One useful workflow every week.</h2><p>Handpicked guides, practical tips and time-saving workflows delivered to your inbox.</p><div data-newsletter="blog_index" data-nl-compact data-nl-placeholder="Email address" data-nl-button="Subscribe"></div></div></section>
   </main>
   <script type="application/json" id="blog-data">${blogJsonData(posts)}</script>
