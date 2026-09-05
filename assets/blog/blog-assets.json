@@ -1102,6 +1102,985 @@
       "sourcePlatform": "Vootkit original vector artwork",
       "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
       "alt": "Editorial illustration representing the Hourly Wage Calculator workflow."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "quote-generator-guide",
+      "localFiles": [
+        "/assets/blog/quote-generator-guide.jpg",
+        "/assets/blog/quote-generator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the Quote & Estimate guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "receipt-generator-guide",
+      "localFiles": [
+        "/assets/blog/receipt-generator-guide.jpg",
+        "/assets/blog/receipt-generator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the Receipt Generator guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "proposal-generator-guide",
+      "localFiles": [
+        "/assets/blog/proposal-generator-guide.jpg",
+        "/assets/blog/proposal-generator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the Proposal Generator guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "contract-generator-guide",
+      "localFiles": [
+        "/assets/blog/contract-generator-guide.jpg",
+        "/assets/blog/contract-generator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the Contract Generator guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "resume-builder-guide",
+      "localFiles": [
+        "/assets/blog/resume-builder-guide.jpg",
+        "/assets/blog/resume-builder-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the Resume / CV Builder guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "swot-generator-guide",
+      "localFiles": [
+        "/assets/blog/swot-generator-guide.jpg",
+        "/assets/blog/swot-generator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the SWOT Analysis Maker guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "landing-page-generator-guide",
+      "localFiles": [
+        "/assets/blog/landing-page-generator-guide.jpg",
+        "/assets/blog/landing-page-generator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the Landing Page Generator guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "business-name-generator-guide",
+      "localFiles": [
+        "/assets/blog/business-name-generator-guide.jpg",
+        "/assets/blog/business-name-generator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the Business Name Generator guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "inventory-tracker-guide",
+      "localFiles": [
+        "/assets/blog/inventory-tracker-guide.jpg",
+        "/assets/blog/inventory-tracker-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the Inventory Tracker guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "business-card-maker-guide",
+      "localFiles": [
+        "/assets/blog/business-card-maker-guide.jpg",
+        "/assets/blog/business-card-maker-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the Business Card Maker guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "qr-business-card-guide",
+      "localFiles": [
+        "/assets/blog/qr-business-card-guide.jpg",
+        "/assets/blog/qr-business-card-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the QR Business Card (vCard) guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "hourly-rate-guide",
+      "localFiles": [
+        "/assets/blog/hourly-rate-guide.jpg",
+        "/assets/blog/hourly-rate-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the Hourly Rate Calculator guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "amazon-fba-calculator-guide",
+      "localFiles": [
+        "/assets/blog/amazon-fba-calculator-guide.jpg",
+        "/assets/blog/amazon-fba-calculator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the Amazon FBA Profit Calculator guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "etsy-fee-calculator-guide",
+      "localFiles": [
+        "/assets/blog/etsy-fee-calculator-guide.jpg",
+        "/assets/blog/etsy-fee-calculator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the Etsy Fee & Profit Calculator guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "stripe-fee-calculator-guide",
+      "localFiles": [
+        "/assets/blog/stripe-fee-calculator-guide.jpg",
+        "/assets/blog/stripe-fee-calculator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the Stripe Fee Calculator guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "paypal-fee-calculator-guide",
+      "localFiles": [
+        "/assets/blog/paypal-fee-calculator-guide.jpg",
+        "/assets/blog/paypal-fee-calculator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the PayPal Fee Calculator guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "roas-calculator-guide",
+      "localFiles": [
+        "/assets/blog/roas-calculator-guide.jpg",
+        "/assets/blog/roas-calculator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the ROAS Calculator guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "cac-ltv-calculator-guide",
+      "localFiles": [
+        "/assets/blog/cac-ltv-calculator-guide.jpg",
+        "/assets/blog/cac-ltv-calculator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the CAC & LTV Calculator guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "profit-margin-guide",
+      "localFiles": [
+        "/assets/blog/profit-margin-guide.jpg",
+        "/assets/blog/profit-margin-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the Profit Margin guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "break-even-guide",
+      "localFiles": [
+        "/assets/blog/break-even-guide.jpg",
+        "/assets/blog/break-even-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the Break-Even Point guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "late-fee-guide",
+      "localFiles": [
+        "/assets/blog/late-fee-guide.jpg",
+        "/assets/blog/late-fee-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the Late Fee Calculator guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "vat-gst-guide",
+      "localFiles": [
+        "/assets/blog/vat-gst-guide.jpg",
+        "/assets/blog/vat-gst-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the VAT / GST Calculator guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "meta-tag-generator-guide",
+      "localFiles": [
+        "/assets/blog/meta-tag-generator-guide.jpg",
+        "/assets/blog/meta-tag-generator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the Meta Tag Generator guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "serp-preview-guide",
+      "localFiles": [
+        "/assets/blog/serp-preview-guide.jpg",
+        "/assets/blog/serp-preview-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the SERP Snippet Preview guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "og-preview-guide",
+      "localFiles": [
+        "/assets/blog/og-preview-guide.jpg",
+        "/assets/blog/og-preview-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the Social Share Preview guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "robots-generator-guide",
+      "localFiles": [
+        "/assets/blog/robots-generator-guide.jpg",
+        "/assets/blog/robots-generator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the robots.txt Generator guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "sitemap-generator-guide",
+      "localFiles": [
+        "/assets/blog/sitemap-generator-guide.jpg",
+        "/assets/blog/sitemap-generator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the Sitemap Generator guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "schema-generator-guide",
+      "localFiles": [
+        "/assets/blog/schema-generator-guide.jpg",
+        "/assets/blog/schema-generator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the Schema Markup Generator guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "keyword-density-guide",
+      "localFiles": [
+        "/assets/blog/keyword-density-guide.jpg",
+        "/assets/blog/keyword-density-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the Keyword Density guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "slug-generator-guide",
+      "localFiles": [
+        "/assets/blog/slug-generator-guide.jpg",
+        "/assets/blog/slug-generator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the URL Slug Generator guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "utm-builder-guide",
+      "localFiles": [
+        "/assets/blog/utm-builder-guide.jpg",
+        "/assets/blog/utm-builder-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the UTM Link Builder guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "url-shortener-guide",
+      "localFiles": [
+        "/assets/blog/url-shortener-guide.jpg",
+        "/assets/blog/url-shortener-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Custom editorial illustration for the URL Shortener guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "rotate-pdf-guide",
+      "localFiles": [
+        "/assets/blog/rotate-pdf-guide.jpg",
+        "/assets/blog/rotate-pdf-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Rotate PDF guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "delete-pdf-pages-guide",
+      "localFiles": [
+        "/assets/blog/delete-pdf-pages-guide.jpg",
+        "/assets/blog/delete-pdf-pages-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Delete PDF Pages guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "reorder-pdf-guide",
+      "localFiles": [
+        "/assets/blog/reorder-pdf-guide.jpg",
+        "/assets/blog/reorder-pdf-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Organise PDF Pages guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "pdf-to-jpg-guide",
+      "localFiles": [
+        "/assets/blog/pdf-to-jpg-guide.jpg",
+        "/assets/blog/pdf-to-jpg-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the PDF to JPG guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "pdf-to-text-guide",
+      "localFiles": [
+        "/assets/blog/pdf-to-text-guide.jpg",
+        "/assets/blog/pdf-to-text-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the PDF Text Extractor guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "pdf-page-numbers-guide",
+      "localFiles": [
+        "/assets/blog/pdf-page-numbers-guide.jpg",
+        "/assets/blog/pdf-page-numbers-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Add Page Numbers guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "pdf-watermark-guide",
+      "localFiles": [
+        "/assets/blog/pdf-watermark-guide.jpg",
+        "/assets/blog/pdf-watermark-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the PDF Watermark guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "pdf-redact-guide",
+      "localFiles": [
+        "/assets/blog/pdf-redact-guide.jpg",
+        "/assets/blog/pdf-redact-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Redact PDF guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "compare-pdf-guide",
+      "localFiles": [
+        "/assets/blog/compare-pdf-guide.jpg",
+        "/assets/blog/compare-pdf-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Compare PDFs guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "text-to-pdf-guide",
+      "localFiles": [
+        "/assets/blog/text-to-pdf-guide.jpg",
+        "/assets/blog/text-to-pdf-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Text to PDF guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "markdown-to-pdf-guide",
+      "localFiles": [
+        "/assets/blog/markdown-to-pdf-guide.jpg",
+        "/assets/blog/markdown-to-pdf-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Markdown to PDF guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "crop-pdf-guide",
+      "localFiles": [
+        "/assets/blog/crop-pdf-guide.jpg",
+        "/assets/blog/crop-pdf-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Crop PDF guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "duplicate-pdf-pages-guide",
+      "localFiles": [
+        "/assets/blog/duplicate-pdf-pages-guide.jpg",
+        "/assets/blog/duplicate-pdf-pages-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Duplicate PDF Pages guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "png-to-pdf-guide",
+      "localFiles": [
+        "/assets/blog/png-to-pdf-guide.jpg",
+        "/assets/blog/png-to-pdf-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the PNG to PDF guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "webp-to-pdf-guide",
+      "localFiles": [
+        "/assets/blog/webp-to-pdf-guide.jpg",
+        "/assets/blog/webp-to-pdf-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the WebP to PDF guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "pdf-to-png-guide",
+      "localFiles": [
+        "/assets/blog/pdf-to-png-guide.jpg",
+        "/assets/blog/pdf-to-png-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the PDF to PNG guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "pdf-to-webp-guide",
+      "localFiles": [
+        "/assets/blog/pdf-to-webp-guide.jpg",
+        "/assets/blog/pdf-to-webp-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the PDF to WebP guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "pdf-creator-guide",
+      "localFiles": [
+        "/assets/blog/pdf-creator-guide.jpg",
+        "/assets/blog/pdf-creator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the PDF Creator guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "extract-pdf-pages-guide",
+      "localFiles": [
+        "/assets/blog/extract-pdf-pages-guide.jpg",
+        "/assets/blog/extract-pdf-pages-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Extract PDF Pages guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "remove-pdf-password-guide",
+      "localFiles": [
+        "/assets/blog/remove-pdf-password-guide.jpg",
+        "/assets/blog/remove-pdf-password-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Remove PDF Password guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "pdf-repair-guide",
+      "localFiles": [
+        "/assets/blog/pdf-repair-guide.jpg",
+        "/assets/blog/pdf-repair-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Repair PDF guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "scan-to-pdf-guide",
+      "localFiles": [
+        "/assets/blog/scan-to-pdf-guide.jpg",
+        "/assets/blog/scan-to-pdf-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Scan to PDF guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "pdf-signature-guide",
+      "localFiles": [
+        "/assets/blog/pdf-signature-guide.jpg",
+        "/assets/blog/pdf-signature-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Sign PDF guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "pdf-form-filler-guide",
+      "localFiles": [
+        "/assets/blog/pdf-form-filler-guide.jpg",
+        "/assets/blog/pdf-form-filler-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the PDF Form Filler guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "html-to-pdf-guide",
+      "localFiles": [
+        "/assets/blog/html-to-pdf-guide.jpg",
+        "/assets/blog/html-to-pdf-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the HTML to PDF guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "word-to-pdf-guide",
+      "localFiles": [
+        "/assets/blog/word-to-pdf-guide.jpg",
+        "/assets/blog/word-to-pdf-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Word to PDF guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "excel-to-pdf-guide",
+      "localFiles": [
+        "/assets/blog/excel-to-pdf-guide.jpg",
+        "/assets/blog/excel-to-pdf-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Excel to PDF guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "pdf-ocr-guide",
+      "localFiles": [
+        "/assets/blog/pdf-ocr-guide.jpg",
+        "/assets/blog/pdf-ocr-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the PDF & Image OCR guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "heic-converter-guide",
+      "localFiles": [
+        "/assets/blog/heic-converter-guide.jpg",
+        "/assets/blog/heic-converter-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the HEIC Converter guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "crop-image-guide",
+      "localFiles": [
+        "/assets/blog/crop-image-guide.jpg",
+        "/assets/blog/crop-image-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Crop Image guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "bulk-resize-guide",
+      "localFiles": [
+        "/assets/blog/bulk-resize-guide.jpg",
+        "/assets/blog/bulk-resize-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Bulk Image Resizer guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "favicon-generator-guide",
+      "localFiles": [
+        "/assets/blog/favicon-generator-guide.jpg",
+        "/assets/blog/favicon-generator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Favicon Generator guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "image-watermark-guide",
+      "localFiles": [
+        "/assets/blog/image-watermark-guide.jpg",
+        "/assets/blog/image-watermark-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Image Watermark guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "color-from-image-guide",
+      "localFiles": [
+        "/assets/blog/color-from-image-guide.jpg",
+        "/assets/blog/color-from-image-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Image Palette Extractor guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "meme-generator-guide",
+      "localFiles": [
+        "/assets/blog/meme-generator-guide.jpg",
+        "/assets/blog/meme-generator-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Meme Generator guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "flip-image-guide",
+      "localFiles": [
+        "/assets/blog/flip-image-guide.jpg",
+        "/assets/blog/flip-image-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Flip Image guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "rotate-image-guide",
+      "localFiles": [
+        "/assets/blog/rotate-image-guide.jpg",
+        "/assets/blog/rotate-image-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Rotate Image guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "circle-crop-guide",
+      "localFiles": [
+        "/assets/blog/circle-crop-guide.jpg",
+        "/assets/blog/circle-crop-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Round Profile Picture guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "grayscale-image-guide",
+      "localFiles": [
+        "/assets/blog/grayscale-image-guide.jpg",
+        "/assets/blog/grayscale-image-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Black & White / Sepia guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "png-to-jpg-guide",
+      "localFiles": [
+        "/assets/blog/png-to-jpg-guide.jpg",
+        "/assets/blog/png-to-jpg-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the PNG to JPG guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "jpg-to-png-guide",
+      "localFiles": [
+        "/assets/blog/jpg-to-png-guide.jpg",
+        "/assets/blog/jpg-to-png-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the JPG to PNG guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "image-blur-guide",
+      "localFiles": [
+        "/assets/blog/image-blur-guide.jpg",
+        "/assets/blog/image-blur-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Image Blur Tool guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "image-brightness-guide",
+      "localFiles": [
+        "/assets/blog/image-brightness-guide.jpg",
+        "/assets/blog/image-brightness-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Brightness & Contrast guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "round-corners-guide",
+      "localFiles": [
+        "/assets/blog/round-corners-guide.jpg",
+        "/assets/blog/round-corners-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Rounded Corners guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "jpg-to-webp-guide",
+      "localFiles": [
+        "/assets/blog/jpg-to-webp-guide.jpg",
+        "/assets/blog/jpg-to-webp-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the JPG to WebP guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "png-to-webp-guide",
+      "localFiles": [
+        "/assets/blog/png-to-webp-guide.jpg",
+        "/assets/blog/png-to-webp-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the PNG to WebP guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "webp-to-png-guide",
+      "localFiles": [
+        "/assets/blog/webp-to-png-guide.jpg",
+        "/assets/blog/webp-to-png-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the WebP to PNG guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "webp-to-jpg-guide",
+      "localFiles": [
+        "/assets/blog/webp-to-jpg-guide.jpg",
+        "/assets/blog/webp-to-jpg-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the WebP to JPG guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "svg-to-png-guide",
+      "localFiles": [
+        "/assets/blog/svg-to-png-guide.jpg",
+        "/assets/blog/svg-to-png-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the SVG to PNG guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "filter-studio-guide",
+      "localFiles": [
+        "/assets/blog/filter-studio-guide.jpg",
+        "/assets/blog/filter-studio-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Photo Filter Studio guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "image-sharpen-guide",
+      "localFiles": [
+        "/assets/blog/image-sharpen-guide.jpg",
+        "/assets/blog/image-sharpen-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Image Sharpener guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "thumbnail-maker-guide",
+      "localFiles": [
+        "/assets/blog/thumbnail-maker-guide.jpg",
+        "/assets/blog/thumbnail-maker-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Thumbnail Maker guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "social-media-image-guide",
+      "localFiles": [
+        "/assets/blog/social-media-image-guide.jpg",
+        "/assets/blog/social-media-image-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Social Media Image Sizer guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "passport-photo-maker-guide",
+      "localFiles": [
+        "/assets/blog/passport-photo-maker-guide.jpg",
+        "/assets/blog/passport-photo-maker-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Passport Photo Maker guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "collage-maker-guide",
+      "localFiles": [
+        "/assets/blog/collage-maker-guide.jpg",
+        "/assets/blog/collage-maker-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Collage Maker guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "batch-compress-guide",
+      "localFiles": [
+        "/assets/blog/batch-compress-guide.jpg",
+        "/assets/blog/batch-compress-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Batch Image Compressor guide."
+    },
+    {
+      "section": "blog-article-cover",
+      "articleSlug": "image-to-text-guide",
+      "localFiles": [
+        "/assets/blog/image-to-text-guide.jpg",
+        "/assets/blog/image-to-text-guide.webp"
+      ],
+      "sourcePlatform": "Vootkit original editorial artwork",
+      "sourceLicenseNote": "Original editorial artwork created for Vootkit; no third-party stock asset used.",
+      "alt": "Original editorial cover for the Image to Text (OCR) guide."
     }
   ]
 }

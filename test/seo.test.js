@@ -663,7 +663,7 @@ console.log(`seo + ezoic verification: ${pass} total assertions passed`);
     ok(/assets\/js\/blog\.js/.test(html), "blog post '" + d + "' loads guide interactions");
   });
 
-  ["everyday", "insurance", "tax", "real-estate"].forEach((category) => {
+  ["everyday", "insurance", "tax", "real-estate", "business", "seo"].forEach((category) => {
     const html = read("blog/" + category + "/index.html");
     ok(/class="wrap bl-cat-hero"/.test(html), "the " + category + " guide archive is generated");
   });
@@ -701,8 +701,24 @@ console.log(`seo + newsletter placement: ${pass} total assertions passed`);
     const actual = (archive.match(new RegExp(`data-category="${slug}"`, "g")) || []).length;
     eq(actual, count, `${slug} category count matches the guides its filter returns`);
   });
+  const primaryCategories = new Set([...archive.matchAll(/data-category="([^"]+)"/g)].map((match) => match[1]));
+  primaryCategories.forEach((slug) => {
+    ok(fsB.existsSync(pathB.join(rootB, "blog", slug, "index.html")), `${slug} has a generated category archive`);
+  });
 }
 console.log(`seo + editorial guide archive: ${pass} total assertions passed`);
+
+/* Category archives are pre-filtered at build time. The client-side category
+   check belongs only to the all-guides homepage; applying it again to
+   /blog/guide/ compares "guide" with primary categories such as "pdf" and
+   hides every valid card. */
+{
+  const fsRuntime = require("fs"), pathRuntime = require("path");
+  const blogJs = fsRuntime.readFileSync(pathRuntime.join(__dirname, "..", "assets", "js", "blog.js"), "utf8");
+  ok(/initialFilter === 'all' && currentFilter !== 'all' && category !== currentFilter/.test(blogJs),
+    "blog runtime does not reapply primary-category filtering to pre-filtered archives");
+}
+console.log(`seo + category archive runtime: ${pass} total assertions passed`);
 
 /* ---------------------------------------------------------------------------
  * EVERY TOOL HAS ITS OWN ICON

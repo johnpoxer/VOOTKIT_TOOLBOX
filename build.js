@@ -2256,6 +2256,7 @@ const BLOG_CATEGORY_INFO = {
   tools: { label: "Tools", title: "Tool guides", intro: "How to choose the right Vootkit tool and use it well." },
   productivity: { label: "Productivity", title: "Productivity guides", intro: "Smarter ways to finish file, content and document work faster." },
   business: { label: "Business", title: "Business guides", intro: "Guides for freelancers, small teams and people managing work files." },
+  seo: { label: "SEO & Marketing", title: "SEO and marketing guides", intro: "Practical guidance for search snippets, structured data, campaign links and site discovery." },
   finance: { label: "Finance", title: "Finance guides", intro: "Plain-English finance explainers with calculators and examples." },
   everyday: { label: "Everyday", title: "Everyday tool guides", intro: "Clear guidance for calculations, conversions, timers, codes and practical daily tasks." },
   insurance: { label: "Insurance", title: "Insurance guides", intro: "Educational insurance estimates, trade-offs and questions to check before comparing policies." },
@@ -2270,7 +2271,7 @@ const BLOG_CATEGORY_INFO = {
   video: { label: "Video", title: "Video guides", intro: "Compress, trim and prepare clips for upload, chat and social platforms." },
   updates: { label: "Updates", title: "Vootkit updates", intro: "Product notes and new ways to use the Vootkit toolkit." }
 };
-const BLOG_CATEGORY_ORDER = ["all", "tutorial", "guide", "news", "tools", "productivity", "finance", "tax", "real-estate", "insurance", "everyday", "pdf", "images", "video", "security", "business", "developer", "updates", "education", "travel"];
+const BLOG_CATEGORY_ORDER = ["all", "tutorial", "guide", "news", "tools", "productivity", "finance", "tax", "real-estate", "insurance", "everyday", "pdf", "images", "video", "security", "business", "seo", "developer", "updates", "education", "travel"];
 
 function blogCategoryDepth(current, posts, allPosts) {
   if (current === "all") return "";

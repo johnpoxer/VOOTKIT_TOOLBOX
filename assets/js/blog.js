@@ -103,7 +103,10 @@
     var q = search ? String(search.value || '').trim().toLowerCase() : '';
     var category = String(card.getAttribute('data-category') || '');
     var text = String(card.getAttribute('data-search') || '').toLowerCase();
-    if (currentFilter !== 'all' && category !== currentFilter) return false;
+    /* Category archive pages are already built with only matching posts.
+       Reapplying the homepage's primary-category filter here hid every card
+       on type/tag archives such as /blog/guide/ and /blog/tutorial/. */
+    if (initialFilter === 'all' && currentFilter !== 'all' && category !== currentFilter) return false;
     if (q && text.indexOf(q) === -1) return false;
     return true;
   }
