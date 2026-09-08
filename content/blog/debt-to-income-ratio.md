@@ -110,7 +110,7 @@ Scale matters just as much as the decision to borrow. On $5,000 a month with $80
 
 Same loan, three sizes, three completely different applications. Use the [Loan Calculator](/tools/finance/loan-calculator/) to turn an amount into a monthly payment, then put that payment into the [Debt-to-Income Calculator](/tools/finance/debt-to-income/). Two steps, and it answers the question before a lender does.
 
-For a mortgage, run it through the [Mortgage Calculator](/tools/finance/mortgage-calculator/) first — remember to include property tax and insurance, since the front-end ratio counts them.
+For a mortgage, run it through the [Mortgage Calculator](/tools/realestate/mortgage-calculator/) first — remember to include property tax and insurance, since the front-end ratio counts them.
 
 ## Irregular income makes this harder, not impossible
 

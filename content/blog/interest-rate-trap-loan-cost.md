@@ -107,7 +107,7 @@ Two levers, both real.
 
 **Overpay.** Every extra payment goes straight at the principal, so it removes all the future interest that principal would have generated. On a long mortgage the effect is disproportionate — [Mortgage Payoff](/tools/realestate/mortgage-payoff/) shows what a modest regular overpayment does to the end date.
 
-**Refinance.** Worth it when the interest saved exceeds the cost of switching. That's a break-even, not a feeling: [Refinance Break-Even](/tools/finance/refinance-calculator/) tells you how many months until you're ahead. If you'd move again before then, it isn't worth it.
+**Refinance.** Worth it when the interest saved exceeds the cost of switching. That's a break-even, not a feeling: [Refinance Break-Even](/tools/realestate/refinance-calculator/) tells you how many months until you're ahead. If you'd move again before then, it isn't worth it.
 
 For credit card debt the maths is harsher and the rates are far higher — [Credit Card Payoff](/tools/finance/credit-card-payoff/) shows how long minimum payments actually take, which is usually the number that changes behaviour.
 
@@ -149,9 +149,9 @@ Sometimes. Check what happens when it ends, whether there's a fee to take it, an
 
 - [Loan Calculator](/tools/finance/loan-calculator/) — payment, total repaid, total interest
 - [Auto Loan Calculator](/tools/finance/auto-loan-calculator/) — vehicle terms and deposits
-- [Refinance Break-Even](/tools/finance/refinance-calculator/) — when switching pays for itself
+- [Refinance Break-Even](/tools/realestate/refinance-calculator/) — when switching pays for itself
 - [Credit Card Payoff](/tools/finance/credit-card-payoff/) — the cost of minimum payments
-- [Mortgage Calculator](/tools/finance/mortgage-calculator/) · [Mortgage Payoff](/tools/realestate/mortgage-payoff/)
+- [Mortgage Calculator](/tools/realestate/mortgage-calculator/) · [Mortgage Payoff](/tools/realestate/mortgage-payoff/)
 - [Home Affordability](/tools/realestate/home-affordability/) · [Closing Costs](/tools/realestate/closing-costs/) · [Rent vs Buy](/tools/realestate/rent-vs-buy/)
 - [Take-Home Pay](/tools/tax/paycheck-calculator/) · [50/30/20 Budget](/tools/finance/budget-calculator/)
 

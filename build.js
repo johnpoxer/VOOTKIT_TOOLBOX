@@ -2265,13 +2265,20 @@ const BLOG_CATEGORY_INFO = {
   education: { label: "Education", title: "Education guides", intro: "Study, document and learning workflows for students and teachers." },
   travel: { label: "Travel", title: "Travel guides", intro: "Planning, file and trip tools for travel workflows." },
   developer: { label: "Developer", title: "Developer guides", intro: "Browser utilities, web formats and technical workflows." },
+  accessibility: { label: "Accessibility", title: "Accessibility guides", intro: "Check contrast, headings, image descriptions and captions, and understand what automated checks miss." },
+  privacy: { label: "Privacy", title: "Privacy guides", intro: "Prepare files for sharing, remove exposed details and understand browser processing boundaries." },
+  text: { label: "Text & Writing", title: "Text and writing guides", intro: "Edit, count, compare and prepare writing without losing meaning or formatting." },
+  design: { label: "Design", title: "Design guides", intro: "Build usable colour palettes, gradients and shadows with checks for the finished interface." },
+  data: { label: "Data", title: "Data guides", intro: "Inspect CSV files, convert structured data and make charts with clear labels and reliable values." },
+  health: { label: "Health & Fitness", title: "Health calculator guides", intro: "Understand calculator inputs, formulas and limitations. Educational estimates, not diagnoses or treatment plans." },
+  audio: { label: "Audio & Voice", title: "Audio and voice guides", intro: "Record, trim and convert audio, with clear format and speech-service limitations." },
   security: { label: "Security", title: "Security guides", intro: "Privacy, safe sharing and file-protection guidance." },
   pdf: { label: "PDF", title: "PDF guides", intro: "Compress, convert, split, merge and clean PDF files without handing them to a server." },
   images: { label: "Images", title: "Image guides", intro: "Resize, compress and convert images while keeping quality under control." },
   video: { label: "Video", title: "Video guides", intro: "Compress, trim and prepare clips for upload, chat and social platforms." },
   updates: { label: "Updates", title: "Vootkit updates", intro: "Product notes and new ways to use the Vootkit toolkit." }
 };
-const BLOG_CATEGORY_ORDER = ["all", "tutorial", "guide", "news", "tools", "productivity", "finance", "tax", "real-estate", "insurance", "everyday", "pdf", "images", "video", "security", "business", "seo", "developer", "updates", "education", "travel"];
+const BLOG_CATEGORY_ORDER = ["all", "tutorial", "guide", "news", "tools", "productivity", "finance", "tax", "real-estate", "insurance", "everyday", "pdf", "images", "video", "audio", "privacy", "security", "business", "seo", "developer", "data", "text", "design", "accessibility", "health", "updates", "education", "travel"];
 
 function blogCategoryDepth(current, posts, allPosts) {
   if (current === "all") return "";
