@@ -68,6 +68,6 @@ Divide rather than adding the percentage back. Something 25% off at 60 was 60 ÷
 - [Tip & Bill Split](/tools/everyday/tip-split/) — Split a bill with tip across any number of people.
 - [Profit Margin](/tools/business/profit-margin/) — Margin, markup and selling price from cost.
 - [Break-Even Point](/tools/business/break-even/) — Units and revenue needed to cover fixed costs.
-- [Currency Converter](/tools/finance/currency-converter/) — Live exchange rates from European Central Bank data.
+- [Currency Converter](/tools/finance/currency-converter/) — Convert currencies with cached ExchangeRate-API reference rates.
 
 Vootkit provides a browser calculator and educational guidance. Results depend on the values and units you enter, so verify important financial, academic, safety or professional decisions with an appropriate authoritative source.

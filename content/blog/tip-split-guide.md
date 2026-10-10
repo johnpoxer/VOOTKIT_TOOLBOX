@@ -63,7 +63,7 @@ This tool splits evenly, which is what most tables actually want. For genuinely 
 ## Useful next tools
 
 - [Percentage Calculator](/tools/everyday/percentage-calculator/) — Percent of, is-what-percent, and percentage change.
-- [Currency Converter](/tools/finance/currency-converter/) — Live exchange rates from European Central Bank data.
+- [Currency Converter](/tools/finance/currency-converter/) — Convert currencies with cached ExchangeRate-API reference rates.
 - [VAT / GST Calculator](/tools/business/vat-gst/) — Add or remove sales tax from any price.
 - [Discount Calculator](/tools/everyday/discount-calculator/) — Final sale price and total savings, with stacked coupons and tax.
 - [Unit Converter](/tools/everyday/unit-converter/) — Length, mass, temperature, area, volume, speed and data.

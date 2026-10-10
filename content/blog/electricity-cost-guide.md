@@ -65,7 +65,7 @@ One thousand watts drawn for one hour, and it is the unit your supplier bills in
 - [Unit Converter](/tools/everyday/unit-converter/) — Length, mass, temperature, area, volume, speed and data.
 - [Percentage Calculator](/tools/everyday/percentage-calculator/) — Percent of, is-what-percent, and percentage change.
 - [50/30/20 Budget Calculator](/tools/finance/budget-calculator/) — Split take-home pay into needs, wants and savings.
-- [Currency Converter](/tools/finance/currency-converter/) — Live exchange rates from European Central Bank data.
+- [Currency Converter](/tools/finance/currency-converter/) — Convert currencies with cached ExchangeRate-API reference rates.
 - [Time Calculator](/tools/everyday/time-calculator/) — Add or subtract hours, minutes and seconds.
 - [Date Calculator](/tools/everyday/date-calculator/) — Days between dates, or add and subtract from a date.
 

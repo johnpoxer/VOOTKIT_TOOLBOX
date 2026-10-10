@@ -65,7 +65,7 @@ Customs, and they shift. Treat them as a starting point, watch what locals do, a
 
 - [Tip & Bill Split](/tools/everyday/tip-split/) — Split a bill with tip across any number of people.
 - [Trip Cost Splitter](/tools/travel/trip-cost-splitter/) — Split shared travel costs evenly between people.
-- [Currency Converter](/tools/finance/currency-converter/) — Live exchange rates from European Central Bank data.
+- [Currency Converter](/tools/finance/currency-converter/) — Convert currencies with cached ExchangeRate-API reference rates.
 - [Percentage Calculator](/tools/everyday/percentage-calculator/) — Percent of, is-what-percent, and percentage change.
 - [VAT / GST Calculator](/tools/business/vat-gst/) — Add or remove sales tax from any price.
 - [50/30/20 Budget Calculator](/tools/finance/budget-calculator/) — Split take-home pay into needs, wants and savings.

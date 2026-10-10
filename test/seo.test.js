@@ -1097,3 +1097,15 @@ console.log(`seo + deindex accelerator: ${pass} total assertions passed`);
   });
 }
 console.log(`seo + regulated tool safety: ${pass} total assertions passed`);
+
+/* Unfinished tools must not carry advertising inventory. */
+{
+ const fs=require("fs"),path=require("path"),VK=require("../data/catalog.js");
+ VK.TOOLS.filter(t=>t.status!=="live").forEach(t=>{
+  const p=path.join(__dirname,"..","tools",t.cat,t.id,"index.html");
+  if(!fs.existsSync(p))return;
+  const h=fs.readFileSync(p,"utf8");
+  ok(!/application\/vk-ad|class="ad-unit|class="ad-slot|adsbygoogle/.test(h),t.id+" unfinished page has no ads");
+ });
+}
+console.log(`seo + unfinished advertising: ${pass} assertions passed`);

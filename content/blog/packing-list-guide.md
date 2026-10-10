@@ -66,7 +66,7 @@ It lives in your browser session. Copy it out or print it if you want it for the
 - [Trip Cost Splitter](/tools/travel/trip-cost-splitter/) — Split shared travel costs evenly between people.
 - [Time Zone Converter](/tools/everyday/timezone-converter/) — Compare a time across cities worldwide.
 - [Event Countdown](/tools/everyday/countdown/) — Count down to any date and time.
-- [Currency Converter](/tools/finance/currency-converter/) — Live exchange rates from European Central Bank data.
+- [Currency Converter](/tools/finance/currency-converter/) — Convert currencies with cached ExchangeRate-API reference rates.
 - [Travel Time Calculator](/tools/travel/distance-calculator/) — How long a trip takes from distance and average speed.
 - [Tipping Calculator by Country](/tools/travel/tip-by-country/) — Suggested tip and total by country custom.
 

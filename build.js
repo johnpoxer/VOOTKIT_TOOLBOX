@@ -1713,10 +1713,10 @@ function toolPremiumCard(spec, archetype) {
 function toolStatsCard() {
   const tools = `${floorTo(VK.counts.live, TOOL_ROUND_TO)}+`;
   const stats = [
-    ["users", USER_DISPLAY, "Users"],
+    ["grid", String(VK.CATEGORIES.length), "Categories"],
     ["grid", tools, "Tools"],
-    ["zap", TASKS_DISPLAY, "Tasks"],
-    ["globe", COUNTRY_DISPLAY, "Countries"]
+    ["laptop", "Browser", "No installation"],
+    ["zap", String(CFG.freeLimit.count), "Free tasks / day"]
   ];
   return `<section class="tool-side-card tool-stat-card" aria-label="Vootkit platform statistics">
     ${stats.map((s) => `<div><span>${icon(s[0])}</span><strong>${esc(s[1])}</strong><small>${esc(s[2])}</small></div>`).join("")}
@@ -1847,7 +1847,7 @@ function toolPage(t) {
   const relatedShell = toolRelatedStrip(t, c, related);
   const howShell = toolHowToCards(t, steps);
 
-  let pageHead = head({ depth: 3, url, ads: true, ld, cat: t.cat, lang: "en", alts: altsForTool(t), bodyClass: "tool-detail-page",
+  let pageHead = head({ depth: 3, url, ads: live, ld, cat: t.cat, lang: "en", alts: altsForTool(t), bodyClass: "tool-detail-page",
     title: toolTitle(t.name, c.name),
     ogTitle: shellTitle,
     desc: `${t.desc} ${local ? "Runs in your browser" : "No install needed"}, no watermark, 5 free uses a day.` });
@@ -1926,7 +1926,7 @@ function toolPage(t) {
         </section>`}
 
         <!-- in-content ad: below the article body, far from the tool controls -->
-        ${adUnit("inContent")}
+        ${live ? adUnit("inContent") : ""}
 
         <!-- 5. FAQ -->
         <section class="prose faq" id="tool-faq">
@@ -1935,7 +1935,7 @@ function toolPage(t) {
         </section>
 
         <!-- footer ad: end of the reading flow, before the onward links -->
-        ${adUnit("footer")}
+        ${live ? adUnit("footer") : ""}
 
         <section class="section" id="recent-wrap" hidden>
           <h2 class="h-sm">Recently viewed</h2>
@@ -3284,8 +3284,8 @@ function proHero() {
   <div class="wrap pro-feats">
     ${proFeature(ICO.infinity, "Unlimited daily runs",
       "The free plan includes " + CFG.freeLimit.count + " tool runs a day. Pro removes the cap entirely — no counter, no waiting until tomorrow, across every tool on the site.")}
-    ${proFeature(ICO.bolt, "Priority processing",
-      "Longer video encodes and larger batches, with the size ceilings raised. Everything still runs on your own machine, so the only limit left is the machine.")}
+    ${proFeature(ICO.bolt, "Larger input limits",
+      "Higher input limits for supported tools. Processing uses your device; upgrading does not add a faster server or a priority encoding queue.")}
     ${proFeature(ICO.shield, "Ad-free, and private by design",
       "No ads anywhere in the workspace. Your files are processed in the browser tab and never uploaded — there is nothing on a server to leak, sell or subpoena.")}
   </div>
@@ -3543,7 +3543,7 @@ write("legal/index.html", legalHubPage());
 write("offline/index.html", statePage({ slug: "offline/", title: "You’re offline", kicker: "Connection status", heading: "You’re offline", icon: "globe", tone: "offline", desc: "Vootkit offline status page.", copy: "It looks like you’re not connected to the internet. Tools already loaded in this browser may still work.", actions: '<button class="btn btn-primary" type="button" onclick="location.reload()">Try again</button><a class="btn" href="../tools/">Open tools</a>' }));
 write("tool-error/index.html", statePage({ slug: "tool-error/", title: "Tool interrupted", kicker: "Tool error", heading: "Something interrupted the process", icon: "alert", tone: "error", desc: "A safe Vootkit tool error page.", copy: "Don’t worry—your original file is safe. Adjust the settings or restart the process.", extra: '<div class="diagnostic"><strong>Diagnostic code</strong><code>E-7A3B-92C1</code></div>', actions: '<button class="btn btn-primary" type="button" onclick="history.back()">Try again</button><a class="btn" href="../contact.html?subject=Tool%20Problem">Contact support</a>' }));
 write("privacy.html", legalPage({
-  file: "privacy.html", title: "Privacy Policy", updated: LAST_UPDATED,
+  file: "privacy.html", title: "Privacy Policy", updated: "10 October 2026",
   desc: "How Vootkit handles account, tool, support, analytics and advertising data, including local browser processing.",
   body: `
     <h2>The short version</h2>
@@ -3570,7 +3570,8 @@ write("privacy.html", legalPage({
     <p>We use carefully selected providers for authentication and account infrastructure, analytics, advertising, email or support, and hosting. They may process limited information under their own terms and our instructions. We do not sell your files. We may disclose information where required by law, to protect users and the service, or as part of a business transfer with appropriate safeguards.</p>
 
     <h2>Advertising</h2>
-    <p>Vootkit may be supported by advertising on eligible pages. Third-party vendors, including Google, may use cookies or similar technologies to serve and measure ads, subject to your consent where required. Ads are visually separated from tool controls and download actions. You can manage personalised advertising through <a href="https://myadcenter.google.com/" rel="nofollow noopener">Google My Ad Center</a>.</p>
+    <p>Vootkit may be supported by advertising on eligible pages. Third-party vendors, including Google, use cookies to serve ads based on your prior visits to Vootkit or other websites, subject to your consent where required. Google's advertising cookies allow Google and its partners to serve ads based on visits to this site and other sites on the Internet. Ads are visually separated from tool controls and download actions.</p>
+    <p>You can manage or opt out of personalised Google advertising through <a href="https://myadcenter.google.com/" rel="nofollow noopener">Google My Ad Center</a>. Read <a href="https://policies.google.com/technologies/ads" rel="nofollow noopener">Google's advertising information</a> and <a href="https://policies.google.com/technologies/partner-sites" rel="nofollow noopener">how Google uses information from partner sites</a>. You can also opt out of participating third-party vendors' personalised advertising through <a href="https://optout.aboutads.info/" rel="nofollow noopener">the Digital Advertising Alliance's choices page</a>. Browser or device settings can provide additional cookie controls.</p>
 
     <h2>Cookies</h2>
     <p>We use necessary browser storage and, subject to consent where required, analytics and advertising technologies. See the <a href="cookies.html">Cookie Policy</a> for categories and controls.</p>
@@ -3756,7 +3757,7 @@ function aboutPage() {
   <section class="about-beliefs"><h2>What we believe</h2><div><article><span>✓</span><h3>Useful before impressive</h3><p>Every feature should solve a real problem.</p></article><article><span>▣</span><h3>Privacy by design</h3><p>Most file tools work directly on your device.</p></article><article><span>✣</span><h3>One connected workspace</h3><p>Tools become more powerful when they work together.</p></article></div></section>
   <section class="about-numbers"><h2>Vootkit by the numbers</h2><div><p><b>${floorTo(VK.counts.live, TOOL_ROUND_TO)}+</b><span>tools</span></p><p><b>${VK.CATEGORIES.length}</b><span>categories</span></p><p><b>Local</b><span>most tools process locally</span></p><p><b>Global</b><span>available worldwide</span></p></div></section>
   <section class="about-founder"><div><h2>Built by John Prosper</h2><p>Vootkit began as a practical toolbox and is growing into a connected platform for everyday digital work.</p><a class="btn" href="founder-story.html">Read the founder story</a></div><img src="public/images/about/john-prosper.webp" alt="John Prosper, founder and full stack developer of Vootkit" width="900" height="1350" loading="lazy"></section>
-  <section class="about-files"><h2>How Vootkit handles files</h2><div><article><b>1</b><span>⌁</span><h3>Choose a tool</h3><p>Pick the tool that matches your task.</p></article><i>→</i><article><b>2</b><span>▣</span><h3>Process in your browser</h3><p>Your files stay on your device. We process locally in your browser.</p></article><i>→</i><article><b>3</b><span>⇩</span><h3>Download your result</h3><p>Get your finished file instantly and keep working.</p></article></div><a href="privacy.html">Learn about privacy →</a></section>
+  <section class="about-files"><h2>How Vootkit handles files</h2><div><article><b>1</b><span>⌁</span><h3>Choose a tool</h3><p>Pick the tool that matches your task.</p></article><i>→</i><article><b>2</b><span>▣</span><h3>Process in your browser</h3><p>Compatible local tools process on your device. Tools requiring an online service explain their network use.</p></article><i>→</i><article><b>3</b><span>⇩</span><h3>Download your result</h3><p>Download your finished file when processing completes. Large files and video encodes can take longer.</p></article></div><a href="privacy.html">Learn about privacy →</a></section>
   <section class="about-trust" aria-labelledby="about-trust-title"><div><p class="eyebrow">How we work</p><h2 id="about-trust-title">Built, checked and explained for real tasks</h2><p>Vootkit is designed for people who need to finish practical work: preparing a document, improving an image, converting a file, checking a calculation or completing several steps as one workflow. We build each live tool around a defined job and provide instructions that explain what it does.</p></div><div><article><h3>Original product work</h3><p>Vootkit's interfaces, workflows and browser-based tool experiences are built and maintained as part of the platform—not copied from another tools website.</p></article><article><h3>Honest tool status</h3><p>Working tools are presented as live. Planned features are identified instead of being represented as completed products.</p></article><article><h3>Clear limitations</h3><p>Financial and health-related calculators provide estimates, not professional advice. Relevant limitations are explained in our <a href="disclaimer.html">disclaimer</a>.</p></article><article><h3>Accountable support</h3><p>Users can report a problem, question a result or suggest an improvement through our <a href="contact.html">contact and support page</a>.</p></article></div></section>
   <section class="about-transparency"><h2>Privacy and business transparency</h2><p>Most compatible file tools process locally in the browser, although tools that need an external service are identified. Vootkit may be supported by advertising and optional paid plans. Advertising does not determine a tool's calculation or result, and ads are kept visually separate from tool controls and download actions.</p><p>Our <a href="privacy.html">Privacy Policy</a>, <a href="cookies.html">Cookie Policy</a>, <a href="terms.html">Terms of Use</a> and <a href="disclaimer.html">Disclaimer</a> explain how the service operates and what users should expect.</p></section>
   <section class="about-next"><div><h2>The next chapter</h2><p>More useful tools. Better workflows.<br>The same commitment to simplicity.</p></div><a class="btn btn-primary" href="blog/">See what's new</a></section>

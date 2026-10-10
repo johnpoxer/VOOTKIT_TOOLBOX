@@ -67,7 +67,7 @@ Settling as you go avoids one large uncomfortable conversation at the end, and i
 - [Tipping Calculator by Country](/tools/travel/tip-by-country/) — Suggested tip and total by country custom.
 - [Fuel Cost Calculator](/tools/travel/fuel-cost-calculator/) — Trip fuel cost from distance, economy and fuel price.
 - [Percentage Calculator](/tools/everyday/percentage-calculator/) — Percent of, is-what-percent, and percentage change.
-- [Currency Converter](/tools/finance/currency-converter/) — Live exchange rates from European Central Bank data.
+- [Currency Converter](/tools/finance/currency-converter/) — Convert currencies with cached ExchangeRate-API reference rates.
 - [50/30/20 Budget Calculator](/tools/finance/budget-calculator/) — Split take-home pay into needs, wants and savings.
 
 Vootkit provides a planning estimate, not a guaranteed fare, reimbursement, journey time or statement of local custom. Prices, traffic, exchange rates, employer rules and destination guidance can change; verify important figures with the relevant provider or authority.
