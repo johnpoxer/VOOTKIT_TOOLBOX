@@ -1724,22 +1724,7 @@ function toolStatsCard() {
 }
 
 function toolSidebar(t, c, related, local, spec, archetype) {
-  return `<aside class="tool-sidebar">
-    ${toolPremiumCard(spec, archetype)}
-    ${toolStatsCard()}
-    ${related.length ? `<section class="tool-side-card">
-      <div class="tool-side-head"><h2>Popular ${esc(c.name)} tools</h2><a href="../">View all ${icon("arrow-right")}</a></div>
-      <div class="tool-side-list">${related.slice(0, 5).map((r) => toolMiniCard(r, "../../../")).join("")}</div>
-    </section>` : ""}
-    <section class="tool-side-card tool-safe-card">
-      <span class="tool-side-icon">${icon("shield")}</span>
-      <h2>Your files are safe with us</h2>
-      <p>${local
-        ? "Most of the work happens inside your browser on your own device. Vootkit does not add an upload step to this tool."
-        : "This tool uses an online service for the lookup it performs. We label network-backed tools clearly before you use them."}</p>
-      <a href="../../../privacy.html">Learn about privacy ${icon("arrow-right")}</a>
-    </section>
-  </aside>`;
+  return "";
 }
 
 function toolWorkspaceShell(t, c, live, local, facts, archetype, steps) {
