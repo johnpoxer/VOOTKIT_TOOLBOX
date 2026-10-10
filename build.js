@@ -128,7 +128,7 @@ function consentHead() {
     .replace(/^\s*\/\/.*$/gm, "")
     .replace(/\n{2,}/g, "\n")
     .trim();
-  return `<script>${src}\nwindow.VKConsent&&window.VKConsent.setDefaults();</script>`;
+  return `<script>window.VK_CONSENT_PROVIDER=${JSON.stringify(CONSENT.provider || "local")};${src}\nwindow.VKConsent&&window.VKConsent.setDefaults();</script>`;
 }
 
 /* The network's loader, for the <head>. Exactly one network's tags ever ship:
@@ -202,7 +202,7 @@ function adUnit(slotKey, label) {
 const V = "?v=" + (function () {
   const crypto = require("crypto");
   const h = crypto.createHash("sha1");
-  const css = ["tokens", "base", "pages", "newsletter", "skin", "home"].map((n) => "assets/css/" + n + ".css");
+  const css = ["tokens", "base", "pages", "newsletter", "skin", "home", "home-v2"].map((n) => "assets/css/" + n + ".css");
   const dataAssets = ["data/catalog.js", "data/tool-icons.js", "data/site.config.js", "data/stats.js"];
   let js = [];
   try { js = fs.readdirSync(path.join(ROOT, "assets/js")).filter((f) => f.endsWith(".js")).sort().map((f) => "assets/js/" + f); } catch (e) {}
@@ -214,7 +214,7 @@ function refreshHomepageAssetVersions() {
   const file = path.join(ROOT, "index.html");
   if (!fs.existsSync(file)) return;
   let html = fs.readFileSync(file, "utf8");
-  html = html.replace(/((?:href|src)="(?:assets\/css\/(?:tokens|base|newsletter|skin|home)\.css|data\/(?:catalog|stats|tool-icons)\.js|assets\/js\/(?:home|ui|supabase-config|newsletter|usage|auth)\.js))\?v=[^"]*(")/g, `$1${V}$2`);
+  html = html.replace(/((?:href|src)="(?:assets\/css\/(?:tokens|base|newsletter|skin|home|home-v2)\.css|data\/(?:catalog|stats|tool-icons|site.config)\.js|assets\/js\/(?:home|ui|supabase-config|newsletter|usage|auth)\.js))\?v=[^"]*(")/g, `$1${V}$2`);
   fs.writeFileSync(file, html);
 }
 
@@ -347,13 +347,13 @@ ${o.ads ? adLoader() : "<!-- no ads inside an active tool workspace -->"}
     </a>
     <nav class="nav" id="nav" aria-label="Main">
       <a href="${up}"${cur("home")}>Home</a>
-      <a href="${up}tools/"${cur("tools")}>Tools</a>
-      <a href="${up}workflows/"${cur("workflow")}>Workflow</a>
+      <a href="${up}tools/"${cur("tools")}>All tools</a>
+      <a href="${up}workflows/"${cur("workflow")}>Workflows</a>
       <a href="${up}templates/"${cur("templates")}>Templates</a>
-      <a href="${up}blog/"${cur("blog")}>Blog</a>
+      <a href="${up}blog/"${cur("blog")}>Guides</a>
       <a href="${up}pricing.html"${cur("pricing")}>Pricing</a>
-      <a href="${up}about.html"${cur("about")}>About</a>
-      <a href="${up}auth/sign-in/" data-auth-link>Log in</a>
+      <a href="${up}about.html"${cur("about")}>About us</a>
+      <a href="${up}auth/sign-in/" data-auth-link>Sign in</a>
     </nav>
     <div class="hdr-act">
       ${langSwitcher(o.alts, lang)}
@@ -363,8 +363,7 @@ ${o.ads ? adLoader() : "<!-- no ads inside an active tool workspace -->"}
       <button class="icon-btn" type="button" data-open-search aria-label="Search tools">
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
       </button>
-      <span id="vk-auth-slot" class="vk-auth-slot" aria-busy="true"><a class="btn btn-sm hdr-login" href="${up}auth/sign-in/">Login</a></span>
-      <a class="hdr-cta" href="${up}auth/sign-up/"><span class="cta-full">Get Started Free</span><span class="cta-short">Start Free</span></a>
+      <span id="vk-auth-slot" class="vk-auth-slot" aria-busy="true"><a class="btn btn-sm hdr-login" href="${up}auth/sign-in/">Sign in</a></span>
       <button class="icon-btn" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav">
         <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
       </button>
@@ -1266,7 +1265,7 @@ function dirHeroVisual() {
 
 function dirTrustStrip() {
   const items = [
-    ["coins", "100% Free", ""],
+    ["coins", "5 free tasks a day", ""],
     ["laptop", "Browser Based", ""],
     ["grid", "250+ Tools", ""],
     ["shield", "Secure", ""]
@@ -1628,7 +1627,8 @@ function toolStepSet(t, archetype) {
 }
 
 function toolHeroBadges(t, local, archetype) {
-  const labels = ["100% Free", "No watermark"];
+  const limited = CFG.freeLimit && CFG.freeLimit.enabled && (CFG.freeLimit.exemptCategories || []).indexOf(t.cat) === -1;
+  const labels = [limited ? `${CFG.freeLimit.count} free tasks a day` : "Free to use", "No watermark"];
   if (archetype === "file") labels.splice(1, 0, local ? "Browser-based" : "Online lookup");
   else labels.splice(1, 0, "Runs instantly");
   return labels.map((x) => `<span class="badge">${esc(x)}</span>`).join("");
@@ -1713,10 +1713,10 @@ function toolPremiumCard(spec, archetype) {
 function toolStatsCard() {
   const tools = `${floorTo(VK.counts.live, TOOL_ROUND_TO)}+`;
   const stats = [
-    ["users", USER_DISPLAY, "Users"],
+    ["grid", String(VK.CATEGORIES.length), "Categories"],
     ["grid", tools, "Tools"],
-    ["zap", TASKS_DISPLAY, "Tasks"],
-    ["globe", COUNTRY_DISPLAY, "Countries"]
+    ["laptop", "Browser", "No installation"],
+    ["zap", String(CFG.freeLimit.count), "Free tasks / day"]
   ];
   return `<section class="tool-side-card tool-stat-card" aria-label="Vootkit platform statistics">
     ${stats.map((s) => `<div><span>${icon(s[0])}</span><strong>${esc(s[1])}</strong><small>${esc(s[2])}</small></div>`).join("")}
@@ -1847,7 +1847,7 @@ function toolPage(t) {
   const relatedShell = toolRelatedStrip(t, c, related);
   const howShell = toolHowToCards(t, steps);
 
-  let pageHead = head({ depth: 3, url, ads: true, ld, cat: t.cat, lang: "en", alts: altsForTool(t), bodyClass: "tool-detail-page",
+  let pageHead = head({ depth: 3, url, ads: live, ld, cat: t.cat, lang: "en", alts: altsForTool(t), bodyClass: "tool-detail-page",
     title: toolTitle(t.name, c.name),
     ogTitle: shellTitle,
     desc: `${t.desc} ${local ? "Runs in your browser" : "No install needed"}, no watermark, 5 free uses a day.` });
@@ -1926,7 +1926,7 @@ function toolPage(t) {
         </section>`}
 
         <!-- in-content ad: below the article body, far from the tool controls -->
-        ${adUnit("inContent")}
+        ${live ? adUnit("inContent") : ""}
 
         <!-- 5. FAQ -->
         <section class="prose faq" id="tool-faq">
@@ -1935,7 +1935,7 @@ function toolPage(t) {
         </section>
 
         <!-- footer ad: end of the reading flow, before the onward links -->
-        ${adUnit("footer")}
+        ${live ? adUnit("footer") : ""}
 
         <section class="section" id="recent-wrap" hidden>
           <h2 class="h-sm">Recently viewed</h2>
@@ -2114,7 +2114,7 @@ function loadPosts() {
     const slug = (data.slug || f.replace(/\.md$/, "")).toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "");
     const plain = body.replace(/[#>*_`~\-\[\]()!]/g, " ").split(/\n\s*\n/).map((s) => s.trim()).filter(Boolean)[0] || "";
     return {
-      slug, title: data.title || slug, date: data.date || "",
+      slug, title: data.title || slug, date: data.date || "", updated: data.updated || data.date || "",
       description: data.description || plain.slice(0, 160),
       thumbnail: data.thumbnail || "", author: data.author || "The Vootkit team",
       /* Reading time from the ACTUAL body, at 220wpm. Not decoration: it is
@@ -2129,7 +2129,7 @@ function loadPosts() {
 }
 function fmtDate(d, long) {
   if (!d) return "";
-  const dt = new Date(d); if (isNaN(dt)) return String(d);
+  const dt = new Date(/^\d{4}-\d{2}-\d{2}$/.test(d) ? d + "T12:00:00Z" : d); if (isNaN(dt)) return String(d);
   return dt.toLocaleDateString("en-US", long ? { year: "numeric", month: "long", day: "numeric" } : { year: "numeric", month: "short", day: "numeric" });
 }
 function blogPostPage(post) {
@@ -2142,7 +2142,7 @@ function blogPostPage(post) {
       { "@type": "ListItem", position: 3, name: post.title, item: url }
     ]},
     { "@context": "https://schema.org", "@type": "BlogPosting", headline: post.title, description: post.description,
-      datePublished: post.date, dateModified: post.date, image: img || undefined,
+      datePublished: post.date, dateModified: post.updated || post.date, image: img || undefined,
       author: { "@type": "Organization", name: post.author },
       publisher: { "@type": "Organization", name: "Vootkit", url: SITE + "/" },
       mainEntityOfPage: url, url }
@@ -2485,7 +2485,7 @@ function loadPosts() {
     const filters = Array.from(new Set([type, category].concat(tags).map(blogCatSlug).filter(Boolean)));
     const words = plain.split(/\s+/).filter(Boolean).length;
     return {
-      slug, title: data.title || slug, date: data.date || "",
+      slug, title: data.title || slug, date: data.date || "", updated: data.updated || data.date || "",
       description: data.description || plain.slice(0, 160),
       thumbnail: extra.thumbnail || data.thumbnail || "",
       author: data.author || "The Vootkit team",
@@ -2705,7 +2705,7 @@ function blogReferenceIndex(posts) {
       <div class="br-load-wrap"><button class="btn br-load-more" type="button" data-blog-more>Load more guides</button></div>
     </section>
     <section class="br-section br-topics"><header><div><span class="br-overline">Explore the library</span><h2>Browse by topic</h2></div></header><div class="br-topic-grid">${topicLinks}</div></section>
-    <section class="br-newsletter"><img src="/assets/blog/nl-band.webp" alt="" width="260" height="180" loading="lazy"><div><h2>One useful workflow every week.</h2><p>Handpicked guides, practical tips and time-saving workflows delivered to your inbox.</p><div data-newsletter="blog_index" data-nl-compact data-nl-placeholder="Email address" data-nl-button="Subscribe"></div></div></section>
+    <section class="br-newsletter"><img src="/assets/blog/nl-band.webp" alt="" width="260" height="180" loading="lazy"><div><h2>New tools, now and then.</h2><p>Occasional tools and practical guides. No more than monthly.</p><div data-newsletter="blog_index" data-nl-compact data-nl-placeholder="Email address" data-nl-button="Subscribe"></div></div></section>
   </main>
   <script type="application/json" id="blog-data">${blogJsonData(posts)}</script>
 </div>` + foot(1, ["assets/js/blog.js"], { noNewsletter: true });
@@ -2723,7 +2723,7 @@ function blogPostPage(post, allPosts) {
       { "@type": "ListItem", position: 4, name: post.title, item: url }
     ]},
     { "@context": "https://schema.org", "@type": "BlogPosting", headline: post.title, description: post.description,
-      datePublished: post.date, dateModified: post.date, image: img || undefined,
+      datePublished: post.date, dateModified: post.updated || post.date, image: img || undefined,
       author: { "@type": author.type || "Person", name: author.name },
       publisher: { "@type": "Organization", name: "Vootkit", url: SITE + "/" },
       mainEntityOfPage: url, url }
@@ -2736,7 +2736,7 @@ function blogPostPage(post, allPosts) {
     <div class="bl-article-kickers"><span class="bl-badge">${esc(post.type)}</span><a href="../${esc(post.categorySlug)}/">${esc(post.category)}</a></div>
     <h1>${esc(post.title)}</h1>
     <p>${esc(post.description)}</p>
-    <div class="bl-article-meta">${blogMetaLine(post)}</div>
+    <div class="bl-article-meta">${blogMetaLine(post)}${post.updated && post.updated !== post.date ? ` · Updated <time datetime="${esc(post.updated)}">${esc(fmtDate(post.updated))}</time>` : ""}</div>
     ${articleHeadActions(post, 2)}
   </header>
   ${blogPicture(post, "bl-article-hero", "eager")}
@@ -3284,8 +3284,8 @@ function proHero() {
   <div class="wrap pro-feats">
     ${proFeature(ICO.infinity, "Unlimited daily runs",
       "The free plan includes " + CFG.freeLimit.count + " tool runs a day. Pro removes the cap entirely — no counter, no waiting until tomorrow, across every tool on the site.")}
-    ${proFeature(ICO.bolt, "Priority processing",
-      "Longer video encodes and larger batches, with the size ceilings raised. Everything still runs on your own machine, so the only limit left is the machine.")}
+    ${proFeature(ICO.bolt, "Larger input limits",
+      "Higher input limits for supported tools. Processing uses your device; upgrading does not add a faster server or a priority encoding queue.")}
     ${proFeature(ICO.shield, "Ad-free, and private by design",
       "No ads anywhere in the workspace. Your files are processed in the browser tab and never uploaded — there is nothing on a server to leak, sell or subpoena.")}
   </div>
@@ -3517,7 +3517,7 @@ function legalHubPage() {
   return productPage({ slug: "legal/", depth: 1, title: "Legal & Privacy Hub", active: "about",
     desc: "Manage cookie choices and review Vootkit privacy, terms, accessibility and security information.", body: `
     <header class="legal-hub-hero"><span>${icon("shield")}</span><div><span class="eyebrow">Trust center</span><h1>Your privacy matters</h1><p>Most compatible tools process files on your device. Our policies explain what Vootkit collects, what stays local, and the choices you control.</p></div></header>
-    <section class="legal-choice" aria-labelledby="cookie-choices"><div><h2 id="cookie-choices">Your cookie choices</h2><p>Necessary storage keeps the site secure and remembers your preferences. Analytics and advertising are optional where consent is required.</p></div><div><button class="btn btn-primary" type="button" data-consent-choice="accept">Accept all</button><button class="btn" type="button" data-consent-choice="reject">Reject optional</button><a class="btn" href="../cookies.html">Customize choices</a></div><p id="legal-choice-status" role="status"></p></section>
+    <section class="legal-choice" aria-labelledby="cookie-choices"><div><h2 id="cookie-choices">Your cookie choices</h2><p>Necessary storage keeps the site secure and remembers your preferences. Analytics and advertising are optional where consent is required.</p></div><div><button class="btn btn-primary" type="button" data-google-consent disabled>Privacy and cookie settings</button><a class="btn" href="../cookies.html">Cookie policy and choices</a></div><p id="legal-choice-status" role="status"></p></section>
     <section class="legal-hub-list" aria-labelledby="policies"><h2 id="policies">Legal, policies & trust</h2>
       ${link("shield", "Privacy policy", "How we protect and use data", "../privacy.html")}${link("file", "Terms of service", "Rules for using Vootkit", "../terms.html")}${link("cookie", "Cookie policy", "Storage, advertising and choices", "../cookies.html")}${link("eye", "Accessibility tools", "Tools that support inclusive digital work", "../tools/accessibility/")}${link("lock", "Security", "Local processing and safeguards", "../security.html")}${link("info", "Disclaimer", "Important limitations", "../disclaimer.html")}
     </section>` , scripts: ["assets/js/support-pages.js"] });
@@ -3543,7 +3543,7 @@ write("legal/index.html", legalHubPage());
 write("offline/index.html", statePage({ slug: "offline/", title: "You’re offline", kicker: "Connection status", heading: "You’re offline", icon: "globe", tone: "offline", desc: "Vootkit offline status page.", copy: "It looks like you’re not connected to the internet. Tools already loaded in this browser may still work.", actions: '<button class="btn btn-primary" type="button" onclick="location.reload()">Try again</button><a class="btn" href="../tools/">Open tools</a>' }));
 write("tool-error/index.html", statePage({ slug: "tool-error/", title: "Tool interrupted", kicker: "Tool error", heading: "Something interrupted the process", icon: "alert", tone: "error", desc: "A safe Vootkit tool error page.", copy: "Don’t worry—your original file is safe. Adjust the settings or restart the process.", extra: '<div class="diagnostic"><strong>Diagnostic code</strong><code>E-7A3B-92C1</code></div>', actions: '<button class="btn btn-primary" type="button" onclick="history.back()">Try again</button><a class="btn" href="../contact.html?subject=Tool%20Problem">Contact support</a>' }));
 write("privacy.html", legalPage({
-  file: "privacy.html", title: "Privacy Policy", updated: LAST_UPDATED,
+  file: "privacy.html", title: "Privacy Policy", updated: "10 October 2026",
   desc: "How Vootkit handles account, tool, support, analytics and advertising data, including local browser processing.",
   body: `
     <h2>The short version</h2>
@@ -3570,7 +3570,8 @@ write("privacy.html", legalPage({
     <p>We use carefully selected providers for authentication and account infrastructure, analytics, advertising, email or support, and hosting. They may process limited information under their own terms and our instructions. We do not sell your files. We may disclose information where required by law, to protect users and the service, or as part of a business transfer with appropriate safeguards.</p>
 
     <h2>Advertising</h2>
-    <p>Vootkit may be supported by advertising on eligible pages. Third-party vendors, including Google, may use cookies or similar technologies to serve and measure ads, subject to your consent where required. Ads are visually separated from tool controls and download actions. You can manage personalised advertising through <a href="https://myadcenter.google.com/" rel="nofollow noopener">Google My Ad Center</a>.</p>
+    <p>Vootkit may be supported by advertising on eligible pages. Third-party vendors, including Google, use cookies to serve ads based on your prior visits to Vootkit or other websites, subject to your consent where required. Google's advertising cookies allow Google and its partners to serve ads based on visits to this site and other sites on the Internet. Ads are visually separated from tool controls and download actions.</p>
+    <p>You can manage or opt out of personalised Google advertising through <a href="https://myadcenter.google.com/" rel="nofollow noopener">Google My Ad Center</a>. Read <a href="https://policies.google.com/technologies/ads" rel="nofollow noopener">Google's advertising information</a> and <a href="https://policies.google.com/technologies/partner-sites" rel="nofollow noopener">how Google uses information from partner sites</a>. You can also opt out of participating third-party vendors' personalised advertising through <a href="https://optout.aboutads.info/" rel="nofollow noopener">the Digital Advertising Alliance's choices page</a>. Browser or device settings can provide additional cookie controls.</p>
 
     <h2>Cookies</h2>
     <p>We use necessary browser storage and, subject to consent where required, analytics and advertising technologies. See the <a href="cookies.html">Cookie Policy</a> for categories and controls.</p>
@@ -3642,18 +3643,18 @@ write("terms.html", legalPage({
    cookies the site does not use is worse than none, because the first thing a
    reviewer does is compare it against the network tab. */
 write("cookies.html", legalPage({
-  file: "cookies.html", title: "Cookie Policy", updated: LAST_UPDATED,
+  file: "cookies.html", title: "Cookie Policy", updated: "10 October 2026",
   desc: "Which cookies and browser storage Vootkit uses, what each one does, and how to refuse them.",
   body: `
     <h2>The short version</h2>
-    <p>Vootkit uses a small number of cookies and browser storage entries. <strong>None of them touch your files.</strong> Files you open in a tool are processed on your own device and are never uploaded, so they are never stored in a cookie, never sent to an analytics service and never seen by an advertiser.</p>
-    <p>You can refuse analytics and advertising storage from the banner shown on your first visit, and change your mind at any time by clearing this site's data in your browser.</p>
+    <p>Vootkit uses a small number of cookies and browser storage entries. <strong>None of them touch your files.</strong> Compatible local file tools process on your device. Tools requiring an online service explain their network use. Advertising does not receive your raw files from Vootkit.</p>
+    <p>On eligible pages, Google’s published consent message provides advertising choices where applicable. Optional storage starts denied; the old Vootkit banner does not override Google’s vendor-consent choices. Use the privacy settings control when available to revisit your choice.</p>
 
     <h2>Strictly necessary</h2>
-    <p>These make the site work and are always on. They store nothing about you as a person.</p>
+    <p>These support preferences, local tool history, task allowances and account sessions. Account session storage identifies your signed-in session.</p>
     <table class="spec-table">
       <tr><th>What</th><th>Why</th></tr>
-      <tr><td><code>vk-consent</code></td><td>Remembers your answer to the cookie banner so you are not asked again.</td></tr>
+      <tr><td><code>vk-consent</code></td><td>Legacy custom-banner choice. It is not used to grant consent when Google’s CMP is configured.</td></tr>
       <tr><td><code>vk-theme</code></td><td>Remembers light or dark mode.</td></tr>
       <tr><td><code>vk-recent</code>, <code>vk-tools</code></td><td>The "recently viewed" list on tool pages. Stays on your device.</td></tr>
       <tr><td><code>vk-uses:&lt;date&gt;</code></td><td>Counts how many tools you have run today, for the free daily allowance.</td></tr>
@@ -3662,21 +3663,21 @@ write("cookies.html", legalPage({
 
     <h2>Analytics</h2>
     <p>We use Google Analytics 4 to count visits and see which tools are used. It records the page, your approximate country, your device type and how you arrived. <strong>It never receives your file names, file contents, or anything you type into a tool.</strong></p>
-    <p>Analytics storage is refused by default in the EEA and UK until you accept.</p>
+    <p>Analytics storage is denied by default until an applicable consent choice permits it. Google’s Consent Mode integration interprets the published message’s choices.</p>
 
     <h2>Advertising</h2>
-    <p>Some pages carry ads from Google AdSense, which may set cookies to measure and personalise them. Advertising storage is refused by default in the EEA and UK until you accept; if you refuse, you will still see ads, but they will be contextual rather than personalised.</p>
+    <p>Some pages carry ads from Google AdSense, which may set cookies to measure and personalise them. Advertising storage, user-data and personalisation signals start denied. Google’s message gathers applicable choices for users in the EEA, UK and Switzerland. Declining does not guarantee an ad will be displayed; availability and ad type depend on Google’s policies.</p>
     <p>Ads are never shown on account or sign-in pages, and never inside a tool while it is working.</p>
 
     <h2>Refusing or removing them</h2>
     <ul>
-      <li>Choose <strong>Reject</strong> on the banner. Analytics and advertising storage stay off.</li>
+      <li>Use the refusal and purpose controls in Google’s consent message. <button type="button" class="btn btn-sm" data-google-consent disabled>Privacy and cookie settings</button> becomes available when Google’s consent service loads on this page.</li>
       <li>Clear this site's data in your browser to reset everything, including your banner choice.</li>
       <li>Browser-level cookie blocking works normally here — the tools do not depend on cookies to function.</li>
     </ul>
 
     <h2>Changes</h2>
-    <p>If we add or remove a cookie, this page changes and the banner asks again.</p>
+    <p>We update this page when the technologies or their purposes materially change. The applicable consent provider manages whether a new choice is required.</p>
   `
 }));
 
@@ -3756,7 +3757,7 @@ function aboutPage() {
   <section class="about-beliefs"><h2>What we believe</h2><div><article><span>✓</span><h3>Useful before impressive</h3><p>Every feature should solve a real problem.</p></article><article><span>▣</span><h3>Privacy by design</h3><p>Most file tools work directly on your device.</p></article><article><span>✣</span><h3>One connected workspace</h3><p>Tools become more powerful when they work together.</p></article></div></section>
   <section class="about-numbers"><h2>Vootkit by the numbers</h2><div><p><b>${floorTo(VK.counts.live, TOOL_ROUND_TO)}+</b><span>tools</span></p><p><b>${VK.CATEGORIES.length}</b><span>categories</span></p><p><b>Local</b><span>most tools process locally</span></p><p><b>Global</b><span>available worldwide</span></p></div></section>
   <section class="about-founder"><div><h2>Built by John Prosper</h2><p>Vootkit began as a practical toolbox and is growing into a connected platform for everyday digital work.</p><a class="btn" href="founder-story.html">Read the founder story</a></div><img src="public/images/about/john-prosper.webp" alt="John Prosper, founder and full stack developer of Vootkit" width="900" height="1350" loading="lazy"></section>
-  <section class="about-files"><h2>How Vootkit handles files</h2><div><article><b>1</b><span>⌁</span><h3>Choose a tool</h3><p>Pick the tool that matches your task.</p></article><i>→</i><article><b>2</b><span>▣</span><h3>Process in your browser</h3><p>Your files stay on your device. We process locally in your browser.</p></article><i>→</i><article><b>3</b><span>⇩</span><h3>Download your result</h3><p>Get your finished file instantly and keep working.</p></article></div><a href="privacy.html">Learn about privacy →</a></section>
+  <section class="about-files"><h2>How Vootkit handles files</h2><div><article><b>1</b><span>⌁</span><h3>Choose a tool</h3><p>Pick the tool that matches your task.</p></article><i>→</i><article><b>2</b><span>▣</span><h3>Process in your browser</h3><p>Compatible local tools process on your device. Tools requiring an online service explain their network use.</p></article><i>→</i><article><b>3</b><span>⇩</span><h3>Download your result</h3><p>Download your finished file when processing completes. Large files and video encodes can take longer.</p></article></div><a href="privacy.html">Learn about privacy →</a></section>
   <section class="about-trust" aria-labelledby="about-trust-title"><div><p class="eyebrow">How we work</p><h2 id="about-trust-title">Built, checked and explained for real tasks</h2><p>Vootkit is designed for people who need to finish practical work: preparing a document, improving an image, converting a file, checking a calculation or completing several steps as one workflow. We build each live tool around a defined job and provide instructions that explain what it does.</p></div><div><article><h3>Original product work</h3><p>Vootkit's interfaces, workflows and browser-based tool experiences are built and maintained as part of the platform—not copied from another tools website.</p></article><article><h3>Honest tool status</h3><p>Working tools are presented as live. Planned features are identified instead of being represented as completed products.</p></article><article><h3>Clear limitations</h3><p>Financial and health-related calculators provide estimates, not professional advice. Relevant limitations are explained in our <a href="disclaimer.html">disclaimer</a>.</p></article><article><h3>Accountable support</h3><p>Users can report a problem, question a result or suggest an improvement through our <a href="contact.html">contact and support page</a>.</p></article></div></section>
   <section class="about-transparency"><h2>Privacy and business transparency</h2><p>Most compatible file tools process locally in the browser, although tools that need an external service are identified. Vootkit may be supported by advertising and optional paid plans. Advertising does not determine a tool's calculation or result, and ads are kept visually separate from tool controls and download actions.</p><p>Our <a href="privacy.html">Privacy Policy</a>, <a href="cookies.html">Cookie Policy</a>, <a href="terms.html">Terms of Use</a> and <a href="disclaimer.html">Disclaimer</a> explain how the service operates and what users should expect.</p></section>
   <section class="about-next"><div><h2>The next chapter</h2><p>More useful tools. Better workflows.<br>The same commitment to simplicity.</p></div><a class="btn btn-primary" href="blog/">See what's new</a></section>
@@ -4647,6 +4648,7 @@ const hlines = [
      with no ".html" in it. A /*.html rule silently never fires; verified live,
      pages were falling through to Netlify's default max-age=0. */
   "  Cache-Control: public, max-age=0, s-maxage=60, stale-while-revalidate=86400",
+  "  Netlify-CDN-Cache-Control: public, durable, s-maxage=300, stale-while-revalidate=86400",
   "",
   /* Assets are cache-busted by ?v=<content hash> (see V, near the top), so a
      deploy changes the URL and browsers/CDNs fetch the new file automatically.
@@ -4868,3 +4870,4 @@ refreshHomepageAssetVersions();
 
 fs.writeFileSync(path.join(ROOT, "_headers"), hlines.join("\n") + "\n");
 console.log(`_headers: ${fxIds.length} isolated tool paths`);
+

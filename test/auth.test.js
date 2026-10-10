@@ -53,7 +53,7 @@ ok(/\.vk-signed-in \.hdr-cta\s*\{\s*display:\s*none/.test(baseCss), "signup CTA 
 const homeHtml = fs.readFileSync(require("path").join(__dirname, "../index.html"), "utf8");
 ok(/class="header-actions"[^>]*>[\s\S]*?id="vk-auth-slot"/.test(homeHtml), "homepage exposes the shared auth slot");
 ok(/data-auth-link/.test(homeHtml), "homepage drawer has an auth-aware account link");
-ok(/data-auth-link>Log in</.test(homeHtml), "signed-out homepage menu says Log in");
+ok(/data-auth-link>Sign in</.test(homeHtml), "signed-out homepage menu says Sign in");
 ok(/documentElement\.classList\.add\('vk-signed-in'\)/.test(homeHtml), "homepage paints auth hint before CSS");
 const buildSource = fs.readFileSync(require("path").join(__dirname, "../build.js"), "utf8");
 ok(/function authHintHead\(\)/.test(buildSource) && /\$\{authHintHead\(\)\}/.test(buildSource), "generated pages paint auth hint before CSS");
@@ -108,3 +108,4 @@ async function domTests() {
 
 if (hasDom) { domTests().catch(function (e) { console.error(e); process.exit(1); }); }
 else { console.log(`auth: ${pass} assertions passed (DOM skipped)`); }
+

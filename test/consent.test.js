@@ -72,6 +72,22 @@ const read = (f) => fs.readFileSync(path.join(ROOT, f), "utf8");
 
 console.log(`consent logic: ${pass} assertions passed`);
 
+/* A remembered custom acceptance must not grant TCF or override the CMP. */
+{
+  const calls=[];
+  global.gtag=(...args)=>calls.push(args);
+  global.VK_CONSENT_PROVIDER='google';
+  C.write(true);
+  C.setDefaults();
+  eq(calls[0][2].ad_storage,'denied','Google mode ignores legacy advertising acceptance');
+  eq(calls[0][2].analytics_storage,'denied','Google mode awaits purpose-specific analytics consent');
+  const before=calls.length;
+  eq(C.update(true),false,'custom accept cannot override certified consent');
+  eq(calls.length,before,'no custom consent update is sent');
+  delete global.VK_CONSENT_PROVIDER;
+  delete global.gtag;
+}
+
 /* ---------------------------------------------------------------------------
  * ORDERING — the entire mechanism
  * ------------------------------------------------------------------------- */
@@ -108,7 +124,7 @@ console.log(`consent logic: ${pass} assertions passed`);
   ok(/position: fixed/.test(css.slice(css.indexOf(".consent-bar"))),
      "the bar is fixed, so it cannot shift layout on every first visit");
   ok(/cookies\.html/.test(ui), "it links to the cookie policy");
-  ok(/never uploaded|never part of this/.test(ui),
+  ok(/never uploaded|never part of this|never part of advertising/.test(ui),
      "and states the file-privacy promise, which is the actual differentiator");
 }
 
@@ -185,3 +201,4 @@ console.log(`consent wiring: ${pass} total assertions passed`);
 }
 
 console.log(`consent + trust + social: ${pass} total assertions passed`);
+

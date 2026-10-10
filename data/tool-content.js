@@ -468,7 +468,7 @@ module.exports = {
   'frame-grabber': {
     intro: 'A thumbnail is usually already somewhere inside your video — the frame where the subject looks right, the moment before the cut. Taking a still out of it needs no encoder at all: the browser can already decode video, so it decodes one frame and paints it to a canvas.',
     what: [
-      'Seeks to the second you specify, draws that frame to a canvas and saves it as a <strong>PNG</strong>. This is the only video tool here that does not use ffmpeg — it uses the browser’s own decoder, so it runs instantly and downloads nothing.',
+      'Seeks to the second you specify, draws that frame to a canvas and saves it as a <strong>PNG</strong>. This is the only video tool here that does not use ffmpeg — it uses the browser’s own decoder, so it needs no FFmpeg engine download. Decoding, seeking and saving still take time.',
       'PNG rather than JPEG on purpose: the frame is going to be a thumbnail, and a thumbnail is usually edited afterwards. Starting from a lossless still means text and edges stay sharp through whatever you do next.'
     ],
     specs: {
@@ -478,7 +478,7 @@ module.exports = {
         ['Resolution', 'The video’s native frame size'],
         ['Time control', 'Seconds, in 0.1 s steps'],
         ['Engine', 'Browser decoder + canvas — no ffmpeg download'],
-        ['Speed', 'Instant'],
+        ['Speed', 'Depends on decoding and saving the selected frame'],
         ['Codec support', 'Whatever your browser can play — MP4/H.264 is safest'],
         ['Privacy', 'The file never leaves your device']
       ]
@@ -2301,8 +2301,8 @@ module.exports = {
       rows: [
         ['Bits', '$0.01 each to the streamer'],
         ['5000 bits', '$50'],
-        ['Subscription', 'You typically net ~50% of the price'],
-        ['Default net per sub', '$2.50 — half of a $4.99 tier'],
+        ['Subscription', 'Enter your actual dashboard net amount; shares vary'],
+        ['Illustrative net per sub', '$2.50 — an editable model assumption, not a guaranteed share'],
         ['Donations', 'Entered directly, minus processor fees'],
         ['Ads', 'Entered directly'],
         ['Total', 'Sum of all four, monthly'],
@@ -2402,17 +2402,17 @@ module.exports = {
       caption: 'Use and setup',
       rows: [
         ['Purpose', 'A holding card before the stream starts'],
-        ['Output', 'An image for an OBS source'],
-        ['CPU cost while shown', 'None — it is static'],
+        ['Output', 'A self-contained HTML file for an OBS browser source'],
+        ['CPU cost while shown', 'Depends on the browser source; an optional countdown updates'],
         ['Typical duration', 'Two to five minutes'],
-        ['Add to OBS as', 'An image source in its own scene'],
+        ['Add to OBS as', 'A browser source with the downloaded local HTML file'],
         ['Pair with', 'Music, so viewers know audio works'],
         ['Privacy', 'Generated in your browser']
       ]
     },
     steps: [
       'Write the text — "Starting soon" plus what the stream is about.',
-      'Download and add it as an image source in a dedicated OBS scene.',
+      'Download the HTML and add it as a local-file browser source in a dedicated OBS scene.',
       'Go live on that scene a few minutes early, then switch.'
     ],
     tip: 'Play music over it. A silent starting screen is indistinguishable from a broken stream, and viewers who cannot tell the difference leave rather than wait. Audible music is the clearest possible signal that everything is working and something is about to happen.',
@@ -2435,9 +2435,9 @@ module.exports = {
       caption: 'Use and setup',
       rows: [
         ['Purpose', 'A holding card during a break'],
-        ['Output', 'An image for an OBS source'],
+        ['Output', 'A self-contained HTML holding screen'],
         ['Keeps you live?', 'Yes — the stream never stops'],
-        ['Add to OBS as', 'An image source in its own scene'],
+        ['Add to OBS as', 'A browser source using the downloaded local HTML file'],
         ['Mute your mic', 'Do this before switching, not after'],
         ['Typical duration', 'Under ten minutes'],
         ['Privacy', 'Generated in your browser']
@@ -2533,8 +2533,8 @@ module.exports = {
     specs: {
       caption: 'Setup and considerations',
       rows: [
-        ['Add to OBS as', 'A browser source'],
-        ['Purpose', 'Show chat on stream and in the VOD'],
+        ['Add to OBS as', 'Custom CSS for a separate browser-source widget'],
+        ['Purpose', 'Style a third-party chat widget; does not supply messages'],
         ['Readability', 'Needs an outline or shadow over video'],
         ['Message count', 'Fewer is better — 5 to 8 lines'],
         ['Moderation', 'Whatever appears on screen is in the recording'],
@@ -2544,7 +2544,7 @@ module.exports = {
     },
     steps: [
       'Style it for contrast — text over video needs an outline or shadow.',
-      'Add it as a browser source and position it clear of the action.',
+      'Paste the generated CSS into your provider’s chat-widget Custom CSS field; add that provider’s widget to OBS.',
       'Test with real chat moving, not a static preview.'
     ],
     tip: 'Whatever appears in the overlay is baked into the VOD permanently. A message your moderators delete two seconds later is still in the recording, and you cannot edit it out without re-encoding the whole thing. If your chat is fast or your moderation is thin, showing fewer lines is safer than showing more.',
@@ -2781,7 +2781,7 @@ module.exports = {
         ['Benefits', 'Entered as an annual figure'],
         ['Returns', 'Total annual cost and the uplift over salary'],
         ['Typical uplift', '20–40% above salary in most jurisdictions'],
-        ['Excludes', 'Equipment, software, office space, recruitment'],
+        ['Excludes', 'Recruitment and any expenses not entered; equipment and overhead have their own fields'],
         ['Knows your country’s rates?', '<strong>No</strong>']
       ]
     },
@@ -2849,7 +2849,7 @@ module.exports = {
         ['Returns', 'Annual and monthly net'],
         ['Knows your tax system?', '<strong>No</strong>'],
         ['Uses flat rates', 'Not progressive bands — see the tip'],
-        ['Excludes', 'Social contributions, local taxes, student loans, credits'],
+        ['Excludes', 'Country-specific rules and credits; use Other deductions for additional annual deductions'],
         ['Typical real deduction', '25–35% of gross in many countries']
       ]
     },
@@ -2862,7 +2862,7 @@ module.exports = {
     faqs: [
       { q: 'What rate should I enter?', a: 'Your effective rate — total tax divided by gross income — rather than your top bracket. The Income Tax Estimator calculates it properly across bands; entering a marginal rate here produces a net figure that is far too low.' },
       { q: 'Why does it not know my country’s rates?', a: 'Because they differ by country, region and year, and often by personal circumstance. A calculator with hard-coded rates would be confidently wrong for most users. Supplying them keeps the assumption visible.' },
-      { q: 'What is not deducted here?', a: 'Social security or national insurance, local and state taxes, student loan repayments, health insurance, union dues and tax credits. Real payslips carry several of these, which is why actual net is usually lower than a two-input estimate.' },
+      { q: 'What is not deducted here?', a: 'Country-specific social contributions and local deductions are not calculated automatically. Enter known annual amounts in Other deductions; credits and progressive bands still require a more complete calculation.' },
       { q: 'Why is my real payslip different?', a: 'Almost always one of the deductions above, or a progressive band structure that a flat rate cannot represent. Use this for planning and your payslip for facts.' }
     ],
     related: ['income-tax-estimator', 'salary-converter', 'paycheck-calculator', 'employee-cost', 'budget-calculator', 'pto-accrual']
@@ -5254,7 +5254,7 @@ module.exports = {
     tip: 'Check your employer death-in-service benefit before buying anything. Many employers provide two to four times salary automatically, and people routinely buy cover on top without counting it — paying for protection they already had. It also usually ends when the job does, which is the other half of the calculation.',
     faqs: [
       { q: 'How much cover do people usually take?', a: 'Ten to twelve times annual income is a common convention, but it is a rule of thumb rather than an answer. A household with a paid-off home and no dependants needs far less; one with young children and a large mortgage may need more.' },
-      { q: 'Does this include what I already have?', a: 'No — you should subtract it. Employer death-in-service cover, existing policies and mortgage protection all reduce the gap, and forgetting them is the commonest way people over-insure.' },
+      { q: 'Does this include what I already have?', a: 'Enter available existing savings and cover in the corresponding field. The model subtracts that figure from the estimated need. Avoid counting the same policy twice and check whether employer cover ends when employment does.' },
       { q: 'How many years of income should I replace?', a: 'Usually until dependants are financially independent, or until a surviving partner reaches a pension. That is a household-specific judgement rather than a default.' },
       { q: 'Should I buy the amount this suggests?', a: 'Treat it as a starting figure for a conversation, not a decision. Premiums depend on age, health and term, and the right structure varies. An independent adviser is worth the fee on a decision this size.' }
     ],
@@ -5273,10 +5273,10 @@ module.exports = {
         ['Monthly take-home', 'Default 3,400'],
         ['Essential outgoings', 'Default 2,400 — the number that matters'],
         ['Employer sick pay', 'In months — the deferred period should match'],
-        ['Returns', 'The monthly shortfall to cover'],
+        ['Returns', 'The lesser of essentials and take-home, plus an estimated funding runway'],
         ['Typical policy cap', 'Around 50–70% of gross income'],
         ['Deferred period', 'Longer wait = cheaper premium'],
-        ['Not counted', 'State benefits, savings, partner’s income'],
+        ['Not counted', 'State benefits and partner’s income; entered savings contribute to the runway estimate'],
         ['Is this advice?', '<strong>No</strong>']
       ]
     },
@@ -7119,9 +7119,9 @@ module.exports = {
       caption: 'How it reads an expression',
       rows: [
         ['Order', 'Brackets, then powers, then × ÷, then + −, left to right within each level'],
-        ['Power symbol', '^ — so 3 ^ 2 is nine'],
+        ['Power symbol', '^ — so 3 ^ 2 is nine; exponent chains associate right to left'],
         ['Brackets', 'Nest as deep as you like; every opening one needs a closing one'],
-        ['Implicit multiplication', 'Not assumed — write 2 × (3 + 1), not 2(3 + 1)'],
+        ['Implicit multiplication', 'Not assumed — write 2 * (3 + 1), not 2(3 + 1)'],
         ['Decimals', 'Use a full stop, whatever your locale writes'],
         ['Division by zero', 'Reported as an error rather than returned as infinity']
       ]
@@ -7135,7 +7135,7 @@ module.exports = {
     tip: 'The single most common mistake in this kind of expression is the minus sign in front of a power. Written strictly, −3 ^ 2 evaluates as −(3 × 3) = −9, because the power binds tighter than the negation. If you meant the square of negative three, you have to write (−3) ^ 2, which gives 9. Spreadsheets differ from mathematical convention here, which is exactly why the two disagree with each other so often.',
     faqs: [
       { q: 'Why is 2 + 3 × 4 fourteen and not twenty?', a: 'Because multiplication binds tighter than addition, so the expression is read as 2 + (3 × 4). This is the standard convention everywhere from school algebra to programming languages, and it is why writing the brackets you mean is worth the two extra keystrokes even when you are confident.' },
-      { q: 'Can I write 2(3 + 1) without the multiplication sign?', a: 'No — implicit multiplication is not assumed, because it is genuinely ambiguous in longer expressions and different systems resolve it differently. Write 2 × (3 + 1). The strictness is deliberate: an expression that could be read two ways is worse than one that has to be typed out.' },
+      { q: 'Can I write 2(3 + 1) without the multiplication sign?', a: 'No — implicit multiplication is not assumed, because it is genuinely ambiguous in longer expressions and different systems resolve it differently. Write 2 * (3 + 1). The strictness is deliberate: an expression that could be read two ways is worse than one that has to be typed out.' },
       { q: 'What does the ^ symbol do?', a: 'It raises to a power, so 3 ^ 2 is nine and 2 ^ 10 is 1,024. Note that it binds more tightly than a leading minus sign, so −3 ^ 2 gives −9 rather than 9. If you want the square of a negative number, put it in brackets.' },
       { q: 'Does it handle very large numbers exactly?', a: 'Up to a point. It uses standard double-precision floating point, which is exact for integers up to about 9 quadrillion and then starts rounding. It also inherits the familiar decimal artefacts — 0.1 + 0.2 lands just above 0.3 — which matter for money calculations and almost nowhere else.' }
     ],
@@ -7352,7 +7352,7 @@ module.exports = {
         ['Leap years', 'Divisible by 4, except centuries, unless divisible by 400 — 2000 was, 1900 was not'],
         ['Days counted', 'Calendar days, including weekends and holidays'],
         ['Inclusive or exclusive', 'The difference excludes the start date and includes the end'],
-        ['Month arithmetic', '31 January plus one month clamps to the end of February'],
+        ['Month arithmetic', 'Month addition uses browser calendar rollover; inspect month-end results'],
         ['Time zones', 'Not applied — dates are treated as plain calendar dates'],
         ['Range', 'Any dates the browser can represent, well beyond any practical need']
       ]
@@ -7775,8 +7775,8 @@ module.exports = {
   'currency-converter': {
     intro: 'The rate you see quoted and the rate you get are different numbers, and the gap is where the money goes. Knowing the mid-market rate is how you find out what your bank actually charged you.',
     what: [
-      'Converts between currencies using live mid-market rates fetched from a free public rate service.',
-      'This is the one Vootkit tool that needs the network. Every other tool runs entirely in your browser; this one cannot, because exchange rates live somewhere else and change constantly.'
+      'Converts between currencies using indicative rates from ExchangeRate-API, cached on Vootkit servers for up to one hour.',
+      'This tool needs an internet connection to fetch rates. Most file tools process on your device; network-backed tools explain their connection requirements.'
     ],
     specs: {
       caption: 'What the rate is, and is not',
@@ -7786,7 +7786,7 @@ module.exports = {
         ['Typical bank margin', 'Commonly 2–4% on top of the mid-market rate'],
         ['Typical card margin', 'Usually smaller, but varies by card and network'],
         ['Freshness', 'The rate’s update time is shown beneath the result'],
-        ['Network', 'Required — the only Vootkit tool that needs it'],
+        ['Network', 'Required — rates fetched through Vootkit servers'],
         ['Account or key', 'Neither']
       ]
     },
@@ -7798,8 +7798,8 @@ module.exports = {
     tip: 'The mid-market rate is a benchmark, not a price you can transact at. Its real use is as a yardstick: convert the amount here, compare it with the figure your provider offered, and the gap tells you what the transfer cost you. That number is often larger than any advertised fee.',
     faqs: [
       { q: 'Why is my bank’s rate worse than this?', a: 'Because the mid-market rate is the midpoint between what buyers and sellers want, and nobody transacts there. Banks and cards apply a margin on top, commonly 2–4%, which is frequently larger than any fee they name separately.' },
-      { q: 'How current are the rates?', a: 'They come from a free public service and the update time is shown under the result. For a coffee it is fine; for a large transfer, check the rate at the moment you send, since markets move.' },
-      { q: 'Why does this tool need the internet when the others do not?', a: 'Because an exchange rate is external data that changes by the second — it cannot be computed on your device the way a compression or a loan payment can. It is the single exception on the site.' },
+      { q: 'How current are the rates?', a: 'ExchangeRate-API publishes indicative rates daily. Vootkit caches responses for up to one hour, and the provider’s update time appears below the result. Check your provider’s actual quote before making a transfer.' },
+      { q: 'Why does this tool need the internet?', a: 'Exchange rates come from an external service. Vootkit servers cache that public data so visitors can reuse it. Your files are not involved in the request.' },
       { q: 'Can I use this for accounting or tax?', a: 'No. Tax authorities usually require a specific published rate for a specific date, often their own. Use this for estimates and comparisons, and the official source for anything that has to be filed.' }
     ],
     related: ['salary-converter', 'loan-calculator', 'budget-calculator', 'compound-interest', 'savings-goal', 'investment-calculator']
@@ -8455,7 +8455,7 @@ module.exports = {
         ['Frame rate', '24 fps (film), 30 fps (default), 60 fps (smooth)'],
         ['Frame timing', 'Constant, so it stays in sync in every editor'],
         ['Compatibility', 'H.264 MP4 plays on virtually every device and platform'],
-        ['Maximum input', '200 MB'],
+        ['Maximum input', LIMITS.videoInputGB + ' GB'],
         ['Maximum length', '30 minutes']
       ]
     },
@@ -8882,3 +8882,4 @@ module.exports = {
 };
 
 module.exports.LIMITS = LIMITS;
+

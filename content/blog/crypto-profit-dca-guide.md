@@ -65,7 +65,7 @@ Use it as an organisational estimate only. Tax rules and permitted cost-basis me
 ## Useful next tools
 
 - [Percentage Calculator](/tools/everyday/percentage-calculator/) — Percent of, is-what-percent, and percentage change.
-- [Currency Converter](/tools/finance/currency-converter/) — Live exchange rates from European Central Bank data.
+- [Currency Converter](/tools/finance/currency-converter/) — Convert currencies with cached ExchangeRate-API reference rates.
 - [Compound Interest](/tools/finance/compound-interest/) — Grow savings with regular contributions over time.
 - [Simple Interest Calculator](/tools/finance/simple-interest/) — Interest and total value from principal, rate and time.
 - [Profit Margin](/tools/business/profit-margin/) — Margin, markup and selling price from cost.

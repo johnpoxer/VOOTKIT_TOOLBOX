@@ -1,0 +1,391 @@
+{
+  "date": "2026-10-10",
+  "method": "Replaced tool-page prose with separately authored illustrative cases, result checks and limitations. No external plagiarism guarantee or invented benchmarks.",
+  "guides": [
+    {
+      "id": "adjust-volume",
+      "file": "content/blog/adjust-volume-guide.md",
+      "words": 245
+    },
+    {
+      "id": "age-calculator",
+      "file": "content/blog/age-calculator-guide.md",
+      "words": 244
+    },
+    {
+      "id": "area-converter",
+      "file": "content/blog/area-converter-guide.md",
+      "words": 226
+    },
+    {
+      "id": "auto-insurance-estimator",
+      "file": "content/blog/auto-insurance-estimator-guide.md",
+      "words": 234
+    },
+    {
+      "id": "barcode-generator",
+      "file": "content/blog/barcode-generator-guide.md",
+      "words": 246
+    },
+    {
+      "id": "bitrate-calculator",
+      "file": "content/blog/bitrate-calculator-guide.md",
+      "words": 243
+    },
+    {
+      "id": "brb-overlay",
+      "file": "content/blog/brb-overlay-guide.md",
+      "words": 250
+    },
+    {
+      "id": "cap-rate",
+      "file": "content/blog/cap-rate-guide.md",
+      "words": 234
+    },
+    {
+      "id": "cash-on-cash",
+      "file": "content/blog/cash-on-cash-guide.md",
+      "words": 232
+    },
+    {
+      "id": "chat-overlay-tool",
+      "file": "content/blog/chat-overlay-tool-guide.md",
+      "words": 247
+    },
+    {
+      "id": "closing-costs",
+      "file": "content/blog/closing-costs-guide.md",
+      "words": 271
+    },
+    {
+      "id": "convert-video",
+      "file": "content/blog/convert-video-guide.md",
+      "words": 248
+    },
+    {
+      "id": "countdown",
+      "file": "content/blog/countdown-guide.md",
+      "words": 246
+    },
+    {
+      "id": "data-converter",
+      "file": "content/blog/data-converter-guide.md",
+      "words": 241
+    },
+    {
+      "id": "date-calculator",
+      "file": "content/blog/date-calculator-guide.md",
+      "words": 239
+    },
+    {
+      "id": "discount-calculator",
+      "file": "content/blog/discount-calculator-guide.md",
+      "words": 240
+    },
+    {
+      "id": "distance-calculator",
+      "file": "content/blog/distance-calculator-guide.md",
+      "words": 242
+    },
+    {
+      "id": "electricity-cost",
+      "file": "content/blog/electricity-cost-guide.md",
+      "words": 250
+    },
+    {
+      "id": "emote-resizer",
+      "file": "content/blog/emote-resizer-guide.md",
+      "words": 246
+    },
+    {
+      "id": "employee-cost",
+      "file": "content/blog/employee-cost-guide.md",
+      "words": 239
+    },
+    {
+      "id": "equation-solver",
+      "file": "content/blog/equation-solver-guide.md",
+      "words": 251
+    },
+    {
+      "id": "extract-audio",
+      "file": "content/blog/extract-audio-guide.md",
+      "words": 245
+    },
+    {
+      "id": "fraction-calculator",
+      "file": "content/blog/fraction-calculator-guide.md",
+      "words": 248
+    },
+    {
+      "id": "frame-grabber",
+      "file": "content/blog/frame-grabber-guide.md",
+      "words": 254
+    },
+    {
+      "id": "fuel-cost-calculator",
+      "file": "content/blog/fuel-cost-calculator-guide.md",
+      "words": 237
+    },
+    {
+      "id": "fuel-economy-converter",
+      "file": "content/blog/fuel-economy-converter-guide.md",
+      "words": 229
+    },
+    {
+      "id": "giveaway-picker",
+      "file": "content/blog/giveaway-picker-guide.md",
+      "words": 239
+    },
+    {
+      "id": "home-affordability",
+      "file": "content/blog/home-affordability-guide.md",
+      "words": 270
+    },
+    {
+      "id": "hourly-wage",
+      "file": "content/blog/hourly-wage-guide.md",
+      "words": 236
+    },
+    {
+      "id": "income-protection",
+      "file": "content/blog/income-protection-guide.md",
+      "words": 245
+    },
+    {
+      "id": "income-tax-estimator",
+      "file": "content/blog/income-tax-estimator-guide.md",
+      "words": 236
+    },
+    {
+      "id": "length-converter",
+      "file": "content/blog/length-converter-guide.md",
+      "words": 234
+    },
+    {
+      "id": "life-insurance-needs",
+      "file": "content/blog/life-insurance-needs-guide.md",
+      "words": 232
+    },
+    {
+      "id": "loop-video",
+      "file": "content/blog/loop-video-guide.md",
+      "words": 238
+    },
+    {
+      "id": "math-solver",
+      "file": "content/blog/math-solver-guide.md",
+      "words": 247
+    },
+    {
+      "id": "mileage-reimbursement",
+      "file": "content/blog/mileage-reimbursement-guide.md",
+      "words": 231
+    },
+    {
+      "id": "mortgage-calculator",
+      "file": "content/blog/mortgage-calculator-guide.md",
+      "words": 268
+    },
+    {
+      "id": "mortgage-payoff",
+      "file": "content/blog/mortgage-payoff-guide.md",
+      "words": 270
+    },
+    {
+      "id": "mute-video",
+      "file": "content/blog/mute-video-guide.md",
+      "words": 247
+    },
+    {
+      "id": "obs-settings-assistant",
+      "file": "content/blog/obs-settings-assistant-guide.md",
+      "words": 243
+    },
+    {
+      "id": "overtime-calculator",
+      "file": "content/blog/overtime-calculator-guide.md",
+      "words": 235
+    },
+    {
+      "id": "packing-list",
+      "file": "content/blog/packing-list-guide.md",
+      "words": 247
+    },
+    {
+      "id": "paycheck-calculator",
+      "file": "content/blog/paycheck-calculator-guide.md",
+      "words": 228
+    },
+    {
+      "id": "payroll-calculator",
+      "file": "content/blog/payroll-calculator-guide.md",
+      "words": 244
+    },
+    {
+      "id": "percentage-calculator",
+      "file": "content/blog/percentage-calculator-guide.md",
+      "words": 242
+    },
+    {
+      "id": "pomodoro",
+      "file": "content/blog/pomodoro-guide.md",
+      "words": 261
+    },
+    {
+      "id": "pto-accrual",
+      "file": "content/blog/pto-accrual-guide.md",
+      "words": 228
+    },
+    {
+      "id": "qr-generator",
+      "file": "content/blog/qr-generator-guide.md",
+      "words": 252
+    },
+    {
+      "id": "qr-scanner",
+      "file": "content/blog/qr-scanner-guide.md",
+      "words": 247
+    },
+    {
+      "id": "random-number-generator",
+      "file": "content/blog/random-number-generator-guide.md",
+      "words": 232
+    },
+    {
+      "id": "random-picker",
+      "file": "content/blog/random-picker-guide.md",
+      "words": 236
+    },
+    {
+      "id": "refinance-calculator",
+      "file": "content/blog/refinance-calculator-guide.md",
+      "words": 265
+    },
+    {
+      "id": "rent-vs-buy",
+      "file": "content/blog/rent-vs-buy-guide.md",
+      "words": 267
+    },
+    {
+      "id": "rental-yield",
+      "file": "content/blog/rental-yield-guide.md",
+      "words": 230
+    },
+    {
+      "id": "resize-video",
+      "file": "content/blog/resize-video-guide.md",
+      "words": 245
+    },
+    {
+      "id": "salary-converter",
+      "file": "content/blog/salary-converter-guide.md",
+      "words": 240
+    },
+    {
+      "id": "self-employment-tax",
+      "file": "content/blog/self-employment-tax-guide.md",
+      "words": 253
+    },
+    {
+      "id": "speed-converter",
+      "file": "content/blog/speed-converter-guide.md",
+      "words": 226
+    },
+    {
+      "id": "starting-soon-screen",
+      "file": "content/blog/starting-soon-screen-guide.md",
+      "words": 245
+    },
+    {
+      "id": "stopwatch",
+      "file": "content/blog/stopwatch-guide.md",
+      "words": 231
+    },
+    {
+      "id": "stream-alert-creator",
+      "file": "content/blog/stream-alert-creator-guide.md",
+      "words": 244
+    },
+    {
+      "id": "stream-asset-sizer",
+      "file": "content/blog/stream-asset-sizer-guide.md",
+      "words": 247
+    },
+    {
+      "id": "stream-overlay-creator",
+      "file": "content/blog/stream-overlay-creator-guide.md",
+      "words": 246
+    },
+    {
+      "id": "stream-revenue-calculator",
+      "file": "content/blog/stream-revenue-calculator-guide.md",
+      "words": 239
+    },
+    {
+      "id": "stream-schedule-planner",
+      "file": "content/blog/stream-schedule-planner-guide.md",
+      "words": 250
+    },
+    {
+      "id": "temperature-converter",
+      "file": "content/blog/temperature-converter-guide.md",
+      "words": 219
+    },
+    {
+      "id": "time-calculator",
+      "file": "content/blog/time-calculator-guide.md",
+      "words": 233
+    },
+    {
+      "id": "timezone-converter",
+      "file": "content/blog/timezone-converter-guide.md",
+      "words": 244
+    },
+    {
+      "id": "tip-by-country",
+      "file": "content/blog/tip-by-country-guide.md",
+      "words": 246
+    },
+    {
+      "id": "tip-split",
+      "file": "content/blog/tip-split-guide.md",
+      "words": 236
+    },
+    {
+      "id": "trip-cost-splitter",
+      "file": "content/blog/trip-cost-splitter-guide.md",
+      "words": 231
+    },
+    {
+      "id": "typing-test",
+      "file": "content/blog/typing-test-guide.md",
+      "words": 228
+    },
+    {
+      "id": "unit-converter",
+      "file": "content/blog/unit-converter-guide.md",
+      "words": 223
+    },
+    {
+      "id": "upload-time",
+      "file": "content/blog/upload-time-guide.md",
+      "words": 238
+    },
+    {
+      "id": "vertical-reframe",
+      "file": "content/blog/vertical-reframe-guide.md",
+      "words": 244
+    },
+    {
+      "id": "volume-converter",
+      "file": "content/blog/volume-converter-guide.md",
+      "words": 235
+    },
+    {
+      "id": "weight-converter",
+      "file": "content/blog/weight-converter-guide.md",
+      "words": 227
+    }
+  ]
+}

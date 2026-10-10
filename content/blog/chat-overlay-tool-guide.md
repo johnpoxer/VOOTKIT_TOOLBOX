@@ -1,70 +1,34 @@
 ---
 title: "How to Style a Stream Chat Overlay With CSS"
 date: "2026-08-28"
-description: "Creates a styled chat overlay to add as a browser source in OBS, so messages appear on the stream itself."
+description: "Style an existing chat widget without confusing styling with a live-chat connection."
 thumbnail: "/assets/blog/chat-overlay-tool-guide.jpg"
 coverAlt: "Editorial illustration representing the Chat Overlay CSS workflow."
 author: "The Vootkit team"
 type: "Guide"
 category: "Video"
 tags: "Video, Streaming, Creator Tools"
+updated: "2026-10-10"
 ---
 
-Putting chat on screen is what makes a VOD watchable afterwards — someone catching the recording sees the reactions, not just your half of the conversation. It also lets you read chat without looking away.
+Style an existing chat widget without confusing styling with a live-chat connection.
 
-## What the Chat Overlay CSS does
+Use the [Chat Overlay CSS](/tools/video/chat-overlay-tool/) alongside this illustrative example.
 
-Creates a styled chat overlay to add as a browser source in OBS, so messages appear on the stream itself.
+## A practical example
 
-It changes what a VOD is worth. Without it, a recording of a stream is one side of a conversation; with it, the jokes land.
+The VOOTKIT tool outputs CSS for a separate chat service. Start with a readable message colour, a contrasting username colour and a modest font size. Paste the CSS into the provider’s custom-style field, then send a test message through that provider. The sample messages on VOOTKIT are previews, not your channel’s chat.
 
-Open the [Chat Overlay CSS](/tools/video/chat-overlay-tool/) and follow the settings and checks below.
+## Check the result
 
-## Setup and considerations
+Test long usernames, emoji and several messages over both bright and dark scenes. If the provider uses different class names, the generated selectors may need adapting to its documented markup.
 
-| Setting | What it means |
-|---|---|
-| Add to OBS as | A browser source |
-| Purpose | Show chat on stream and in the VOD |
-| Readability | Needs an outline or shadow over video |
-| Message count | Fewer is better — 5 to 8 lines |
-| Moderation | Whatever appears on screen is in the recording |
-| CPU | A browser source costs more than a static image |
-| Privacy | Generated in your browser |
+## Try a comparison
 
-## How to use it
+Set a larger font, send a long test message and observe how many lines it occupies in the provider’s actual widget. A style that works for two short preview messages can become difficult to read when usernames and messages wrap.
 
-1. Style it for contrast — text over video needs an outline or shadow.
-2. Add it as a browser source and position it clear of the action.
-3. Test with real chat moving, not a static preview.
+## What this does not establish
 
-## A practical quality check
+CSS does not provide moderation, authentication or message delivery. The connected chat service controls those functions; review what can appear in your recording.
 
-Whatever appears in the overlay is baked into the VOD permanently. A message your moderators delete two seconds later is still in the recording, and you cannot edit it out without re-encoding the whole thing. If your chat is fast or your moderation is thin, showing fewer lines is safer than showing more.
-
-## Common questions
-
-### Why is my chat overlay hard to read?
-
-Plain text over video is unreadable whenever the background is busy or bright. Add a strong outline or drop shadow, or a semi-transparent panel behind the text — contrast matters far more than font choice.
-
-### How many messages should I show?
-
-Five to eight lines. More becomes a wall that nobody reads and that covers your content; fewer scrolls too fast to follow during a busy moment.
-
-### Do deleted messages disappear from the VOD?
-
-No. The overlay is recorded as part of the video, so anything that appeared is permanent. That is worth weighing before showing chat on a channel with heavy traffic.
-
-### Does a browser source hurt performance?
-
-It costs more than a static image, since it is effectively a small web page rendering continuously. On a CPU-constrained machine that competes with your encoder — one more reason to keep the overlay simple.
-
-## Useful next tools
-
-- [Stream Overlay Creator](/tools/video/stream-overlay-creator/) — Design a transparent webcam overlay for OBS.
-- [Stream Alert Creator](/tools/video/stream-alert-creator/) — Design follower, sub and donation alert graphics.
-- [Brb Overlay](/tools/video/brb-overlay/) — A styled page to drop into OBS as a browser source.
-- [Obs Settings Assistant](/tools/video/obs-settings-assistant/) — Recommended bitrate and encoder settings for your setup.
-
-Vootkit provides a browser tool and educational guidance, not a guarantee that every browser, device or third-party platform will accept every file. Platform specifications can change, so verify important publishing requirements with the destination service.
+[Report unclear guidance or a result that needs checking](/contact.html).

@@ -45,7 +45,9 @@
      * SET THIS TO FALSE if Ezoic or Mediavine goes live — both ship their own
      * certified CMP, and two consent layers on one page is worse for the user
      * and worse legally than either alone. */
-    consent: { enabled: true },
+    // Google Privacy & messaging: published message for vootkit.com verified
+    // in AdSense on 10 October 2026. Its choices replace the custom banner.
+    consent: { enabled: true, provider: "google" },
 
     /* AdSense.
      *

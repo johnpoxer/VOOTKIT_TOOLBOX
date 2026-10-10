@@ -22,12 +22,13 @@
     function peek() { return toks[pos]; }
     function next() { return toks[pos++]; }
     function expr() { var x = term(); while (peek() && (peek().v === '+' || peek().v === '-')) { var op = next().v; var y = term(); x = op === '+' ? x + y : x - y; } return x; }
-    function term() { var x = power(); while (peek() && (peek().v === '*' || peek().v === '/' || peek().v === '%')) { var op = next().v; var y = power(); x = op === '*' ? x * y : op === '/' ? x / y : x % y; } return x; }
-    function power() { var x = unary(); if (peek() && peek().v === '^') { next(); var y = power(); x = Math.pow(x, y); } return x; }
-    function unary() { if (peek() && (peek().v === '-' || peek().v === '+')) { var op = next().v; var x = unary(); return op === '-' ? -x : x; } return primary(); }
+    function term() { var x = unary(); while (peek() && (peek().v === '*' || peek().v === '/' || peek().v === '%')) { var op = next().v; var y = unary(); x = op === '*' ? x * y : op === '/' ? x / y : x % y; } return x; }
+    function power() { var x = primary(); if (peek() && peek().v === '^') { next(); var y = unary(); x = Math.pow(x, y); } return x; }
+    function unary() { if (peek() && (peek().v === '-' || peek().v === '+')) { var op = next().v; var x = unary(); return op === '-' ? -x : x; } return power(); }
     function primary() { var t = next(); if (!t) throw new Error('Unexpected end of expression.'); if (t.t === 'num') return t.v; if (t.v === '(') { var x = expr(); var cl = next(); if (!cl || cl.v !== ')') throw new Error('Missing closing bracket.'); return x; } throw new Error('Unexpected “' + t.v + '”.'); }
     var r = expr();
     if (pos < toks.length) throw new Error('Unexpected “' + peek().v + '”.');
+    if (!Number.isFinite(r)) throw new Error('The expression has no finite numeric result. Check division by zero and the size of powers.');
     return r;
   }
 

@@ -76,7 +76,7 @@ Audio is a small slice of the file, but on a short clip it's not nothing. 192 kb
 
 Game audio and voice survive 96 kbps fine. Music does not.
 
-If the clip doesn't need sound at all, [Mute / Strip Audio](/tools/video/mute-video/) removes the track entirely and takes a stream copy, so the video is untouched and it finishes instantly.
+If the clip doesn't need sound at all, [Mute / Strip Audio](/tools/video/mute-video/) removes the track entirely and takes a stream copy, so the video is untouched. Stream copying is usually faster than encoding, but large files still need time to read and save.
 
 ## Doing it
 

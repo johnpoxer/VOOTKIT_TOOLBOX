@@ -16,6 +16,8 @@
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 .vk-home-ref .wordmark{display:inline-flex;align-items:center;gap:7px;color:#151a36!important;font-size:23px;letter-spacing:-1px}.vk-home-ref .wordmark .brand-v{width:29px;height:29px;flex:0 0 29px}.vk-home-ref .wordmark .brand-ring,.vk-home-ref .wordmark .brand-check{fill:none;stroke:#4f35e8;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}.vk-home-ref .wordmark .brand-orb{fill:#52a7ff;stroke:none}.vk-home-ref .footer-bar .wordmark{font-size:16px}.vk-home-ref .footer-bar .wordmark .brand-v{width:21px;height:21px;flex-basis:21px}
 .vk-home-ref .mobile-header>.wordmark{display:inline-flex!important;flex-direction:row!important;align-items:center!important;white-space:nowrap}.vk-home-ref .mobile-header>.wordmark .brand-v{display:block!important;width:29px!important;max-width:29px!important;height:29px!important;max-height:29px!important;flex:0 0 29px!important}
+.newsletter form.nl{display:block}.newsletter .nl-check{height:auto;padding:0}.newsletter .nl-consent{font-size:12px}
+.vk-home-ref .drawer [data-auth-link]{display:none!important}
 
 /* The reference homepage is intentionally light-only. Keep legacy theme tokens
    from washing out text when a visitor's device is set to dark mode. */
@@ -64,3 +66,4 @@
 .vk-home-ref .trust-strip b{color:#22283c!important}
 .vk-home-ref .searchbox input{color:#11152d!important;-webkit-text-fill-color:#11152d!important}
 .vk-home-ref .searchbox input::placeholder{color:#999eaf!important;-webkit-text-fill-color:#999eaf!important;opacity:1}
+

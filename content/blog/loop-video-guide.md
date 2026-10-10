@@ -1,70 +1,34 @@
 ---
 title: "How to Create a Seamless Looping Video"
 date: "2026-08-28"
-description: "Repeats the clip end to end for the number of plays you choose, using -streamloop with -c copy. The video is never decoded, so a three-times loop of a…"
+description: "Check the join between repetitions before exporting a longer loop."
 thumbnail: "/assets/blog/loop-video-guide.jpg"
 coverAlt: "Editorial illustration representing the Loop Video workflow."
 author: "The Vootkit team"
 type: "Guide"
 category: "Video"
 tags: "Video, Streaming, Creator Tools"
+updated: "2026-10-10"
 ---
 
-Looping a short clip — a logo sting, a background plate, a two-second reaction — normally means pasting it end to end in an editor and exporting the whole thing. There is a much cheaper way: write the same encoded stream out several times in a row. No re-encoding, no generation loss.
+Check the join between repetitions before exporting a longer loop.
 
-## What the Loop Video does
+Use the [Loop Video](/tools/video/loop-video/) alongside this illustrative example.
 
-Repeats the clip end to end for the number of plays you choose, using <code>-stream_loop</code> with <code>-c copy</code>. The video is never decoded, so a three-times loop of a 10-second clip takes about as long as copying the file.
+## A practical example
 
-Output length and size scale linearly and predictably: three plays is three times the duration and very close to three times the bytes.
+A ten-second clip repeated six times is roughly a minute of material, but an obvious jump at each join can make it unsuitable as a background. Watch the last second followed by the first second. Choose a calmer section or a deliberate transition in an editor if the motion does not connect.
 
-Open the [Loop Video](/tools/video/loop-video/) and follow the settings and checks below.
+## Check the result
 
-## Limits and behaviour
+Check the audio boundary too: a cut in a musical phrase may be more distracting than the visual jump. Test a small repeat count before a long export to avoid spending time on a flawed seam.
 
-| Setting | What it means |
-|---|---|
-| Total plays | 2 to 20 |
-| Method | Stream copy (<code>-stream_loop</code>) — no re-encode |
-| Quality | Identical to source on every repetition |
-| Output duration | Source length × plays |
-| Output size | Roughly source size × plays |
-| Maximum input | 2 GB |
-| Maximum length | 30 minutes for the SOURCE clip |
+## Try a comparison
 
-## How to use it
+Compare two repetitions with three before requesting a long loop. Each additional join introduces another chance to notice the seam. If the two-copy version already has a click or jump, fix the source section before generating more repetitions.
 
-1. Add the clip you want repeated.
-2. Set <strong>Total plays</strong> — this is the finished count, so 3 means the clip appears three times, not that it repeats three extra times.
-3. Loop, then download.
+## What this does not establish
 
-## A practical quality check
+Repeating footage does not create new detail. Large repeat counts increase output size, processing time and memory demands.
 
-Loops read as seamless only when the last frame flows into the first. Trim the clip so it starts and ends at the same point in the motion before looping — a quarter of a second of dead air at the end becomes a visible stutter every time round.
-
-## Common questions
-
-### Does looping degrade the quality each time?
-
-No. The same encoded data is written repeatedly rather than being decoded and re-encoded, so the twentieth repetition is identical to the first. Doing this in an editor typically re-encodes everything and loses a little quality across the whole file.
-
-### Does "Total plays: 3" give me three or four copies?
-
-Three. The number is the finished count rather than the number of extra repeats, which is the opposite of how ffmpeg counts internally — <code>-stream_loop</code> takes the number of ADDITIONAL loops, so three plays is passed as two. The tool does that subtraction for you, because "how many times will this appear" is the question people actually have.
-
-### Why cap it at 20?
-
-Because size scales with it. A 40 MB clip looped twenty times is 800 MB, which is awkward to handle in a browser tab and awkward to upload anywhere. If you need more, loop the looped file.
-
-### Will the audio loop too?
-
-Yes — the whole stream repeats, video and audio together, and they stay in sync because neither is re-timed.
-
-## Useful next tools
-
-- [Trim Video](/tools/video/trim-video/) — Cut the segment you want and save it.
-- [Video To Gif](/tools/video/video-to-gif/) — Turn a short clip into a shareable GIF.
-- [Compress Video](/tools/video/compress-video/) — Shrink any video in your browser — pick a quality level or a size to fit.
-- [Mute Video](/tools/video/mute-video/) — Remove the audio track to avoid copyright strikes.
-
-Vootkit provides a browser tool and educational guidance, not a guarantee that every browser, device or third-party platform will accept every file. Platform specifications can change, so verify important publishing requirements with the destination service.
+[Report unclear guidance or a result that needs checking](/contact.html).

@@ -227,7 +227,7 @@
     }
     if (doc) doc.querySelectorAll('[data-auth-link]').forEach(function (link) {
       link.href = user ? '#sign-out' : u + 'auth/sign-in/';
-      link.textContent = user ? 'Sign out' : 'Log in';
+      link.textContent = user ? 'Sign out' : 'Sign in';
       link.onclick = user ? function (e) { e.preventDefault(); signOut(); } : null;
     });
   }
@@ -304,3 +304,4 @@
     if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', boot); else boot();
   }
 })(typeof window !== 'undefined' ? window : globalThis);
+
