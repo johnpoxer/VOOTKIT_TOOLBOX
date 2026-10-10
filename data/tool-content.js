@@ -7775,8 +7775,8 @@ module.exports = {
   'currency-converter': {
     intro: 'The rate you see quoted and the rate you get are different numbers, and the gap is where the money goes. Knowing the mid-market rate is how you find out what your bank actually charged you.',
     what: [
-      'Converts between currencies using live mid-market rates fetched from a free public rate service.',
-      'This is the one Vootkit tool that needs the network. Every other tool runs entirely in your browser; this one cannot, because exchange rates live somewhere else and change constantly.'
+      'Converts between currencies using indicative rates from ExchangeRate-API, cached on Vootkit servers for up to one hour.',
+      'This tool needs an internet connection to fetch rates. Most file tools process on your device; network-backed tools explain their connection requirements.'
     ],
     specs: {
       caption: 'What the rate is, and is not',
@@ -7786,7 +7786,7 @@ module.exports = {
         ['Typical bank margin', 'Commonly 2–4% on top of the mid-market rate'],
         ['Typical card margin', 'Usually smaller, but varies by card and network'],
         ['Freshness', 'The rate’s update time is shown beneath the result'],
-        ['Network', 'Required — the only Vootkit tool that needs it'],
+        ['Network', 'Required — rates fetched through Vootkit servers'],
         ['Account or key', 'Neither']
       ]
     },
@@ -7798,8 +7798,8 @@ module.exports = {
     tip: 'The mid-market rate is a benchmark, not a price you can transact at. Its real use is as a yardstick: convert the amount here, compare it with the figure your provider offered, and the gap tells you what the transfer cost you. That number is often larger than any advertised fee.',
     faqs: [
       { q: 'Why is my bank’s rate worse than this?', a: 'Because the mid-market rate is the midpoint between what buyers and sellers want, and nobody transacts there. Banks and cards apply a margin on top, commonly 2–4%, which is frequently larger than any fee they name separately.' },
-      { q: 'How current are the rates?', a: 'They come from a free public service and the update time is shown under the result. For a coffee it is fine; for a large transfer, check the rate at the moment you send, since markets move.' },
-      { q: 'Why does this tool need the internet when the others do not?', a: 'Because an exchange rate is external data that changes by the second — it cannot be computed on your device the way a compression or a loan payment can. It is the single exception on the site.' },
+      { q: 'How current are the rates?', a: 'ExchangeRate-API publishes indicative rates daily. Vootkit caches responses for up to one hour, and the provider’s update time appears below the result. Check your provider’s actual quote before making a transfer.' },
+      { q: 'Why does this tool need the internet?', a: 'Exchange rates come from an external service. Vootkit servers cache that public data so visitors can reuse it. Your files are not involved in the request.' },
       { q: 'Can I use this for accounting or tax?', a: 'No. Tax authorities usually require a specific published rate for a specific date, often their own. Use this for estimates and comparisons, and the official source for anything that has to be filed.' }
     ],
     related: ['salary-converter', 'loan-calculator', 'budget-calculator', 'compound-interest', 'savings-goal', 'investment-calculator']
@@ -8882,3 +8882,4 @@ module.exports = {
 };
 
 module.exports.LIMITS = LIMITS;
+

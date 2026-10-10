@@ -202,7 +202,7 @@ function adUnit(slotKey, label) {
 const V = "?v=" + (function () {
   const crypto = require("crypto");
   const h = crypto.createHash("sha1");
-  const css = ["tokens", "base", "pages", "newsletter", "skin", "home"].map((n) => "assets/css/" + n + ".css");
+  const css = ["tokens", "base", "pages", "newsletter", "skin", "home", "home-v2"].map((n) => "assets/css/" + n + ".css");
   const dataAssets = ["data/catalog.js", "data/tool-icons.js", "data/site.config.js", "data/stats.js"];
   let js = [];
   try { js = fs.readdirSync(path.join(ROOT, "assets/js")).filter((f) => f.endsWith(".js")).sort().map((f) => "assets/js/" + f); } catch (e) {}
@@ -214,7 +214,7 @@ function refreshHomepageAssetVersions() {
   const file = path.join(ROOT, "index.html");
   if (!fs.existsSync(file)) return;
   let html = fs.readFileSync(file, "utf8");
-  html = html.replace(/((?:href|src)="(?:assets\/css\/(?:tokens|base|newsletter|skin|home)\.css|data\/(?:catalog|stats|tool-icons)\.js|assets\/js\/(?:home|ui|supabase-config|newsletter|usage|auth)\.js))\?v=[^"]*(")/g, `$1${V}$2`);
+  html = html.replace(/((?:href|src)="(?:assets\/css\/(?:tokens|base|newsletter|skin|home|home-v2)\.css|data\/(?:catalog|stats|tool-icons|site.config)\.js|assets\/js\/(?:home|ui|supabase-config|newsletter|usage|auth)\.js))\?v=[^"]*(")/g, `$1${V}$2`);
   fs.writeFileSync(file, html);
 }
 
@@ -347,13 +347,13 @@ ${o.ads ? adLoader() : "<!-- no ads inside an active tool workspace -->"}
     </a>
     <nav class="nav" id="nav" aria-label="Main">
       <a href="${up}"${cur("home")}>Home</a>
-      <a href="${up}tools/"${cur("tools")}>Tools</a>
-      <a href="${up}workflows/"${cur("workflow")}>Workflow</a>
+      <a href="${up}tools/"${cur("tools")}>All tools</a>
+      <a href="${up}workflows/"${cur("workflow")}>Workflows</a>
       <a href="${up}templates/"${cur("templates")}>Templates</a>
-      <a href="${up}blog/"${cur("blog")}>Blog</a>
+      <a href="${up}blog/"${cur("blog")}>Guides</a>
       <a href="${up}pricing.html"${cur("pricing")}>Pricing</a>
-      <a href="${up}about.html"${cur("about")}>About</a>
-      <a href="${up}auth/sign-in/" data-auth-link>Log in</a>
+      <a href="${up}about.html"${cur("about")}>About us</a>
+      <a href="${up}auth/sign-in/" data-auth-link>Sign in</a>
     </nav>
     <div class="hdr-act">
       ${langSwitcher(o.alts, lang)}
@@ -363,8 +363,7 @@ ${o.ads ? adLoader() : "<!-- no ads inside an active tool workspace -->"}
       <button class="icon-btn" type="button" data-open-search aria-label="Search tools">
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
       </button>
-      <span id="vk-auth-slot" class="vk-auth-slot" aria-busy="true"><a class="btn btn-sm hdr-login" href="${up}auth/sign-in/">Login</a></span>
-      <a class="hdr-cta" href="${up}auth/sign-up/"><span class="cta-full">Get Started Free</span><span class="cta-short">Start Free</span></a>
+      <span id="vk-auth-slot" class="vk-auth-slot" aria-busy="true"><a class="btn btn-sm hdr-login" href="${up}auth/sign-in/">Sign in</a></span>
       <button class="icon-btn" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav">
         <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
       </button>
@@ -1266,7 +1265,7 @@ function dirHeroVisual() {
 
 function dirTrustStrip() {
   const items = [
-    ["coins", "100% Free", ""],
+    ["coins", "5 free tasks a day", ""],
     ["laptop", "Browser Based", ""],
     ["grid", "250+ Tools", ""],
     ["shield", "Secure", ""]
@@ -1628,7 +1627,8 @@ function toolStepSet(t, archetype) {
 }
 
 function toolHeroBadges(t, local, archetype) {
-  const labels = ["100% Free", "No watermark"];
+  const limited = CFG.freeLimit && CFG.freeLimit.enabled && (CFG.freeLimit.exemptCategories || []).indexOf(t.cat) === -1;
+  const labels = [limited ? `${CFG.freeLimit.count} free tasks a day` : "Free to use", "No watermark"];
   if (archetype === "file") labels.splice(1, 0, local ? "Browser-based" : "Online lookup");
   else labels.splice(1, 0, "Runs instantly");
   return labels.map((x) => `<span class="badge">${esc(x)}</span>`).join("");
@@ -2705,7 +2705,7 @@ function blogReferenceIndex(posts) {
       <div class="br-load-wrap"><button class="btn br-load-more" type="button" data-blog-more>Load more guides</button></div>
     </section>
     <section class="br-section br-topics"><header><div><span class="br-overline">Explore the library</span><h2>Browse by topic</h2></div></header><div class="br-topic-grid">${topicLinks}</div></section>
-    <section class="br-newsletter"><img src="/assets/blog/nl-band.webp" alt="" width="260" height="180" loading="lazy"><div><h2>One useful workflow every week.</h2><p>Handpicked guides, practical tips and time-saving workflows delivered to your inbox.</p><div data-newsletter="blog_index" data-nl-compact data-nl-placeholder="Email address" data-nl-button="Subscribe"></div></div></section>
+    <section class="br-newsletter"><img src="/assets/blog/nl-band.webp" alt="" width="260" height="180" loading="lazy"><div><h2>New tools, now and then.</h2><p>Occasional tools and practical guides. No more than monthly.</p><div data-newsletter="blog_index" data-nl-compact data-nl-placeholder="Email address" data-nl-button="Subscribe"></div></div></section>
   </main>
   <script type="application/json" id="blog-data">${blogJsonData(posts)}</script>
 </div>` + foot(1, ["assets/js/blog.js"], { noNewsletter: true });
@@ -4647,6 +4647,7 @@ const hlines = [
      with no ".html" in it. A /*.html rule silently never fires; verified live,
      pages were falling through to Netlify's default max-age=0. */
   "  Cache-Control: public, max-age=0, s-maxage=60, stale-while-revalidate=86400",
+  "  Netlify-CDN-Cache-Control: public, durable, s-maxage=300, stale-while-revalidate=86400",
   "",
   /* Assets are cache-busted by ?v=<content hash> (see V, near the top), so a
      deploy changes the URL and browsers/CDNs fetch the new file automatically.
@@ -4868,3 +4869,4 @@ refreshHomepageAssetVersions();
 
 fs.writeFileSync(path.join(ROOT, "_headers"), hlines.join("\n") + "\n");
 console.log(`_headers: ${fxIds.length} isolated tool paths`);
+

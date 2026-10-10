@@ -556,3 +556,5 @@ body::before {
 .brand svg { transition: transform var(--dur) var(--ease); }
 @media (prefers-reduced-motion: no-preference) { .brand:hover svg { transform: rotate(-6deg) scale(1.06); } }
 a, .btn, .icon-btn, summary { transition: color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease); }
+
+@media (min-width:1000px){.nav [data-auth-link]{display:none}}

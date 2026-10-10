@@ -5,7 +5,7 @@
 (function (root) {
   'use strict';
 
-  var API = 'https://open.er-api.com/v6/latest/';   // free, no key, CORS-enabled
+  var API = '/.netlify/functions/exchange-rates?base=';
   var CURRENCIES = ['USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD', 'CHF', 'CNY', 'INR', 'NGN', 'ZAR', 'BRL', 'MXN', 'SGD', 'HKD', 'SEK', 'NOK', 'NZD', 'KRW', 'AED'];
   var cache = {};   // base -> { time, rates }
 
@@ -57,7 +57,8 @@
       ]));
       host.appendChild(W.el('div', { class: 'wgrid2' }, [fld(W, 'Amount', amount), fld(W, 'From', from), fld(W, 'To', to)]));
       host.appendChild(out); host.appendChild(meta);
-      host.appendChild(W.el('p', { class: 'note', text: 'This tool fetches live mid-market rates from a free public API — the only Vootkit tool that needs the network. Rates are indicative and exclude any bank/card margin. No account or key required.' }));
+      host.appendChild(W.el('p', { class: 'note', text: 'Rates from ExchangeRate-API are cached on Vootkit servers for up to one hour. Rates are indicative and exclude bank/card margins. No account required.' }));
+      host.appendChild(W.el('a', { href: 'https://www.exchangerate-api.com', text: 'Rates By Exchange Rate API', rel: 'noopener', class: 'note' }));
       convert();
     }
   };
@@ -67,3 +68,4 @@
   if (typeof root.VKW !== 'undefined') { Object.keys(T).forEach(function (k) { root.VKW.tools[k] = T[k]; });
     if (typeof document !== 'undefined') { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', root.VKW.boot); else root.VKW.boot(); } }
 })(typeof window !== 'undefined' ? window : globalThis);
+

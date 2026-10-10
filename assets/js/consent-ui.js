@@ -19,7 +19,7 @@
   var doc = typeof document !== 'undefined' ? document : null;
 
   function up() {
-    return (root.VKAuth && root.VKAuth.upPrefix) ? root.VKAuth.upPrefix(location.pathname) : '';
+    return '/';
   }
 
   function dismiss(el, granted) {
@@ -40,7 +40,7 @@
       '<div class="consent-inner">' +
         '<p class="consent-text">' +
           'We use cookies for analytics and advertising. ' +
-          '<strong>Your files are never part of this</strong> — they are processed on your device and never uploaded. ' +
+          '<strong>Your files are never part of advertising</strong>. Most file tools process on your device. ' +
           '<a href="' + up() + 'cookies.html">Cookie Policy</a>' +
         '</p>' +
         '<div class="consent-actions">' +
@@ -64,3 +64,4 @@
   if (typeof module === 'object' && module.exports) module.exports = root.VKConsentUI;
   if (doc) { if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', init); else init(); }
 })(typeof window !== 'undefined' ? window : globalThis);
+

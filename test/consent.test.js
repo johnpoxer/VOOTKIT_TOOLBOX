@@ -108,7 +108,7 @@ console.log(`consent logic: ${pass} assertions passed`);
   ok(/position: fixed/.test(css.slice(css.indexOf(".consent-bar"))),
      "the bar is fixed, so it cannot shift layout on every first visit");
   ok(/cookies\.html/.test(ui), "it links to the cookie policy");
-  ok(/never uploaded|never part of this/.test(ui),
+  ok(/never uploaded|never part of this|never part of advertising/.test(ui),
      "and states the file-privacy promise, which is the actual differentiator");
 }
 
@@ -185,3 +185,4 @@ console.log(`consent wiring: ${pass} total assertions passed`);
 }
 
 console.log(`consent + trust + social: ${pass} total assertions passed`);
+
