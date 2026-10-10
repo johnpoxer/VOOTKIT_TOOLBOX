@@ -881,11 +881,11 @@ console.log(`seo + footer parity: ${pass} total assertions passed`);
   if (!home) {
     console.log("safety section: SKIPPED (index.html unreadable)");
   } else {
-    const sec = (home.match(/<section class="closing-section ref-wrap">[\s\S]*?<\/section>/) || [""])[0];
-    ok(sec, "the homepage includes its privacy explanation");
-    ok(/Most file tools (?:run|process) on your (?:own )?device/.test(home), "the homepage accurately describes local processing");
-    ok(/Your files\. Your control\./.test(sec), "the privacy section explains user control");
-    ok(/Tools that need an online connection are labelled/.test(sec), "the privacy section avoids an absolute offline claim");
+    const sec = (home.match(/<section class="privacy-card ref-wrap">[\s\S]*?<\/section>/) || [""])[0];
+    ok(sec, "the homepage has its approved privacy card");
+    ok(/Most (?:files stay|processing stays) on your device/.test(home), "the homepage accurately describes local processing");
+    ok(/Private by design/.test(sec), "the privacy card states the design principle");
+    ok(/No uploads for most tools/.test(sec), "the privacy card avoids an absolute upload claim");
     ok(/href="privacy\.html"/.test(home), "the homepage links to the privacy policy");
 
     /* THE BADGES ARE GONE, EVERYWHERE. They were on 258 tool cards and 258 tool
