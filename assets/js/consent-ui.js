@@ -53,10 +53,37 @@
     return wrap;
   }
 
+  function googleChoices() {
+    var fc = root.googlefc = root.googlefc || {};
+    fc.callbackQueue = fc.callbackQueue || [];
+    fc.callbackQueue.push({ CONSENT_API_READY: function () {
+      var buttons = doc.querySelectorAll('[data-google-consent]');
+      buttons.forEach(function (button) {
+        button.disabled = false;
+        button.addEventListener('click', function () {
+          fc.callbackQueue.push({ CONSENT_API_READY: function () { fc.showRevocationMessage(); } });
+        });
+      });
+      var footer = doc.querySelector('footer');
+      if (footer && !footer.querySelector('[data-google-consent]')) {
+        var button = doc.createElement('button');
+        button.type = 'button'; button.className = 'btn btn-sm';
+        button.textContent = 'Privacy and cookie settings';
+        button.setAttribute('data-google-consent', '');
+        button.addEventListener('click', function () {
+          fc.callbackQueue.push({ CONSENT_API_READY: function () { fc.showRevocationMessage(); } });
+        });
+        footer.appendChild(button);
+      }
+    } });
+  }
+
   function init() {
-    if (!doc || !root.VKConsent || !root.VKConsent.needsBanner()) return;
+    if (!doc || !root.VKConsent) return;
     var cfg = (root.VK_CONFIG && root.VK_CONFIG.consent) || {};
     if (cfg.enabled === false) return;   // a network CMP has taken over
+    if (root.VKConsent.usesGoogleCMP()) { googleChoices(); return; }
+    if (!root.VKConsent.needsBanner()) return;
     doc.body.appendChild(build());
   }
 

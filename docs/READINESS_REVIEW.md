@@ -1,30 +1,31 @@
 # VOOTKIT readiness review — 10 October 2026
 
-## AdSense assessment
+Google's Sites screen reports Low value content. Only Google can approve the site. This is not an approval guarantee or an external plagiarism audit.
 
-Not yet confirmed ready to reapply. The owner reports an earlier low-content rejection. Only Google can approve the site; this review is not an approval guarantee.
+All 198 articles were checked for identical complete bodies, matching long tool-description passages and broken local Markdown links. Seventy-seven guides were rewritten with separately authored illustrative examples, result checks, comparisons and limitations. Seven broken links in four other articles were corrected. No benchmarks or expert testing claims were invented. Modification dates are displayed. See EDITORIAL_REVIEW.json and CONTENT_AUDIT.json; test/editorial.test.js reproduces the checks.
 
-The source contains 198 blog articles. Automated checks found no identical complete article bodies, missing article thumbnails, future publication dates, or missing local references on the homepage, About, Privacy, Cookies, Security, Contact, Blog, Pricing and video-compressor pages. Article body word counts range from approximately 505 to 1,706. Word count is not a Google eligibility threshold and does not establish originality or usefulness.
+Twelve tool descriptions were corrected against their implementations. The maths parser now handles unary minus and exponent associativity correctly and rejects non-finite results. Earlier changes corrected About, pricing and privacy claims. The original design, single sign-in control and replacement photos remain.
 
-An overlap check found 77 tool-guide articles containing long passages also used in their corresponding tool descriptions. Review those guides for independent value: a worked example with real inputs and outputs, specific limitations, troubleshooting and verified sources. Do not invent testing results or merely increase word count. The overlap is a review flag, not proof that Google will reject a particular page.
+Genuine user interest and ongoing maintenance cannot be established by code changes. Continue reviewing feedback and keeping useful examples current. No minimum word count guarantees eligibility.
 
-This change retains the original visual design, makes the shared authentication control visible on mobile while hiding duplicate navigation links, replaces repeated homepage photographs, corrects unsupported instant-processing and priority-server claims, removes advertising from unfinished tools, and adds Google's advertising-cookie disclosures and opt-out links. Seven guide links now name the actual exchange-rate provider.
+## Consent and account evidence
 
-Before reapplying:
+The account's European regulations message for vootkit.com is Published (English plus 31 languages). Advertising Consent Mode was enabled and saved on 10 October. Google's Privacy & messaging offering is a certified consent solution. Analytics Consent Mode remains off; optional storage defaults to denied. Legacy custom-banner acceptance does not grant Google consent.
 
-1. Publish the reviewed changes to www.vootkit.com and verify the production pages, ads.txt and crawl access. A deploy preview does not update production.
-2. Review the guides flagged for reused passages and confirm that substantive articles provide additional value beyond the corresponding tools.
-3. Configure and verify a Google-certified TCF consent platform for personalized advertising in the EEA, UK and Switzerland. The existing custom preference banner is not evidence of certification. Google's AdSense Privacy & messaging offering is an account-side option.
-4. Check the AdSense Sites and Policy Center screens for the exact rejection wording and outstanding account-specific issues. Those screens have not been inspected in this review.
+This revision uses Google callbacks to reopen privacy choices and suppresses the custom banner. Existing AdSense tags load published messages on eligible pages. Message delivery, accept/reject signals and reopening choices still need production verification after deployment. The preview domain is not the message domain. Publication alone does not prove end-to-end compliance.
 
-Sources: https://support.google.com/adsense/answer/7299563 ; https://support.google.com/adsense/answer/13554116 ; https://support.google.com/adsense/answer/1348695 ; https://support.google.com/publisherpolicies/answer/11112688
+Both live ads.txt URLs returned HTTP 200 with the correct publisher declaration, although the older account status says Not found. An activation reminder requests payment information and site connection. Complete outstanding account steps and recheck crawl status before another review. No review request was submitted.
 
-## Media processing server
+Before reapplying: deploy these changes, verify crawl access and consent behaviour, complete account activation requirements and assess real usefulness through feedback. The low-value finding remains until Google reviews production again.
 
-Netlify currently hosts the website. Video encoding runs on the visitor's device through single-threaded browser FFmpeg. Adding another static web host will not make encoding faster.
+Sources: https://support.google.com/adsense/answer/7299563 ; https://support.google.com/adsense/answer/13554116 ; https://support.google.com/adsense/answer/10961068 ; https://developers.google.com/funding-choices/fc-api-docs
 
-Candidate: DigitalOcean 4 vCPU / 8 GiB Basic Droplet at $48/month for a pilot; 4 dedicated vCPU / 8 GiB CPU-Optimized Droplet at $84/month for sustained encoding. Prices were checked against https://www.digitalocean.com/pricing/droplets on the review date. Taxes, optional backups and overages may add cost. No account or paid server has been created and no encoding benchmark has been run.
+## Media server
 
-The server implementation needs native FFmpeg, a bounded job queue, authenticated upload and download endpoints, progress and cancellation, file-size and duration limits, temporary-file expiry, HTTPS, process resource limits and monitoring. Begin with video compression, benchmark representative clips, then extend to other compatible tools. Preserve the current local mode and make upload processing an explicit user choice; update privacy disclosures before enabling uploads.
+Netlify hosts the site; video encoding runs on the visitor's device through browser FFmpeg. A separate processing server is needed to offload encoding.
 
-Do not advertise guaranteed seconds: upload speed, video length, resolution, codec, selected quality and concurrent jobs determine total time. Choose the monthly budget and establish the hosting account before deployment.
+The owner selected a $48/month DigitalOcean pilot budget and will create the account after content work. The reviewed Basic option has 4 shared vCPU and 8 GiB memory. No paid server has been created or benchmarked. Current charges, optional backups, taxes and overages: https://www.digitalocean.com/pricing/droplets.
+
+Implementation needs native FFmpeg, a bounded queue, authenticated uploads/downloads, progress/cancellation, size/duration limits, temporary-file expiry, HTTPS, resource limits and monitoring. Start with compression and benchmark representative clips. Preserve local mode; server uploads must be an explicit choice with accurate privacy disclosures.
+
+Do not guarantee seconds: upload speed, duration, resolution, codec, quality and concurrent jobs determine completion time.

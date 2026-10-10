@@ -116,7 +116,7 @@ Comparing a rate from one lender against an APR from another is meaningless — 
 
 Then ask the question the table can't answer: how long am I keeping this?
 
-The [Loan Calculator](/tools/finance/loan-calculator/) and [Mortgage Calculator](/tools/finance/mortgage-calculator/) will give you the payment and total for each scenario, and the [Percentage Calculator](/tools/finance/percentage-calculator/) handles the rate comparisons. If the real question underneath is whether you can carry the payment at all, the [Debt-to-Income Calculator](/tools/finance/debt-to-income/) works out the ratio your lender is about to calculate about you anyway.
+The [Loan Calculator](/tools/finance/loan-calculator/) and [Mortgage Calculator](/tools/realestate/mortgage-calculator/) will give you the payment and total for each scenario, and the [Percentage Calculator](/tools/everyday/percentage-calculator/) handles the rate comparisons. If the real question underneath is whether you can carry the payment at all, the [Debt-to-Income Calculator](/tools/finance/debt-to-income/) works out the ratio your lender is about to calculate about you anyway.
 
 ## What to ask before signing
 

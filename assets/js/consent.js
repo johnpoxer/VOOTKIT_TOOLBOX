@@ -87,8 +87,19 @@
   }
 
   /* Called from the head, before gtag('config'). */
+  function usesGoogleCMP() {
+    return root.VK_CONSENT_PROVIDER === 'google' ||
+      !!(root.VK_CONFIG && root.VK_CONFIG.consent && root.VK_CONFIG.consent.provider === 'google');
+  }
+
   function setDefaults() {
     var g = gtagSafe();
+    if (usesGoogleCMP()) {
+      // A legacy two-button choice is not a TCF vendor-consent record.
+      // Remain denied until Google's published CMP supplies purpose choices.
+      g('consent', 'default', Object.assign(signals(false), { wait_for_update: 500 }));
+      return;
+    }
     var saved = read();
     if (saved) {
       /* A returning visitor who already answered: apply their answer globally
@@ -107,15 +118,17 @@
   }
 
   function update(granted) {
+    if (usesGoogleCMP()) return false;
     gtagSafe()('consent', 'update', signals(granted));
     write(granted);
+    return true;
   }
 
   root.VKConsent = {
     KEY: KEY, VERSION: VERSION,
     REGIONS: CONSENT_REQUIRED_REGIONS,
     signals: signals, read: read, write: write,
-    setDefaults: setDefaults, update: update,
+    setDefaults: setDefaults, update: update, usesGoogleCMP: usesGoogleCMP,
     needsBanner: function () { return read() === null; }
   };
   if (typeof module === 'object' && module.exports) module.exports = root.VKConsent;

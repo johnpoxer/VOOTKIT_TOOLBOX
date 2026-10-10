@@ -1,73 +1,34 @@
 ---
 title: "How Much Should You Tip in Different Countries?"
 date: "2026-08-30"
-description: "Suggests a tip for a given bill in nine countries: the US, Canada, UK, Germany, France, Italy, Spain, Australia and Japan."
+description: "Treat country presets as starting assumptions, then inspect the actual bill."
 thumbnail: "/assets/blog/tip-by-country-guide.jpg"
 coverAlt: "Editorial illustration representing the Tipping Calculator by Country workflow."
 author: "The Vootkit team"
 type: "Guide"
 category: "Travel"
 tags: "Travel, Planning, Calculators"
+updated: "2026-10-10"
 ---
 
-Tipping is a local custom that travellers routinely get wrong in both directions — under-tipping in the US where staff depend on it, and over-tipping in Japan where it can cause genuine awkwardness.
+Treat country presets as starting assumptions, then inspect the actual bill.
 
-## What the Tipping Calculator by Country does
+Use the [Tipping Calculator by Country](/tools/travel/tip-by-country/) alongside this illustrative example.
 
-Suggests a tip for a given bill in **nine countries**: the US, Canada, UK, Germany, France, Italy, Spain, Australia and Japan.
+## A practical example
 
-The range between them is enormous, and it reflects how staff are paid rather than how generous the customers are.
+On a bill of 50, choosing an illustrative 10% additional gratuity adds 5. If the printed bill already contains a service charge, first decide whether any additional tip is intended; applying a preset without reading the bill can add an amount you did not mean to pay.
 
-Open the [Tipping Calculator by Country](/tools/travel/tip-by-country/) and follow the settings and checks below.
+## Check the result
 
-## Coverage
+Ask how the charge is described and whether it is included, optional or separate. Customs can differ between a restaurant, a hotel and a tour even within one country.
 
-| Setting | What it means |
-|---|---|
-| Countries | US · Canada · UK · Germany · France · Italy · Spain · Australia · Japan |
-| United States | Highest — tipped wages are below minimum |
-| **Japan** | **Not customary — can cause awkwardness** |
-| Australia | Low — staff are paid a full wage |
-| Europe | Modest rounding is common |
-| Bill amount | Default 50 |
-| Watch for | Service already included on the bill |
-| Guidance is | Customary, not a rule |
+## Try a comparison
 
-## How to use it
+Compare zero additional gratuity with your chosen percentage after reading the service charge. The difference is the extra amount you are deciding to add, not necessarily the total service payment already in the bill. Keep that distinction visible when explaining a shared total.
 
-1. Enter the bill and choose the country.
-2. **Check the bill for service already added** before tipping on top.
-3. Adjust for the service you actually received.
+## What this does not establish
 
-## Practical advice
+A country label is not a legal obligation or a universal etiquette rule. Use local context and your own choice rather than treating the default as mandatory.
 
-Read the bill before you tip. Many European restaurants add a service charge or a per-person cover, and tipping the customary percentage on top means paying twice — which visitors do constantly. If the bill lists "servizio", "service compris" or a cover charge, a small rounding-up is plenty.
-
-## Common questions
-
-### Why is US tipping so much higher?
-
-Because tipped staff in many US states may legally be paid below the standard minimum wage, with tips expected to make up the difference. The tip is part of the wage rather than a bonus, which is why not tipping there has a different meaning than elsewhere.
-
-### Should I tip in Japan?
-
-Generally no. It is not customary and can be genuinely awkward — service is included in the price and excellent service is the expectation rather than something purchased. Leaving money can be politely refused or cause confusion.
-
-### What if service is already on the bill?
-
-Then you have already tipped. Rounding up slightly is fine; adding the full customary percentage on top is paying twice, and it is the commonest visitor mistake in Europe.
-
-### Are these rules?
-
-Customs, and they shift. Treat them as a starting point, watch what locals do, and adjust for the service you received.
-
-## Useful next tools
-
-- [Tip & Bill Split](/tools/everyday/tip-split/) — Split a bill with tip across any number of people.
-- [Trip Cost Splitter](/tools/travel/trip-cost-splitter/) — Split shared travel costs evenly between people.
-- [Currency Converter](/tools/finance/currency-converter/) — Convert currencies with cached ExchangeRate-API reference rates.
-- [Percentage Calculator](/tools/everyday/percentage-calculator/) — Percent of, is-what-percent, and percentage change.
-- [VAT / GST Calculator](/tools/business/vat-gst/) — Add or remove sales tax from any price.
-- [50/30/20 Budget Calculator](/tools/finance/budget-calculator/) — Split take-home pay into needs, wants and savings.
-
-Vootkit provides a planning estimate, not a guaranteed fare, reimbursement, journey time or statement of local custom. Prices, traffic, exchange rates, employer rules and destination guidance can change; verify important figures with the relevant provider or authority.
+[Report unclear guidance or a result that needs checking](/contact.html).

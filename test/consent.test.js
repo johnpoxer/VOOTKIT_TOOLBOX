@@ -72,6 +72,22 @@ const read = (f) => fs.readFileSync(path.join(ROOT, f), "utf8");
 
 console.log(`consent logic: ${pass} assertions passed`);
 
+/* A remembered custom acceptance must not grant TCF or override the CMP. */
+{
+  const calls=[];
+  global.gtag=(...args)=>calls.push(args);
+  global.VK_CONSENT_PROVIDER='google';
+  C.write(true);
+  C.setDefaults();
+  eq(calls[0][2].ad_storage,'denied','Google mode ignores legacy advertising acceptance');
+  eq(calls[0][2].analytics_storage,'denied','Google mode awaits purpose-specific analytics consent');
+  const before=calls.length;
+  eq(C.update(true),false,'custom accept cannot override certified consent');
+  eq(calls.length,before,'no custom consent update is sent');
+  delete global.VK_CONSENT_PROVIDER;
+  delete global.gtag;
+}
+
 /* ---------------------------------------------------------------------------
  * ORDERING — the entire mechanism
  * ------------------------------------------------------------------------- */

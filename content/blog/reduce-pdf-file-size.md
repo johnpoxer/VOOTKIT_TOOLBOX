@@ -81,7 +81,7 @@ Portals state a maximum and reject anything above it. The reduction you need is 
 (current − limit) ÷ current × 100 = % you must remove
 ```
 
-An 11.8 MB file against a 5 MB cap: `(11.8 − 5) ÷ 11.8 × 100 ≈ 58%`. The [Percentage Calculator](/tools/finance/percentage-calculator/) does it if you'd rather not.
+An 11.8 MB file against a 5 MB cap: `(11.8 − 5) ÷ 11.8 × 100 ≈ 58%`. The [Percentage Calculator](/tools/everyday/percentage-calculator/) does it if you'd rather not.
 
 Knowing that number tells you which lever to pull. Under 30% is usually one quality step. Around 60% typically wants the 75% scale. If you need 90%, you're looking at 50% scale — or the document has pages in it that shouldn't be there.
 

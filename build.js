@@ -128,7 +128,7 @@ function consentHead() {
     .replace(/^\s*\/\/.*$/gm, "")
     .replace(/\n{2,}/g, "\n")
     .trim();
-  return `<script>${src}\nwindow.VKConsent&&window.VKConsent.setDefaults();</script>`;
+  return `<script>window.VK_CONSENT_PROVIDER=${JSON.stringify(CONSENT.provider || "local")};${src}\nwindow.VKConsent&&window.VKConsent.setDefaults();</script>`;
 }
 
 /* The network's loader, for the <head>. Exactly one network's tags ever ship:
@@ -2114,7 +2114,7 @@ function loadPosts() {
     const slug = (data.slug || f.replace(/\.md$/, "")).toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "");
     const plain = body.replace(/[#>*_`~\-\[\]()!]/g, " ").split(/\n\s*\n/).map((s) => s.trim()).filter(Boolean)[0] || "";
     return {
-      slug, title: data.title || slug, date: data.date || "",
+      slug, title: data.title || slug, date: data.date || "", updated: data.updated || data.date || "",
       description: data.description || plain.slice(0, 160),
       thumbnail: data.thumbnail || "", author: data.author || "The Vootkit team",
       /* Reading time from the ACTUAL body, at 220wpm. Not decoration: it is
@@ -2129,7 +2129,7 @@ function loadPosts() {
 }
 function fmtDate(d, long) {
   if (!d) return "";
-  const dt = new Date(d); if (isNaN(dt)) return String(d);
+  const dt = new Date(/^\d{4}-\d{2}-\d{2}$/.test(d) ? d + "T12:00:00Z" : d); if (isNaN(dt)) return String(d);
   return dt.toLocaleDateString("en-US", long ? { year: "numeric", month: "long", day: "numeric" } : { year: "numeric", month: "short", day: "numeric" });
 }
 function blogPostPage(post) {
@@ -2142,7 +2142,7 @@ function blogPostPage(post) {
       { "@type": "ListItem", position: 3, name: post.title, item: url }
     ]},
     { "@context": "https://schema.org", "@type": "BlogPosting", headline: post.title, description: post.description,
-      datePublished: post.date, dateModified: post.date, image: img || undefined,
+      datePublished: post.date, dateModified: post.updated || post.date, image: img || undefined,
       author: { "@type": "Organization", name: post.author },
       publisher: { "@type": "Organization", name: "Vootkit", url: SITE + "/" },
       mainEntityOfPage: url, url }
@@ -2485,7 +2485,7 @@ function loadPosts() {
     const filters = Array.from(new Set([type, category].concat(tags).map(blogCatSlug).filter(Boolean)));
     const words = plain.split(/\s+/).filter(Boolean).length;
     return {
-      slug, title: data.title || slug, date: data.date || "",
+      slug, title: data.title || slug, date: data.date || "", updated: data.updated || data.date || "",
       description: data.description || plain.slice(0, 160),
       thumbnail: extra.thumbnail || data.thumbnail || "",
       author: data.author || "The Vootkit team",
@@ -2723,7 +2723,7 @@ function blogPostPage(post, allPosts) {
       { "@type": "ListItem", position: 4, name: post.title, item: url }
     ]},
     { "@context": "https://schema.org", "@type": "BlogPosting", headline: post.title, description: post.description,
-      datePublished: post.date, dateModified: post.date, image: img || undefined,
+      datePublished: post.date, dateModified: post.updated || post.date, image: img || undefined,
       author: { "@type": author.type || "Person", name: author.name },
       publisher: { "@type": "Organization", name: "Vootkit", url: SITE + "/" },
       mainEntityOfPage: url, url }
@@ -2736,7 +2736,7 @@ function blogPostPage(post, allPosts) {
     <div class="bl-article-kickers"><span class="bl-badge">${esc(post.type)}</span><a href="../${esc(post.categorySlug)}/">${esc(post.category)}</a></div>
     <h1>${esc(post.title)}</h1>
     <p>${esc(post.description)}</p>
-    <div class="bl-article-meta">${blogMetaLine(post)}</div>
+    <div class="bl-article-meta">${blogMetaLine(post)}${post.updated && post.updated !== post.date ? ` · Updated <time datetime="${esc(post.updated)}">${esc(fmtDate(post.updated))}</time>` : ""}</div>
     ${articleHeadActions(post, 2)}
   </header>
   ${blogPicture(post, "bl-article-hero", "eager")}
@@ -3517,7 +3517,7 @@ function legalHubPage() {
   return productPage({ slug: "legal/", depth: 1, title: "Legal & Privacy Hub", active: "about",
     desc: "Manage cookie choices and review Vootkit privacy, terms, accessibility and security information.", body: `
     <header class="legal-hub-hero"><span>${icon("shield")}</span><div><span class="eyebrow">Trust center</span><h1>Your privacy matters</h1><p>Most compatible tools process files on your device. Our policies explain what Vootkit collects, what stays local, and the choices you control.</p></div></header>
-    <section class="legal-choice" aria-labelledby="cookie-choices"><div><h2 id="cookie-choices">Your cookie choices</h2><p>Necessary storage keeps the site secure and remembers your preferences. Analytics and advertising are optional where consent is required.</p></div><div><button class="btn btn-primary" type="button" data-consent-choice="accept">Accept all</button><button class="btn" type="button" data-consent-choice="reject">Reject optional</button><a class="btn" href="../cookies.html">Customize choices</a></div><p id="legal-choice-status" role="status"></p></section>
+    <section class="legal-choice" aria-labelledby="cookie-choices"><div><h2 id="cookie-choices">Your cookie choices</h2><p>Necessary storage keeps the site secure and remembers your preferences. Analytics and advertising are optional where consent is required.</p></div><div><button class="btn btn-primary" type="button" data-google-consent disabled>Privacy and cookie settings</button><a class="btn" href="../cookies.html">Cookie policy and choices</a></div><p id="legal-choice-status" role="status"></p></section>
     <section class="legal-hub-list" aria-labelledby="policies"><h2 id="policies">Legal, policies & trust</h2>
       ${link("shield", "Privacy policy", "How we protect and use data", "../privacy.html")}${link("file", "Terms of service", "Rules for using Vootkit", "../terms.html")}${link("cookie", "Cookie policy", "Storage, advertising and choices", "../cookies.html")}${link("eye", "Accessibility tools", "Tools that support inclusive digital work", "../tools/accessibility/")}${link("lock", "Security", "Local processing and safeguards", "../security.html")}${link("info", "Disclaimer", "Important limitations", "../disclaimer.html")}
     </section>` , scripts: ["assets/js/support-pages.js"] });
@@ -3643,18 +3643,18 @@ write("terms.html", legalPage({
    cookies the site does not use is worse than none, because the first thing a
    reviewer does is compare it against the network tab. */
 write("cookies.html", legalPage({
-  file: "cookies.html", title: "Cookie Policy", updated: LAST_UPDATED,
+  file: "cookies.html", title: "Cookie Policy", updated: "10 October 2026",
   desc: "Which cookies and browser storage Vootkit uses, what each one does, and how to refuse them.",
   body: `
     <h2>The short version</h2>
-    <p>Vootkit uses a small number of cookies and browser storage entries. <strong>None of them touch your files.</strong> Files you open in a tool are processed on your own device and are never uploaded, so they are never stored in a cookie, never sent to an analytics service and never seen by an advertiser.</p>
-    <p>You can refuse analytics and advertising storage from the banner shown on your first visit, and change your mind at any time by clearing this site's data in your browser.</p>
+    <p>Vootkit uses a small number of cookies and browser storage entries. <strong>None of them touch your files.</strong> Compatible local file tools process on your device. Tools requiring an online service explain their network use. Advertising does not receive your raw files from Vootkit.</p>
+    <p>On eligible pages, Google’s published consent message provides advertising choices where applicable. Optional storage starts denied; the old Vootkit banner does not override Google’s vendor-consent choices. Use the privacy settings control when available to revisit your choice.</p>
 
     <h2>Strictly necessary</h2>
-    <p>These make the site work and are always on. They store nothing about you as a person.</p>
+    <p>These support preferences, local tool history, task allowances and account sessions. Account session storage identifies your signed-in session.</p>
     <table class="spec-table">
       <tr><th>What</th><th>Why</th></tr>
-      <tr><td><code>vk-consent</code></td><td>Remembers your answer to the cookie banner so you are not asked again.</td></tr>
+      <tr><td><code>vk-consent</code></td><td>Legacy custom-banner choice. It is not used to grant consent when Google’s CMP is configured.</td></tr>
       <tr><td><code>vk-theme</code></td><td>Remembers light or dark mode.</td></tr>
       <tr><td><code>vk-recent</code>, <code>vk-tools</code></td><td>The "recently viewed" list on tool pages. Stays on your device.</td></tr>
       <tr><td><code>vk-uses:&lt;date&gt;</code></td><td>Counts how many tools you have run today, for the free daily allowance.</td></tr>
@@ -3663,21 +3663,21 @@ write("cookies.html", legalPage({
 
     <h2>Analytics</h2>
     <p>We use Google Analytics 4 to count visits and see which tools are used. It records the page, your approximate country, your device type and how you arrived. <strong>It never receives your file names, file contents, or anything you type into a tool.</strong></p>
-    <p>Analytics storage is refused by default in the EEA and UK until you accept.</p>
+    <p>Analytics storage is denied by default until an applicable consent choice permits it. Google’s Consent Mode integration interprets the published message’s choices.</p>
 
     <h2>Advertising</h2>
-    <p>Some pages carry ads from Google AdSense, which may set cookies to measure and personalise them. Advertising storage is refused by default in the EEA and UK until you accept; if you refuse, you will still see ads, but they will be contextual rather than personalised.</p>
+    <p>Some pages carry ads from Google AdSense, which may set cookies to measure and personalise them. Advertising storage, user-data and personalisation signals start denied. Google’s message gathers applicable choices for users in the EEA, UK and Switzerland. Declining does not guarantee an ad will be displayed; availability and ad type depend on Google’s policies.</p>
     <p>Ads are never shown on account or sign-in pages, and never inside a tool while it is working.</p>
 
     <h2>Refusing or removing them</h2>
     <ul>
-      <li>Choose <strong>Reject</strong> on the banner. Analytics and advertising storage stay off.</li>
+      <li>Use the refusal and purpose controls in Google’s consent message. <button type="button" class="btn btn-sm" data-google-consent disabled>Privacy and cookie settings</button> becomes available when Google’s consent service loads on this page.</li>
       <li>Clear this site's data in your browser to reset everything, including your banner choice.</li>
       <li>Browser-level cookie blocking works normally here — the tools do not depend on cookies to function.</li>
     </ul>
 
     <h2>Changes</h2>
-    <p>If we add or remove a cookie, this page changes and the banner asks again.</p>
+    <p>We update this page when the technologies or their purposes materially change. The applicable consent provider manages whether a new choice is required.</p>
   `
 }));
 
