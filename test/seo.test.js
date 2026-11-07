@@ -821,7 +821,7 @@ console.log(`seo + tool icons: ${pass} total assertions passed`);
     const H = links(home, /^/);            // already relative to root
     const B = links(built, /^(\.\.\/)+/);  // walk-up prefix removed
 
-    const required = ["tools/", "workflows/", "pricing.html", "blog/", "about.html", "contact.html", "privacy.html", "terms.html"];
+    const required = ["tools/", "pricing.html", "blog/", "about.html", "contact.html", "privacy.html", "terms.html"];
     ok(H.size >= required.length, "the homepage footer carries the essential link set, got " + H.size);
     required.forEach((u) => ok(H.has(u), "homepage footer is missing essential link: " + u));
 

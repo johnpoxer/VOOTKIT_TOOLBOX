@@ -2,6 +2,19 @@
 # The site is a static build produced by `npm run build` (build.js). The
 # generated _headers and _redirects files carry the per-path rules.
 
+# Withdrawn workflow builder: temporary redirects preserve bookmarked access.
+[[redirects]]
+  from = "/workflows"
+  to = "/tools/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/workflows/*"
+  to = "/tools/"
+  status = 302
+  force = true
+
 [build]
   publish = "."
   command = "npm run build"

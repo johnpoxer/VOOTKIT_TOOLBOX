@@ -348,7 +348,7 @@ ${o.ads ? adLoader() : "<!-- no ads inside an active tool workspace -->"}
     <nav class="nav" id="nav" aria-label="Main">
       <a href="${up}"${cur("home")}>Home</a>
       <a href="${up}tools/"${cur("tools")}>All tools</a>
-      <a href="${up}workflows/"${cur("workflow")}>Workflows</a>
+      
       <a href="${up}templates/"${cur("templates")}>Templates</a>
       <a href="${up}blog/"${cur("blog")}>Guides</a>
       <a href="${up}pricing.html"${cur("pricing")}>Pricing</a>
@@ -413,11 +413,11 @@ function footCols(up) {
   return `
       <div class="ftr-col">
         <h4>Product</h4>
-        <a href="${up}tools/">All tools</a><a href="${up}workflows/">Workflows</a><a href="${up}pricing.html">Pricing</a><a href="${up}blog/">What’s new</a>
+        <a href="${up}tools/">All tools</a><a href="${up}pricing.html">Pricing</a><a href="${up}blog/">What’s new</a>
       </div>
       <div class="ftr-col">
         <h4>Resources</h4>
-        <a href="${up}blog/">Guides</a><a href="${up}blog/">Blog</a><a href="${up}help/">Help center</a><a href="${up}contact.html">Contact us</a>
+        <a href="${up}blog/">Guides</a><a href="${up}help/">Help center</a><a href="${up}contact.html">Contact us</a>
       </div>
       <div class="ftr-col">
         <h4>Company</h4>
@@ -1448,12 +1448,7 @@ function allToolsPage() {
     <aside class="dir-side" aria-label="Tool categories">
       <h2>Categories</h2>
       <nav class="dir-cat-list">${sidebar}</nav>
-      <div class="dir-side-promo">
-        <span>${icon("sparkles")}</span>
-        <strong>Build repeat workflows</strong>
-        <p>Chain PDF, image and video tools when one step is not enough.</p>
-        <a class="btn btn-sm" href="../workflows/">Explore Workflow</a>
-      </div>
+      
     </aside>
 
     <div class="dir-results" id="tools-results">
@@ -1698,13 +1693,12 @@ function toolPremiumCard(spec, archetype) {
   const benefits = [
     "Unlimited daily tool runs",
     "An ad-free workspace",
-    "Build and save reusable workflows",
     "Secure billing management"
   ];
   return `<section class="tool-side-card tool-upgrade-card">
     <span class="tool-side-icon">${icon("crown")}</span>
     <h2>Upgrade for more power</h2>
-    <p>Unlock unlimited daily runs, an ad-free workspace and saved workflows.</p>
+    <p>Unlock unlimited daily runs, an ad-free workspace.</p>
     <ul>${benefits.map((b) => `<li>${icon("check")}<span>${esc(b)}</span></li>`).join("")}</ul>
     <a class="btn btn-primary" href="../../../pricing.html">Creator Pro - $8 / month</a>
   </section>`;
@@ -1819,7 +1813,7 @@ function toolPage(t) {
   const shellTitle = toolShellTitle(t);
 
   const faqs = (deep ? deep.faqs : []).concat([
-    { q: `Is ${t.name} free?`, a: `Yes. The Vootkit free plan includes 5 tool runs a day. Upgrade to Vootkit Pro for unlimited daily use, an ad-free workspace and saved workflows.` },
+    { q: `Is ${t.name} free?`, a: `Yes. The Vootkit free plan includes 5 tool runs a day. Upgrade to Vootkit Pro for unlimited daily use, an ad-free workspace.` },
     { q: "Are my files uploaded?", a: local
         ? `No. ${t.name} runs entirely in your browser — your file is processed on your own device and never sent to a server. There is nothing for us to store or delete.`
         : `${t.name} needs the internet to work, so it calls an external service to fetch data. It does not require an account and does not track you.` },
@@ -2071,7 +2065,7 @@ function infoPage(o) {
   const up = "../".repeat(depth) || "./";
   const url = SITE + "/" + o.slug;
   const ld = { "@context": "https://schema.org", "@type": "WebPage", name: o.title, url, description: o.desc };
-  let pageHead = head({ depth, url, ads: true, ld, title: `${o.title} — Vootkit`, ogTitle: o.title, desc: o.desc });
+  let pageHead = head({ depth, url, ads: !o.noindex, ld, title: `${o.title} — Vootkit`, ogTitle: o.title, desc: o.desc });
   if (o.noindex) pageHead = pageHead.replace("</head>", '<meta name="robots" content="noindex,follow">\n</head>');
   return pageHead +
 `<div class="wrap section">
@@ -2591,16 +2585,7 @@ function articleTools(post, depth) {
     <div class="bl-tool-grid">${cards}</div>
   </section>`;
 }
-function workflowCard(post, depth) {
-  if (!post.relatedWorkflow) return "";
-  const up = "../".repeat(depth) || "./";
-  return `<aside class="bl-workflow-rec">
-    <span class="eyebrow">Workflow</span>
-    <h2>Want to do this automatically?</h2>
-    <p>Use a Vootkit workflow to chain compatible tools and keep the work moving without rebuilding the steps every time.</p>
-    <a class="btn btn-primary" href="${up}workflows/#wf-market" data-track="article_workflow_click">Explore workflows</a>
-  </aside>`;
-}
+function workflowCard() { return ""; }
 function articleToc(post, mobile) {
   if (!post.toc || post.toc.length < 3) return "";
   const links = post.toc.slice(0, 10).map((h) => `<a class="lv${h.level}" href="#${esc(h.id)}" data-toc-link>${esc(h.text)}</a>`).join("");
@@ -3204,7 +3189,7 @@ function accountPage(isPreview) {
 <nav class="acct-bottom-nav" aria-label="Account navigation">
   <a href="../"><span aria-hidden="true">⌂</span><small>Home</small></a>
   <a href="../tools/"><span aria-hidden="true">▦</span><small>Tools</small></a>
-  <a href="../workflows/"><span aria-hidden="true">⌘</span><small>Workflows</small></a>
+  
   <a class="is-active" href="./" aria-current="page"><span aria-hidden="true">□</span><small>Account</small></a>
 </nav>` + foot(1, ["assets/js/account.js"]);
 }
@@ -3296,7 +3281,7 @@ function pricingPage() {
   const url = SITE + "/pricing.html";
   const P = CFG.stripe.plans;
   const ld = [
-    { "@context": "https://schema.org", "@type": "WebPage", name: "Pricing", url, description: "Vootkit pricing — start free with 5 tool runs a day. Upgrade to Creator Pro for unlimited usage, an ad-free workspace and saved workflows." },
+    { "@context": "https://schema.org", "@type": "WebPage", name: "Pricing", url, description: "Vootkit pricing — start free with 5 tool runs a day. Upgrade to Creator Pro for unlimited usage, an ad-free workspace." },
     { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
       { "@type": "ListItem", position: 1, name: "Vootkit", item: SITE + "/" },
       { "@type": "ListItem", position: 2, name: "Pricing", item: url }
@@ -3312,7 +3297,7 @@ function pricingPage() {
   const annualSaving = Math.round((1 - P.creator_pro_annual.amount / (P.creator_pro_monthly.amount * 12)) * 100);
   const feat = (on, txt) => `<li class="${on ? "yes" : "no"}"><svg viewBox="0 0 24 24" aria-hidden="true">${on ? '<path d="M20 6 9 17l-5-5"/>' : '<path d="M6 6l12 12M18 6 6 18"/>'}</svg>${txt}</li>`;
   const yn = (v) => v === true ? '<span class="cmp-yes" aria-label="Included">✓</span>' : v === false ? '<span class="cmp-no" aria-label="Not included">—</span>' : v;
-  return head({ depth: 0, url, ads: true, ld, bodyClass: "pricing-ref", title: "Vootkit Pricing: Free & Creator Pro Plans", ogTitle: "Vootkit Pricing — Free and Creator Pro", desc: "Start free with 5 tool runs a day. Upgrade to Creator Pro for unlimited usage, an ad-free workspace and saved workflows." }) +
+  return head({ depth: 0, url, ads: true, ld, bodyClass: "pricing-ref", title: "Vootkit Pricing: Free & Creator Pro Plans", ogTitle: "Vootkit Pricing — Free and Creator Pro", desc: "Start free with 5 tool runs a day. Upgrade to Creator Pro for unlimited usage, an ad-free workspace." }) +
 `<div class="wrap section" id="plans">
   <header class="sec-head" style="margin-top:var(--s-4)">
     <span class="pricing-kicker">Simple, transparent pricing</span>
@@ -3355,13 +3340,12 @@ function pricingPage() {
       <h2>Creator Pro</h2>
       <p class="plan-price"><span class="plan-amt" data-price="pro">$${P.creator_pro_monthly.amount}</span><span class="plan-per" data-per="pro">/month</span></p>
       <p class="plan-tag">For creators, students and professionals who rely on Vootkit throughout their workday.</p>
-      <p class="plan-detail">Remove the daily counter, keep your workspace distraction-free and build reusable workflows that connect several tools into one repeatable process.</p>
+      <p class="plan-detail">Remove the daily counter and keep your workspace distraction-free while using individual tools.</p>
       <button class="btn btn-primary btn-block" type="button" data-plan="creator_pro" data-plan-month="creator_pro_monthly" data-plan-year="creator_pro_annual">Get Pro</button>
       <p class="plan-includes">Everything in Free, plus:</p>
       <ul class="plan-feats">
         ${feat(true, "Unlimited tool runs across the platform")}
         ${feat(true, "Completely ad-free Vootkit workspace")}
-        ${feat(true, "Build and save reusable multi-step workflows")}
         ${feat(true, "Private browser processing for most tools")}
         ${feat(true, "Secure Stripe invoices and billing management")}
         ${feat(true, "Cancel anytime and keep Pro through the paid period")}
@@ -3377,7 +3361,6 @@ function pricingPage() {
         <thead><tr><th scope="col" style="text-align:left">Feature</th><th scope="col">Free</th><th scope="col" class="cmp-hi">Creator Pro</th></tr></thead>
         <tbody>
           <tr><th scope="row">Daily tool runs</th><td>5 / day</td><td class="cmp-hi">Unlimited</td></tr>
-          <tr><th scope="row">Saved workflows</th><td>${yn(false)}</td><td class="cmp-hi">${yn(true)}</td></tr>
           <tr><th scope="row">Workspace ads</th><td>Included</td><td class="cmp-hi">None</td></tr>
           <tr><th scope="row">Browser processing</th><td>${yn(true)}</td><td class="cmp-hi">${yn(true)}</td></tr>
           <tr><th scope="row">Billing management</th><td>${yn(false)}</td><td class="cmp-hi">Stripe portal</td></tr>
@@ -3487,13 +3470,13 @@ function helpCenterPage() {
     <header class="product-hero"><span class="eyebrow">Vootkit support</span><h1>How can we help?</h1><p>Search practical answers, browse a topic, or contact the team.</p>
       <label class="help-search">${icon("search")}<span class="sr-only">Search help</span><input id="help-search" type="search" placeholder="Search help articles" autocomplete="off"></label></header>
     <section aria-labelledby="help-topics"><h2 id="help-topics">Popular topics</h2><div class="help-topic-grid">
-      ${topic("zap", "Getting started", "../blog/")}${topic("shield", "Files & privacy", "../privacy.html")}${topic("tool", "Tools", "../tools/")}${topic("workflow", "Workflows", "../workflows/")}${topic("users", "Account & billing", "../account/")}
+      ${topic("zap", "Getting started", "../blog/")}${topic("shield", "Files & privacy", "../privacy.html")}${topic("tool", "Tools", "../tools/")}${topic("users", "Account & billing", "../account/")}
     </div></section>
     <section class="help-featured" aria-labelledby="featured-help"><h2 id="featured-help">Featured answers</h2><div id="help-results">
       ${article("book", "Getting started with Vootkit", "Set up your account and explore the basics.", "../blog/")}
       ${article("shield", "Keeping your files safe and private", "Understand local processing and your controls.", "../privacy.html")}
       ${article("file", "Choosing the right PDF tool", "Find the best tool for your task.", "../tools/pdf/")}
-      ${article("workflow", "Build a multi-step workflow", "Connect compatible tools into one process.", "../workflows/")}
+      
       ${article("card", "Plans, usage and billing", "Compare Free and Pro or manage your account.", "../pricing.html")}
     </div><p class="help-empty" id="help-empty" hidden>No matching answer yet. Try fewer words or contact support.</p></section>
     <div class="status-card"><span class="status-dot">✓</span><span><strong>All systems operational</strong><small>Tools are available normally.</small></span></div>
@@ -3508,7 +3491,7 @@ function filesPage() {
     <section class="storage-card"><div><span>${icon("clock")}</span><strong id="storage-label">0 B saved on this device</strong></div><button type="button" id="files-manage">Manage</button><progress id="storage-progress" max="100" value="0">0%</progress></section>
     <div class="selection-bar" id="selection-bar" hidden><strong><span id="selected-count">0</span> selected</strong><button type="button" data-file-action="download">${icon("download")} Download</button><button type="button" data-file-action="delete">${icon("trash")} Delete</button></div>
     <section class="file-list-card" aria-labelledby="saved-files"><h2 id="saved-files">Saved files</h2><div id="file-list"></div><div class="files-empty" id="files-empty"><span>${icon("folder")}</span><h3>Your saved results will appear here</h3><p>Add files to organize them locally, or save a result after using a Vootkit tool.</p><a class="btn" href="../tools/">Explore tools</a></div></section>
-    <div class="file-folders"><a href="../workflows/"><span>${icon("workflow")}</span><strong>Workflow results</strong><i>›</i></a><button type="button" id="files-trash"><span>${icon("trash")}</span><strong>Trash</strong><i>›</i></button></div>
+    <div class="file-folders"><button type="button" id="files-trash"><span>${icon("trash")}</span><strong>Trash</strong><i>›</i></button></div>
     <p class="local-note">${icon("lock")} File names and file data remain in this browser. Clearing site data can remove locally saved items, so keep an original copy.</p>` });
 }
 
@@ -3600,7 +3583,7 @@ write("terms.html", legalPage({
   desc: "The terms for using Vootkit's free online tools.",
   body: `
     <h2>Using Vootkit</h2>
-    <p>These terms govern your access to Vootkit's website, tools, guides, accounts, workflows and paid features. By using the service, you agree to these terms. Some tools work without an account; saved workflows, subscriptions or other features may require one.</p>
+    <p>These terms govern your access to Vootkit's website, tools, guides, accounts and paid features. By using the service, you agree to these terms. Some tools work without an account; subscriptions or other features may require one.</p>
 
     <h2>Accounts and eligibility</h2>
     <p>You must provide accurate information, protect your sign-in credentials and promptly tell us about suspected unauthorised use. You are responsible for activity through your account. If you are not legally able to agree to these terms, a parent, guardian or authorised organisation must do so for you.</p>
@@ -3758,9 +3741,9 @@ function aboutPage() {
   <section class="about-numbers"><h2>Vootkit by the numbers</h2><div><p><b>${floorTo(VK.counts.live, TOOL_ROUND_TO)}+</b><span>tools</span></p><p><b>${VK.CATEGORIES.length}</b><span>categories</span></p><p><b>Local</b><span>most tools process locally</span></p><p><b>Global</b><span>available worldwide</span></p></div></section>
   <section class="about-founder"><div><h2>Built by John Prosper</h2><p>Vootkit began as a practical toolbox and is growing into a connected platform for everyday digital work.</p><a class="btn" href="founder-story.html">Read the founder story</a></div><img src="public/images/about/john-prosper.webp" alt="John Prosper, founder and full stack developer of Vootkit" width="900" height="1350" loading="lazy"></section>
   <section class="about-files"><h2>How Vootkit handles files</h2><div><article><b>1</b><span>⌁</span><h3>Choose a tool</h3><p>Pick the tool that matches your task.</p></article><i>→</i><article><b>2</b><span>▣</span><h3>Process in your browser</h3><p>Compatible local tools process on your device. Tools requiring an online service explain their network use.</p></article><i>→</i><article><b>3</b><span>⇩</span><h3>Download your result</h3><p>Download your finished file when processing completes. Large files and video encodes can take longer.</p></article></div><a href="privacy.html">Learn about privacy →</a></section>
-  <section class="about-trust" aria-labelledby="about-trust-title"><div><p class="eyebrow">How we work</p><h2 id="about-trust-title">Built, checked and explained for real tasks</h2><p>Vootkit is designed for people who need to finish practical work: preparing a document, improving an image, converting a file, checking a calculation or completing several steps as one workflow. We build each live tool around a defined job and provide instructions that explain what it does.</p></div><div><article><h3>Original product work</h3><p>Vootkit's interfaces, workflows and browser-based tool experiences are built and maintained as part of the platform—not copied from another tools website.</p></article><article><h3>Honest tool status</h3><p>Working tools are presented as live. Planned features are identified instead of being represented as completed products.</p></article><article><h3>Clear limitations</h3><p>Financial and health-related calculators provide estimates, not professional advice. Relevant limitations are explained in our <a href="disclaimer.html">disclaimer</a>.</p></article><article><h3>Accountable support</h3><p>Users can report a problem, question a result or suggest an improvement through our <a href="contact.html">contact and support page</a>.</p></article></div></section>
+  <section class="about-trust" aria-labelledby="about-trust-title"><div><p class="eyebrow">How we work</p><h2 id="about-trust-title">Built, checked and explained for real tasks</h2><p>Vootkit is designed for people who need to finish practical work: preparing a document, improving an image, converting a file, checking a calculation or checking the result before sharing it. We build each live tool around a defined job and provide instructions that explain what it does.</p></div><div><article><h3>Original product work</h3><p>Vootkit's interfaces and browser-based tool experiences are built and maintained as part of the platform—not copied from another tools website.</p></article><article><h3>Honest tool status</h3><p>Working tools are presented as live. Planned features are identified instead of being represented as completed products.</p></article><article><h3>Clear limitations</h3><p>Financial and health-related calculators provide estimates, not professional advice. Relevant limitations are explained in our <a href="disclaimer.html">disclaimer</a>.</p></article><article><h3>Accountable support</h3><p>Users can report a problem, question a result or suggest an improvement through our <a href="contact.html">contact and support page</a>.</p></article></div></section>
   <section class="about-transparency"><h2>Privacy and business transparency</h2><p>Most compatible file tools process locally in the browser, although tools that need an external service are identified. Vootkit may be supported by advertising and optional paid plans. Advertising does not determine a tool's calculation or result, and ads are kept visually separate from tool controls and download actions.</p><p>Our <a href="privacy.html">Privacy Policy</a>, <a href="cookies.html">Cookie Policy</a>, <a href="terms.html">Terms of Use</a> and <a href="disclaimer.html">Disclaimer</a> explain how the service operates and what users should expect.</p></section>
-  <section class="about-next"><div><h2>The next chapter</h2><p>More useful tools. Better workflows.<br>The same commitment to simplicity.</p></div><a class="btn btn-primary" href="blog/">See what's new</a></section>
+  <section class="about-next"><div><h2>The next chapter</h2><p>More useful tools. Clearer guidance.<br>The same commitment to simplicity.</p></div><a class="btn btn-primary" href="blog/">See what's new</a></section>
 </div>` + foot(0);
 }
 write("about.html", aboutPage());
@@ -4343,7 +4326,7 @@ function workflowPage() {
   ]);
 }
 
-write("workflows/index.html", workflowPage());
+write("workflows/index.html", infoPage({depth:1, slug:"workflows/", title:"Workflows are unavailable", h1:"Workflows are unavailable", eyebrow:"Tools", noindex:true, desc:"Use individual Vootkit tools while workflows are unavailable.", lede:"The workflow builder has been withdrawn while it is reviewed.", body:'<p>Use the <a href="../tools/">individual tools</a> instead.</p>'}));
 
 write("contact-success/index.html", infoPage({
   depth: 1, slug: "contact-success/", title: "Message sent", eyebrow: "Contact & Support", noindex: true,
@@ -4424,7 +4407,7 @@ console.log(`generated ${pages} pages (${localizedPages} localised)`);
  * so Google can still reach and cluster them through the alternates on every
  * English page. This only changes what we actively ask it to prioritise.
  * Revisit once English pages hold real positions. */
-const enUrls = ["/", "/tools/", "/workflows/", "/templates/", "/pricing.html", "/about.html", "/founder-story.html", "/contact.html", "/help/", "/legal/", "/privacy.html", "/terms.html", "/cookies.html", "/disclaimer.html", "/security.html"]
+const enUrls = ["/", "/tools/", "/templates/", "/pricing.html", "/about.html", "/founder-story.html", "/contact.html", "/help/", "/legal/", "/privacy.html", "/terms.html", "/cookies.html", "/disclaimer.html", "/security.html"]
   .concat(POSTS.length ? ["/blog/"] : [])                       // only list blog when it has posts
   .concat(BLOG_USED_CATEGORIES.map((slug) => `/blog/${slug}/`))
   .concat(POSTS.map((p) => `/blog/${p.slug}/`))

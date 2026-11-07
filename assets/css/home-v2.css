@@ -67,3 +67,4 @@
 .vk-home-ref .searchbox input{color:#11152d!important;-webkit-text-fill-color:#11152d!important}
 .vk-home-ref .searchbox input::placeholder{color:#999eaf!important;-webkit-text-fill-color:#999eaf!important;opacity:1}
 
+.vk-home-ref .bottom-nav{grid-template-columns:repeat(3,minmax(0,1fr))}
