@@ -558,3 +558,4 @@ body::before {
 a, .btn, .icon-btn, summary { transition: color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease); }
 
 .nav [data-auth-link]{display:none!important}
+.vk-home-ref .bottom-nav{grid-template-columns:repeat(3,minmax(0,1fr))}.acct-bottom-nav{grid-template-columns:repeat(3,minmax(0,1fr))}.acct-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
