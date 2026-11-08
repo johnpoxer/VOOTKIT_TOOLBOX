@@ -1,7 +1,7 @@
 ---
-title: "How to Make a Scanned PDF Searchable With OCR"
+title: "How to Extract Text From a Scanned PDF With OCR"
 date: "2026-09-04"
-description: "Use Vootkit's PDF & Image OCR with a worked example, quality checks, privacy guidance and the right related tools."
+description: "Extract and check text from scanned PDFs or images, choose a supported language and understand the 20-page limit and plain-text output."
 thumbnail: "/assets/blog/pdf-ocr-guide.jpg"
 coverAlt: "Original editorial cover for the PDF & Image OCR guide."
 author: "The Vootkit team"
@@ -11,90 +11,78 @@ tags: "PDF, Browser Tools, Productivity"
 relatedTools: "pdf-ocr, scan-to-pdf, pdf-to-text, text-diff"
 ---
 
-PDF & Image OCR helps you recognise characters from scanned pages for search, copying or accessibility review. The fastest workflow is not the one with the fewest clicks; it is the one that preserves the right source, uses settings chosen for the destination and includes a deliberate check of the export.
+A scanned PDF can look like ordinary text while containing only pictures of pages. Copying a sentence from it requires optical character recognition, or OCR, which predicts characters from those images.
 
-## What the PDF & Image OCR does
+Vootkit's [PDF & Image OCR](/tools/pdf/pdf-ocr/) produces recognised text that you can copy or download as a `.txt` file. It does **not** add a searchable text layer to the original PDF or export a newly searchable PDF. If that is the required deliverable, you need a tool that explicitly supports that output.
 
-Extract text from scanned PDFs and images with OCR. Open the [PDF & Image OCR](/tools/pdf/pdf-ocr/) to follow the workflow in this guide.
+## Check whether you need OCR
 
-PDF & Image OCR performs this file operation in your browser after its required code has loaded. Vootkit does not need to upload the source for this operation, but the exported document still deserves the same privacy care as the original.
+Try selecting and copying a short sentence from the PDF first. If the document already contains usable text, [PDF Text Extractor](/tools/pdf/pdf-to-text/) is the more direct route. OCR introduces recognition uncertainty that is unnecessary when the text is already available.
 
-## Decide what the finished file must do
+For an image-only scan, inspect its quality. Characters should be in focus, correctly oriented and large enough to read. A blurred photograph cannot become perfectly accurate text just by choosing a different language model.
 
-Before using PDF & Image OCR, identify the destination: email, upload portal, website, print, archive, application or internal review. That choice controls format, dimensions, quality and what must remain editable or searchable. A technically successful pdf & image ocr operation can still produce the wrong result for its destination.
+Keep the original beside the recognised result. It remains the reference when a date, name or amount looks suspicious.
 
-For PDF & Image OCR, prepare:
+## Know the supported input and output
 
-- **Clear scan.** Use the reviewed source rather than a forwarded or compressed copy.
-- **Correct language.** Confirm this against the destination requirement before processing.
-- **Page orientation.** Record the choice so the result can be reproduced later.
-- **Expected names and numbers.** Record the choice so the result can be reproduced later.
-- **Output purpose.** Record the choice so the result can be reproduced later.
+| Item | Current behaviour |
+|---|---|
+| Source | A PDF or a browser-readable image |
+| Languages | English, Spanish, French, German, Italian and Portuguese |
+| PDF page limit | The first 20 pages of the selected PDF |
+| PDF preparation | Pages rendered at a scale of two before recognition |
+| Result | Text displayed in the tool, with page markers for multipage results |
+| Export | Copy text or download `ocr.txt` |
 
-## Choose settings from the destination backward
+The page limit matters even when the tool reports that processing completed. A 25-page PDF does not produce all 25 pages of text in one run. Check the original page count before starting.
 
-Start with **output purpose**, because it defines what the recipient or platform will accept. Then set **correct language** only as high as that job needs. Maximum quality, resolution or page size is not automatically safer: it can make the output slower, harder to send and no more useful at its real display size.
+## Prepare longer documents deliberately
 
-For PDF & Image OCR, make a second test version when you are unsure. Change one setting only, compare both outputs at the size the recipient will use, and keep the smaller or simpler version only when meaningful detail and required behaviour remain intact. This one-variable comparison is more dependable than changing format, quality and dimensions together.
+For a document longer than 20 pages, use [Split PDF](/tools/pdf/split-pdf/) to create appropriately sized parts. Name each part with its original page range, such as `report-pages-21-25.pdf`.
 
-## Step-by-step workflow
+The OCR output numbers pages within the processed part. Preserve the original range in your filename or notes so a marker such as “Page 1” is not confused with page one of the full report.
 
-1. Preserve the original and work from a clearly named copy.
-2. Open [PDF & Image OCR](/tools/pdf/pdf-ocr/) and add the intended source file.
-3. Set **correct language** for the actual destination rather than choosing the maximum automatically.
-4. Process one representative result first when the source contains mixed pages or a batch of different images.
-5. Inspect the areas most likely to fail: small text, faces, signatures, transparent edges, page order or fine lines.
-6. Export with a descriptive filename and reopen it outside the tool before sending or replacing anything.
+If several pages have a different orientation, correct the relevant source copy before OCR. Use [Rotate PDF](/tools/pdf/rotate-pdf/) where its operation matches the change you need, and inspect the result before extracting text.
 
-## Worked example
+## Extract text step by step
 
-A five-page receipt bundle is rotated, OCR is run in the document language and totals, dates and supplier names are checked against each image before export.
+1. Open PDF & Image OCR and choose the intended PDF or image.
+2. Select the language actually used by the text.
+3. Choose **Extract text** and allow the required engine and language data to load.
+4. Watch the page progress and wait for completion or an error.
+5. Compare the recognised text with representative source passages.
+6. Use **Copy text** or **Download .txt**, then give the result a descriptive filename.
 
-This scenario tests PDF & Image OCR against a concrete requirement. If **clear scan** or **correct language** changes, keep the first result as a baseline so you can identify which choice affected quality, size or usability.
+The first run can take longer because recognition dependencies must load. Source processing happens in the browser, but a first visit is not guaranteed to work without a connection. Large pages also consume memory, so test a smaller part if the browser struggles.
 
-## What changes—and what does not
+## A worked receipt example
 
-OCR predicts text and will make errors, especially with handwriting, tables, low contrast and unusual fonts. It does not certify the content.
+Suppose you need the supplier, date and total from five scanned receipts. Choose the language matching the receipts and process the file. Keep each recognised page associated with its original image.
 
-The PDF & Image OCR result should be judged by fitness for purpose. Compare the output with the source at normal viewing size and at 100% zoom, then test any behaviour the destination needs: text selection, transparency, links, form fields, print margins or platform acceptance.
+Check the supplier name letter by letter, then verify the date format and every digit in the total. Pay special attention to decimal commas and decimal points. An output of `18.00` instead of `180.00` can look plausible while changing the meaning substantially.
 
-## Common mistakes
+Copy the checked values into your working record only after review. OCR is an input aid; it does not reconcile an account, certify a receipt or verify that a transaction occurred.
 
-- **Wrong language.** This usually creates the largest avoidable failure.
-- **Blurred source.** Check this in the first test export.
-- **Trusting numbers blindly.** Add it to the final review rather than assuming the tool can infer it.
-- **Discarding the scan.** Add it to the final review rather than assuming the tool can infer it.
-- **Exposing sensitive documents.** Add it to the final review rather than assuming the tool can infer it.
+## Review layout and recognition errors separately
 
-## Quality and privacy checklist
+Columns and tables can emerge in an unexpected reading order. Read across the original row when checking whether a number belongs to the correct label. A block of recognised text does not preserve spreadsheet structure automatically.
 
-- Keep the original document until the recipient or destination accepts the new version.
-- Verify **clear scan** and **output purpose** against the job requirement.
-- Reopen the exported file and confirm its type, dimensions or page count.
-- Inspect content that carries meaning: names, totals, signatures, labels, faces and fine edges.
-- Remove private pages, metadata or visual details only with a method that truly removes them.
-- Use a new filename so the source and output cannot be confused.
+Handwriting, stamps, small print and low contrast can produce errors. Check characters that look similar, such as O and 0, or I and 1. An apparently fluent sentence may still contain a changed name or omitted word.
 
-## When another tool is the better next step
+Use [Text Diff](/tools/text/text-diff/) to compare your corrected transcription with the raw output when you need a record of edits. The comparison identifies changes; the scan establishes which version is accurate.
 
-- [Scan to PDF](/tools/pdf/scan-to-pdf/) — Use this for the most likely next operation after PDF & Image OCR.
-- [PDF Text Extractor](/tools/pdf/pdf-to-text/) — Choose this when the destination requires a different kind of result.
-- [Text Diff](/tools/text/text-diff/) — Use this to verify, optimise or prepare the exported file.
+## Save text and source together
 
-These links follow the workflow around PDF & Image OCR; they are not generic category links. Avoid chaining conversions without a reason because every extra raster or lossy step can reduce quality and make troubleshooting harder.
+Keep the scan and reviewed text under related filenames. Avoid overwriting the raw recognition result until you have a checked copy. If you share the extracted text, remember that it can contain the same private details as the image.
 
-## Frequently asked questions
+### Can I search the original PDF after this?
 
-### Does PDF & Image OCR upload my file?
+Not because of this operation. You can search the exported text in a text editor, but the tool does not embed it into the original PDF.
 
-The PDF & Image OCR operation runs in the browser on your device. The page itself and its processing libraries must load, but Vootkit does not need to upload the source file to perform this operation.
+### Why are pages missing from the text?
 
-### Should I delete the original after the export works?
+Check whether the PDF exceeded the first-20-page limit. Split longer documents into labelled parts and process each part.
 
-Not immediately. Keep the original until the PDF & Image OCR output has been reopened, checked and accepted by its destination. This operation and any later conversion, cropping, compression, redaction or page edit can discard information that cannot be recreated.
+### Can I trust the extracted numbers automatically?
 
-### Why can the output look different from the source?
-
-Format capabilities, fonts, colour handling, transparency, compression, rendering scale and page geometry can all affect appearance. For PDF & Image OCR, check **correct language** and the limitation explained above first.
-
-Vootkit provides PDF & Image OCR as a browser-based file tool with educational guidance. Verify important legal, archival, accessibility, identity, medical or professional-document requirements with the relevant authority or recipient.
+No. Verify important amounts, dates and identifiers against the source. The engine recognises patterns; it does not understand the consequences of a wrong digit.

@@ -3,6 +3,27 @@
 Read this before editing anything blog-related. The two mistakes below are
 easy to make and both look like the change silently did nothing.
 
+## Guide coverage — 8 September 2026
+
+There are now 212 articles. All 20 live tool categories have a primary-category
+guide and a populated archive. The latest batch adds 14 substantial category
+and workflow articles: accessibility, privacy, writing, design, developer, data,
+health, audio, education, PDF preparation, image publishing, video publishing,
+business documents and choosing tools. Existing related articles remain in place.
+
+This completes category coverage and the broad workflow batch; it does not mean
+every individual tool has its own dedicated article. Future work should deepen
+specific tasks and replace generic older prose rather than duplicate these guides.
+
+Run `npm run check:guides` after changes. It builds the site, verifies every
+article's hub/archive/sitemap presence, checks authored local links and covers,
+and runs the existing SEO regression checks. New primary categories also need
+entries in `BLOG_CATEGORY_INFO` and `BLOG_CATEGORY_ORDER` in `build.js`.
+
+Write from the implementation, including its limitations. In particular, PDF OCR
+exports text (not a searchable PDF), and browser speech recognition may use a
+remote service. Avoid blanket offline, no-network or unlimited-use promises.
+
 ---
 
 ## 1. `/blog/` is GENERATED. Do not edit it.

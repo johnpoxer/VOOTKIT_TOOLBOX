@@ -8,6 +8,7 @@
   },
   "scripts": {
     "build": "node build.js",
+    "check:guides": "npm run build && node test/guide-coverage.test.js && node test/seo.test.js",
     "audit": "node test/audit-tools.js",
     "audit:json": "node test/audit-tools.js --json > docs/tool-registry.json",
     "audit:strict": "node test/audit-tools.js --strict",
